@@ -139,6 +139,24 @@ bool CrateApp::Init()
 	BuildGeometryBuffers();
 	obj.setVB(md3dDevice);
 	obj.setIB(md3dDevice);
+	
+	WCHAR strBuffer[100];
+	swprintf(strBuffer, L"\nMy Obj Vertex Count : %d\n My Obj face Count : %d\n"
+		,obj.m_numVertex, obj.m_numIndex/3);
+	
+
+	OutputDebugStringW(strBuffer);
+
+
+	obj.printVerticesSize();
+
+	vector<int> a;
+	a.reserve(10);
+	swprintf(strBuffer, L"a.capacity : %d , a.size : %d"
+		, a.capacity(), a.size());
+
+
+	OutputDebugStringW(strBuffer);
 
 	return true;
 }
@@ -176,6 +194,7 @@ void CrateApp::DrawScene()
 
 	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//md3dImmediateContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	UINT stride = sizeof(Vertex::Basic32);
 	UINT offset = 0;
@@ -183,7 +202,7 @@ void CrateApp::DrawScene()
 	XMMATRIX view = XMLoadFloat4x4(&mView);
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
 	XMMATRIX viewProj = view * proj;
-
+	
 	// Set per frame constants.
 	Effects::BasicFX->SetDirLights(mDirLights);
 	Effects::BasicFX->SetEyePosW(mEyePosW);
@@ -211,6 +230,7 @@ void CrateApp::DrawScene()
 
 		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(obj.m_numIndex, 0, 0);
+		
 	}
 	//for (UINT p = 0; p < techDesc.Passes; ++p)
 	//{
@@ -259,6 +279,7 @@ void CrateApp::OnMouseMove(WPARAM btnState, int x, int y)
 
 		// Update angles based on input to orbit camera around box.
 		mTheta += dx;
+		mPhi += dy;
 		mPhi += dy;
 
 		// Restrict the angle mPhi.

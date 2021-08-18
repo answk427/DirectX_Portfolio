@@ -52,4 +52,18 @@ public:
 	void setIB(ID3D11Device* device);
 	int m_numVertex;
 	int m_numIndex;
+	void printVerticesSize()
+	{
+		WCHAR strBuffer[100];
+		swprintf(strBuffer, L"\nIn Obj Class Vertex Vector Size : %d\n My Obj Class face Vector Size : %d\n"
+			, vertices.size(), indices.size() / 3);
+		OutputDebugStringW(strBuffer);
+
+		swprintf(strBuffer, L"vertices.capacity : %d , vertices.size : %d"
+			, vertices.capacity(), vertices.size());
+		OutputDebugStringW(strBuffer);
+
+		
+		
+	}
 };

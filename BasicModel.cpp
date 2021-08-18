@@ -12,7 +12,7 @@ BasicModel::BasicModel(ID3D11Device* device, TextureMgr& texMgr, const std::stri
 	ModelMesh.SetSubsetTable(Subsets);
 
 	SubsetCount = mats.size();
-
+	  
 	for(UINT i = 0; i < SubsetCount; ++i)
 	{
 		Mat.push_back(mats[i].Mat);
@@ -22,6 +22,11 @@ BasicModel::BasicModel(ID3D11Device* device, TextureMgr& texMgr, const std::stri
 
 		ID3D11ShaderResourceView* normalMapSRV = texMgr.CreateTexture(texturePath + mats[i].NormalMapName);
 		NormalMapSRV.push_back(normalMapSRV);
+
+		
+		
+		
+		
 	}
 }
 

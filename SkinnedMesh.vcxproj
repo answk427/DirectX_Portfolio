@@ -125,6 +125,7 @@
     <ClInclude Include="Common\xnacollision.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="LoadM3d.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="MeshGeometry.h" />
     <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="RenderStates.h" />
