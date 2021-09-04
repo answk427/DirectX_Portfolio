@@ -137,26 +137,8 @@ bool CrateApp::Init()
 	//	L"Textures/WoodCrate01.dds", 0, 0, &mDiffuseMapSRV, 0));
 
 	BuildGeometryBuffers();
-	obj.setVB(md3dDevice);
-	obj.setIB(md3dDevice);
+
 	
-	WCHAR strBuffer[100];
-	swprintf(strBuffer, L"\nMy Obj Vertex Count : %d\n My Obj face Count : %d\n"
-		,obj.m_numVertex, obj.m_numIndex/3);
-	
-
-	OutputDebugStringW(strBuffer);
-
-
-	obj.printVerticesSize();
-
-	vector<int> a;
-	a.reserve(10);
-	swprintf(strBuffer, L"a.capacity : %d , a.size : %d"
-		, a.capacity(), a.size());
-
-
-	OutputDebugStringW(strBuffer);
 
 	return true;
 }
@@ -211,7 +193,6 @@ void CrateApp::DrawScene()
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	activeTech->GetDesc(&techDesc);
-	obj.Draw(md3dImmediateContext);
 
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
@@ -228,9 +209,7 @@ void CrateApp::DrawScene()
 		Effects::BasicFX->SetMaterial(mBoxMat);
 		Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
 
-		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-		md3dImmediateContext->DrawIndexed(obj.m_numIndex, 0, 0);
-		
+		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);		
 	}
 	//for (UINT p = 0; p < techDesc.Passes; ++p)
 	//{

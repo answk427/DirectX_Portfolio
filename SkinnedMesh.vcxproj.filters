@@ -93,10 +93,13 @@
     <ClCompile Include="Common\xnacollision.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectLoader.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -170,13 +173,22 @@
     <ClInclude Include="Common\xnacollision.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectLoader.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferResource.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
   </ItemGroup>

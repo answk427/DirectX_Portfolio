@@ -8,62 +8,37 @@
 #include <vector>
 #include <string>
 
-#include "Vertex.h"
-#include "Effects.h"
+#include "Mesh.h"
+
+
+
 
 #pragma comment(lib, "assimp.lib")
 
 using namespace std;
 
-struct mesh
-{
-	vector<Vertex::Basic32> vertices;
-	vector<int> indices;
-	UINT materialIndex;
-	mesh() {
-		materialIndex = 0;
-	}
-};
-
 class ObjectLoader
 {
 private:
 	const aiScene* m_pScene;
-	vector<mesh> m_meshes; //meshÀÇ ÁýÇÕ
-	ID3D11Buffer* m_VB;
-	ID3D11Buffer* m_IB;
-
-	vector<Vertex::Basic32> vertices;
-	vector<UINT32> indices;
 	
-
-	int m_numMaterial;
-	int m_numBones;
-	
-
 	void InitScene();
-	void InitMesh(UINT index, const aiMesh* pMesh);
 	
-
 public:
 	ObjectLoader(const string& fileName);
-	void Draw(ID3D11DeviceContext* context);
-	void setVB(ID3D11Device* device);
-	void setIB(ID3D11Device* device);
-	int m_numVertex;
-	int m_numIndex;
-	void printVerticesSize()
-	{
-		WCHAR strBuffer[100];
-		swprintf(strBuffer, L"\nIn Obj Class Vertex Vector Size : %d\n My Obj Class face Vector Size : %d\n"
-			, vertices.size(), indices.size() / 3);
-		OutputDebugStringW(strBuffer);
+	
+	
+	//void InitMesh(UINT index, const aiMesh* pMesh);
+			
+	//void printVerticesSize()
+	//{
+	//	WCHAR strBuffer[100];
+	//	swprintf(strBuffer, L"\nIn Obj Class Vertex Vector Size : %d\n My Obj Class face Vector Size : %d\n"
+	//		, vertices.size(), indices.size() / 3);
+	//	OutputDebugStringW(strBuffer);
 
-		swprintf(strBuffer, L"vertices.capacity : %d , vertices.size : %d"
-			, vertices.capacity(), vertices.size());
-		OutputDebugStringW(strBuffer);
-
-		
-		
-	}
+	//	swprintf(strBuffer, L"vertices.capacity : %d , vertices.size : %d"
+	//		, vertices.capacity(), vertices.size());
+	//	OutputDebugStringW(strBuffer);
+	//}
 };

@@ -22,6 +22,7 @@ SkinnedModel::SkinnedModel(ID3D11Device* device, TextureMgr& texMgr, const std::
 
 		ID3D11ShaderResourceView* normalMapSRV = texMgr.CreateTexture(texturePath + mats[i].NormalMapName);
 		NormalMapSRV.push_back(normalMapSRV);
+		
 	}
 }
 

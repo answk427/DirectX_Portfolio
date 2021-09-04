@@ -22,11 +22,7 @@ BasicModel::BasicModel(ID3D11Device* device, TextureMgr& texMgr, const std::stri
 
 		ID3D11ShaderResourceView* normalMapSRV = texMgr.CreateTexture(texturePath + mats[i].NormalMapName);
 		NormalMapSRV.push_back(normalMapSRV);
-
-		
-		
-		
-		
+				
 	}
 }
 

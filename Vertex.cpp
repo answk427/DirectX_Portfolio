@@ -1,6 +1,8 @@
 #include "Vertex.h"
 #include "Effects.h"
 
+//이펙트 서명. 결국 Vertex와 이펙트의 Input은 일치해야한다.
+
 #pragma region InputLayoutDesc
 
 const D3D11_INPUT_ELEMENT_DESC InputLayoutDesc::Pos[1] = 
@@ -14,6 +16,8 @@ const D3D11_INPUT_ELEMENT_DESC InputLayoutDesc::Basic32[3] =
 	{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
 };
+
+
 
 const D3D11_INPUT_ELEMENT_DESC InputLayoutDesc::PosNormalTexTan[4] = 
 {
