@@ -1,7 +1,9 @@
 #pragma once
 #include "Interface.h"
 #include "Mesh.h"
+#include "Material.h"
 
+#include <TextureMgr.h>
 #include <D3D11.h>
 #include <d3dUtil.h>
 #include <vector>
@@ -11,7 +13,7 @@ class Renderer : public Component
 {
 protected:
 	Mesh* mesh;
-	vector<Material> materials;
+	vector<GeneralMaterial> materials;
 	vector<ID3D11ShaderResourceView*> diffuseMaps;
 	vector<ID3D11ShaderResourceView*> normalMaps;
 public:
@@ -22,9 +24,11 @@ public:
 	virtual void LateUpdate() override;
 	virtual void Draw(ID3D11DeviceContext* context) = 0;
 
-	Renderer(Mesh* meshSrc) :mesh(meshSrc) {}
+	Renderer(std::wstring& fileName, std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
+	~Renderer();
+	void InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath);
+	void InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePath);
+	
+	
 
 };
-
-
-

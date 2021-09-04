@@ -1,7 +1,11 @@
 #include "TextureMgr.h"
 
+bool TextureMgr::instantiated = false;
+
 TextureMgr::TextureMgr() : md3dDevice(0)
 {
+	assert(!instantiated);
+	instantiated = true;
 }
 
 TextureMgr::~TextureMgr()
@@ -12,6 +16,7 @@ TextureMgr::~TextureMgr()
     }
 
 	mTextureSRV.clear();
+	instantiated = false;
 }
 
 void TextureMgr::Init(ID3D11Device* device)

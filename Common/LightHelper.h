@@ -63,14 +63,14 @@ struct SpotLight
 	float Pad; // Pad the last float so we can set an array of lights if we wanted.
 };
 
-//struct Material
-//{
-//	Material() { ZeroMemory(this, sizeof(this)); }
-//
-//	XMFLOAT4 Ambient;
-//	XMFLOAT4 Diffuse;
-//	XMFLOAT4 Specular; // w = SpecPower
-//	XMFLOAT4 Reflect;
-//};
+struct Material
+{
+	Material() { ZeroMemory(this, sizeof(this)); }
+
+	XMFLOAT4 Ambient;
+	XMFLOAT4 Diffuse;
+	XMFLOAT4 Specular; // w = SpecPower
+	XMFLOAT4 Reflect;
+};
 
 #endif // LIGHTHELPER_H

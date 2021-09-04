@@ -12,5 +12,16 @@ struct BasicMaterial
 	XMFLOAT4 Reflect;
 };
 
+struct GeneralMaterial
+{
+	BasicMaterial basicMat;
+	std::wstring diffuseMapName;
+	std::wstring normalMapName;
+	XMFLOAT2 textureTiling;
+	XMFLOAT2 textureOffset;
+
+	
+	GeneralMaterial() { ZeroMemory(this, sizeof(this));}
+};
 
 

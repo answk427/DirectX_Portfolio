@@ -15,7 +15,7 @@ BasicModel::BasicModel(ID3D11Device* device, TextureMgr& texMgr, const std::stri
 	  
 	for(UINT i = 0; i < SubsetCount; ++i)
 	{
-		Mat.push_back(mats[i].Mat);
+//		Mat.push_back(mats[i].Mat);
 
 		ID3D11ShaderResourceView* diffuseMapSRV = texMgr.CreateTexture(texturePath + mats[i].DiffuseMapName);
 		DiffuseMapSRV.push_back(diffuseMapSRV);

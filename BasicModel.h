@@ -13,7 +13,7 @@ public:
 
 	UINT SubsetCount;
 
-	std::vector<Material> Mat;
+	//std::vector<Material> Mat;
 	std::vector<ID3D11ShaderResourceView*> DiffuseMapSRV;
 	std::vector<ID3D11ShaderResourceView*> NormalMapSRV;
 
