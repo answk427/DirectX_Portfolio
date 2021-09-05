@@ -8,8 +8,10 @@ namespace MyVertex
 	{
 		XMFLOAT3 pos; //정점의 위치
 		XMFLOAT3 normal; //법선벡터
-		XMFLOAT3 tan; //탄젠트 벡터
 		XMFLOAT2 tex; //텍스쳐 좌표
+		XMFLOAT3 tan; //탄젠트(접선) 벡터
+		XMFLOAT3 biTan; //바이탄젠트(종접선) 벡터
+		
 		
 		BasicVertex() :pos(0), normal(0), tan(0), tex(0) {}
 	};

@@ -18,7 +18,8 @@
 #include "Vertex.h"
 #include "ObjectLoader.h"
 
-ObjectLoader obj("Models/18042_GonF.fbx");
+
+//ObjectLoader obj("Models/18042_GonF.fbx");
 
 
 class CrateApp : public D3DApp
@@ -40,6 +41,8 @@ private:
 	void BuildGeometryBuffers();
 
 private:
+	
+
 	ID3D11Buffer* mBoxVB;
 	ID3D11Buffer* mBoxIB;
 

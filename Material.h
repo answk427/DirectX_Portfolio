@@ -17,11 +17,16 @@ struct GeneralMaterial
 	BasicMaterial basicMat;
 	std::wstring diffuseMapName;
 	std::wstring normalMapName;
+	std::wstring specularMap;
 	XMFLOAT2 textureTiling;
 	XMFLOAT2 textureOffset;
 
 	
-	GeneralMaterial() { ZeroMemory(this, sizeof(this));}
+	GeneralMaterial() 
+	{
+		ZeroMemory(this, sizeof(this));
+		textureTiling = { 1.0f,1.0f };
+	}
 };
 
 

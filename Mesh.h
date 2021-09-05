@@ -42,19 +42,21 @@ public:
 	Mesh() : mVB(0), mIB(0) {}
 	~Mesh() { ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(InstanceBuffer); }
 	
+	void SetVertices(vector<MyVertex::BasicVertex>& vertexSrc);
+	void SetIndices(vector<UINT>& indexSrc);
+	
 
-
-	void Draw(ID3D11DeviceContext* context);
+	void Draw(ID3D11DeviceContext* context, UINT subsetIdx);
 
 	template <typename VertexType>
 	void SetVB(ID3D11Device* device);
-
 	void SetIB(ID3D11Device* device);
 	void SetInstanceBuffer(ID3D11Device* device, int bufferSize);
 
 	ID3D11Buffer* GetVB() { return mVB; }
 	ID3D11Buffer* GetIB() { return mVB; }
 	ID3D11Buffer* GetInstanceBuffer() { return InstanceBuffer; }
+	int GetSubsetLength() { return subsets.size(); }
 
 };
 

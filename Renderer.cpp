@@ -1,5 +1,5 @@
 #include "Renderer.h"
-
+//******************Renderer 함수 정의 ************************//
 void Renderer::Init()
 {
 	
@@ -45,3 +45,11 @@ void Renderer::InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePat
 	}
 }
 
+
+//***********************MeshRenderer 함수 정의 **************************//
+
+void MeshRenderer::Draw(ID3D11DeviceContext * context)
+{
+	for(int i=0; i<mesh->GetSubsetLength(); i++)
+		mesh->Draw(context,i);
+}

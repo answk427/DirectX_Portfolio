@@ -1,15 +1,28 @@
 #include "Mesh.h"
 
 
-void Mesh::Draw(ID3D11DeviceContext * context)
+void Mesh::SetVertices(vector<MyVertex::BasicVertex>& vertexSrc)
 {
-	for (int i = 0; i < subsets.size(); i++)
-	{
-		context->DrawIndexed(subsets[i].IndexCount
-			, subsets[i].IndexStart
-			, subsets[i].VertexStart);
-	}
-	
+	//vertices를 빈 벡터로 만듬
+	vector<MyVertex::BasicVertex>().swap(vertices);
+	//매개변수 벡터와 교환
+	vertices.swap(vertexSrc);
+}
+
+void Mesh::SetIndices(vector<UINT>& indexSrc)
+{
+	//Indices를 빈 벡터로 만듬
+	vector<UINT>().swap(indices);
+	//매개변수 벡터와 교환
+	indices.swap(indexSrc);
+}
+
+void Mesh::Draw(ID3D11DeviceContext * context, UINT subsetIdx)
+{
+	context->DrawIndexed(subsets[subsetIdx].IndexCount
+		, subsets[subsetIdx].IndexStart
+		, subsets[subsetIdx].VertexStart);
+
 }
 
 //인덱스버퍼 생성
@@ -42,9 +55,9 @@ void Mesh::SetInstanceBuffer(ID3D11Device * device, int bufferSize)
 	desc.ByteWidth = sizeof(InstancingData) * bufferSize;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; //쓰기 가능 버퍼
 	desc.MiscFlags = 0;
-	desc.StructureByteStride = 0; 
+	desc.StructureByteStride = 0;
 	desc.Usage = D3D11_USAGE_DYNAMIC;
-	
+
 	//매핑후 instancingData의 내용을 직접 쓸것이므로 subresource는 null
 	HR(device->CreateBuffer(&desc, 0, &InstanceBuffer));
 }
