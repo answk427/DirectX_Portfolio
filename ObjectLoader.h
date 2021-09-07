@@ -23,18 +23,12 @@ class ObjectLoader
 private:
 	const aiScene* m_pScene;
 	//메쉬구조를 저장할 컨테이너들
-	vector<MyVertex::BasicVertex>* vertices;
-	vector<UINT>* indices; 
-	vector<Subset>* subsets;
-	vector<GeneralMaterial>* materials;
-
-	//Mesh관련 vector들 초기화
-	void InitMeshData(vector<MyVertex::BasicVertex>* vertices,
-		vector<UINT>* indices,
-		vector<Subset>* subsets);
-	
+	vector<MyVertex::BasicVertex> vertices;
+	vector<UINT> indices; 
+	vector<Subset> subsets;
+	vector<GeneralMaterial> materials;
+		
 	//Material vector 초기화
-	void InitMaterialData(vector<GeneralMaterial>* materials);
 	void SetMaterial(const int& matNumOfMesh);
 
 	//노드탐색
@@ -50,11 +44,8 @@ public:
 	//모델파일을 읽어와 scene 초기화
 	void InitScene(const string & fileName);
 	//적재 컨테이너 한번에 초기화
-	void InitAll(vector<MyVertex::BasicVertex>* vertices,
-		vector<UINT>* indices,
-		vector<Subset>* subsets,
-		vector<GeneralMaterial>* materials);
-
+	void InitContainer();
+	
 	//Data 읽기
 	bool LoadData();
 	

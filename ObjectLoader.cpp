@@ -64,7 +64,10 @@ void ObjectLoader::InitScene(const string& fileName)
 
 	if (m_pScene) //경로의 파일을 정상적으로 로드했을 때
 	{
-		
+		//멤버 컨테니어 초기화
+		InitContainer();
+		//material의 개수만큼 초기화
+		materials.assign(m_pScene->mNumMaterials, GeneralMaterial());
 	}
 	else
 	{
@@ -72,38 +75,24 @@ void ObjectLoader::InitScene(const string& fileName)
 	}
 }
 
+void ObjectLoader::InitContainer()
+{
+	vector<MyVertex::BasicVertex>().swap(vertices);
+	vector<UINT>().swap(indices);
+	vector<Subset>().swap(subsets);
+	vector<GeneralMaterial>().swap(materials);
+}
+
 bool ObjectLoader::LoadData()
 {
-	//Init이 제대로 안된 상황
-	if (m_pScene == NULL || vertices == NULL || indices == NULL || subsets == NULL || materials == NULL)
+	if (m_pScene == NULL)
 		return false;
-	
+
 	NodeTravel(m_pScene->mRootNode);
+
+	return true;
 }
 
-void ObjectLoader::InitAll(vector<MyVertex::BasicVertex>* vertices, vector<UINT>* indices, vector<Subset>* subsets, vector<GeneralMaterial>* materials)
-{
-	InitMeshData(vertices, indices, subsets);
-	InitMaterialData(materials);
-}
-
-
-
-void ObjectLoader::InitMeshData(vector<MyVertex::BasicVertex>* vertices,
-	vector<UINT>* indices,
-	vector<Subset>* subsets)
-{
-	this->vertices = vertices;
-	this->indices = indices;
-	this->subsets = subsets;
-}
-
-void ObjectLoader::InitMaterialData(vector<GeneralMaterial>* materials)
-{
-	this->materials = materials;
-	//material의 개수만큼 초기화
-	materials->assign(m_pScene->mNumMaterials, GeneralMaterial());
-}
 
 void ObjectLoader::SetMaterial(const int & matNumOfMesh)
 {
@@ -113,15 +102,15 @@ void ObjectLoader::SetMaterial(const int & matNumOfMesh)
 	
 	//Material의 Diffuse 값 적재
 	aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-	(*materials)[matNumOfMesh].basicMat.Diffuse = { color.r, color.g, color.b, 1.0f };
+	(materials)[matNumOfMesh].basicMat.Diffuse = { color.r, color.g, color.b, 1.0f };
 	
 	//Material의 ambient 값 적재
 	aiMat->Get(AI_MATKEY_COLOR_AMBIENT, color);
-	(*materials)[matNumOfMesh].basicMat.Ambient = { color.r, color.g, color.b, 1.0f };
+	(materials)[matNumOfMesh].basicMat.Ambient = { color.r, color.g, color.b, 1.0f };
 	
 	//Material의 Specular 값 적재
 	aiMat->Get(AI_MATKEY_COLOR_SPECULAR, color);
-	(*materials)[matNumOfMesh].basicMat.Specular = { color.r, color.g, color.b, color.a };
+	(materials)[matNumOfMesh].basicMat.Specular = { color.r, color.g, color.b, color.a };
 
 	//*************Texture 적재 **************//
 	aiString* fileName;
@@ -131,16 +120,16 @@ void ObjectLoader::SetMaterial(const int & matNumOfMesh)
 
 	//DiffuseTexture 경로 저장
 	aiMat->GetTexture(aiTextureType_DIFFUSE, 0, fileName);
-	(*materials)[matNumOfMesh].diffuseMapName = A2W(fileName->C_Str());
+	(materials)[matNumOfMesh].diffuseMapName = A2W(fileName->C_Str());
 	
 	
 	//SpecularTexture 경로 저장
 	aiMat->GetTexture(aiTextureType_SPECULAR, 0, fileName);
-	(*materials)[matNumOfMesh].specularMap= A2W(fileName->C_Str());
+	(materials)[matNumOfMesh].specularMap= A2W(fileName->C_Str());
 
 	//NormalTexture 경로 저장
 	aiMat->GetTexture(aiTextureType_NORMALS, 0, fileName);
-	(*materials)[matNumOfMesh].normalMapName = A2W(fileName->C_Str());
+	(materials)[matNumOfMesh].normalMapName = A2W(fileName->C_Str());
 }
 
 
@@ -173,16 +162,16 @@ void ObjectLoader::SetMesh(aiMesh * mesh)
 	
 	//총 정점의 갯수를 구함
 	vertexCount += mesh->mNumVertices;
-	vertices->reserve(vertexCount+10);
+	vertices.reserve(vertexCount+10);
 
 	//index의 총 갯수
 	indexCount += mesh->mNumFaces*3;
-	indices->reserve(indexCount + 10);
+	indices.reserve(indexCount + 10);
 
 	tempSubset.VertexCount = mesh->mNumVertices;
 	tempSubset.IndexCount = mesh->mNumFaces*3;
 	
-	subsets->push_back(tempSubset);
+	subsets.push_back(tempSubset);
 	
 	SetMaterial(mesh->mMaterialIndex);
 
@@ -221,7 +210,7 @@ void ObjectLoader::SetMesh(aiMesh * mesh)
 			tempVertex.tan = XMFLOAT3(tangent.x, tangent.y, tangent.z);
 			tempVertex.biTan = XMFLOAT3(biTangent.x, biTangent.y, biTangent.z);
 		}
-		vertices->push_back(tempVertex);
+		vertices.push_back(tempVertex);
 	}
 
 	
@@ -232,9 +221,9 @@ void ObjectLoader::SetMesh(aiMesh * mesh)
 		for (int i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace& face = mesh->mFaces[i];
-			indices->push_back(face.mIndices[0]);
-			indices->push_back(face.mIndices[1]);
-			indices->push_back(face.mIndices[2]);
+			indices.push_back(face.mIndices[0]);
+			indices.push_back(face.mIndices[1]);
+			indices.push_back(face.mIndices[2]);
 		}
 	}
 

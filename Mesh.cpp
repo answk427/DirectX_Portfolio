@@ -17,6 +17,14 @@ void Mesh::SetIndices(vector<UINT>& indexSrc)
 	indices.swap(indexSrc);
 }
 
+void Mesh::SetSubset(vector<Subset>& subsetSrc)
+{
+	//subsets∏¶ ∫Û ∫§≈Õ∑Œ ∏∏µÎ
+	vector<Subset>().swap(subsets);
+	//∏≈∞≥∫Øºˆ ∫§≈ÕøÕ ±≥»Ø
+	subsets.swap(subsetSrc);
+}
+
 void Mesh::Draw(ID3D11DeviceContext * context, UINT subsetIdx)
 {
 	context->DrawIndexed(subsets[subsetIdx].IndexCount

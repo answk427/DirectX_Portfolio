@@ -24,7 +24,9 @@ public:
 	virtual void LateUpdate() override;
 	virtual void Draw(ID3D11DeviceContext* context) = 0;
 
-	Renderer(std::wstring& fileName, std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
+	Renderer();
+	//Renderer(std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
+	
 	~Renderer();
 	void InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 	void InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePath);
@@ -33,6 +35,8 @@ public:
 
 class MeshRenderer : public Renderer
 {
+public:
+	MeshRenderer();
 	// Renderer을(를) 통해 상속됨
 	virtual void Draw(ID3D11DeviceContext * context) override;
 };

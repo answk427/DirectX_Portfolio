@@ -17,6 +17,7 @@
 #include "Effects.h"
 #include "Vertex.h"
 #include "ObjectLoader.h"
+#include "Renderer.h"
 
 
 //ObjectLoader obj("Models/18042_GonF.fbx");
@@ -39,6 +40,7 @@ public:
 
 private:
 	void BuildGeometryBuffers();
+	ObjectLoader* objLoader = new ObjectLoader();
 
 private:
 	
@@ -141,7 +143,9 @@ bool CrateApp::Init()
 
 	BuildGeometryBuffers();
 
-	
+	Mesh* mesh = new Mesh();
+	MeshRenderer* rend = new MeshRenderer();
+		
 
 	return true;
 }
