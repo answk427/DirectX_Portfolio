@@ -30,6 +30,7 @@ public:
 	void InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 };
 
+
 class MeshRenderer : public Renderer
 {
 	// Renderer을(를) 통해 상속됨

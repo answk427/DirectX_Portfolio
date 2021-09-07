@@ -27,38 +27,35 @@ private:
 	vector<UINT>* indices; 
 	vector<Subset>* subsets;
 	vector<GeneralMaterial>* materials;
-	
-	void InitScene();
-	
-	
-public:
-	int vertexCount;
-	int indexCount;
-	//생성자에서 scene 초기화
-	ObjectLoader(const string& fileName);
+
 	//Mesh관련 vector들 초기화
 	void InitMeshData(vector<MyVertex::BasicVertex>* vertices,
 		vector<UINT>* indices,
 		vector<Subset>* subsets);
+	
 	//Material vector 초기화
 	void InitMaterialData(vector<GeneralMaterial>* materials);
 	void SetMaterial(const int& matNumOfMesh);
 
+	//노드탐색
 	void NodeTravel(aiNode* node);
+	//매쉬적재함수
 	void SetMesh(aiMesh* mesh);
+public:
+	int vertexCount;
+	int indexCount;
+	//생성자
+	ObjectLoader() : m_pScene(0), vertices(0), indices(0), subsets(0), materials(0) {}
 	
-	
-	//void InitMesh(UINT index, const aiMesh* pMesh);
-			
-	//void printVerticesSize()
-	//{
-	//	WCHAR strBuffer[100];
-	//	swprintf(strBuffer, L"\nIn Obj Class Vertex Vector Size : %d\n My Obj Class face Vector Size : %d\n"
-	//		, vertices.size(), indices.size() / 3);
-	//	OutputDebugStringW(strBuffer);
+	//모델파일을 읽어와 scene 초기화
+	void InitScene(const string & fileName);
+	//적재 컨테이너 한번에 초기화
+	void InitAll(vector<MyVertex::BasicVertex>* vertices,
+		vector<UINT>* indices,
+		vector<Subset>* subsets,
+		vector<GeneralMaterial>* materials);
 
-	//	swprintf(strBuffer, L"vertices.capacity : %d , vertices.size : %d"
-	//		, vertices.capacity(), vertices.size());
-	//	OutputDebugStringW(strBuffer);
-	//}
+	//Data 읽기
+	bool LoadData();
+	
 };

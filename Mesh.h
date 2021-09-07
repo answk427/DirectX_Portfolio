@@ -17,10 +17,10 @@ public:
 	UINT VertexStart;
 	UINT IndexCount;
 	UINT IndexStart;	
-	UINT id;
+	UINT materialNum;
 	
 	Subset() : VertexCount(0), VertexStart(0),
-		IndexCount(0), IndexStart(0), id(0) {}
+		IndexCount(0), IndexStart(0), materialNum(0) {}
 };
 
 
