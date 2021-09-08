@@ -43,6 +43,14 @@ void Renderer::InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePat
 	}
 }
 
+void Renderer::SetMaterials(vector<GeneralMaterial>& materialSrc)
+{
+	//materials를 빈 벡터로 만듬
+	vector<GeneralMaterial>().swap(materials);
+	//매개변수 벡터와 교환
+	materials.swap(materialSrc);
+}
+
 
 //***********************MeshRenderer 함수 정의 **************************//
 
@@ -52,6 +60,11 @@ MeshRenderer::MeshRenderer()
 
 void MeshRenderer::Draw(ID3D11DeviceContext * context)
 {
-	for(int i=0; i<mesh->GetSubsetLength(); i++)
+	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
+	mesh->SetVB(context);
+	mesh->SetIB(context);
+	
+	int subsetLength = mesh->GetSubsetLength();
+	for(int i=0; i<subsetLength; i++)
 		mesh->Draw(context,i);
 }

@@ -31,35 +31,39 @@ private:
 	ID3D11Buffer* mVB;
 	ID3D11Buffer* mIB;
 	ID3D11Buffer* InstanceBuffer;
-public:
 
-	//반직선 검출등에 사용
-	vector<MyVertex::BasicVertex> vertices;
-	vector<UINT> indices;
-	vector<InstancingData> InstancingDatas;
+	//버퍼초기화 함수들
+	//정점버퍼 생성
+	void InitVB(ID3D11Device* device);
+	void InitIB(ID3D11Device* device);
+	void InitInstanceBuffer(ID3D11Device* device, int bufferSize);
 
-
-
-	
-	//생성자
-	Mesh() : mVB(0), mIB(0) {}
-	~Mesh() { ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(InstanceBuffer); }
-	
 	//ObjectLoader에서 매쉬정보들을 전달받는 함수
 	void SetVertices(vector<MyVertex::BasicVertex>& vertexSrc);
 	void SetIndices(vector<UINT>& indexSrc);
-	void SetSubset(vector<Subset>& subsetSrc);
+	void SetSubsets(vector<Subset>& subsetSrc);
+
+	int vertexBufferCount;
+public:
+	//반직선 검출등에 사용
+	vector<MyVertex::BasicVertex> vertices;
+	vector<InstancingData> InstancingDatas;
+	vector<UINT> indices;
 	
+	void SetVB(ID3D11DeviceContext* context);
+	void SetIB(ID3D11DeviceContext* context);
+	//생성자
+	Mesh() : mVB(0), mIB(0), vertexBufferCount(0) {}
+	~Mesh() { ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(InstanceBuffer); }
+	
+	void Init(ID3D11Device* device,
+		vector<MyVertex::BasicVertex>& vertexSrc,
+		vector<UINT>& indexSrc,
+		vector<Subset>& subsetSrc);
+
 
 	void Draw(ID3D11DeviceContext* context, UINT subsetIdx);
 
-	//버퍼초기화 함수들
-	template <typename VertexType>
-	void SetVB(ID3D11Device* device);
-	void SetIB(ID3D11Device* device);
-	void SetInstanceBuffer(ID3D11Device* device, int bufferSize);
-
-	
 	ID3D11Buffer* GetVB() { return mVB; }
 	ID3D11Buffer* GetIB() { return mVB; }
 	ID3D11Buffer* GetInstanceBuffer() { return InstanceBuffer; }
@@ -67,23 +71,3 @@ public:
 
 };
 
-//정점버퍼 생성
-template<typename VertexType>
-inline void Mesh::SetVB(ID3D11Device * device)
-{
-	ReleaseCOM(mVB);
-	
-	//bufferDesc 작성
-	D3D11_BUFFER_DESC desc;
-	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	desc.ByteWidth = sizeof(VertexType) * vertices.size();
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = 0;
-	desc.StructureByteStride = 0; //구조적버퍼에 저장된 원소 하나의 크기, 구조적버퍼 사용할때 필요
-	desc.Usage = D3D11_USAGE_IMMUTABLE;
-
-	D3D11_SUBRESOURCE_DATA subRes;
-	subRes.pSysMem = &vertices;
-
-	HR(device->CreateBuffer(&desc, &subRes, &mVB));
-}

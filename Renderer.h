@@ -28,8 +28,11 @@ public:
 	//Renderer(std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
 	
 	~Renderer();
+
 	void InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 	void InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePath);
+	void SetMesh(Mesh* meshSrc) { mesh = meshSrc; }
+	void SetMaterials(vector<GeneralMaterial>& materialSrc);
 };
 
 

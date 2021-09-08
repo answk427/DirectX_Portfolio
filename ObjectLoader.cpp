@@ -66,8 +66,8 @@ void ObjectLoader::InitScene(const string& fileName)
 	{
 		//멤버 컨테니어 초기화
 		InitContainer();
-		//material의 개수만큼 초기화
-		materials.assign(m_pScene->mNumMaterials, GeneralMaterial());
+		//Material 데이터 적재
+		SetMaterial();
 	}
 	else
 	{
@@ -94,42 +94,47 @@ bool ObjectLoader::LoadData()
 }
 
 
-void ObjectLoader::SetMaterial(const int & matNumOfMesh)
+void ObjectLoader::SetMaterial()
 {
-	aiMaterial* aiMat = m_pScene->mMaterials[matNumOfMesh];
-		
-	aiColor4D color;
-	
-	//Material의 Diffuse 값 적재
-	aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-	(materials)[matNumOfMesh].basicMat.Diffuse = { color.r, color.g, color.b, 1.0f };
-	
-	//Material의 ambient 값 적재
-	aiMat->Get(AI_MATKEY_COLOR_AMBIENT, color);
-	(materials)[matNumOfMesh].basicMat.Ambient = { color.r, color.g, color.b, 1.0f };
-	
-	//Material의 Specular 값 적재
-	aiMat->Get(AI_MATKEY_COLOR_SPECULAR, color);
-	(materials)[matNumOfMesh].basicMat.Specular = { color.r, color.g, color.b, color.a };
+	//material의 개수만큼 초기화
+	materials.assign(m_pScene->mNumMaterials, GeneralMaterial());
+	for (int matNumOfMesh = 0; matNumOfMesh < m_pScene->mNumMaterials; matNumOfMesh++)
+	{
+		aiMaterial* aiMat = m_pScene->mMaterials[matNumOfMesh];
 
-	//*************Texture 적재 **************//
-	aiString* fileName;
-	
-	//A2W(유티코드 -> 멀티바이트 변환 함수)를 사용하기위한 매크로
-	USES_CONVERSION; 
+		aiColor4D color;
 
-	//DiffuseTexture 경로 저장
-	aiMat->GetTexture(aiTextureType_DIFFUSE, 0, fileName);
-	(materials)[matNumOfMesh].diffuseMapName = A2W(fileName->C_Str());
-	
-	
-	//SpecularTexture 경로 저장
-	aiMat->GetTexture(aiTextureType_SPECULAR, 0, fileName);
-	(materials)[matNumOfMesh].specularMap= A2W(fileName->C_Str());
+		//Material의 Diffuse 값 적재
+		aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+		materials[matNumOfMesh].basicMat.Diffuse = { color.r, color.g, color.b, 1.0f };
 
-	//NormalTexture 경로 저장
-	aiMat->GetTexture(aiTextureType_NORMALS, 0, fileName);
-	(materials)[matNumOfMesh].normalMapName = A2W(fileName->C_Str());
+		//Material의 ambient 값 적재
+		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, color);
+		materials[matNumOfMesh].basicMat.Ambient = { color.r, color.g, color.b, 1.0f };
+
+		//Material의 Specular 값 적재
+		aiMat->Get(AI_MATKEY_COLOR_SPECULAR, color);
+		materials[matNumOfMesh].basicMat.Specular = { color.r, color.g, color.b, color.a };
+
+		//*************Texture 적재 **************//
+		aiString fileName;
+
+		//A2W(유티코드 -> 멀티바이트 변환 함수)를 사용하기위한 매크로
+		USES_CONVERSION;
+
+		//DiffuseTexture 경로 저장
+		aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &fileName);
+		materials[matNumOfMesh].diffuseMapName = A2W(fileName.C_Str());
+
+
+		//SpecularTexture 경로 저장
+		aiMat->GetTexture(aiTextureType_SPECULAR, 0, &fileName);
+		materials[matNumOfMesh].specularMap = A2W(fileName.C_Str());
+
+		//NormalTexture 경로 저장
+		aiMat->GetTexture(aiTextureType_NORMALS, 0, &fileName);
+		materials[matNumOfMesh].normalMapName = A2W(fileName.C_Str());
+	}
 }
 
 
@@ -173,8 +178,6 @@ void ObjectLoader::SetMesh(aiMesh * mesh)
 	
 	subsets.push_back(tempSubset);
 	
-	SetMaterial(mesh->mMaterialIndex);
-
 	//정점 구조체 데이터
 	for (int i = 0; i < mesh->mNumVertices; i++)
 	{

@@ -13,7 +13,7 @@ namespace MyVertex
 		XMFLOAT3 biTan; //바이탄젠트(종접선) 벡터
 		
 		
-		BasicVertex() :pos(0), normal(0), tan(0), tex(0) {}
+		BasicVertex() :pos(0,0,0), normal(1,1,1), tex(0, 0), tan(1,1,1), biTan(1,1,1)  {}
 	};
 
 	//뼈가 있는 모델에 사용, 다른 버퍼슬롯에 넣을것.

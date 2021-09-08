@@ -21,6 +21,7 @@
 
 
 //ObjectLoader obj("Models/18042_GonF.fbx");
+MeshRenderer* rendr = new MeshRenderer();
 
 
 class CrateApp : public D3DApp
@@ -144,8 +145,16 @@ bool CrateApp::Init()
 	BuildGeometryBuffers();
 
 	Mesh* mesh = new Mesh();
-	MeshRenderer* rend = new MeshRenderer();
-		
+	//Loader로 모델 읽기..
+	objLoader->InitScene("Models/18042_GonF.fbx");
+	objLoader->LoadData();
+
+	//mesh, renderer에 적재하기..
+	mesh->Init(md3dDevice, objLoader->GetVertices(),
+		objLoader->GetIndices(), objLoader->GetSubsets());
+	rendr->SetMesh(mesh);
+	rendr->SetMaterials(objLoader->GetMaterials());
+	
 
 	return true;
 }
@@ -183,7 +192,6 @@ void CrateApp::DrawScene()
 
 	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//md3dImmediateContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	UINT stride = sizeof(Vertex::Basic32);
 	UINT offset = 0;
@@ -216,7 +224,9 @@ void CrateApp::DrawScene()
 		Effects::BasicFX->SetMaterial(mBoxMat);
 		Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
 
-		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);		
+		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);	
+
+		rendr->Draw(md3dImmediateContext);
 	}
 	//for (UINT p = 0; p < techDesc.Passes; ++p)
 	//{
