@@ -29,7 +29,7 @@ private:
 	vector<GeneralMaterial> materials;
 		
 	//Material vector 초기화
-	void SetMaterial(int matNumOfMesh);
+	void SetMaterial();
 	//적재 컨테이너 한번에 초기화
 	void InitContainer();
 

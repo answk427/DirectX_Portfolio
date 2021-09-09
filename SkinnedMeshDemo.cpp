@@ -157,7 +157,7 @@ bool CrateApp::Init()
 
 	Mesh* mesh = new Mesh();
 	//Loader로 모델 읽기..
-	objLoader->InitScene("Models/18042_GonF.fbx");
+	objLoader->InitScene("Models/18042_GonF_material.fbx");
 	objLoader->LoadData();
 
 	//mesh, renderer에 적재하기..
