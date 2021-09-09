@@ -66,8 +66,6 @@ void ObjectLoader::InitScene(const string& fileName)
 	{
 		//멤버 컨테니어 초기화
 		InitContainer();
-		//Material 데이터 적재
-		SetMaterial();
 	}
 	else
 	{
@@ -77,6 +75,7 @@ void ObjectLoader::InitScene(const string& fileName)
 
 void ObjectLoader::InitContainer()
 {
+	//전부 비우는 작업
 	vector<MyVertex::BasicVertex>().swap(vertices);
 	vector<UINT>().swap(indices);
 	vector<Subset>().swap(subsets);
@@ -94,47 +93,55 @@ bool ObjectLoader::LoadData()
 }
 
 
-void ObjectLoader::SetMaterial()
+void ObjectLoader::SetMaterial(int matNumOfMesh)
 {
-	//material의 개수만큼 초기화
-	materials.assign(m_pScene->mNumMaterials, GeneralMaterial());
-	for (int matNumOfMesh = 0; matNumOfMesh < m_pScene->mNumMaterials; matNumOfMesh++)
-	{
-		aiMaterial* aiMat = m_pScene->mMaterials[matNumOfMesh];
 
-		aiColor4D color;
+	aiMaterial* aiMat = m_pScene->mMaterials[matNumOfMesh];
+	GeneralMaterial tempMaterial;
+	
+	aiColor4D color;
 
-		//Material의 Diffuse 값 적재
-		aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-		materials[matNumOfMesh].basicMat.Diffuse = { color.r, color.g, color.b, 1.0f };
+	//Material의 Diffuse 값 적재
+	aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+	tempMaterial.basicMat.Diffuse = { color.r, color.g, color.b, 1.0f };
+	color = { 0,0,0,0 };
 
-		//Material의 ambient 값 적재
-		aiMat->Get(AI_MATKEY_COLOR_AMBIENT, color);
-		materials[matNumOfMesh].basicMat.Ambient = { color.r, color.g, color.b, 1.0f };
+	//Material의 ambient 값 적재
+	aiMat->Get(AI_MATKEY_COLOR_AMBIENT, color);
+	tempMaterial.basicMat.Ambient = { color.r, color.g, color.b, 1.0f };
+	color = { 0,0,0,0 };
 
-		//Material의 Specular 값 적재
-		aiMat->Get(AI_MATKEY_COLOR_SPECULAR, color);
-		materials[matNumOfMesh].basicMat.Specular = { color.r, color.g, color.b, color.a };
+	//Material의 Specular 값 적재
+	aiMat->Get(AI_MATKEY_COLOR_SPECULAR, color);
+	tempMaterial.basicMat.Specular = { color.r, color.g, color.b, color.a };
+	color = { 0,0,0,0 };
 
-		//*************Texture 적재 **************//
-		aiString fileName;
+	//Material의 Reflect 값 적재
+	aiMat->Get(AI_MATKEY_COLOR_REFLECTIVE, color);
+	tempMaterial.basicMat.Reflect = { color.r, color.g, color.b, color.a };
 
-		//A2W(유티코드 -> 멀티바이트 변환 함수)를 사용하기위한 매크로
-		USES_CONVERSION;
+	//*************Texture 적재 **************//
+	aiString fileName;
 
-		//DiffuseTexture 경로 저장
-		aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &fileName);
-		materials[matNumOfMesh].diffuseMapName = A2W(fileName.C_Str());
+	//A2W(유티코드 -> 멀티바이트 변환 함수)를 사용하기위한 매크로
+	USES_CONVERSION;
+
+	//DiffuseTexture 경로 저장
+	aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &fileName);
+	tempMaterial.diffuseMapName = A2W(fileName.C_Str());
+	fileName.Clear();
 
 
-		//SpecularTexture 경로 저장
-		aiMat->GetTexture(aiTextureType_SPECULAR, 0, &fileName);
-		materials[matNumOfMesh].specularMap = A2W(fileName.C_Str());
+	//SpecularTexture 경로 저장
+	aiMat->GetTexture(aiTextureType_SPECULAR, 0, &fileName);
+	tempMaterial.specularMap = A2W(fileName.C_Str());
+	fileName.Clear();
 
-		//NormalTexture 경로 저장
-		aiMat->GetTexture(aiTextureType_NORMALS, 0, &fileName);
-		materials[matNumOfMesh].normalMapName = A2W(fileName.C_Str());
-	}
+	//NormalTexture 경로 저장
+	aiMat->GetTexture(aiTextureType_NORMALS, 0, &fileName);
+	tempMaterial.normalMapName = A2W(fileName.C_Str());
+
+	materials.push_back(tempMaterial);
 }
 
 
@@ -147,37 +154,39 @@ void ObjectLoader::NodeTravel(aiNode * node)
 		aiMesh* mesh = m_pScene->mMeshes[node->mMeshes[i]];
 		SetMesh(mesh);
 	}
-	
+
 	//모든 자식노드를 순회
 	for (int i = 0; i < node->mNumChildren; i++)
 		NodeTravel(node->mChildren[i]);
-	
+
 	return;
 }
 
 void ObjectLoader::SetMesh(aiMesh * mesh)
 {
-	
 	Subset tempSubset;
 	//material인덱스 
 	tempSubset.materialNum = mesh->mMaterialIndex;
 	//현재 vertex, index 갯수가 이 다음 subset의 시작점
 	tempSubset.VertexStart = vertexCount;
 	tempSubset.IndexStart = indexCount;
-	
+
 	//총 정점의 갯수를 구함
 	vertexCount += mesh->mNumVertices;
-	vertices.reserve(vertexCount+10);
+	vertices.reserve(vertexCount + 10);
 
 	//index의 총 갯수
-	indexCount += mesh->mNumFaces*3;
+	indexCount += mesh->mNumFaces * 3;
 	indices.reserve(indexCount + 10);
 
 	tempSubset.VertexCount = mesh->mNumVertices;
-	tempSubset.IndexCount = mesh->mNumFaces*3;
-	
+	tempSubset.IndexCount = mesh->mNumFaces * 3;
+
 	subsets.push_back(tempSubset);
-	
+
+	//Material 데이터 적재
+	SetMaterial(mesh->mMaterialIndex);
+
 	//정점 구조체 데이터
 	for (int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -189,7 +198,7 @@ void ObjectLoader::SetMesh(aiMesh * mesh)
 			aiVector3D& position = mesh->mVertices[i];
 			tempVertex.pos = XMFLOAT3(position.x, position.y, position.z);
 		}
-		
+
 		//Texture 좌표 적재
 		if (mesh->HasTextureCoords(0))
 		{
@@ -209,14 +218,14 @@ void ObjectLoader::SetMesh(aiMesh * mesh)
 		{
 			aiVector3D& tangent = mesh->mTangents[i];
 			aiVector3D& biTangent = mesh->mBitangents[i];
-			
+
 			tempVertex.tan = XMFLOAT3(tangent.x, tangent.y, tangent.z);
 			tempVertex.biTan = XMFLOAT3(biTangent.x, biTangent.y, biTangent.z);
 		}
 		vertices.push_back(tempVertex);
 	}
 
-	
+
 	//index 적재
 	if (mesh->HasFaces())
 	{
@@ -239,5 +248,5 @@ void ObjectLoader::SetMesh(aiMesh * mesh)
 	{
 
 	}
-	
+
 }
