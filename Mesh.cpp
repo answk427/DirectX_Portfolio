@@ -28,8 +28,10 @@ void Mesh::SetSubsets(vector<Subset>& subsetSrc)
 void Mesh::SetVB(ID3D11DeviceContext * context)
 {
 	UINT stride[1] = { sizeof(vertices[0]) };
-	context->IASetVertexBuffers(0, vertexBufferCount, &mVB, stride, 0);
+	UINT offset[1] = { 0 };
+	context->IASetVertexBuffers(0, vertexBufferCount, &mVB, stride, offset);
 	
+
 }
 
 void Mesh::SetIB(ID3D11DeviceContext * context)
@@ -52,7 +54,7 @@ void Mesh::Draw(ID3D11DeviceContext * context, UINT subsetIdx)
 	context->DrawIndexed(subsets[subsetIdx].IndexCount
 		, subsets[subsetIdx].IndexStart
 		, subsets[subsetIdx].VertexStart);
-
+	//context->DrawIndexed(indices.size(), 0, 0);
 }
 
 void Mesh::InitVB(ID3D11Device * device)
@@ -72,6 +74,8 @@ void Mesh::InitVB(ID3D11Device * device)
 	subRes.pSysMem = &vertices[0];
 
 	HR(device->CreateBuffer(&desc, &subRes, &mVB));
+
+	vertexBufferCount++;
 }
 
 //인덱스버퍼 생성

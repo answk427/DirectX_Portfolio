@@ -18,6 +18,7 @@
 #include "Vertex.h"
 #include "ObjectLoader.h"
 #include "Renderer.h"
+#include <Camera.h>
 
 
 //ObjectLoader obj("Models/18042_GonF.fbx");
@@ -44,7 +45,6 @@ private:
 	ObjectLoader* objLoader = new ObjectLoader();
 
 private:
-	
 
 	ID3D11Buffer* mBoxVB;
 	ID3D11Buffer* mBoxIB;
@@ -139,14 +139,25 @@ bool CrateApp::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 
-	//HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
-	//	L"Textures/WoodCrate01.dds", 0, 0, &mDiffuseMapSRV, 0));
+	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
+		L"Textures/tree01-bark_diffuse.dds", 0, 0, &mDiffuseMapSRV, 0));
+
+	/*DirectX::ScratchImage image;
+	wchar_t* name = L"Textures/test.tga";
+	wstring ws = L"Textures/test.tga";
+	HRESULT hresult = DirectX::LoadFromTGAFile(L"Textures/test.tga", nullptr, image);
+	HR(hresult);
+	hresult = DirectX::CreateShaderResourceView(md3dDevice, image.GetImage(1,1,1), image.GetImageCount(),
+		image.GetMetadata(), &mDiffuseMapSRV);
+	
+	HR(hresult);*/
+		
 
 	BuildGeometryBuffers();
 
 	Mesh* mesh = new Mesh();
 	//Loader로 모델 읽기..
-	objLoader->InitScene("Models/18042_GonF.fbx");
+	objLoader->InitScene("Models/18042_GonF_material.fbx");
 	objLoader->LoadData();
 
 	//mesh, renderer에 적재하기..
@@ -183,6 +194,7 @@ void CrateApp::UpdateScene(float dt)
 
 	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&mView, V);
+	
 }
 
 void CrateApp::DrawScene()
@@ -199,12 +211,14 @@ void CrateApp::DrawScene()
 	XMMATRIX view = XMLoadFloat4x4(&mView);
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
 	XMMATRIX viewProj = view * proj;
+
 	
 	// Set per frame constants.
 	Effects::BasicFX->SetDirLights(mDirLights);
 	Effects::BasicFX->SetEyePosW(mEyePosW);
 
-	ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light3Tech;
+	//ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light3Tech;
+	ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light3TexTech;
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	activeTech->GetDesc(&techDesc);
