@@ -30,6 +30,7 @@ struct GeneralMaterial
 	{
 		ZeroMemory(this, sizeof(this));
 		textureTiling = { 1.0f,1.0f };
+		textureOffset = { 0.0f, 0.0f };
 		diffuseMapName = L"StandardDiffuseMap";
 		
 	}
