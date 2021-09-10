@@ -106,7 +106,7 @@ CrateApp::CrateApp(HINSTANCE hInstance)
 	XMStoreFloat4x4(&mView, I);
 	XMStoreFloat4x4(&mProj, I);
 
-	mDirLights[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	/*mDirLights[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	mDirLights[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	mDirLights[0].Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 16.0f);
 	mDirLights[0].Direction = XMFLOAT3(0.707f, -0.707f, 0.0f);
@@ -114,7 +114,22 @@ CrateApp::CrateApp(HINSTANCE hInstance)
 	mDirLights[1].Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	mDirLights[1].Diffuse = XMFLOAT4(1.4f, 1.4f, 1.4f, 1.0f);
 	mDirLights[1].Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 16.0f);
-	mDirLights[1].Direction = XMFLOAT3(-0.707f, 0.0f, 0.707f);
+	mDirLights[1].Direction = XMFLOAT3(-0.707f, 0.0f, 0.707f);*/
+
+	mDirLights[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mDirLights[0].Diffuse = XMFLOAT4(1.0f, 0.9f, 0.9f, 1.0f);
+	mDirLights[0].Specular = XMFLOAT4(0.8f, 0.8f, 0.7f, 1.0f);
+	mDirLights[0].Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
+
+	mDirLights[1].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	mDirLights[1].Diffuse = XMFLOAT4(0.40f, 0.40f, 0.40f, 1.0f);
+	mDirLights[1].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mDirLights[1].Direction = XMFLOAT3(0.707f, -0.707f, 0.0f);
+
+	mDirLights[2].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	mDirLights[2].Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
+	mDirLights[2].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, -1.0f);
 
 	mBoxMat.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mBoxMat.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -140,8 +155,8 @@ bool CrateApp::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 
-	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
-		L"Textures/tree01-bark_diffuse.dds", 0, 0, &mDiffuseMapSRV, 0));
+	/*HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
+		L"Textures/tree01-bark_diffuse.dds", 0, 0, &mDiffuseMapSRV, 0));*/
 
 	/*DirectX::ScratchImage image;
 	wchar_t* name = L"Textures/test.tga";
@@ -226,7 +241,6 @@ void CrateApp::DrawScene()
 
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-
 		// Draw the box.
 		XMMATRIX world = XMLoadFloat4x4(&mBoxWorld);
 		XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);

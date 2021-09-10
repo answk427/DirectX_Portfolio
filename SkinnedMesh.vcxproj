@@ -124,6 +124,7 @@
     <ClInclude Include="Common\TextureMgr.h" />
     <ClInclude Include="Common\Waves.h" />
     <ClInclude Include="Common\xnacollision.h" />
+    <ClInclude Include="Constant.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="LoadM3d.h" />

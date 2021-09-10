@@ -9,6 +9,8 @@
 #define EFFECTS_H
 
 #include "d3dUtil.h"
+#include "Material.h"
+
 
 #pragma region Effect
 class Effect
@@ -16,7 +18,15 @@ class Effect
 public:
 	Effect(ID3D11Device* device, const std::wstring& filename);
 	virtual ~Effect();
-
+	//Frame별로 필요한 세팅을 수행하는 함수
+	virtual void PerFrameSet(DirectionalLight* directL,
+		PointLight* pointL,
+		SpotLight* spotL) = 0;
+	//Object별로 필요한 세팅을 수행하는 함수
+	virtual void PerObjectSet(GeneralMaterial* material,
+		Camera* camera,
+		InstancingData* instancingData) = 0;
+	
 private:
 	Effect(const Effect& rhs);
 	Effect& operator=(const Effect& rhs);

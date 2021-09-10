@@ -26,6 +26,9 @@ void TextureMgr::Init(ID3D11Device* device)
 
 ID3D11ShaderResourceView* TextureMgr::CreateTexture(std::wstring filename)
 {
+	if (filename.empty())
+		return nullptr;
+
 	ID3D11ShaderResourceView* srv = 0;
 
 	// Does it already exist?
@@ -36,7 +39,7 @@ ID3D11ShaderResourceView* TextureMgr::CreateTexture(std::wstring filename)
 	else
 	{
 		HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice, filename.c_str(), 0, 0, &srv, 0 ));
-
+		
 		mTextureSRV[filename] = srv;
 	}
 
