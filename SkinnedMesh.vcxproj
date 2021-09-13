@@ -95,6 +95,7 @@
     <ClCompile Include="Common\TextureMgr.cpp" />
     <ClCompile Include="Common\Waves.cpp" />
     <ClCompile Include="Common\xnacollision.cpp" />
+    <ClCompile Include="EffectMgr.cpp" />
     <ClCompile Include="Effects.cpp" />
     <ClCompile Include="LoadM3d.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="Common\Waves.h" />
     <ClInclude Include="Common\xnacollision.h" />
     <ClInclude Include="Constant.h" />
+    <ClInclude Include="EffectMgr.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="LoadM3d.h" />

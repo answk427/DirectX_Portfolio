@@ -102,6 +102,9 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EffectMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -192,6 +195,9 @@
       <Filter>New Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Constant.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectMgr.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
   </ItemGroup>

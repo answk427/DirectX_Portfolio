@@ -10,6 +10,8 @@
 
 #include "d3dUtil.h"
 #include "Material.h"
+#include <Camera.h>
+#include "BufferResource.h"
 
 
 #pragma region Effect
@@ -21,13 +23,18 @@ public:
 	//Frame별로 필요한 세팅을 수행하는 함수
 	virtual void PerFrameSet(DirectionalLight* directL,
 		PointLight* pointL,
-		SpotLight* spotL) = 0;
+		SpotLight* spotL,
+		const XMFLOAT3& eyePosW) = 0;
 	//Object별로 필요한 세팅을 수행하는 함수
 	virtual void PerObjectSet(GeneralMaterial* material,
 		Camera* camera,
 		InstancingData* instancingData) = 0;
-	
+	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
+		ID3D11ShaderResourceView* normalMap,
+		ID3D11ShaderResourceView* specularMap);
+
 private:
+	//복사를 못하게 함
 	Effect(const Effect& rhs);
 	Effect& operator=(const Effect& rhs);
 
@@ -54,7 +61,7 @@ public:
 	void SetFogStart(float f)                           { FogStart->SetFloat(f); }
 	void SetFogRange(float f)                           { FogRange->SetFloat(f); }
 	void SetDirLights(const DirectionalLight* lights)   { DirLights->SetRawValue(lights, 0, 3*sizeof(DirectionalLight)); }
-	void SetMaterial(const Material& mat)               { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
+	void SetMaterial(const BasicMaterial& mat)               { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
 	void SetDiffuseMap(ID3D11ShaderResourceView* tex)   { DiffuseMap->SetResource(tex); }
 	void SetShadowMap(ID3D11ShaderResourceView* tex)    { ShadowMap->SetResource(tex); }
 	void SetSsaoMap(ID3D11ShaderResourceView* tex)      { SsaoMap->SetResource(tex); }
@@ -133,6 +140,13 @@ public:
 	ID3DX11EffectShaderResourceVariable* ShadowMap;
 	ID3DX11EffectShaderResourceVariable* SsaoMap;
 	ID3DX11EffectShaderResourceVariable* CubeMap;
+
+	// Effect을(를) 통해 상속됨
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW) override;
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, InstancingData * instancingData) override;
+	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
+		ID3D11ShaderResourceView* normalMap,
+		ID3D11ShaderResourceView* specularMap);
 };
 #pragma endregion
 
@@ -293,6 +307,10 @@ public:
 	ID3DX11EffectShaderResourceVariable* NormalMap;
 	ID3DX11EffectShaderResourceVariable* ShadowMap;
 	ID3DX11EffectShaderResourceVariable* SsaoMap;
+
+	// Effect을(를) 통해 상속됨
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, InstancingData * instancingData) override;
 };
 #pragma endregion
 

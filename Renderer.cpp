@@ -43,6 +43,15 @@ void Renderer::InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePat
 	}
 }
 
+void Renderer::InitEffects(EffectMgr & effectMgr, const std::wstring& shaderPath)
+{
+	for (auto& elem : materials)
+	{
+		Effect* effect = effectMgr.GetEffect(shaderPath + elem.ShaderName);
+		effects.push_back(effect);
+	}	
+}
+
 void Renderer::SetMaterials(vector<GeneralMaterial>& materialSrc)
 {
 	//materials를 빈 벡터로 만듬
@@ -58,13 +67,20 @@ MeshRenderer::MeshRenderer()
 {
 }
 
-void MeshRenderer::Draw(ID3D11DeviceContext * context)
+void MeshRenderer::Draw(ID3D11DeviceContext * context, Camera* camera)
 {
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
 	mesh->SetVB(context);
 	mesh->SetIB(context);
 	
 	int subsetLength = mesh->GetSubsetLength();
-	for(int i=0; i<subsetLength; i++)
-		mesh->Draw(context,i);
+	for (int i = 0; i < subsetLength; i++)
+	{
+		//shader에 필요한 데이터 설정
+		effects[i]->PerObjectSet(&materials[i],
+			camera, &mesh->InstancingDatas[i]);
+		
+
+		mesh->Draw(context, i);
+	}
 }

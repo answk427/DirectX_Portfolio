@@ -19,13 +19,12 @@ struct GeneralMaterial
 	std::wstring diffuseMapName;
 	std::wstring normalMapName;
 	std::wstring specularMap;
-	std::string ShaderName;
+	std::wstring ShaderName;
 
 	//텍스쳐 행렬을 위한 변수
 	XMFLOAT2 textureTiling;
 	XMFLOAT2 textureOffset;
 
-	
 	GeneralMaterial() 
 	{
 		ZeroMemory(this, sizeof(this));

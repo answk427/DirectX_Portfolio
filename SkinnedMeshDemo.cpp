@@ -44,6 +44,7 @@ public:
 private:
 	void BuildGeometryBuffers();
 	ObjectLoader* objLoader = new ObjectLoader();
+	Camera camera;
 
 private:
 
@@ -151,12 +152,16 @@ bool CrateApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
+	//카메라 초기화
+	camera.SetPosition({ 0,0,-10.0f });
+	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 
-	/*HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
-		L"Textures/tree01-bark_diffuse.dds", 0, 0, &mDiffuseMapSRV, 0));*/
+	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
+		L"Textures/tree01-bark_diffuse.dds", 0, 0, &mDiffuseMapSRV, 0));
 
 	/*DirectX::ScratchImage image;
 	wchar_t* name = L"Textures/test.tga";
@@ -188,6 +193,8 @@ bool CrateApp::Init()
 
 void CrateApp::OnResize()
 {
+	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+
 	D3DApp::OnResize();
 
 	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
@@ -279,6 +286,9 @@ void CrateApp::DrawScene()
 	//}
 
 	HR(mSwapChain->Present(0, 0));
+
+	camera.UpdateViewMatrix();
+	
 }
 
 void CrateApp::OnMouseDown(WPARAM btnState, int x, int y)

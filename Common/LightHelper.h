@@ -41,6 +41,9 @@ struct PointLight
 	XMFLOAT3 Att;
 	float Pad; // Pad the last float so we can set an array of lights if we wanted.
 };
+static void functions();
+
+void functions() { return; }
 
 struct SpotLight
 {

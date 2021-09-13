@@ -50,6 +50,7 @@ struct Material
 	float4 Reflect;
 };
 
+
 //---------------------------------------------------------------------------------------
 // Computes the ambient, diffuse, and specular terms in the lighting equation
 // from a directional light.  We need to output the terms separately because

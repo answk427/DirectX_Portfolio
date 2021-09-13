@@ -26,6 +26,7 @@ Effect::~Effect()
 {
 	ReleaseCOM(mFX);
 }
+
 #pragma endregion
 
 #pragma region BasicEffect
@@ -108,6 +109,43 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 
 BasicEffect::~BasicEffect()
 {
+}
+void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW)
+{
+	SetDirLights(directL);
+	SetEyePosW(eyePosW);
+}
+
+void BasicEffect::PerObjectSet(GeneralMaterial * material, 
+	Camera * camera, 
+	InstancingData * instancingData)
+{
+	//세계행렬
+	XMMATRIX world = instancingData->world;
+	SetWorld(world);
+	
+	//비균등 비례로 인한 법선벡터 계산에 쓰이는 행렬
+	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
+	SetWorldInvTranspose(worldInvTranspose);
+	
+	//물체공간 -> 투영공간 변환행렬
+	XMMATRIX worldViewProj = world * camera->ViewProj();
+	SetWorldViewProj(worldViewProj);
+
+	//텍스쳐 변환 I * S * (R) * T
+	XMMATRIX texTransform = XMMatrixIdentity() *
+		XMMatrixScaling(material->textureTiling.x,
+			material->textureTiling.y, 0.0f) *
+		XMMatrixTranslation(material->textureOffset.x,
+			material->textureOffset.y, 0.0f);
+	SetTexTransform(texTransform);
+
+	//재질 설정
+	SetMaterial(material->basicMat);
+}
+void BasicEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+	SetDiffuseMap(diffuseMap);
 }
 #pragma endregion
 
@@ -248,6 +286,12 @@ NormalMapEffect::NormalMapEffect(ID3D11Device* device, const std::wstring& filen
 }
 
 NormalMapEffect::~NormalMapEffect()
+{
+}
+void NormalMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
+{
+}
+void NormalMapEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, InstancingData * instancingData)
 {
 }
 #pragma endregion
