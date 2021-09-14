@@ -27,7 +27,7 @@ public:
 	virtual void Update() override;
 	virtual void FixedUpdate() override;
 	virtual void LateUpdate() override;
-	virtual void Draw(ID3D11DeviceContext* context, Camera* camera) = 0;
+	virtual void Draw(ID3D11DeviceContext* context, Camera* camera, CXMMATRIX& world) = 0;
 
 	Renderer();
 	//Renderer(std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
@@ -47,7 +47,7 @@ class MeshRenderer : public Renderer
 public:
 	MeshRenderer();
 	// Renderer을(를) 통해 상속됨
-	virtual void Draw(ID3D11DeviceContext * context, Camera* camera) override;
+	virtual void Draw(ID3D11DeviceContext * context, Camera* camera, CXMMATRIX& world) override;
 };
 
 class SkinnedMeshRenderer : public Renderer

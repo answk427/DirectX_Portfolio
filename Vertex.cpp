@@ -51,36 +51,38 @@ void InputLayouts::InitAll(ID3D11Device* device)
 	D3DX11_PASS_DESC passDesc;
 
 	//
-	// Pos
-	//
-
-	Effects::SkyFX->SkyTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(device->CreateInputLayout(InputLayoutDesc::Pos, 1, passDesc.pIAInputSignature, 
-		passDesc.IAInputSignatureSize, &Pos));
-
-	//
 	// Basic32
 	//
 
 	Effects::BasicFX->Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(device->CreateInputLayout(InputLayoutDesc::Basic32, 3, passDesc.pIAInputSignature, 
+	HR(device->CreateInputLayout(InputLayoutDesc::Basic32, 3, passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize, &Basic32));
 
-	//
-	// NormalMap
+	////
+	//// Pos
+	////
+
+
+	//Effects::SkyFX->SkyTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	//HR(device->CreateInputLayout(InputLayoutDesc::Pos, 1, passDesc.pIAInputSignature, 
+	//	passDesc.IAInputSignatureSize, &Pos));
 	//
 
-	Effects::NormalMapFX->Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTan, 4, passDesc.pIAInputSignature, 
-		passDesc.IAInputSignatureSize, &PosNormalTexTan));
+	////
+	//// NormalMap
+	////
 
-	//
-	// NormalMapSkinned
-	//
+	//Effects::NormalMapFX->Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
+	//HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTan, 4, passDesc.pIAInputSignature, 
+	//	passDesc.IAInputSignatureSize, &PosNormalTexTan));
 
-	Effects::NormalMapFX->Light1SkinnedTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTanSkinned, 6, passDesc.pIAInputSignature, 
-		passDesc.IAInputSignatureSize, &PosNormalTexTanSkinned));
+	////
+	//// NormalMapSkinned
+	////
+
+	//Effects::NormalMapFX->Light1SkinnedTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	//HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTanSkinned, 6, passDesc.pIAInputSignature, 
+	//	passDesc.IAInputSignatureSize, &PosNormalTexTanSkinned));
 }
 
 void InputLayouts::DestroyAll()

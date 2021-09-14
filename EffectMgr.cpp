@@ -23,7 +23,7 @@ Effect* EffectMgr::GetEffect(const std::wstring& shaderName)
 		return nullptr;
 
 	//생성된 effect를 찾을 수 없을 때
-	else if (myEffect.find(shaderName) != myEffect.end())
+	else if (myEffect.find(shaderName) == myEffect.end())
 	{
 		//지정된 타입이 없으면 기본으로 생성
 		if (effectTypes.find(shaderName) == effectTypes.end())
@@ -65,6 +65,14 @@ void EffectMgr::SetType(std::wstring & shaderName, EffectType type)
 		effectTypes[shaderName] = type;
 
 	return;
+}
+
+void EffectMgr::SetPerFrame(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
+{
+	for (auto effect : myEffect)
+	{
+		effect.second->PerFrameSet(directL, pointL, spotL, eyePosW);
+	}
 }
 
 

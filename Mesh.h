@@ -52,6 +52,8 @@ public:
 	
 	void SetVB(ID3D11DeviceContext* context);
 	void SetIB(ID3D11DeviceContext* context);
+
+public:
 	//»ý¼ºÀÚ
 	Mesh() : mVB(0), mIB(0), vertexBufferCount(0) {}
 	~Mesh() { ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(InstanceBuffer); }
@@ -61,7 +63,7 @@ public:
 		vector<UINT>& indexSrc,
 		vector<Subset>& subsetSrc);
 
-
+public:
 	void Draw(ID3D11DeviceContext* context, UINT subsetIdx);
 
 	ID3D11Buffer* GetVB() { return mVB; }

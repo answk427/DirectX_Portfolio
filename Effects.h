@@ -13,6 +13,15 @@
 #include <Camera.h>
 #include "BufferResource.h"
 
+enum TechniqueType
+{
+	Light = 1,
+	DiffuseMap = 2,
+	AlphaClip = 4,
+	Fog = 8,
+	Reflect = 16,
+	Skinned = 32
+};
 
 #pragma region Effect
 class Effect
@@ -20,19 +29,27 @@ class Effect
 public:
 	Effect(ID3D11Device* device, const std::wstring& filename);
 	virtual ~Effect();
+public:
 	//Frame별로 필요한 세팅을 수행하는 함수
 	virtual void PerFrameSet(DirectionalLight* directL,
 		PointLight* pointL,
 		SpotLight* spotL,
 		const XMFLOAT3& eyePosW) = 0;
+	
 	//Object별로 필요한 세팅을 수행하는 함수
 	virtual void PerObjectSet(GeneralMaterial* material,
 		Camera* camera,
-		InstancingData* instancingData) = 0;
+		CXMMATRIX& world) = 0;
+
+	//Technique을 얻는 함수
+	virtual ID3DX11EffectTechnique* GetTechnique(UINT techType) = 0;
+	
+	//텍스쳐 맵 세팅
 	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
 		ID3D11ShaderResourceView* normalMap,
-		ID3D11ShaderResourceView* specularMap);
+		ID3D11ShaderResourceView* specularMap) {}
 
+	
 private:
 	//복사를 못하게 함
 	Effect(const Effect& rhs);
@@ -143,10 +160,13 @@ public:
 
 	// Effect을(를) 통해 상속됨
 	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW) override;
-	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, InstancingData * instancingData) override;
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX& world) override;
 	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
 		ID3D11ShaderResourceView* normalMap,
 		ID3D11ShaderResourceView* specularMap);
+
+	// Effect을(를) 통해 상속됨
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
 };
 #pragma endregion
 
@@ -308,9 +328,16 @@ public:
 	ID3DX11EffectShaderResourceVariable* ShadowMap;
 	ID3DX11EffectShaderResourceVariable* SsaoMap;
 
+
 	// Effect을(를) 통해 상속됨
 	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
-	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, InstancingData * instancingData) override;
+
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
+
+
+	// Effect을(를) 통해 상속됨
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+
 };
 #pragma endregion
 

@@ -23,7 +23,7 @@
 
 
 //ObjectLoader obj("Models/18042_GonF.fbx");
-MeshRenderer* rendr = new MeshRenderer();
+MeshRenderer* render = new MeshRenderer();
 
 
 class CrateApp : public D3DApp
@@ -45,6 +45,8 @@ private:
 	void BuildGeometryBuffers();
 	ObjectLoader* objLoader = new ObjectLoader();
 	Camera camera;
+	TextureMgr texMgr;
+	EffectMgr effectMgr;
 
 private:
 
@@ -54,7 +56,7 @@ private:
 	ID3D11ShaderResourceView* mDiffuseMapSRV;
 
 	DirectionalLight mDirLights[3];
-	Material mBoxMat;
+	BasicMaterial mBoxMat;
 
 	XMFLOAT4X4 mTexTransform;
 	XMFLOAT4X4 mBoxWorld;
@@ -135,6 +137,7 @@ CrateApp::CrateApp(HINSTANCE hInstance)
 	mBoxMat.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mBoxMat.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	mBoxMat.Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 16.0f);
+	mBoxMat.Reflect = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 CrateApp::~CrateApp()
@@ -153,8 +156,10 @@ bool CrateApp::Init()
 		return false;
 
 	//카메라 초기화
-	camera.SetPosition({ 0,0,-10.0f });
+	camera.SetPosition({ 50.0f, 0, 30.0f });
 	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1 });
+	
 	
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	Effects::InitAll(md3dDevice);
@@ -173,6 +178,8 @@ bool CrateApp::Init()
 	
 	HR(hresult);*/
 		
+	texMgr.Init(md3dDevice);
+	effectMgr.Init(md3dDevice);
 
 	BuildGeometryBuffers();
 
@@ -184,10 +191,12 @@ bool CrateApp::Init()
 	//mesh, renderer에 적재하기..
 	mesh->Init(md3dDevice, objLoader->GetVertices(),
 		objLoader->GetIndices(), objLoader->GetSubsets());
-	rendr->SetMesh(mesh);
-	rendr->SetMaterials(objLoader->GetMaterials());
+	render->SetMesh(mesh);
+	render->SetMaterials(objLoader->GetMaterials());
 	
-
+	//render->InitDiffuseMaps(texMgr, L"Textures/");
+	render->InitEffects(effectMgr, L"FX/");
+	
 	return true;
 }
 
@@ -203,6 +212,21 @@ void CrateApp::OnResize()
 
 void CrateApp::UpdateScene(float dt)
 {
+	//
+	// Control the camera.
+	//
+	if (GetAsyncKeyState('W') & 0x8000)
+		camera.Walk(10.0f*dt);
+
+	if (GetAsyncKeyState('S') & 0x8000)
+		camera.Walk(-10.0f*dt);
+
+	if (GetAsyncKeyState('A') & 0x8000)
+		camera.Strafe(-10.0f*dt);
+
+	if (GetAsyncKeyState('D') & 0x8000)
+		camera.Strafe(10.0f*dt);
+
 	// Convert Spherical to Cartesian coordinates.
 	float x = mRadius * sinf(mPhi)*cosf(mTheta);
 	float z = mRadius * sinf(mPhi)*sinf(mTheta);
@@ -228,26 +252,30 @@ void CrateApp::DrawScene()
 	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	UINT stride = sizeof(Vertex::Basic32);
-	UINT offset = 0;
-
-	XMMATRIX view = XMLoadFloat4x4(&mView);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX viewProj = view * proj;
-
 	
 	// Set per frame constants.
-	Effects::BasicFX->SetDirLights(mDirLights);
-	Effects::BasicFX->SetEyePosW(mEyePosW);
+	effectMgr.SetPerFrame(mDirLights, nullptr, nullptr, camera.GetPosition());
+	render->Draw(md3dImmediateContext, &camera, XMMatrixIdentity());
+		
 
-	//ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light3Tech;
-	ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light3TexTech;
 
+
+
+	ID3DX11EffectTechnique* tech = Effects::BasicFX->Light3Tech;
 	D3DX11_TECHNIQUE_DESC techDesc;
-	activeTech->GetDesc(&techDesc);
+	HR(tech->GetDesc(&techDesc));
+	UINT stride = sizeof(Vertex::Basic32);
+	UINT offset = 0;
+	
+	XMMATRIX view = camera.View();
+	XMMATRIX proj = camera.Proj();
+	
 
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
+		md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
+		md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
+
 		// Draw the box.
 		XMMATRIX world = XMLoadFloat4x4(&mBoxWorld);
 		XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
@@ -260,30 +288,9 @@ void CrateApp::DrawScene()
 		Effects::BasicFX->SetMaterial(mBoxMat);
 		Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
 
-		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);	
-
-		rendr->Draw(md3dImmediateContext);
+		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+		md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
 	}
-	//for (UINT p = 0; p < techDesc.Passes; ++p)
-	//{
-	//	md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
-	//	md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
-
-	//	// Draw the box.
-	//	XMMATRIX world = XMLoadFloat4x4(&mBoxWorld);
-	//	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
-	//	XMMATRIX worldViewProj = world * view*proj;
-
-	//	Effects::BasicFX->SetWorld(world);
-	//	Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
-	//	Effects::BasicFX->SetWorldViewProj(worldViewProj);
-	//	Effects::BasicFX->SetTexTransform(XMLoadFloat4x4(&mTexTransform));
-	//	Effects::BasicFX->SetMaterial(mBoxMat);
-	//	Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
-
-	//	activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-	//	md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
-	//}
 
 	HR(mSwapChain->Present(0, 0));
 

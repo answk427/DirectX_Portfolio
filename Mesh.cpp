@@ -23,6 +23,7 @@ void Mesh::SetSubsets(vector<Subset>& subsetSrc)
 	vector<Subset>().swap(subsets);
 	//매개변수 벡터와 교환
 	subsets.swap(subsetSrc);
+
 }
 
 void Mesh::SetVB(ID3D11DeviceContext * context)

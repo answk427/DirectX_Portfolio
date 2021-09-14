@@ -118,10 +118,8 @@ void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, S
 
 void BasicEffect::PerObjectSet(GeneralMaterial * material, 
 	Camera * camera, 
-	InstancingData * instancingData)
+	CXMMATRIX& world)
 {
-	//세계행렬
-	XMMATRIX world = instancingData->world;
 	SetWorld(world);
 	
 	//비균등 비례로 인한 법선벡터 계산에 쓰이는 행렬
@@ -146,6 +144,19 @@ void BasicEffect::PerObjectSet(GeneralMaterial * material,
 void BasicEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
 {
 	SetDiffuseMap(diffuseMap);
+}
+ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
+{
+	switch (techType)
+	{
+		case TechniqueType::Light:
+			return Light3Tech;
+		case TechniqueType::Light | TechniqueType::DiffuseMap:
+			return Light3TexAlphaClipTech;
+		default:
+			nullptr;
+	}
+	return nullptr;
 }
 #pragma endregion
 
@@ -288,12 +299,20 @@ NormalMapEffect::NormalMapEffect(ID3D11Device* device, const std::wstring& filen
 NormalMapEffect::~NormalMapEffect()
 {
 }
+
 void NormalMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
 {
 }
-void NormalMapEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, InstancingData * instancingData)
+
+void NormalMapEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
 {
 }
+
+ID3DX11EffectTechnique * NormalMapEffect::GetTechnique(UINT techType)
+{
+	return nullptr;
+}
+
 #pragma endregion
 
 #pragma region BuildShadowMapEffect
@@ -445,12 +464,12 @@ void Effects::InitAll(ID3D11Device* device)
 {
 	BasicFX           = new BasicEffect(device, L"FX/Basic.fxo");
 	NormalMapFX       = new NormalMapEffect(device, L"FX/NormalMap.fxo");
-	BuildShadowMapFX  = new BuildShadowMapEffect(device, L"FX/BuildShadowMap.fxo");
-	SsaoNormalDepthFX = new SsaoNormalDepthEffect(device, L"FX/SsaoNormalDepth.fxo");
-	SsaoFX            = new SsaoEffect(device, L"FX/Ssao.fxo");
-	SsaoBlurFX        = new SsaoBlurEffect(device, L"FX/SsaoBlur.fxo");
-	SkyFX             = new SkyEffect(device, L"FX/Sky.fxo");
-	DebugTexFX        = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
+	//BuildShadowMapFX  = new BuildShadowMapEffect(device, L"FX/BuildShadowMap.fxo");
+	//SsaoNormalDepthFX = new SsaoNormalDepthEffect(device, L"FX/SsaoNormalDepth.fxo");
+	//SsaoFX            = new SsaoEffect(device, L"FX/Ssao.fxo");
+	//SsaoBlurFX        = new SsaoBlurEffect(device, L"FX/SsaoBlur.fxo");
+	//SkyFX             = new SkyEffect(device, L"FX/Sky.fxo");
+	//DebugTexFX        = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
 }
 
 void Effects::DestroyAll()
