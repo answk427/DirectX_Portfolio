@@ -179,7 +179,9 @@ bool CrateApp::Init()
 	HR(hresult);*/
 		
 	texMgr.Init(md3dDevice);
+
 	effectMgr.Init(md3dDevice);
+	effectMgr.SetEffect(L"FX/Basic.fxo", Effects::BasicFX);
 
 	BuildGeometryBuffers();
 
@@ -261,7 +263,7 @@ void CrateApp::DrawScene()
 
 
 
-	ID3DX11EffectTechnique* tech = Effects::BasicFX->Light3Tech;
+	/*ID3DX11EffectTechnique* tech = Effects::BasicFX->Light3Tech;
 	D3DX11_TECHNIQUE_DESC techDesc;
 	HR(tech->GetDesc(&techDesc));
 	UINT stride = sizeof(Vertex::Basic32);
@@ -269,28 +271,28 @@ void CrateApp::DrawScene()
 	
 	XMMATRIX view = camera.View();
 	XMMATRIX proj = camera.Proj();
-	
+	*/
 
-	for (UINT p = 0; p < techDesc.Passes; ++p)
-	{
-		md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
-		md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
+	//for (UINT p = 0; p < techDesc.Passes; ++p)
+	//{
+	//	md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
+	//	md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
 
-		// Draw the box.
-		XMMATRIX world = XMLoadFloat4x4(&mBoxWorld);
-		XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
-		XMMATRIX worldViewProj = world * view*proj;
+	//	// Draw the box.
+	//	XMMATRIX world = XMLoadFloat4x4(&mBoxWorld);
+	//	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
+	//	XMMATRIX worldViewProj = world * view*proj;
 
-		Effects::BasicFX->SetWorld(world);
-		Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
-		Effects::BasicFX->SetWorldViewProj(worldViewProj);
-		Effects::BasicFX->SetTexTransform(XMLoadFloat4x4(&mTexTransform));
-		Effects::BasicFX->SetMaterial(mBoxMat);
-		Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
+	//	Effects::BasicFX->SetWorld(world);
+	//	Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
+	//	Effects::BasicFX->SetWorldViewProj(worldViewProj);
+	//	Effects::BasicFX->SetTexTransform(XMLoadFloat4x4(&mTexTransform));
+	//	Effects::BasicFX->SetMaterial(mBoxMat);
+	//	Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
 
-		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-		md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
-	}
+	//	tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+	//	md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
+	//}
 
 	HR(mSwapChain->Present(0, 0));
 

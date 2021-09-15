@@ -13,6 +13,7 @@
 #include <Camera.h>
 #include "BufferResource.h"
 
+
 enum TechniqueType
 {
 	Light = 1,
@@ -515,6 +516,8 @@ public:
 	ID3DX11EffectShaderResourceVariable* Texture;
 };
 #pragma endregion
+
+
 
 #pragma region Effects
 class Effects

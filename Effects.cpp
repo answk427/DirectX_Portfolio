@@ -152,7 +152,7 @@ ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 		case TechniqueType::Light:
 			return Light3Tech;
 		case TechniqueType::Light | TechniqueType::DiffuseMap:
-			return Light3TexAlphaClipTech;
+			return Light3TexTech;
 		default:
 			nullptr;
 	}
@@ -463,6 +463,7 @@ DebugTexEffect*        Effects::DebugTexFX        = 0;
 void Effects::InitAll(ID3D11Device* device)
 {
 	BasicFX           = new BasicEffect(device, L"FX/Basic.fxo");
+	
 	NormalMapFX       = new NormalMapEffect(device, L"FX/NormalMap.fxo");
 	//BuildShadowMapFX  = new BuildShadowMapEffect(device, L"FX/BuildShadowMap.fxo");
 	//SsaoNormalDepthFX = new SsaoNormalDepthEffect(device, L"FX/SsaoNormalDepth.fxo");

@@ -29,8 +29,11 @@ public:
 
 	Effect* GetEffect(const std::wstring& shaderName);
 	Effect* CreateEffect(const std::wstring& shaderName, EffectType type);
-	void SetType(std::wstring& shaderName, EffectType type);
+	
+	void SetType(const std::wstring& shaderName, EffectType type);
+	void SetEffect(const std::wstring& shaderName, Effect* effect) { myEffect[shaderName] = effect; }
 
 	void SetPerFrame(DirectionalLight* directL, PointLight *pointL, SpotLight *spotL, const XMFLOAT3 &eyePosW);
+	
 	
 };

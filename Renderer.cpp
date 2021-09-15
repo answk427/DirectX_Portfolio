@@ -76,49 +76,24 @@ void MeshRenderer::Draw(ID3D11DeviceContext * context, Camera* camera, CXMMATRIX
 	
 	int subsetLength = mesh->GetSubsetLength();
 
-	//activeTech 아직 미구현
+	
 	ID3DX11EffectTechnique* activeTech;
 	D3DX11_TECHNIQUE_DESC techDesc;
-
-	/*activeTech = effects[0]->GetTechnique(TechniqueType::Light |
-				TechniqueType::DiffuseMap);*/
 	
-	activeTech = Effects::BasicFX->Light3TexAlphaClipTech;
-		
-	activeTech->GetDesc(&techDesc);
-	
-
 	for (int i = 0; i < subsetLength; i++)
 	{
-		/*activeTech = effects[i]->GetTechnique(TechniqueType::Light |
+		activeTech = effects[i]->GetTechnique(TechniqueType::Light |
 			TechniqueType::DiffuseMap);
-		activeTech->GetDesc(&techDesc);*/
+		activeTech->GetDesc(&techDesc);
 		
 		//shader에 필요한 데이터 설정
-		/*effects[i]->PerObjectSet(&materials[i],
-			camera, world);*/
-		Effects::BasicFX->PerObjectSet(&materials[i],
+		effects[i]->PerObjectSet(&materials[i],
 			camera, world);
-		
+				
 		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{
 			activeTech->GetPassByIndex(p)->Apply(0, context);
 			mesh->Draw(context, i);
 		}
 	}
-
-	//for (UINT p = 0; p < techDesc.Passes; ++p)
-	//{
-	//	for (int i = 0; i < subsetLength; i++)
-	//	{
-	//		//shader에 필요한 데이터 설정
-	//		effects[i]->PerObjectSet(&materials[i],
-	//			camera, world);
-
-	//		activeTech->GetPassByIndex(p)->Apply(0, context);
-
-	//		mesh->Draw(context, i);
-	//	}
-	//}
-
 }

@@ -57,7 +57,7 @@ Effect * EffectMgr::CreateEffect(const std::wstring& shaderName, EffectType type
 	return effect;
 }
 
-void EffectMgr::SetType(std::wstring & shaderName, EffectType type)
+void EffectMgr::SetType(const std::wstring & shaderName, EffectType type)
 {
 	if (effectTypes.find(shaderName) != effectTypes.end())
 		return;
