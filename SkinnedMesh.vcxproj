@@ -108,7 +108,7 @@
     <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="SkinnedData.cpp" />
     <ClCompile Include="SkinnedModel.cpp" />
-    <ClCompile Include="SkinnedMeshDemo.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Ssao.cpp" />
     <ClCompile Include="Vertex.cpp" />
