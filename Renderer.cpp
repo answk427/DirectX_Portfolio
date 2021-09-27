@@ -68,7 +68,7 @@ MeshRenderer::MeshRenderer()
 {
 }
 
-void MeshRenderer::Draw(ID3D11DeviceContext * context, Camera* camera, CXMMATRIX& world)
+void MeshRenderer::Draw(ID3D11DeviceContext * context, Camera* camera, CXMMATRIX world)
 {
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
 	mesh->SetVB(context);
@@ -96,4 +96,8 @@ void MeshRenderer::Draw(ID3D11DeviceContext * context, Camera* camera, CXMMATRIX
 			mesh->Draw(context, i);
 		}
 	}
+}
+
+void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera, CXMMATRIX world)
+{
 }

@@ -123,7 +123,7 @@ void ObjectLoader::SetMaterial(int matNumOfMesh)
 	//*************Texture 적재 **************//
 	aiString fileName;
 
-	//A2W(유티코드 -> 멀티바이트 변환 함수)를 사용하기위한 매크로
+	//A2W(유니코드 -> 멀티바이트 변환 함수)를 사용하기위한 매크로
 	USES_CONVERSION;
 
 	//DiffuseTexture 경로 저장

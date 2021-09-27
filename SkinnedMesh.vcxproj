@@ -95,8 +95,10 @@
     <ClCompile Include="Common\TextureMgr.cpp" />
     <ClCompile Include="Common\Waves.cpp" />
     <ClCompile Include="Common\xnacollision.cpp" />
+    <ClCompile Include="ComponentMgr.cpp" />
     <ClCompile Include="EffectMgr.cpp" />
     <ClCompile Include="Effects.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LoadM3d.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshGeometry.cpp" />
@@ -125,8 +127,10 @@
     <ClInclude Include="Common\TextureMgr.h" />
     <ClInclude Include="Common\Waves.h" />
     <ClInclude Include="Common\xnacollision.h" />
+    <ClInclude Include="ComponentMgr.h" />
     <ClInclude Include="Constant.h" />
     <ClInclude Include="EffectMgr.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="LoadM3d.h" />
@@ -136,6 +140,7 @@
     <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderStates.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="SkinnedData.h" />
     <ClInclude Include="SkinnedModel.h" />

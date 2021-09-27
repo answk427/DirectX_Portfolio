@@ -1,4 +1,4 @@
-﻿  Renderer.cpp
+﻿  ComponentMgr.cpp
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\dxgitype.h(12): warning C4005: 'DXGI_STATUS_OCCLUDED': 매크로 재정의
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50092): note: 'DXGI_STATUS_OCCLUDED'의 이전 정의를 참조하십시오.
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\dxgitype.h(13): warning C4005: 'DXGI_STATUS_CLIPPED': 매크로 재정의

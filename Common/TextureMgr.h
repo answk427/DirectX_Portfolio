@@ -4,6 +4,9 @@
 #include "d3dUtil.h"
 #include <map>
 #include <unordered_map>
+#include <io.h>
+#include <atlconv.h>
+
 
 ///<summary>
 /// Simple texture manager to avoid loading duplicate textures from file.  That can

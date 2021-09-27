@@ -26,7 +26,12 @@ void TextureMgr::Init(ID3D11Device* device)
 
 ID3D11ShaderResourceView* TextureMgr::CreateTexture(std::wstring filename)
 {
+	USES_CONVERSION;
+
 	if (filename.empty())
+		return nullptr;
+	//파일이 존재하는지 검사
+	else if (_access(W2A(filename.c_str()), 0) < 0)
 		return nullptr;
 
 	ID3D11ShaderResourceView* srv = 0;

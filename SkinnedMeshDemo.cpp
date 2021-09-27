@@ -20,6 +20,7 @@
 #include "ObjectLoader.h"
 #include "Renderer.h"
 #include <Camera.h>
+#include "GameObject.h"
 
 
 //ObjectLoader obj("Models/18042_GonF.fbx");
@@ -187,7 +188,7 @@ bool CrateApp::Init()
 
 	Mesh* mesh = new Mesh();
 	//Loader로 모델 읽기..
-	objLoader->InitScene("Models/18042_GonF.fbx");
+	objLoader->InitScene("Models/18042_GonF_material.fbx");
 	objLoader->LoadData();
 
 	//mesh, renderer에 적재하기..
@@ -196,8 +197,23 @@ bool CrateApp::Init()
 	render->SetMesh(mesh);
 	render->SetMaterials(objLoader->GetMaterials());
 	
-	//render->InitDiffuseMaps(texMgr, L"Textures/");
+	render->InitDiffuseMaps(texMgr, L"Textures/");
 	render->InitEffects(effectMgr, L"FX/");
+
+	GameObject obj(L"nnnnnn");
+	obj.AddComponent(render);
+	SkinnedMeshRenderer temp;
+	obj.AddComponent(&temp);
+	MeshRenderer* comp = obj.GetComponent<MeshRenderer>();
+	
+	if (comp == nullptr)
+	{
+		printf("zzz\n");
+	}
+	else
+	{
+		printf("find~\n");
+	}
 	
 	return true;
 }

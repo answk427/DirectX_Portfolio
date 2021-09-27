@@ -102,8 +102,14 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="EffectMgr.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>New Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMgr.cpp">
+      <Filter>New Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +204,15 @@
       <Filter>New Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EffectMgr.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentMgr.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
   </ItemGroup>

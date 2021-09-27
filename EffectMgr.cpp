@@ -30,7 +30,6 @@ Effect* EffectMgr::GetEffect(const std::wstring& shaderName)
 			return CreateEffect(shaderName, EffectType::BasicEffectType);
 		else
 			return CreateEffect(shaderName, effectTypes[shaderName]);
-
 	}
 	else
 		return myEffect[shaderName];
