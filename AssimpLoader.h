@@ -18,7 +18,7 @@
 
 using namespace std;
 
-class ObjectLoader
+class AssimpLoader
 {
 private:
 	const aiScene* m_pScene;
@@ -41,10 +41,10 @@ public:
 	int vertexCount;
 	int indexCount;
 	//생성자
-	ObjectLoader() : m_pScene(0), vertices(0), indices(0), subsets(0), materials(0)
+	AssimpLoader() : m_pScene(0), vertices(0), indices(0), subsets(0), materials(0)
 	,vertexCount(0), indexCount(0){}
 	//소멸자
-	~ObjectLoader() { aiReleaseImport(m_pScene); }
+	~AssimpLoader() { aiReleaseImport(m_pScene); }
 	
 	//모델파일을 읽어와 scene 초기화
 	void InitScene(const string & fileName);

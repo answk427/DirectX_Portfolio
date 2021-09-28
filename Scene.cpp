@@ -17,7 +17,7 @@
 #include "LightHelper.h"
 #include "Effects.h"
 #include "Vertex.h"
-#include "ObjectLoader.h"
+#include "AssimpLoader.h"
 #include "Renderer.h"
 #include <Camera.h>
 #include "GameObject.h"

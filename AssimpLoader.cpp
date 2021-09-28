@@ -1,4 +1,4 @@
-#include "ObjectLoader.h"
+#include "AssimpLoader.h"
 #include <atlconv.h>
 
 
