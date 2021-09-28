@@ -21,10 +21,7 @@
 #include "Renderer.h"
 #include <Camera.h>
 #include "GameObject.h"
-
-
-//ObjectLoader obj("Models/18042_GonF.fbx");
-MeshRenderer* render = new MeshRenderer();
+#include "ComponentMgr.h"
 
 
 class Scene : public D3DApp
@@ -43,39 +40,22 @@ public:
 	void OnMouseMove(WPARAM btnState, int x, int y);
 
 private:
-	void BuildGeometryBuffers();
-	ObjectLoader* objLoader = new ObjectLoader();
-	Camera camera;
+	AssimpLoader objLoader;
 	TextureMgr texMgr;
 	EffectMgr effectMgr;
+	ComponentMgr componentMgr;
+
 
 private:
-
-	ID3D11Buffer* mBoxVB;
-	ID3D11Buffer* mBoxIB;
-
-	ID3D11ShaderResourceView* mDiffuseMapSRV;
-
+	Camera camera;
 	DirectionalLight mDirLights[3];
-	BasicMaterial mBoxMat;
+	std::vector<GameObject> gameObjects;
+		
 
-	XMFLOAT4X4 mTexTransform;
-	XMFLOAT4X4 mBoxWorld;
-
-	XMFLOAT4X4 mView;
-	XMFLOAT4X4 mProj;
-
-	int mBoxVertexOffset;
-	UINT mBoxIndexOffset;
-	UINT mBoxIndexCount;
-
-	XMFLOAT3 mEyePosW;
-
+private:
 	float mTheta;
 	float mPhi;
 	float mRadius;
-
-	POINT mLastMousePos;
 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
@@ -96,20 +76,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 
 Scene::Scene(HINSTANCE hInstance)
-	: D3DApp(hInstance), mBoxVB(0), mBoxIB(0), mDiffuseMapSRV(0), mEyePosW(0.0f, 0.0f, 0.0f),
+	: D3DApp(hInstance), 
 	mTheta(1.3f*MathHelper::Pi), mPhi(0.4f*MathHelper::Pi), mRadius(2.5f)
 {
 	mMainWndCaption = L"Crate Demo";
 
-	mLastMousePos.x = 0;
-	mLastMousePos.y = 0;
-
-	XMMATRIX I = XMMatrixIdentity();
-	XMStoreFloat4x4(&mBoxWorld, I);
-	XMStoreFloat4x4(&mTexTransform, I);
-	XMStoreFloat4x4(&mView, I);
-	XMStoreFloat4x4(&mProj, I);
-
+	
 	/*mDirLights[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	mDirLights[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	mDirLights[0].Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 16.0f);
@@ -135,18 +107,11 @@ Scene::Scene(HINSTANCE hInstance)
 	mDirLights[2].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, -1.0f);
 
-	mBoxMat.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mBoxMat.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mBoxMat.Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 16.0f);
-	mBoxMat.Reflect = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	
 }
 
 Scene::~Scene()
 {
-	ReleaseCOM(mBoxVB);
-	ReleaseCOM(mBoxIB);
-	ReleaseCOM(mDiffuseMapSRV);
-
 	Effects::DestroyAll();
 	InputLayouts::DestroyAll();
 }
@@ -158,7 +123,7 @@ bool Scene::Init()
 
 	//카메라 초기화
 	camera.SetPosition({ 50.0f, 0, 30.0f });
-	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
 	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1 });
 	
 	
@@ -166,66 +131,18 @@ bool Scene::Init()
 	Effects::InitAll(md3dDevice);
 	InputLayouts::InitAll(md3dDevice);
 
-	HR(D3DX11CreateShaderResourceViewFromFile(md3dDevice,
-		L"Textures/tree01-bark_diffuse.dds", 0, 0, &mDiffuseMapSRV, 0));
-
-	/*DirectX::ScratchImage image;
-	wchar_t* name = L"Textures/test.tga";
-	wstring ws = L"Textures/test.tga";
-	HRESULT hresult = DirectX::LoadFromTGAFile(L"Textures/test.tga", nullptr, image);
-	HR(hresult);
-	hresult = DirectX::CreateShaderResourceView(md3dDevice, image.GetImage(1,1,1), image.GetImageCount(),
-		image.GetMetadata(), &mDiffuseMapSRV);
-	
-	HR(hresult);*/
-		
 	texMgr.Init(md3dDevice);
-
 	effectMgr.Init(md3dDevice);
-	effectMgr.SetEffect(L"FX/Basic.fxo", Effects::BasicFX);
-
-	BuildGeometryBuffers();
-
-	Mesh* mesh = new Mesh();
-	//Loader로 모델 읽기..
-	objLoader->InitScene("Models/18042_GonF_material.fbx");
-	objLoader->LoadData();
-
-	//mesh, renderer에 적재하기..
-	mesh->Init(md3dDevice, objLoader->GetVertices(),
-		objLoader->GetIndices(), objLoader->GetSubsets());
-	render->SetMesh(mesh);
-	render->SetMaterials(objLoader->GetMaterials());
-	
-	render->InitDiffuseMaps(texMgr, L"Textures/");
-	render->InitEffects(effectMgr, L"FX/");
-
-	GameObject obj(L"nnnnnn");
-	obj.AddComponent(render);
-	SkinnedMeshRenderer temp;
-	obj.AddComponent(&temp);
-	MeshRenderer* comp = obj.GetComponent<MeshRenderer>();
-	
-	if (comp == nullptr)
-	{
-		printf("zzz\n");
-	}
-	else
-	{
-		printf("find~\n");
-	}
-	
+		
 	return true;
 }
 
 void Scene::OnResize()
 {
-	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
-
 	D3DApp::OnResize();
 
-	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
-	XMStoreFloat4x4(&mProj, P);
+	//종횡비가 바뀌었을 수 있으니 다시 설정
+	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 }
 
 void Scene::UpdateScene(float dt)
@@ -245,21 +162,11 @@ void Scene::UpdateScene(float dt)
 	if (GetAsyncKeyState('D') & 0x8000)
 		camera.Strafe(10.0f*dt);
 
-	// Convert Spherical to Cartesian coordinates.
-	float x = mRadius * sinf(mPhi)*cosf(mTheta);
-	float z = mRadius * sinf(mPhi)*sinf(mTheta);
-	float y = mRadius * cosf(mPhi);
-
-	mEyePosW = XMFLOAT3(x, y, z);
-
-	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, V);
-	
+	//// Convert Spherical to Cartesian coordinates.
+	//float x = mRadius * sinf(mPhi)*cosf(mTheta);
+	//float z = mRadius * sinf(mPhi)*sinf(mTheta);
+	//float y = mRadius * cosf(mPhi);
+		
 }
 
 void Scene::DrawScene()
@@ -269,58 +176,20 @@ void Scene::DrawScene()
 
 	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	
+		
 	// Set per frame constants.
 	effectMgr.SetPerFrame(mDirLights, nullptr, nullptr, camera.GetPosition());
-	render->Draw(md3dImmediateContext, &camera, XMMatrixIdentity());
+	
 		
 
-
-
-
-	/*ID3DX11EffectTechnique* tech = Effects::BasicFX->Light3Tech;
-	D3DX11_TECHNIQUE_DESC techDesc;
-	HR(tech->GetDesc(&techDesc));
-	UINT stride = sizeof(Vertex::Basic32);
-	UINT offset = 0;
-	
-	XMMATRIX view = camera.View();
-	XMMATRIX proj = camera.Proj();
-	*/
-
-	//for (UINT p = 0; p < techDesc.Passes; ++p)
-	//{
-	//	md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
-	//	md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
-
-	//	// Draw the box.
-	//	XMMATRIX world = XMLoadFloat4x4(&mBoxWorld);
-	//	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
-	//	XMMATRIX worldViewProj = world * view*proj;
-
-	//	Effects::BasicFX->SetWorld(world);
-	//	Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
-	//	Effects::BasicFX->SetWorldViewProj(worldViewProj);
-	//	Effects::BasicFX->SetTexTransform(XMLoadFloat4x4(&mTexTransform));
-	//	Effects::BasicFX->SetMaterial(mBoxMat);
-	//	Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV);
-
-	//	tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-	//	md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
-	//}
 
 	HR(mSwapChain->Present(0, 0));
 
 	camera.UpdateViewMatrix();
-	
 }
 
 void Scene::OnMouseDown(WPARAM btnState, int x, int y)
 {
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
-
 	SetCapture(mhMainWnd);
 }
 
@@ -331,98 +200,9 @@ void Scene::OnMouseUp(WPARAM btnState, int x, int y)
 
 void Scene::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	if ((btnState & MK_LBUTTON) != 0)
-	{
-		// Make each pixel correspond to a quarter of a degree.
-		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
-		float dy = XMConvertToRadians(0.25f*static_cast<float>(y - mLastMousePos.y));
-
-		// Update angles based on input to orbit camera around box.
-		mTheta += dx;
-		mPhi += dy;
-		mPhi += dy;
-
-		// Restrict the angle mPhi.
-		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
-	}
-	else if ((btnState & MK_RBUTTON) != 0)
-	{
-		// Make each pixel correspond to 0.01 unit in the scene.
-		float dx = 0.01f*static_cast<float>(x - mLastMousePos.x);
-		float dy = 0.01f*static_cast<float>(y - mLastMousePos.y);
-
-		// Update the camera radius based on input.
-		mRadius += dx - dy;
-
-		// Restrict the radius.
-		//mRadius = MathHelper::Clamp(mRadius, 1.0f, 15.0f);
-	}
-
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
-}
-
-void Scene::BuildGeometryBuffers()
-{
-	GeometryGenerator::MeshData box;
-
-	GeometryGenerator geoGen;
-	geoGen.CreateBox(1.0f, 1.0f, 1.0f, box);
-
-	// Cache the vertex offsets to each object in the concatenated vertex buffer.
-	mBoxVertexOffset = 0;
-
-	// Cache the index count of each object.
-	mBoxIndexCount = box.Indices.size();
-
-	// Cache the starting index for each object in the concatenated index buffer.
-	mBoxIndexOffset = 0;
-
-	UINT totalVertexCount = box.Vertices.size();
-
-	UINT totalIndexCount = mBoxIndexCount;
-
-	//
-	// Extract the vertex elements we are interested in and pack the
-	// vertices of all the meshes into one vertex buffer.
-	//
-
-	std::vector<Vertex::Basic32> vertices(totalVertexCount);
-
-	UINT k = 0;
-	for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = box.Vertices[i].Position;
-		vertices[k].Normal = box.Vertices[i].Normal;
-		vertices[k].Tex = box.Vertices[i].TexC;
-	}
-
-	D3D11_BUFFER_DESC vbd;
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex::Basic32) * totalVertexCount;
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = 0;
-	D3D11_SUBRESOURCE_DATA vinitData;
-	vinitData.pSysMem = &vertices[0];
-	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mBoxVB));
 	
-	//
-	// Pack the indices of all the meshes into one index buffer.
-	//
-
-	std::vector<UINT> indices;
-	indices.insert(indices.end(), box.Indices.begin(), box.Indices.end());
-
-	D3D11_BUFFER_DESC ibd;
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(UINT) * totalIndexCount;
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	ibd.MiscFlags = 0;
-	D3D11_SUBRESOURCE_DATA iinitData;
-	iinitData.pSysMem = &indices[0];
-	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mBoxIB));
 }
+
+
 
 

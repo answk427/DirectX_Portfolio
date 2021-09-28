@@ -2,7 +2,7 @@
 #include <atlconv.h>
 
 
-void ObjectLoader::InitScene(const string& fileName)
+void AssimpLoader::InitScene(const string& fileName)
 {
 	m_pScene = aiImportFile(fileName.c_str(),
 		aiProcess_GenBoundingBoxes | //BoundingBox 계산?
@@ -73,7 +73,7 @@ void ObjectLoader::InitScene(const string& fileName)
 	}
 }
 
-void ObjectLoader::InitContainer()
+void AssimpLoader::InitContainer()
 {
 	//전부 비우는 작업
 	vector<MyVertex::BasicVertex>().swap(vertices);
@@ -82,7 +82,7 @@ void ObjectLoader::InitContainer()
 	vector<GeneralMaterial>().swap(materials);
 }
 
-bool ObjectLoader::LoadData()
+bool AssimpLoader::LoadData()
 {
 	if (m_pScene == NULL)
 		return false;
@@ -93,7 +93,7 @@ bool ObjectLoader::LoadData()
 }
 
 
-void ObjectLoader::SetMaterial(int matNumOfMesh)
+void AssimpLoader::SetMaterial(int matNumOfMesh)
 {
 
 	aiMaterial* aiMat = m_pScene->mMaterials[matNumOfMesh];
@@ -146,7 +146,7 @@ void ObjectLoader::SetMaterial(int matNumOfMesh)
 
 
 
-void ObjectLoader::NodeTravel(aiNode * node)
+void AssimpLoader::NodeTravel(aiNode * node)
 {
 	//해당 노드의 매쉬를 적재
 	for (int i = 0; i < node->mNumMeshes; i++)
@@ -162,7 +162,7 @@ void ObjectLoader::NodeTravel(aiNode * node)
 	return;
 }
 
-void ObjectLoader::SetMesh(aiMesh * mesh)
+void AssimpLoader::SetMesh(aiMesh * mesh)
 {
 	Subset tempSubset;
 	//material인덱스 

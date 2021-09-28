@@ -112,7 +112,9 @@ BasicEffect::~BasicEffect()
 }
 void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW)
 {
-	SetDirLights(directL);
+	if(directL == nullptr)
+		SetDirLights(directL);	
+	
 	SetEyePosW(eyePosW);
 }
 

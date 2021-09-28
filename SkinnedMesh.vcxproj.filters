@@ -25,39 +25,12 @@
     <Filter Include="New Source Files">
       <UniqueIdentifier>{f941181b-efc5-4153-a013-13f248cd8b20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="OldRendering">
+      <UniqueIdentifier>{9b3c5169-c648-4311-bb84-be1c17c183d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderStates.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShadowMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sky.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Ssao.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinnedData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadM3d.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshGeometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinnedModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Common\Camera.cpp">
@@ -93,9 +66,6 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectLoader.cpp">
-      <Filter>New Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
@@ -110,6 +80,39 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicModel.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedModel.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedData.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Ssao.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Sky.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshGeometry.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadM3d.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMap.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStates.cpp">
+      <Filter>OldRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader.cpp">
+      <Filter>New Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,9 +191,6 @@
     <ClInclude Include="Material.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectLoader.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Interface.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
@@ -213,6 +213,9 @@
       <Filter>New Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpLoader.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
   </ItemGroup>
