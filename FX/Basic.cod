@@ -290,13 +290,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -325,7 +325,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r2.yzyy, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -345,16 +345,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.xyz, r2.xyzx, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r2.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r2.w
                 mov r5.xyz, -r8.xyzx
                 dp3 r5.w, r5.xyzx, r0.xyzx
@@ -372,7 +372,7 @@ fxgroup
                 mul r0.xyz, r4.xyzx, r0.xxxx
                 mul r0.xyz, r7.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r3.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -642,13 +642,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -677,7 +677,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r2.yzyy, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -697,16 +697,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r5.xyz, r2.xyzx, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r2.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r2.w
                 mov r8.xyz, -r8.xyzx
                 dp3 r5.w, r8.xyzx, r0.xyzx
@@ -724,7 +724,7 @@ fxgroup
                 mul r8.xyz, r4.xyzx, r5.wwww
                 mul r7.xyz, r7.xyzx, r8.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r6.xyz, r3.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r3.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -748,16 +748,16 @@ fxgroup
                 mov r10.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.xyz, r2.xyzx, r8.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r2.w, l(0.000000), r0.w
                 mov r8.xyz, -r11.xyzx
                 dp3 r3.w, r8.xyzx, r0.xyzx
@@ -775,7 +775,7 @@ fxgroup
                 mul r1.xyz, r4.xyzx, r0.xxxx
                 mul r1.xyz, r10.xyzx, r1.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r0.xyz, r2.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r2.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -1045,13 +1045,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -1080,7 +1080,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r2.yzyy, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -1100,16 +1100,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r5.xyz, r2.xyzx, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r2.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r2.w
                 mov r8.xyz, -r8.xyzx
                 dp3 r5.w, r8.xyzx, r0.xyzx
@@ -1127,7 +1127,7 @@ fxgroup
                 mul r8.xyz, r4.xyzx, r5.wwww
                 mul r7.xyz, r7.xyzx, r8.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r6.xyz, r3.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r3.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -1151,16 +1151,16 @@ fxgroup
                 mov r10.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r8.xyz, r2.xyzx, r8.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r2.w, l(0.000000), r0.w
                 mov r11.xyz, -r11.xyzx
                 dp3 r3.w, r11.xyzx, r0.xyzx
@@ -1178,7 +1178,7 @@ fxgroup
                 mul r11.xyz, r4.xyzx, r3.wwww
                 mul r10.xyz, r10.xyzx, r11.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r9.xyz, r2.wwww, r9.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r10.xyz, r2.wwww, r10.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -1202,16 +1202,16 @@ fxgroup
                 mov r10.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.xyz, r2.xyzx, r8.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r2.w, l(0.000000), r0.w
                 mov r8.xyz, -r11.xyzx
                 dp3 r3.w, r8.xyzx, r0.xyzx
@@ -1229,7 +1229,7 @@ fxgroup
                 mul r1.xyz, r4.xyzx, r0.xxxx
                 mul r1.xyz, r10.xyzx, r1.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r0.xyz, r2.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r2.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -1710,13 +1710,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -1745,7 +1745,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -1765,16 +1765,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r6.xyz, -r9.xyzx
                 dp3 r6.w, r6.xyzx, r0.xyzx
@@ -1792,7 +1792,7 @@ fxgroup
                 mul r0.xyz, r5.xyzx, r0.xxxx
                 mul r0.xyz, r8.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -2068,13 +2068,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -2103,7 +2103,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -2123,16 +2123,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -2150,7 +2150,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r6.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -2174,16 +2174,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r4.w, r9.xyzx, r0.xyzx
@@ -2201,7 +2201,7 @@ fxgroup
                 mul r1.xyz, r5.xyzx, r0.xxxx
                 mul r1.xyz, r11.xyzx, r1.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r0.xyz, r3.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -2477,13 +2477,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -2512,7 +2512,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -2532,16 +2532,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -2559,7 +2559,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r6.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -2583,16 +2583,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r9.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r12.xyz, -r12.xyzx
                 dp3 r4.w, r12.xyzx, r0.xyzx
@@ -2610,7 +2610,7 @@ fxgroup
                 mul r12.xyz, r5.xyzx, r4.wwww
                 mul r11.xyz, r11.xyzx, r12.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r3.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -2634,16 +2634,16 @@ fxgroup
                 mov r11.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r4.w, r9.xyzx, r0.xyzx
@@ -2661,7 +2661,7 @@ fxgroup
                 mul r1.xyz, r5.xyzx, r0.xxxx
                 mul r1.xyz, r11.xyzx, r1.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r0.xyz, r3.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -3154,13 +3154,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -3189,7 +3189,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -3209,16 +3209,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r6.xyz, -r9.xyzx
                 dp3 r6.w, r6.xyzx, r0.xyzx
@@ -3236,7 +3236,7 @@ fxgroup
                 mul r0.xyz, r5.xyzx, r0.xxxx
                 mul r0.xyz, r8.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -3518,13 +3518,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -3553,7 +3553,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -3573,16 +3573,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -3600,7 +3600,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r6.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -3624,16 +3624,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r4.w, r9.xyzx, r0.xyzx
@@ -3651,7 +3651,7 @@ fxgroup
                 mul r1.xyz, r5.xyzx, r0.xxxx
                 mul r1.xyz, r11.xyzx, r1.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r0.xyz, r3.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -3933,13 +3933,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -3968,7 +3968,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -3988,16 +3988,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -4015,7 +4015,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r6.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -4039,16 +4039,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r9.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r12.xyz, -r12.xyzx
                 dp3 r4.w, r12.xyzx, r0.xyzx
@@ -4066,7 +4066,7 @@ fxgroup
                 mul r12.xyz, r5.xyzx, r4.wwww
                 mul r11.xyz, r11.xyzx, r12.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r3.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -4090,16 +4090,16 @@ fxgroup
                 mov r11.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r4.w, r9.xyzx, r0.xyzx
@@ -4117,7 +4117,7 @@ fxgroup
                 mul r1.xyz, r5.xyzx, r0.xxxx
                 mul r1.xyz, r11.xyzx, r1.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r0.xyz, r3.wwww, r0.yzwy, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -4387,13 +4387,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -4422,7 +4422,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r2.x, r2.yzyy, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, r2.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -4442,16 +4442,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.yzw, r2.yyzw, r5.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r5.x, l(0.000000), r3.w
                 mov r5.yzw, -r8.xxyz
                 dp3 r6.w, r5.yzwy, r0.xyzx
@@ -4469,7 +4469,7 @@ fxgroup
                 mul r0.xyz, r4.xyzx, r0.xxxx
                 mul r0.xyz, r7.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r5.xxxx, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r5.xxxx, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -4752,13 +4752,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -4787,7 +4787,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r2.x, r2.yzyy, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, r2.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -4807,16 +4807,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r5.xyz, r2.yzwy, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r5.w, l(0.000000), r3.w
                 mov r8.xyz, -r8.xyzx
                 dp3 r6.w, r8.xyzx, r0.xyzx
@@ -4834,7 +4834,7 @@ fxgroup
                 mul r8.xyz, r4.xyzx, r6.wwww
                 mul r7.xyz, r7.xyzx, r8.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r6.xyz, r5.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r5.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -4858,16 +4858,16 @@ fxgroup
                 mov r10.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.yzw, r2.yyzw, r8.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r1.w
                 mov r8.xyz, -r11.xyzx
                 dp3 r5.w, r8.xyzx, r0.xyzx
@@ -4885,7 +4885,7 @@ fxgroup
                 mul r0.xyz, r4.xyzx, r0.xxxx
                 mul r0.xyz, r10.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r3.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -5168,13 +5168,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -5203,7 +5203,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r2.x, r2.yzyy, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, r2.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -5223,16 +5223,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r5.xyz, r2.yzwy, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r5.w, l(0.000000), r3.w
                 mov r8.xyz, -r8.xyzx
                 dp3 r6.w, r8.xyzx, r0.xyzx
@@ -5250,7 +5250,7 @@ fxgroup
                 mul r8.xyz, r4.xyzx, r6.wwww
                 mul r7.xyz, r7.xyzx, r8.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r6.xyz, r5.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r5.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -5274,16 +5274,16 @@ fxgroup
                 mov r10.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r8.xyz, r2.yzwy, r8.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r1.w
                 mov r11.xyz, -r11.xyzx
                 dp3 r5.w, r11.xyzx, r0.xyzx
@@ -5301,7 +5301,7 @@ fxgroup
                 mul r11.xyz, r4.xyzx, r5.wwww
                 mul r10.xyz, r10.xyzx, r11.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r9.xyz, r3.wwww, r9.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -5325,16 +5325,16 @@ fxgroup
                 mov r10.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.yzw, r2.yyzw, r8.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r1.w
                 mov r8.xyz, -r11.xyzx
                 dp3 r5.w, r8.xyzx, r0.xyzx
@@ -5352,7 +5352,7 @@ fxgroup
                 mul r0.xyz, r4.xyzx, r0.xxxx
                 mul r0.xyz, r10.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r3.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r3.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -5890,13 +5890,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -5925,7 +5925,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -5945,16 +5945,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r6.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.x, l(0.000000), r4.w
                 mov r6.yzw, -r9.xxyz
                 dp3 r7.w, r6.yzwy, r0.xyzx
@@ -5972,7 +5972,7 @@ fxgroup
                 mul r0.xyz, r5.xyzx, r0.xxxx
                 mul r0.xyz, r8.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r6.xxxx, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r6.xxxx, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -6261,13 +6261,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -6296,7 +6296,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -6316,16 +6316,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.yzwy, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.w, l(0.000000), r4.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r7.w, r9.xyzx, r0.xyzx
@@ -6343,7 +6343,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r7.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -6367,16 +6367,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r9.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -6394,7 +6394,7 @@ fxgroup
                 mul r0.xyz, r5.xyzx, r0.xxxx
                 mul r0.xyz, r11.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -6683,13 +6683,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -6718,7 +6718,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -6738,16 +6738,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.yzwy, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.w, l(0.000000), r4.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r7.w, r9.xyzx, r0.xyzx
@@ -6765,7 +6765,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r7.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -6789,16 +6789,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r9.xyz, r3.yzwy, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r12.xyz, -r12.xyzx
                 dp3 r6.w, r12.xyzx, r0.xyzx
@@ -6816,7 +6816,7 @@ fxgroup
                 mul r12.xyz, r5.xyzx, r6.wwww
                 mul r11.xyz, r11.xyzx, r12.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r10.xyz, r4.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r4.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -6840,16 +6840,16 @@ fxgroup
                 mov r11.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r9.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -6867,7 +6867,7 @@ fxgroup
                 mul r0.xyz, r5.xyzx, r0.xxxx
                 mul r0.xyz, r11.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -7417,13 +7417,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -7452,7 +7452,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -7472,16 +7472,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r6.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.x, l(0.000000), r4.w
                 mov r6.yzw, -r9.xxyz
                 dp3 r7.w, r6.yzwy, r0.xyzx
@@ -7499,7 +7499,7 @@ fxgroup
                 mul r0.xyz, r5.xyzx, r0.xxxx
                 mul r0.xyz, r8.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r6.xxxx, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r6.xxxx, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -7794,13 +7794,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -7829,7 +7829,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -7849,16 +7849,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.yzwy, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.w, l(0.000000), r4.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r7.w, r9.xyzx, r0.xyzx
@@ -7876,7 +7876,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r7.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -7900,16 +7900,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r9.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -7927,7 +7927,7 @@ fxgroup
                 mul r0.xyz, r5.xyzx, r0.xxxx
                 mul r0.xyz, r11.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -8222,13 +8222,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -8257,7 +8257,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -8277,16 +8277,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.yzwy, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.w, l(0.000000), r4.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r7.w, r9.xyzx, r0.xyzx
@@ -8304,7 +8304,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r7.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -8328,16 +8328,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r9.xyz, r3.yzwy, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r12.xyz, -r12.xyzx
                 dp3 r6.w, r12.xyzx, r0.xyzx
@@ -8355,7 +8355,7 @@ fxgroup
                 mul r12.xyz, r5.xyzx, r6.wwww
                 mul r11.xyz, r11.xyzx, r12.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r10.xyz, r4.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r4.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -8379,16 +8379,16 @@ fxgroup
                 mov r11.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r9.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -8406,7 +8406,7 @@ fxgroup
                 mul r0.xyz, r5.xyzx, r0.xxxx
                 mul r0.xyz, r11.xyzx, r0.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r1.xyz, r4.wwww, r1.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r0.xyz, r4.wwww, r0.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -8691,13 +8691,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -8726,7 +8726,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r2.yzyy, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -8746,16 +8746,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.xyz, r2.xyzx, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r2.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r2.w
                 mov r5.xyz, -r8.xyzx
                 dp3 r5.w, r5.xyzx, r0.xyzx
@@ -8773,7 +8773,7 @@ fxgroup
                 mul r4.xyz, r4.xyzx, r4.wwww
                 mul r4.xyz, r7.xyzx, r4.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r3.xyz, r3.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -9057,13 +9057,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -9092,7 +9092,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r2.yzyy, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -9112,16 +9112,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r5.xyz, r2.xyzx, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r2.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r2.w
                 mov r8.xyz, -r8.xyzx
                 dp3 r5.w, r8.xyzx, r0.xyzx
@@ -9139,7 +9139,7 @@ fxgroup
                 mul r8.xyz, r4.xyzx, r5.wwww
                 mul r7.xyz, r7.xyzx, r8.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r6.xyz, r3.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r3.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -9163,16 +9163,16 @@ fxgroup
                 mov r10.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.xyz, r2.xyzx, r8.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r2.w, l(0.000000), r0.w
                 mov r8.xyz, -r11.xyzx
                 dp3 r3.w, r8.xyzx, r0.xyzx
@@ -9190,7 +9190,7 @@ fxgroup
                 mul r4.xyz, r4.xyzx, r3.wwww
                 mul r4.xyz, r10.xyzx, r4.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r3.xyz, r2.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r2.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -9474,13 +9474,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -9509,7 +9509,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r2.yzyy, t0.xxxx, s1, r2.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -9529,16 +9529,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r5.xyz, r2.xyzx, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r2.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r2.w
                 mov r8.xyz, -r8.xyzx
                 dp3 r5.w, r8.xyzx, r0.xyzx
@@ -9556,7 +9556,7 @@ fxgroup
                 mul r8.xyz, r4.xyzx, r5.wwww
                 mul r7.xyz, r7.xyzx, r8.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r6.xyz, r3.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r3.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -9580,16 +9580,16 @@ fxgroup
                 mov r10.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r8.xyz, r2.xyzx, r8.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r2.w, l(0.000000), r0.w
                 mov r11.xyz, -r11.xyzx
                 dp3 r3.w, r11.xyzx, r0.xyzx
@@ -9607,7 +9607,7 @@ fxgroup
                 mul r11.xyz, r4.xyzx, r3.wwww
                 mul r10.xyz, r10.xyzx, r11.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r9.xyz, r2.wwww, r9.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r10.xyz, r2.wwww, r10.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -9631,16 +9631,16 @@ fxgroup
                 mov r10.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.xyz, r2.xyzx, r8.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r2.w, l(0.000000), r0.w
                 mov r8.xyz, -r11.xyzx
                 dp3 r3.w, r8.xyzx, r0.xyzx
@@ -9658,7 +9658,7 @@ fxgroup
                 mul r4.xyz, r4.xyzx, r3.wwww
                 mul r4.xyz, r10.xyzx, r4.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r3.xyz, r2.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r2.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -10153,13 +10153,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -10188,7 +10188,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -10208,16 +10208,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r6.xyz, -r9.xyzx
                 dp3 r6.w, r6.xyzx, r0.xyzx
@@ -10235,7 +10235,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r5.wwww
                 mul r5.xyz, r8.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -10525,13 +10525,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -10560,7 +10560,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -10580,16 +10580,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -10607,7 +10607,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r6.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -10631,16 +10631,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r4.w, r9.xyzx, r0.xyzx
@@ -10658,7 +10658,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r4.wwww
                 mul r5.xyz, r11.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r3.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -10948,13 +10948,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -10983,7 +10983,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -11003,16 +11003,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -11030,7 +11030,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r6.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -11054,16 +11054,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r9.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r12.xyz, -r12.xyzx
                 dp3 r4.w, r12.xyzx, r0.xyzx
@@ -11081,7 +11081,7 @@ fxgroup
                 mul r12.xyz, r5.xyzx, r4.wwww
                 mul r11.xyz, r11.xyzx, r12.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r3.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -11105,16 +11105,16 @@ fxgroup
                 mov r11.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r4.w, r9.xyzx, r0.xyzx
@@ -11132,7 +11132,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r4.wwww
                 mul r5.xyz, r11.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r3.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -11639,13 +11639,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -11674,7 +11674,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -11694,16 +11694,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r6.xyz, -r9.xyzx
                 dp3 r6.w, r6.xyzx, r0.xyzx
@@ -11721,7 +11721,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r5.wwww
                 mul r5.xyz, r8.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -12017,13 +12017,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -12052,7 +12052,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -12072,16 +12072,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -12099,7 +12099,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r6.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -12123,16 +12123,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r4.w, r9.xyzx, r0.xyzx
@@ -12150,7 +12150,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r4.wwww
                 mul r5.xyz, r11.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r3.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -12446,13 +12446,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -12481,7 +12481,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.yzyy, t1.xxxx, s1, r3.x
                 add r0.w, r0.w, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -12501,16 +12501,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.xyzx, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r3.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -12528,7 +12528,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r6.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r4.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r4.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -12552,16 +12552,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r9.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r12.xyz, -r12.xyzx
                 dp3 r4.w, r12.xyzx, r0.xyzx
@@ -12579,7 +12579,7 @@ fxgroup
                 mul r12.xyz, r5.xyzx, r4.wwww
                 mul r11.xyz, r11.xyzx, r12.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r3.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -12603,16 +12603,16 @@ fxgroup
                 mov r11.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.xyz, r3.xyzx, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r0.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r0.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r4.w, r9.xyzx, r0.xyzx
@@ -12630,7 +12630,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r4.wwww
                 mul r5.xyz, r11.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r3.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -12914,13 +12914,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -12949,7 +12949,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r2.x, r2.yzyy, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, r2.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -12969,16 +12969,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.yzw, r2.yyzw, r5.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r5.x, l(0.000000), r3.w
                 mov r5.yzw, -r8.xxyz
                 dp3 r6.w, r5.yzwy, r0.xyzx
@@ -12996,7 +12996,7 @@ fxgroup
                 mul r4.xyz, r4.xyzx, r4.wwww
                 mul r4.xyz, r7.xyzx, r4.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r3.xyz, r5.xxxx, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r5.xxxx, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -13293,13 +13293,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -13328,7 +13328,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r2.x, r2.yzyy, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, r2.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -13348,16 +13348,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r5.xyz, r2.yzwy, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r5.w, l(0.000000), r3.w
                 mov r8.xyz, -r8.xyzx
                 dp3 r6.w, r8.xyzx, r0.xyzx
@@ -13375,7 +13375,7 @@ fxgroup
                 mul r8.xyz, r4.xyzx, r6.wwww
                 mul r7.xyz, r7.xyzx, r8.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r6.xyz, r5.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r5.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -13399,16 +13399,16 @@ fxgroup
                 mov r10.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.yzw, r2.yyzw, r8.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r1.w
                 mov r8.xyz, -r11.xyzx
                 dp3 r5.w, r8.xyzx, r0.xyzx
@@ -13426,7 +13426,7 @@ fxgroup
                 mul r4.xyz, r4.xyzx, r4.wwww
                 mul r4.xyz, r10.xyzx, r4.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r3.xyz, r3.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -13723,13 +13723,13 @@ fxgroup
                 nop 
                 mov r2.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r2.xyz, r2.zxyz, r2.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r2.x, r2.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r3.xy, r2.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -13758,7 +13758,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r2.x, r2.yzyy, t0.xxxx, s1, r2.x
                 add r1.w, r1.w, r2.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -13778,16 +13778,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r8.xyz, -r8.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r5.xyz, r2.yzwy, r5.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r3.w, r8.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r5.w, l(0.000000), r3.w
                 mov r8.xyz, -r8.xyzx
                 dp3 r6.w, r8.xyzx, r0.xyzx
@@ -13805,7 +13805,7 @@ fxgroup
                 mul r8.xyz, r4.xyzx, r6.wwww
                 mul r7.xyz, r7.xyzx, r8.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r6.xyz, r5.wwww, r6.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r7.xyz, r5.wwww, r7.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -13829,16 +13829,16 @@ fxgroup
                 mov r10.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r8.xyz, r2.yzwy, r8.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r1.w
                 mov r11.xyz, -r11.xyzx
                 dp3 r5.w, r11.xyzx, r0.xyzx
@@ -13856,7 +13856,7 @@ fxgroup
                 mul r11.xyz, r4.xyzx, r5.wwww
                 mul r10.xyz, r10.xyzx, r11.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r9.xyz, r3.wwww, r9.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r10.xyz, r3.wwww, r10.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -13880,16 +13880,16 @@ fxgroup
                 mov r10.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r11.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r11.xyz, -r11.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r2.yzw, r2.yyzw, r8.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r11.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r3.w, l(0.000000), r1.w
                 mov r8.xyz, -r11.xyzx
                 dp3 r5.w, r8.xyzx, r0.xyzx
@@ -13907,7 +13907,7 @@ fxgroup
                 mul r4.xyz, r4.xyzx, r4.wwww
                 mul r4.xyz, r10.xyzx, r4.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r3.xyz, r3.wwww, r3.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r4.xyz, r3.wwww, r4.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -14459,13 +14459,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -14494,7 +14494,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -14514,16 +14514,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r6.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.x, l(0.000000), r4.w
                 mov r6.yzw, -r9.xxyz
                 dp3 r7.w, r6.yzwy, r0.xyzx
@@ -14541,7 +14541,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r5.wwww
                 mul r5.xyz, r8.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r6.xxxx, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r6.xxxx, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -14844,13 +14844,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -14879,7 +14879,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -14899,16 +14899,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.yzwy, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.w, l(0.000000), r4.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r7.w, r9.xyzx, r0.xyzx
@@ -14926,7 +14926,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r7.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -14950,16 +14950,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r9.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -14977,7 +14977,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r5.wwww
                 mul r5.xyz, r11.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -15280,13 +15280,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -15315,7 +15315,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -15335,16 +15335,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.yzwy, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.w, l(0.000000), r4.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r7.w, r9.xyzx, r0.xyzx
@@ -15362,7 +15362,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r7.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -15386,16 +15386,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r9.xyz, r3.yzwy, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r12.xyz, -r12.xyzx
                 dp3 r6.w, r12.xyzx, r0.xyzx
@@ -15413,7 +15413,7 @@ fxgroup
                 mul r12.xyz, r5.xyzx, r6.wwww
                 mul r11.xyz, r11.xyzx, r12.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r10.xyz, r4.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r4.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -15437,16 +15437,16 @@ fxgroup
                 mov r11.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r9.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -15464,7 +15464,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r5.wwww
                 mul r5.xyz, r11.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -16028,13 +16028,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -16063,7 +16063,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -16083,16 +16083,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r6.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.x, l(0.000000), r4.w
                 mov r6.yzw, -r9.xxyz
                 dp3 r7.w, r6.yzwy, r0.xyzx
@@ -16110,7 +16110,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r5.wwww
                 mul r5.xyz, r8.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r6.xxxx, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r6.xxxx, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -16419,13 +16419,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -16454,7 +16454,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -16474,16 +16474,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.yzwy, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.w, l(0.000000), r4.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r7.w, r9.xyzx, r0.xyzx
@@ -16501,7 +16501,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r7.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -16525,16 +16525,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r9.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -16552,7 +16552,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r5.wwww
                 mul r5.xyz, r11.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -16861,13 +16861,13 @@ fxgroup
                 nop 
                 mov r3.xyzw, v4.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 233 "LightHelper.fx"
+                #line 234 "LightHelper.fx"
                 div r3.xyz, r3.zxyz, r3.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 236
+                #line 237
                 mov r3.x, r3.x  // depth<0:NaN:Inf>
                 
-                #line 253
+                #line 254
                 add r4.xy, r3.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -16896,7 +16896,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r3.x, r3.yzyy, t1.xxxx, s1, r3.x
                 add r1.w, r1.w, r3.x  // percentLit<0:[0f,9f]>
                 
-                #line 256
+                #line 257
                 div r1.w, r1.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 146 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\Basic.fx"
@@ -16916,16 +16916,16 @@ fxgroup
                 mov r0.xyz, r0.xyzx  // normal<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 mov r1.xyz, r1.xyzx  // toEye<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r9.xyz, -r9.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r6.xyz, r3.yzwy, r6.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r4.w, r9.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r6.w, l(0.000000), r4.w
                 mov r9.xyz, -r9.xyzx
                 dp3 r7.w, r9.xyzx, r0.xyzx
@@ -16943,7 +16943,7 @@ fxgroup
                 mul r9.xyz, r5.xyzx, r7.wwww
                 mul r8.xyz, r8.xyzx, r9.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r7.xyz, r6.wwww, r7.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r8.xyz, r6.wwww, r8.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -16967,16 +16967,16 @@ fxgroup
                 mov r11.xyz, cb0[6].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[7].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r9.xyz, r3.yzwy, r9.xyzx  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r12.xyz, -r12.xyzx
                 dp3 r6.w, r12.xyzx, r0.xyzx
@@ -16994,7 +16994,7 @@ fxgroup
                 mul r12.xyz, r5.xyzx, r6.wwww
                 mul r11.xyz, r11.xyzx, r12.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r10.xyz, r4.wwww, r10.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r11.xyz, r4.wwww, r11.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
@@ -17018,16 +17018,16 @@ fxgroup
                 mov r11.xyz, cb0[10].xyzx  // L<8,9,10>
                 mov r12.xyz, cb0[11].xyzx  // L<12,13,14>
                 
-                #line 70 "LightHelper.fx"
+                #line 71 "LightHelper.fx"
                 mov r12.xyz, -r12.xyzx  // lightVec<0,1,2>
                 
-                #line 73
+                #line 74
                 mul r3.yzw, r3.yyzw, r9.xxyz  // ambient<0:Inf,1:Inf,2:Inf>
                 
-                #line 78
+                #line 79
                 dp3 r1.w, r12.xyzx, r0.xyzx  // diffuseFactor<0:NaN:Inf>
                 
-                #line 82
+                #line 83
                 lt r4.w, l(0.000000), r1.w
                 mov r9.xyz, -r12.xyzx
                 dp3 r6.w, r9.xyzx, r0.xyzx
@@ -17045,7 +17045,7 @@ fxgroup
                 mul r5.xyz, r5.xyzx, r5.wwww
                 mul r5.xyz, r11.xyzx, r5.xyzx  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 82
+                #line 83
                 movc r4.xyz, r4.wwww, r4.xyzx, l(0,0,0,0)  // diffuse<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 movc r5.xyz, r4.wwww, r5.xyzx, l(0,0,0,0)  // spec<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 

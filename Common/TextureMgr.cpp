@@ -8,6 +8,11 @@ TextureMgr::TextureMgr() : md3dDevice(0)
 	instantiated = true;
 }
 
+TextureMgr::TextureMgr(ID3D11Device * device)
+{
+	md3dDevice = device;
+}
+
 TextureMgr::~TextureMgr()
 {
 	for(auto it = mTextureSRV.begin(); it != mTextureSRV.end(); ++it)

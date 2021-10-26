@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>C:\Users\JS\Documents\GitRepository\DX_Portfolio\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Users\JS\Documents\GitRepository\DX_Portfolio\Common;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\JS\Documents\GitRepository\DX_Portfolio;C:\Users\JS\Documents\GitRepository\DX_Portfolio\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;C:\Users\JS\Documents\GitRepository\DX_Portfolio\Common;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;C:\Users\JS\Documents\GitRepository\DX_Portfolio\Common;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -53,8 +53,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -98,11 +97,15 @@
     <ClCompile Include="ComponentMgr.cpp" />
     <ClCompile Include="EffectMgr.cpp" />
     <ClCompile Include="Effects.cpp" />
+    <ClCompile Include="HierarchyDialog.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LoadM3d.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshGeometry.cpp" />
     <ClCompile Include="AssimpLoader.cpp" />
+    <ClCompile Include="MeshMgr.cpp" />
+    <ClCompile Include="MsgProcedure.cpp" />
+    <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
@@ -111,10 +114,12 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Ssao.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicModel.h" />
+    <ClInclude Include="Bones.h" />
     <ClInclude Include="Common\Camera.h" />
     <ClInclude Include="Common\d3dApp.h" />
     <ClInclude Include="Common\d3dUtil.h" />
@@ -130,6 +135,7 @@
     <ClInclude Include="ComponentMgr.h" />
     <ClInclude Include="Constant.h" />
     <ClInclude Include="EffectMgr.h" />
+    <ClInclude Include="HierarchyDialog.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Effects.h" />
@@ -138,14 +144,18 @@
     <ClInclude Include="MeshGeometry.h" />
     <ClInclude Include="BufferResource.h" />
     <ClInclude Include="AssimpLoader.h" />
+    <ClInclude Include="MeshMgr.h" />
+    <ClInclude Include="MsgProcedure.h" />
+    <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderStates.h" />
-    <ClInclude Include="Scene.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="SkinnedData.h" />
     <ClInclude Include="SkinnedModel.h" />
     <ClInclude Include="Sky.h" />
     <ClInclude Include="Ssao.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Mesh.h" />
   </ItemGroup>
@@ -228,6 +238,9 @@
     <Library Include="Common\assimp.lib" />
     <Library Include="Common\Effects11.lib" />
     <Library Include="Common\Effects11d.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Portfolio_Test1.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

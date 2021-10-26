@@ -16,6 +16,7 @@ class TextureMgr
 {
 public:
 	TextureMgr();
+	TextureMgr(ID3D11Device* device);
 	~TextureMgr();
 
 	void Init(ID3D11Device* device);

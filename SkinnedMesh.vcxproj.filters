@@ -28,6 +28,12 @@
     <Filter Include="OldRendering">
       <UniqueIdentifier>{9b3c5169-c648-4311-bb84-be1c17c183d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="New Source Files\Manager">
+      <UniqueIdentifier>{a4d601fa-034d-4030-9698-de45705c9b3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="New Header Files\Manager">
+      <UniqueIdentifier>{01532fb2-bd5d-4321-8572-0fc555e910aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp">
@@ -72,12 +78,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EffectMgr.cpp">
-      <Filter>New Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentMgr.cpp">
-      <Filter>New Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -112,6 +112,27 @@
       <Filter>OldRendering</Filter>
     </ClCompile>
     <ClCompile Include="AssimpLoader.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMgr.cpp">
+      <Filter>New Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectMgr.cpp">
+      <Filter>New Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshMgr.cpp">
+      <Filter>New Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectMgr.cpp">
+      <Filter>New Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgProcedure.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HierarchyDialog.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -203,19 +224,37 @@
     <ClInclude Include="Constant.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EffectMgr.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentMgr.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AssimpLoader.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bones.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgProcedure.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentMgr.h">
+      <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectMgr.h">
+      <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshMgr.h">
+      <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectMgr.h">
+      <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="HierarchyDialog.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -260,5 +299,10 @@
     <Library Include="Common\assimp.lib">
       <Filter>Common</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Portfolio_Test1.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

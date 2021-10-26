@@ -4,7 +4,9 @@
 
 #include "d3dApp.h"
 #include <WindowsX.h>
+#include <Windows.h>
 #include <sstream>
+
 
 namespace
 {
@@ -108,6 +110,7 @@ int D3DApp::Run()
 			}
 			else
 			{
+				MessageBox(mhMainWnd, L"sleep", L"sleep", MB_OK);
 				Sleep(100);
 			}
         }
@@ -208,8 +211,8 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_ACTIVATE:
 		if( LOWORD(wParam) == WA_INACTIVE )
 		{
-			mAppPaused = true;
-			mTimer.Stop();
+			//mAppPaused = true;
+			//mTimer.Stop();
 		}
 		else
 		{
@@ -309,6 +312,7 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_LBUTTONDOWN:
+		
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -320,6 +324,14 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 	case WM_MOUSEMOVE:
 		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		return 0;
+	//메뉴를 눌렀을때 LOWORD(wParam)에 메뉴ID 들어있음.
+	case WM_COMMAND:
+		
+		return 0;
+	//키보드 눌렸을 때
+	case WM_KEYDOWN:
+		
 		return 0;
 	}
 
@@ -338,7 +350,7 @@ bool D3DApp::InitMainWindow()
 	wc.hIcon         = LoadIcon(0, IDI_APPLICATION);
 	wc.hCursor       = LoadCursor(0, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wc.lpszMenuName  = 0;
+	wc.lpszMenuName = MAKEINTRESOURCE(IDR_MENU1);
 	wc.lpszClassName = L"D3DWndClassName";
 
 	if( !RegisterClass(&wc) )

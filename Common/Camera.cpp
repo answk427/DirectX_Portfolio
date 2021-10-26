@@ -113,6 +113,7 @@ float Camera::GetFarWindowHeight()const
 	return mFarWindowHeight;
 }
 
+//투영행렬
 void Camera::SetLens(float fovY, float aspect, float zn, float zf)
 {
 	// cache properties
@@ -128,6 +129,7 @@ void Camera::SetLens(float fovY, float aspect, float zn, float zf)
 	XMStoreFloat4x4(&mProj, P);
 }
 
+//시야행렬
 void Camera::LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp)
 {
 	XMVECTOR L = XMVector3Normalize(XMVectorSubtract(target, pos));
@@ -197,6 +199,7 @@ void Camera::RotateY(float angle)
 	// Rotate the basis vectors about the world y-axis.
 
 	XMMATRIX R = XMMatrixRotationY(angle);
+	//XMMATRIX R = XMMatrixRotationAxis(XMLoadFloat3(&mUp), angle);
 
 	XMStoreFloat3(&mRight,   XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
