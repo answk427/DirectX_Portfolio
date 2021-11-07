@@ -12,6 +12,33 @@
 #include "BufferResource.h"
 #include "Renderer.h"
 
+class NodeStruct
+{
+private:
+	wstring name;
+	XMFLOAT4X4 mat;
+private:
+	friend AssimpLoader;
+	//메쉬구조를 저장할 컨테이너들
+	vector<MyVertex::BasicVertex> vertices;
+	vector<UINT> indices;
+	vector<Subset> subsets;
+	vector<GeneralMaterial> materials;
+public:
+	//현재 노드의 하위노드들
+	vector<NodeStruct> childs;
+public:
+	NodeStruct(const wstring& nodeName, const XMFLOAT4X4 nodeMat) : name(nodeName), mat(nodeMat) {}
+
+public:
+	vector<MyVertex::BasicVertex> GetVertices() { return vertices; }
+	vector<UINT> GetIndices() { return indices; }
+	vector<Subset> GetSubsets() { return subsets; }
+	
+	wstring GetName() { return name; }
+	XMFLOAT4X4 GetMatrix() { return mat; }
+};
+
 
 
 #pragma comment(lib, "assimp.lib")
@@ -25,11 +52,7 @@ private:
 	std::string currentFileName;
 private:
 	const aiScene* m_pScene;
-	//메쉬구조를 저장할 컨테이너들
-	vector<MyVertex::BasicVertex> vertices;
-	vector<UINT> indices; 
-	vector<Subset> subsets;
-	vector<GeneralMaterial> materials;
+	
 		
 private:
 	//Material vector 초기화
@@ -57,10 +80,7 @@ public:
 	//Data 읽기
 	bool LoadData();
 
-public:
-	vector<MyVertex::BasicVertex> GetVertices() { return vertices; }
-	vector<UINT> GetIndices() { return indices; }
-	vector<Subset> GetSubsets() { return subsets; }
+
 	vector<GeneralMaterial> GetMaterials(){ return materials; }
 	bool HasBone() { return false; } //임시로 false만 반환
 	bool IsEmpty() { return m_pScene == nullptr; }

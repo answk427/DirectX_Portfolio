@@ -274,6 +274,74 @@ Simple, Drop Down, Drop List 형태 제공
 */
 
 /* 유용한 함수 정리
+  ㅇ클라이언트 크기를 기준으로 전체 윈도우 '크기' 재계산
+  클라이언트 = 실제 내용 표시되는 부분
+  윈도우 = 전체 창 크기(메뉴 등 다 합쳐서)
+  BOOL WINAPI AdjustWindowRect(
+	LPRECT lpRect,
+	DWORD dwStyle,
+	BOOL bMenu); //bMenu = 메뉴의 크기를 포함할 것인지
 
+   - 클라이언트 크기 (300,300)일 때
+   (0,0,299,299) 설정
+
+   RECT rect = {0,0,299,299};
+   AdjustWindowRect(&rect, WS_VERLAPPEDWINDOW, true); <- CreateWindow의 스타일과 동일해야 함
+   rect.right - rect.left , rect.top - rect.bottom 으로 크기를 구함
+   내부적으로 처리가 되서 +1을 해주지 않아도 됨.
+   ----------------------
+   GetClientRect()
+   - 클라이언트 크기 조차
+   BOOL WINAPI GetClientRect(
+		HWND hwnd, LPRECT lpRect);
+   좌상단 (0,0)에서 시작
+   크기는 rect.right +1, rect.bottom+1
+   --------------------------
+   GetWindowRect()  차이점뭐지?
+   - 전체 윈도우의 크기를 조사
+   
+   BOOL WINAPI GetWindow 
+
+   -------------------------------
+   MoveWindow() => 무브윈도우인데 크기도 바꿀수있음
+   - 윈도우의 위치와 크기 변경
+   BOOL WINAPI MoveWindow(
+		HWND hWnd, int X, int Y,
+		int nWidtdh, int nHeight,
+		BOOL bRePaint);
+	-------------------------------
+   
+   SetROP2()
+   - 현재 출력 화면 + 펜 + 브러쉬
+   - 배경이 있는 화면에서 도형 및 선 출력할 때
+   int SetROP2(HDC hdc, int fnDrawMode);
+   
+   ---------------------------------
+   PtlnRect()
+   - 지정한 위치가 사각형 안에 포함 되었는지를 판별
+   BOOL PtlnRect(
+		const RECT *lprc,
+		POINT Pt
+	);
+
+	포함 : 0이외의 값 리턴
+	미포함 : 0 리턴
+	-------------------
+	InterSectRect()
+	- 두 개의 사각형의 교차를 판별
+	BOOL IntersectRect(LPRECT lprcDst,
+		const RECT *lprcSrc1,
+		const RECT *lprcSrc2);
+
+	전체 화면 해상도 구하기
+	GetSystemMetrics(SM_CXSCREEN)
+	GetSystemMetrics(SM_CYSCREEN)
+*/
+ 
+/*
+	메인 윈도우 외에 일반 윈도우 생성하는 법
+	- WS_POPUP | WS_CAPTION | WS_THICKERFRAME |WS_VISIBLE
+	
 
 */
+

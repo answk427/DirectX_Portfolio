@@ -208,8 +208,15 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	// WM_ACTIVATE is sent when the window is activated or deactivated.  
 	// We pause the game when the window is deactivated and unpause it 
 	// when it becomes active.  
+	
+		
 	case WM_ACTIVATE:
-		if( LOWORD(wParam) == WA_INACTIVE )
+	{
+		int width = GetSystemMetrics(SM_CXSCREEN)*WIDTHRATE;
+		int height = (GetSystemMetrics(SM_CYSCREEN)-30)*HEIGHTRATE; //30은 작업표시줄 크기
+		MoveWindow(mhMainWnd, 0, 0, width, height, true);
+
+		if (LOWORD(wParam) == WA_INACTIVE)
 		{
 			//mAppPaused = true;
 			//mTimer.Stop();
@@ -220,6 +227,7 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			mTimer.Start();
 		}
 		return 0;
+	}
 
 	// WM_SIZE is sent when the user resizes the window.  
 	case WM_SIZE:

@@ -11,6 +11,9 @@
 #ifndef D3DAPP_H
 #define D3DAPP_H
 
+#define WIDTHRATE 0.7
+#define HEIGHTRATE 0.7
+
 #include "d3dUtil.h"
 #include "GameTimer.h"
 #include <string>

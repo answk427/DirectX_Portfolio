@@ -6,7 +6,7 @@ GameObject& ObjectMgr::CreateGameObject(std::wstring name)
 	return gameObjects[gameObjects.size() - 1];
 }
 
-void ObjectMgr::CreateObjectFromFile(std::string fileName)
+GameObject* ObjectMgr::CreateObjectFromFile(std::string fileName)
 {
 	//assimpScene이 같은 파일로 초기화 된 상태인지 확인
 	if (!assimpLoader.EqualFileName(fileName))
@@ -14,7 +14,7 @@ void ObjectMgr::CreateObjectFromFile(std::string fileName)
 		assimpLoader.InitScene(fileName);
 		if (!assimpLoader.LoadData())
 		{
-			return;
+			return nullptr;
 		}
 			
 	}
@@ -29,7 +29,7 @@ void ObjectMgr::CreateObjectFromFile(std::string fileName)
 	USES_CONVERSION;
 	GameObject& obj = CreateGameObject(A2W(name.c_str()));
 
-	
+	//뼈가 없는 구조
 	if (!assimpLoader.HasBone())
 	{
 		MeshRenderer* comp = (MeshRenderer*)componentMgr.CreateComponent(ComponentType::MESHRENDERER);
@@ -57,4 +57,6 @@ void ObjectMgr::CreateObjectFromFile(std::string fileName)
 		comp->SetTransform(&obj.transform);
 		obj.AddComponent(comp);
 	}
+	
+	return &obj;
 }

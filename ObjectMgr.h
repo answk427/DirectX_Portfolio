@@ -27,5 +27,5 @@ public:
 
 public:
 	GameObject& CreateGameObject(std::wstring name);
-	void CreateObjectFromFile(std::string fileName);
+	GameObject* CreateObjectFromFile(std::string fileName);
 };

@@ -73,7 +73,7 @@ bool MsgProcedure::FileSaveDialog(HWND hwnd, WCHAR filePath[])
 	ofn.nMaxFileTitle = MAX_PATH;
 
 	//실제 저장하는 코드는 만들어줘야 함.
-	//GetSaveFileName을 통해 경로, 파일명 얻어올 수 있음.
+	//GetSaveFileName을 통해 경로,  파일명 얻어올 수 있음.
 	if (GetSaveFileName(&ofn) != 0)
 	{
 		switch (ofn.nFilterIndex)

@@ -242,6 +242,16 @@
   <ItemGroup>
     <ResourceCompile Include="Portfolio_Test1.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\desktop\bitmap1.bmp" />
+    <Image Include="..\..\..\desktop\bitmap2.bmp" />
+    <Image Include="..\..\..\desktop\bitmap4.bmp" />
+    <Image Include="..\..\..\Desktop\box.bmp" />
+    <Image Include="..\..\..\Desktop\box.PNG" />
+    <Image Include="..\..\..\Desktop\box16.bmp" />
+    <Image Include="bitmap1.bmp" />
+    <Image Include="bitmap2.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

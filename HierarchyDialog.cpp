@@ -2,28 +2,49 @@
 
 HierarchyDialog* g_HierarchyDialog = 0;
 
+
 bool HierarchyDialog::instantiated = false;
+
 
 bool HierarchyDialog::OpenDialog()
 {
-	if (DialogBox(m_hInstance, MAKEINTRESOURCE(IDD_DIALOG1), 0, DlgProc))
+	if(!IsWindow(m_hDlg))
+	{
+		m_hDlg = CreateDialog(0, MAKEINTRESOURCE(IDD_DIALOG1), 0, DlgProc);
+
+		ShowWindow(m_hDlg, SW_SHOW);
 		return true;
-	//CreateDialog(m_hInstance, MAKEINTRESOURCE(IDD_DIALOG1), 0, DlgProc);
+	}
 
 	return false;
 }
 bool HierarchyDialog::OpenDialog(HWND hwnd)
 {
-	//DialogBox(m_hInstance, MAKEINTRESOURCE(IDD_DIALOG1), hwnd, DlgProc);
-	if (!IsWindow(hDlg))
+	hWnd = hwnd;
+	if (!IsWindow(m_hDlg))
 	{
-		hDlg = CreateDialog(m_hInstance, MAKEINTRESOURCE(IDD_DIALOG1), 0, DlgProc);
-		ShowWindow(hDlg, SW_SHOW);
+		m_hDlg = CreateDialog(m_hInstance, MAKEINTRESOURCE(IDD_DIALOG1), 0, DlgProc);
+		
+		ShowWindow(m_hDlg, SW_SHOW);
 		return true;
 	}
 	
 	return false;
 }
+
+void HierarchyDialog::Init(HWND hWnd_main)
+{
+	hWnd = hWnd_main;
+	
+	InitCommonControls();
+}
+
+void HierarchyDialog::treeInit(HWND hDlg)
+{
+	m_hwndTV = GetDlgItem(hDlg, IDC_TREE1);
+	TreeImageSet();
+}
+
 HierarchyDialog::HierarchyDialog(HINSTANCE hInstance) : MsgProcedure(hInstance) 
 {
 	assert(!instantiated);
@@ -34,16 +55,21 @@ INT_PTR CALLBACK HierarchyDialog::DlgProc(HWND hDlg, UINT message, WPARAM wParam
 {
 	UNREFERENCED_PARAMETER(lParam);
 	switch (message)
-	{
+	{	
 	case WM_CLOSE:
 		EndDialog(hDlg, 0);
 		return (INT_PTR)TRUE;
 	case WM_INITDIALOG:
 	{
+		g_HierarchyDialog->testFunc();
+
+		
 		//콤보박스에 항목 추가
 		HWND comboBox1 = GetDlgItem(hDlg, IDC_COMBO1);
 		HWND listBox1 = GetDlgItem(hDlg, IDC_LIST1);
-		WCHAR* strMenu[] = { L"hi", L"hello", L"bonjour" };
+		//tree control의 핸들을 얻어와서 멤버변수에 저장
+		g_HierarchyDialog->treeInit(hDlg);
+		WCHAR* strMenu[] = { L"hi", TEXT("hello"), L"bonjour" };
 		for (int i = 0; i < 3; i++)
 		{
 			//콤보박스에 추가하는 매크로 함수
@@ -86,6 +112,12 @@ INT_PTR CALLBACK HierarchyDialog::DlgProc(HWND hDlg, UINT message, WPARAM wParam
 		return (INT_PTR)TRUE;
 	case WM_NOTIFY: //리스트 컨트롤 클릭했을 때 발생
 		g_HierarchyDialog->NotifyProc(lParam);
+	case WM_MOVE: //
+	{
+		g_HierarchyDialog->testFunc();
+		return (INT_PTR)TRUE;
+	}
+
 	}
 	return (INT_PTR)FALSE;
 }
@@ -127,6 +159,9 @@ void HierarchyDialog::MenuProc(HWND hDlg,WPARAM wParam)
 		ListView_SetItemText(hLV, lvItem.iItem, 2, L"2에 test Sub Item");
 		ListView_SetItemText(hLV, lvItem.iItem, 3, L"3에 test Sub Item");
 		MessageBox(hDlg, L"IDC_BUTTON1", L"dialog button", MB_OK);
+
+		TreeViewInsertItem(L"gonf");
+		
 		break;
 	}
 		
@@ -245,9 +280,106 @@ void HierarchyDialog::NotifyProc(LPARAM lParam)
 	switch (((LPNMHDR)lParam)->code)
 	{
 		case NM_CLICK :
-			MessageBox(hDlg, L"NotifProc!", L"test", MB_OK);
+			int n = TreeView_GetCount(m_hwndTV);
+			TCHAR str[100];
+			wsprintf(str, TEXT("tree count : %d"), n);
+			//MessageBox(m_hDlg, str, L"test", MB_OK);
+			
 			return;
 	}
+}
+
+void HierarchyDialog::testFunc()
+{
+	RECT mainWndRect;
+	GetWindowRect(hWnd, &mainWndRect);
+
+	MoveWindow(m_hDlg, mainWndRect.right,
+		mainWndRect.top,
+		(mainWndRect.right - mainWndRect.left) / 2,
+		(mainWndRect.bottom - mainWndRect.top), true);
+}
+
+HTREEITEM HierarchyDialog::TreeViewInsertItem(LPWSTR itemName, HTREEITEM parent)
+{
+	TVITEM tvi;
+	TVINSERTSTRUCT tvins;
+		
+
+	//TVI_FIRST, TVI_LAST, TVI_ROOT, TVI_SORT 삽입위치
+	tvi.mask = TVIF_TEXT | TVIF_IMAGE
+		| TVIF_SELECTEDIMAGE | TVIF_PARAM;
+	
+	//text 설정
+	tvi.pszText = itemName;
+	tvi.cchTextMax = wcslen(tvi.pszText)+1;
+	
+	
+	//image 설정
+	tvi.iImage = m_Closed;
+	tvi.iSelectedImage = m_nOpen;
+	
+	tvi.lParam = 1;
+	tvins.hParent = parent;
+	tvins.item = tvi;
+	tvins.hInsertAfter = TVI_FIRST;
+	
+	
+	return TreeView_InsertItem(m_hwndTV, &tvins);
+}
+
+void HierarchyDialog::TreeInsertObject(Object* obj, HTREEITEM parent)
+{
+	//LPWSTR itemName = L"";
+	TCHAR itemName[100];
+	
+	if (obj->parent == nullptr)
+	{
+		//root 아이템 삽입
+		wsprintf(itemName, TEXT("%s"), obj->name.c_str());
+		
+		parent = TreeViewInsertItem(itemName);
+	}
+
+	//자식오브젝트 삽입
+	for (Object* child : obj->childs)
+	{
+		wsprintf(itemName, TEXT("%s"), child->name.c_str());
+		HTREEITEM newParent = TreeViewInsertItem(itemName, parent);
+		TreeInsertObject(child, newParent);
+	}
+
+	return;
+}
+
+bool HierarchyDialog::TreeImageSet()
+{
+	HIMAGELIST imageList;
+	HBITMAP hbmp;
+
+	//cInitial = 이미지 개수, cGrow = 최대 이미지 수(capacity)?
+	if ((imageList =
+		ImageList_Create(16, 16,
+			ILC_COLOR24, 2, 10)) == NULL)
+		return false;
+
+	//열린 상자 이미지
+	hbmp = LoadBitmap(m_hInstance, MAKEINTRESOURCE(IDB_BITMAP2));
+	m_nOpen = ImageList_Add(imageList, hbmp, (HBITMAP)NULL);
+	DeleteObject(hbmp);
+
+	//닫힌 상자 이미지
+	hbmp = LoadBitmap(m_hInstance, MAKEINTRESOURCE(IDB_BITMAP2));
+	m_Closed = ImageList_Add(imageList, hbmp, (HBITMAP)NULL);
+	DeleteObject(hbmp);
+
+	//이미지 추가 실패한 것이 있으면
+	if (ImageList_GetImageCount(imageList) < 2)
+		return false;
+
+	TreeView_SetImageList(m_hwndTV, imageList, TVSIL_NORMAL);
+	
+	return true;
 }
 
 

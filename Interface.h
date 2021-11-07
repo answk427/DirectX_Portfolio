@@ -22,10 +22,9 @@ public:
 
 class Object
 {
-private:
+public:
 	Object* parent;
 	std::vector<Object*> childs;
-public:
 	std::wstring name;
 public:
 	Object(const std::wstring& name) : name(name), parent(0) {}

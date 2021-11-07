@@ -4,34 +4,59 @@
 #include <resource.h>
 #include <cassert>
 #include "MsgProcedure.h"
+#include "GameObject.h"
+
+#pragma comment(lib,"comctl32.lib")
+
 
 class HierarchyDialog : public MsgProcedure
 {
 public:	
 	static bool instantiated;
-	HWND hDlg;
+
+	int m_nOpen; //오픈이미지 인덱스
+	int m_Closed; //클로즈이미지 인덱스
+
+	HWND m_hDlg; //dialog
+	HWND m_hwndTV; //tree view
+	HWND hWnd; //main window
+	
+	
 	HierarchyDialog(HINSTANCE hInstance);
 	
 	static INT_PTR CALLBACK DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
-
+	
 	// MsgProcedure을(를) 통해 상속됨
 	virtual bool OpenDialog() override;
 	bool OpenDialog(HWND hwnd);
+	void Init(HWND hWnd_main);
+	void treeInit(HWND hDlg);
+	
 
 public:
+	//TreeView 함수
+	HTREEITEM TreeViewInsertItem(LPWSTR itemName, HTREEITEM parent = TVI_ROOT);
+	void TreeInsertObject(Object* obj, HTREEITEM parent = TVI_ROOT);
+
 	//메뉴눌렸을때 WM_COMMAND 
 	virtual void MenuProc(HWND hDlg, WPARAM wParam) override;
 	
-
 	virtual void KeyDownProc(WPARAM wParam) override;
 	
 	virtual void MouseMoveProc(WPARAM btnState, LPARAM mousePos) override;
 		   
 	virtual void CharProc(HWND hDlg, WPARAM wParam) override;
 
-	void NotifyProc(LPARAM lParam);
 	
 
+	bool TreeImageSet();
+
+	void NotifyProc(LPARAM lParam);
+	
+	void testFunc();
+	
+
+	
 };
 
 /*Dialog
@@ -40,9 +65,11 @@ public:
 1. 모달형 다이얼로그
 - 다이얼로그가 최우선 순위 ex)메시지박스
 - 모달형 다이얼로그가 제어권을 독점함.(다른 창 선택 불가)
+- DialogBox()로 생성 EndDialog()로 해제
 
 2. 모델리스형 다이얼로그
-
+- CreateDialog()로 생성
+- DestroyWindow()로 해제
 
 
 ㅇ 다이얼로그 생성함수

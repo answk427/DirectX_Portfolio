@@ -152,9 +152,14 @@ bool Scene::Init()
 	texMgr.Init(md3dDevice);
 	effectMgr.Init(md3dDevice);
 
-	objectMgr.CreateObjectFromFile("C:/Users/JS/Documents/GitRepository/DX_Portfolio/Models/18042_GonF.fbx");
+
+	m_HierarchyDialog.Init(mhMainWnd);
+	m_HierarchyDialog.OpenDialog();
+
+	GameObject* gameObj = objectMgr.CreateObjectFromFile("C:/Users/JS/Documents/GitRepository/DX_Portfolio/Models/18042_GonF.fbx");
+	m_HierarchyDialog.TreeInsertObject(gameObj);
+		
 	
-	m_HierarchyDialog.OpenDialog(mhMainWnd);
 	SetFocus(mhMainWnd);
 
 	return true;
