@@ -16,7 +16,7 @@ public:
 	MeshMgr() {}
 	~MeshMgr() {}
 public:
-	Mesh* CreateMeshFromFile(const std::string fileName, AssimpLoader& loader);
+	Mesh* CreateMeshFromFile(const std::string fileName, AssimpMesh& loader);
 	void Init(ID3D11Device* device) { this->device = device; }
 	
 	

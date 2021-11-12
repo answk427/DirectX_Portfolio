@@ -132,6 +132,9 @@
     <ClCompile Include="MsgProcedure.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DialogPractice.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="HierarchyDialog.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
@@ -253,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="EffectMgr.h">
       <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogPractice.h">
+      <Filter>New Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HierarchyDialog.h">
       <Filter>New Header Files</Filter>

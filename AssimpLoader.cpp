@@ -39,35 +39,38 @@ void AssimpLoader::InitScene(const string& fileName)
 	if (m_pScene) //경로의 파일을 정상적으로 로드했을 때
 	{
 		currentFileName = fileName;
-		//멤버 컨테니어 초기화
-		InitContainer();
+		if (root != nullptr)
+		{
+			delete root;
+			root = nullptr;
+		}
 	}
 	
 	
 	
 }
 
-void AssimpLoader::InitContainer()
-{
-	//전부 비우는 작업
-	vector<MyVertex::BasicVertex>().swap(vertices);
-	vector<UINT>().swap(indices);
-	vector<Subset>().swap(subsets);
-	vector<GeneralMaterial>().swap(materials);
-}
+//void AssimpLoader::InitContainer()
+//{
+//	//전부 비우는 작업
+//	vector<MyVertex::BasicVertex>().swap(vertices);
+//	vector<UINT>().swap(indices);
+//	vector<Subset>().swap(subsets);
+//	vector<GeneralMaterial>().swap(materials);
+//}
 
 bool AssimpLoader::LoadData()
 {
 	if (m_pScene == NULL)
 		return false;
 
-	NodeTravel(m_pScene->mRootNode);
+	NodeTravel();
 
 	return true;
 }
 
 
-void AssimpLoader::SetMaterial(int matNumOfMesh)
+GeneralMaterial AssimpLoader::SetMaterial(int matNumOfMesh)
 {
 
 	aiMaterial* aiMat = m_pScene->mMaterials[matNumOfMesh];
@@ -115,51 +118,85 @@ void AssimpLoader::SetMaterial(int matNumOfMesh)
 	aiMat->GetTexture(aiTextureType_NORMALS, 0, &fileName);
 	tempMaterial.normalMapName = A2W(fileName.C_Str());
 
-	materials.push_back(tempMaterial);
+	return tempMaterial;
 }
 
 
-
-void AssimpLoader::NodeTravel(aiNode * node)
+void AssimpLoader::NodeTravel()
 {
+	USES_CONVERSION;
+	aiNode* node = m_pScene->mRootNode;
+	
+	//변환행렬 적재
+	root = new NodeStruct(wstring(A2W(node->mName.C_Str()))
+		, ConvertMatrix(node->mTransformation));
+	
 	//해당 노드의 매쉬를 적재
 	for (int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = m_pScene->mMeshes[node->mMeshes[i]];
-		SetMesh(mesh);
+		if (root->assimpMesh == nullptr)
+			root->assimpMesh = new AssimpMesh();
+		SetMesh(*(root->assimpMesh),mesh);
+	}
+	
+	//모든 자식노드를 순회
+	for (int i = 0; i < node->mNumChildren; i++)
+		NodeTravel(*root, node->mChildren[i]);
+	
+}
+
+void AssimpLoader::NodeTravel(NodeStruct& parent ,aiNode * node)
+{
+	USES_CONVERSION;
+	
+	
+	parent.childs.push_back(NodeStruct(wstring(A2W(node->mName.C_Str())),
+		ConvertMatrix(node->mTransformation)));
+	NodeStruct& current = parent.childs.back();
+	
+	//해당 노드의 매쉬를 적재
+	for (int i = 0; i < node->mNumMeshes; i++)
+	{
+		aiMesh* mesh = m_pScene->mMeshes[node->mMeshes[i]];
+		if (current.assimpMesh == nullptr)
+			current.assimpMesh = new AssimpMesh();
+		SetMesh(*(current.assimpMesh),mesh);
 	}
 
 	//모든 자식노드를 순회
 	for (int i = 0; i < node->mNumChildren; i++)
-		NodeTravel(node->mChildren[i]);
+		NodeTravel(current,node->mChildren[i]);
 
 	return;
 }
 
-void AssimpLoader::SetMesh(aiMesh * mesh)
+void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 {
+	
 	Subset tempSubset;
 	//material인덱스 
 	tempSubset.materialNum = mesh->mMaterialIndex;
 	//현재 vertex, index 갯수가 이 다음 subset의 시작점
-	tempSubset.VertexStart = vertexCount;
-	tempSubset.IndexStart = indexCount;
+	tempSubset.VertexStart = assimpMesh.vertexCount;
+	tempSubset.IndexStart = assimpMesh.indexCount;
 
 	//총 정점의 갯수를 구함
-	vertexCount += mesh->mNumVertices;
-	vertices.reserve(vertexCount + 10);
+	assimpMesh.vertexCount += mesh->mNumVertices;
+	assimpMesh.vertices.reserve(assimpMesh.vertexCount + 10);
 
 	//index의 총 갯수
-	indexCount += mesh->mNumFaces * 3;
-	indices.reserve(indexCount + 10);
+	assimpMesh.indexCount += mesh->mNumFaces * 3;
+	assimpMesh.indices.reserve(assimpMesh.indexCount + 10);
 
 	tempSubset.VertexCount = mesh->mNumVertices;
 	tempSubset.IndexCount = mesh->mNumFaces * 3;
 
-	subsets.push_back(tempSubset);
+	assimpMesh.subsets.push_back(tempSubset);
 
 	//Material 데이터 적재
-	SetMaterial(mesh->mMaterialIndex);
+	assimpMesh.materials.push_back(SetMaterial(mesh->mMaterialIndex));
+	
 
 	//정점 구조체 데이터
 	for (int i = 0; i < mesh->mNumVertices; i++)
@@ -196,7 +233,7 @@ void AssimpLoader::SetMesh(aiMesh * mesh)
 			tempVertex.tan = XMFLOAT3(tangent.x, tangent.y, tangent.z);
 			tempVertex.biTan = XMFLOAT3(biTangent.x, biTangent.y, biTangent.z);
 		}
-		vertices.push_back(tempVertex);
+		assimpMesh.vertices.push_back(tempVertex);
 	}
 
 
@@ -207,9 +244,9 @@ void AssimpLoader::SetMesh(aiMesh * mesh)
 		for (int i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace& face = mesh->mFaces[i];
-			indices.push_back(face.mIndices[0]);
-			indices.push_back(face.mIndices[1]);
-			indices.push_back(face.mIndices[2]);
+			assimpMesh.indices.push_back(face.mIndices[0]);
+			assimpMesh.indices.push_back(face.mIndices[1]);
+			assimpMesh.indices.push_back(face.mIndices[2]);
 		}
 	}
 
@@ -223,4 +260,12 @@ void AssimpLoader::SetMesh(aiMesh * mesh)
 
 	}
 
+}
+
+inline XMFLOAT4X4 AssimpLoader::ConvertMatrix(aiMatrix4x4 & mat)
+{
+	return XMFLOAT4X4(mat.a1,mat.a2,mat.a3,mat.a4,
+		mat.b1,mat.b2,mat.b3,mat.b4,
+		mat.c1,mat.c2,mat.c3,mat.c4,
+		mat.d1,mat.d2,mat.d3,mat.d4);
 }

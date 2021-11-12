@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 
+typedef std::string gameObjectID;
 
 //오브젝트에 추가될 컴포넌트의 인터페이스
 class Component
@@ -22,17 +23,23 @@ public:
 
 class Object
 {
+private:
+	gameObjectID id;
+	std::wstring name;
 public:
 	Object* parent;
 	std::vector<Object*> childs;
-	std::wstring name;
+	
 public:
-	Object(const std::wstring& name) : name(name), parent(0) {}
-	//자식 오브젝트로 생성할 때 사용
-	Object(const std::wstring& name, Object* parent) : name(name), parent(parent)
-	{
-		parent->childs.push_back(this);
-	}
+	Object() :id(""), name(L"") {}
+	Object(const gameObjectID& id) : id(id), name(L"Object"), parent(0) {}
+	Object(const gameObjectID& id, const std::wstring& name) : id(id), name(name), parent(0) {}
+	
 	virtual ~Object() {}
 
+public:
+	std::wstring GetName() { return name; }
+	void SetName(std::wstring& name) { this->name = name; }
+	void SetParent(Object* parent) { this->parent = parent; }
+	void SetChild(Object* child) { childs.push_back(child); }
 };

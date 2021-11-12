@@ -31,6 +31,7 @@ class Scene : public D3DApp
 //Dialog
 public:
 	HierarchyDialog m_HierarchyDialog;
+	
 public:
 	Scene(HINSTANCE hInstance);
 	~Scene();
@@ -158,6 +159,7 @@ bool Scene::Init()
 
 	GameObject* gameObj = objectMgr.CreateObjectFromFile("C:/Users/JS/Documents/GitRepository/DX_Portfolio/Models/18042_GonF.fbx");
 	m_HierarchyDialog.TreeInsertObject(gameObj);
+	
 		
 	
 	SetFocus(mhMainWnd);
@@ -243,8 +245,9 @@ void Scene::OnMouseMove(WPARAM btnState, int x, int y)
 
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
-
 }
+
+
 
 
 

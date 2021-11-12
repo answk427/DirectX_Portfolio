@@ -97,8 +97,9 @@
     <ClCompile Include="ComponentMgr.cpp" />
     <ClCompile Include="EffectMgr.cpp" />
     <ClCompile Include="Effects.cpp" />
-    <ClCompile Include="HierarchyDialog.cpp" />
+    <ClCompile Include="DialogPractice.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HierarchyDialog.cpp" />
     <ClCompile Include="LoadM3d.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshGeometry.cpp" />
@@ -135,8 +136,9 @@
     <ClInclude Include="ComponentMgr.h" />
     <ClInclude Include="Constant.h" />
     <ClInclude Include="EffectMgr.h" />
-    <ClInclude Include="HierarchyDialog.h" />
+    <ClInclude Include="DialogPractice.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="HierarchyDialog.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="LoadM3d.h" />

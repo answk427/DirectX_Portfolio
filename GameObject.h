@@ -12,11 +12,12 @@ bool getComponentCompare(const Component* comp, const type_info& compType);
 
 class GameObject : public Object
 {
+
 public:
-	GameObject(const std::wstring& name) : Object(name) {}
-	//parent의 자식 오브젝트로 생성
-	GameObject(const std::wstring& name, Object* parent) : Object(name, parent) {}
-	
+	GameObject() : Object() {}
+	GameObject(const gameObjectID& id) : Object(id) {}
+	GameObject(const gameObjectID& id, const std::wstring& name) : Object(id, name) {}
+			
 	Transform transform;
 
 public:
