@@ -94,6 +94,7 @@
     <ClCompile Include="Common\TextureMgr.cpp" />
     <ClCompile Include="Common\Waves.cpp" />
     <ClCompile Include="Common\xnacollision.cpp" />
+    <ClCompile Include="ComponentDialog.cpp" />
     <ClCompile Include="ComponentMgr.cpp" />
     <ClCompile Include="EffectMgr.cpp" />
     <ClCompile Include="Effects.cpp" />
@@ -133,8 +134,11 @@
     <ClInclude Include="Common\TextureMgr.h" />
     <ClInclude Include="Common\Waves.h" />
     <ClInclude Include="Common\xnacollision.h" />
+    <ClInclude Include="ComponentDialog.h" />
     <ClInclude Include="ComponentMgr.h" />
     <ClInclude Include="Constant.h" />
+    <ClInclude Include="DialogSizeDefine.h" />
+    <ClInclude Include="DialogStructureEX.h" />
     <ClInclude Include="EffectMgr.h" />
     <ClInclude Include="DialogPractice.h" />
     <ClInclude Include="GameObject.h" />
@@ -189,6 +193,7 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">fxc compile for release: %(FullPath)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">fxc /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
     </CustomBuild>
+    <None Include="..\..\..\desktop\ribbon1.mfcribbon-ms" />
     <None Include="FX\LightHelper.fx" />
     <CustomBuild Include="FX\NormalMap.fx">
       <FileType>Document</FileType>

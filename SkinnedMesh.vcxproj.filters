@@ -34,6 +34,12 @@
     <Filter Include="New Header Files\Manager">
       <UniqueIdentifier>{01532fb2-bd5d-4321-8572-0fc555e910aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="New Header Files\EngineDialog">
+      <UniqueIdentifier>{fd38960f-3349-4cae-8879-734d67d0554e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="New Source Files\EngineDialog">
+      <UniqueIdentifier>{6f7e9c6a-8776-4df8-951c-1cbebac123c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp">
@@ -133,10 +139,13 @@
       <Filter>New Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DialogPractice.cpp">
-      <Filter>New Source Files</Filter>
+      <Filter>New Source Files\EngineDialog</Filter>
     </ClCompile>
     <ClCompile Include="HierarchyDialog.cpp">
-      <Filter>New Source Files</Filter>
+      <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentDialog.cpp">
+      <Filter>New Source Files\EngineDialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -257,16 +266,28 @@
     <ClInclude Include="EffectMgr.h">
       <Filter>New Header Files\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="DialogPractice.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HierarchyDialog.h">
-      <Filter>New Header Files</Filter>
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogPractice.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentDialog.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogStructureEX.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogSizeDefine.h">
+      <Filter>New Header Files\EngineDialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FX\LightHelper.fx">
       <Filter>FX</Filter>
+    </None>
+    <None Include="..\..\..\desktop\ribbon1.mfcribbon-ms">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

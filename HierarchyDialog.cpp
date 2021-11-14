@@ -139,10 +139,20 @@ void HierarchyDialog::WindowSizing(HWND hDlg)
 	RECT mainWndRect;
 	GetWindowRect(hWnd, &mainWndRect);
 
-	MoveWindow(hDlg, mainWndRect.right-20,
+	//dialog 위치, 크기 조정
+	MoveWindow(hDlg, width * MAINWINDOWWIDTHRATE,
 		mainWndRect.top,
-		width - (mainWndRect.right - mainWndRect.left),
-		(mainWndRect.bottom - mainWndRect.top), true);
+		width * HIERARCHYWIDTHRATE,
+		height * HIERARCHYHEIGHTRATE, true);
+
+	//tree control 위치, 크기 조정
+	RECT dlgWndRect;
+	GetWindowRect(hDlg, &dlgWndRect);
+	HWND hwndTV = GetDlgItem(hDlg, IDC_TREE2);
+	MoveWindow(hwndTV, 0,
+		0,
+		dlgWndRect.right - dlgWndRect.left,
+		dlgWndRect.bottom - dlgWndRect.top, true);
 }
 
 HTREEITEM HierarchyDialog::TreeViewInsertItem(Object* item, HTREEITEM parent)

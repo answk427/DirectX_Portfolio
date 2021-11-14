@@ -25,12 +25,14 @@
 #include "ObjectMgr.h"
 #include "MeshMgr.h"
 #include "HierarchyDialog.h"
+#include "ComponentDialog.h"
 
 class Scene : public D3DApp
 {
 //Dialog
 public:
 	HierarchyDialog m_HierarchyDialog;
+	ComponentDialog m_ComponentDialog;
 	
 public:
 	Scene(HINSTANCE hInstance);
@@ -88,7 +90,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 Scene::Scene(HINSTANCE hInstance)
 	: D3DApp(hInstance), objectMgr(meshMgr, componentMgr, effectMgr, texMgr),
 	mTheta(1.3f*MathHelper::Pi),
-	mPhi(0.4f*MathHelper::Pi), mRadius(2.5f), m_HierarchyDialog(hInstance)
+	mPhi(0.4f*MathHelper::Pi), mRadius(2.5f), 
+	m_HierarchyDialog(hInstance), m_ComponentDialog(hInstance)
 {
 	
 	mMainWndCaption = L"Crate Demo";
@@ -153,12 +156,15 @@ bool Scene::Init()
 	texMgr.Init(md3dDevice);
 	effectMgr.Init(md3dDevice);
 
-
+	//Hierarchy 초기화
 	m_HierarchyDialog.Init(mhMainWnd);
 	m_HierarchyDialog.OpenDialog();
-
 	GameObject* gameObj = objectMgr.CreateObjectFromFile("C:/Users/JS/Documents/GitRepository/DX_Portfolio/Models/18042_GonF.fbx");
 	m_HierarchyDialog.TreeInsertObject(gameObj);
+	
+	//ComponentDialog 초기화
+	m_ComponentDialog.Init(mhMainWnd);
+	m_ComponentDialog.OpenDialog();
 	
 		
 	
@@ -177,6 +183,7 @@ void Scene::OnResize()
 
 void Scene::UpdateScene(float dt)
 {
+	
 	//
 	// Control the camera.
 	//

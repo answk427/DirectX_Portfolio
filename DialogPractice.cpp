@@ -66,7 +66,7 @@ INT_PTR CALLBACK DialogPractice::DlgProc(HWND hDlg, UINT message, WPARAM wParam,
 		
 		//콤보박스에 항목 추가
 		HWND comboBox1 = GetDlgItem(hDlg, IDC_COMBO1);
-		HWND listBox1 = GetDlgItem(hDlg, IDC_LIST1);
+		HWND listBox1 = GetDlgItem(hDlg, IDC_LIST2);
 		//tree control의 핸들을 얻어와서 멤버변수에 저장
 		g_HierarchyDialog->treeInit(hDlg);
 		WCHAR* strMenu[] = { L"hi", TEXT("hello"), L"bonjour" };

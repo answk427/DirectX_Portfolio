@@ -212,8 +212,8 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 	case WM_ACTIVATE:
 	{
-		int width = GetSystemMetrics(SM_CXSCREEN)*WIDTHRATE;
-		int height = (GetSystemMetrics(SM_CYSCREEN)-30)*HEIGHTRATE; //30은 작업표시줄 크기
+		int width = GetSystemMetrics(SM_CXSCREEN)*MAINWINDOWWIDTHRATE;
+		int height = (GetSystemMetrics(SM_CYSCREEN)-30)*MAINWINDOWHEIGHTRATE; //30은 작업표시줄 크기
 		MoveWindow(mhMainWnd, 0, 0, width, height, true);
 
 		if (LOWORD(wParam) == WA_INACTIVE)

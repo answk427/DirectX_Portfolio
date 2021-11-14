@@ -5,6 +5,7 @@
 #include <cassert>
 #include "MsgProcedure.h"
 #include "GameObject.h"
+#include "DialogSizeDefine.h"
 
 #pragma comment(lib,"comctl32.lib")
 
