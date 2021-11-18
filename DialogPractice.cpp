@@ -1,5 +1,6 @@
 #include "DialogPractice.h"
 
+
 DialogPractice* g_HierarchyDialog = 0;
 
 

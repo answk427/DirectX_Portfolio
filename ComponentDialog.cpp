@@ -37,7 +37,7 @@ INT_PTR CALLBACK ChildProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 	case WM_INITDIALOG:
 	{
 		OnChildDialogInit(hDlg);
-		//g_ComponentDialog->OnTabbedDialogInit(hDlg);
+		
 
 		return (INT_PTR)TRUE;
 	}
@@ -102,7 +102,7 @@ void ComponentDialog::Init(HWND hWnd_main)
 	InitCommonControls();
 }
 
-ComponentDialog::ComponentDialog(HINSTANCE hInstance) : MsgProcedure(hInstance)
+ComponentDialog::ComponentDialog(HINSTANCE hInstance) : MsgProcedure(hInstance), m_pHdr(0)
 {
 	assert(!instantiated);
 	instantiated = true;
@@ -115,6 +115,8 @@ INT_PTR CALLBACK ComponentDialog::DlgProc(HWND hDlg, UINT message, WPARAM wParam
 	switch (message)
 	{
 	case WM_CLOSE:
+		if (g_ComponentDialog->m_pHdr != nullptr)
+			LocalFree(g_ComponentDialog->m_pHdr);
 		EndDialog(hDlg, 0);
 		return (INT_PTR)TRUE;
 	case WM_INITDIALOG:
@@ -244,23 +246,23 @@ HRESULT ComponentDialog::OnTabbedDialogInit(HWND hwndDlg)
 
 	// Allocate memory for the DLGHDR structure. Remember to 
 	// free this memory before the dialog box is destroyed.
-	DLGHDR *pHdr = (DLGHDR *)LocalAlloc(LPTR, sizeof(DLGHDR));
+	m_pHdr = (DLGHDR *)LocalAlloc(LPTR, sizeof(DLGHDR));
 	
 	// Save a pointer to the DLGHDR structure in the window
 	// data of the dialog box. 
-	SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)pHdr);
+	SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)m_pHdr);
 
 	// Create the tab control. Note that m_hInstance is a global 
 	// instance handle. 
-	/*pHdr->hwndTab = CreateWindow(
+	/*m_pHdr->hwndTab = CreateWindow(
 		WC_TABCONTROL, L"",
 		WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE,
 		0, 0, 100, 100,
 		hwndDlg, NULL, m_hInstance, NULL
 	);*/
-	pHdr->hwndTab = GetDlgItem(hwndDlg, TABCONTROLID);
+	m_pHdr->hwndTab = GetDlgItem(hwndDlg, TABCONTROLID);
 
-	if (pHdr->hwndTab == NULL)
+	if (m_pHdr->hwndTab == NULL)
 	{
 		return HRESULT_FROM_WIN32(GetLastError());
 	}
@@ -269,26 +271,26 @@ HRESULT ComponentDialog::OnTabbedDialogInit(HWND hwndDlg)
 	tie.mask = TCIF_TEXT | TCIF_IMAGE;
 	tie.iImage = -1;
 	tie.pszText = L"Transform";
-	TabCtrl_InsertItem(pHdr->hwndTab, 0, &tie);
+	TabCtrl_InsertItem(m_pHdr->hwndTab, 0, &tie);
 	tie.pszText = L"MeshRenderer";
-	TabCtrl_InsertItem(pHdr->hwndTab, 1, &tie);
+	TabCtrl_InsertItem(m_pHdr->hwndTab, 1, &tie);
 	tie.pszText = L"Terrain";
-	TabCtrl_InsertItem(pHdr->hwndTab, 2, &tie);
+	TabCtrl_InsertItem(m_pHdr->hwndTab, 2, &tie);
 
 	// Lock the resources for the three child dialog boxes. 
-	pHdr->apRes[0] = DoLockDlgRes(MAKEINTRESOURCE(TAB_TRANSFORM));
-	pHdr->apRes[1] = DoLockDlgRes(MAKEINTRESOURCE(TAB_MESHRENDERER));
-	pHdr->apRes[2] = DoLockDlgRes(MAKEINTRESOURCE(TAB_TERRAIN));
+	m_pHdr->apRes[0] = DoLockDlgRes(MAKEINTRESOURCE(TAB_TRANSFORM));
+	m_pHdr->apRes[1] = DoLockDlgRes(MAKEINTRESOURCE(TAB_MESHRENDERER));
+	m_pHdr->apRes[2] = DoLockDlgRes(MAKEINTRESOURCE(TAB_TERRAIN));
 
 	// Determine a bounding rectangle that is large enough to 
 	// contain the largest child dialog box. 
 	//SetRectEmpty(&rcTab);
 	//for (i = 0; i < C_PAGES; i++)
 	//{
-	//	if (pHdr->apRes[i]->cx > rcTab.right)
-	//		rcTab.right = pHdr->apRes[i]->cx;
-	//	if (pHdr->apRes[i]->cy > rcTab.bottom)
-	//		rcTab.bottom = pHdr->apRes[i]->cy;
+	//	if (m_pHdr->apRes[i]->cx > rcTab.right)
+	//		rcTab.right = m_pHdr->apRes[i]->cx;
+	//	if (m_pHdr->apRes[i]->cy > rcTab.bottom)
+	//		rcTab.bottom = m_pHdr->apRes[i]->cy;
 	//}
 
 	//// Map the rectangle from dialog box units to pixels.
@@ -296,18 +298,18 @@ HRESULT ComponentDialog::OnTabbedDialogInit(HWND hwndDlg)
 
 	// Calculate how large to make the tab control, so 
 	// the display area can accommodate all the child dialog boxes. 
-	TabCtrl_AdjustRect(pHdr->hwndTab, TRUE, &rcTab);
-	GetClientRect(pHdr->hwndTab, &rcTab);
+	TabCtrl_AdjustRect(m_pHdr->hwndTab, TRUE, &rcTab);
+	GetClientRect(m_pHdr->hwndTab, &rcTab);
 	
 	//OffsetRect(&rcTab, cxMargin - rcTab.left, cyMargin - rcTab.top);
 
 	// Calculate the display rectangle. 
-	CopyRect(&pHdr->rcDisplay, &rcTab);
-	TabCtrl_AdjustRect(pHdr->hwndTab, FALSE, &pHdr->rcDisplay);
+	CopyRect(&m_pHdr->rcDisplay, &rcTab);
+	TabCtrl_AdjustRect(m_pHdr->hwndTab, FALSE, &m_pHdr->rcDisplay);
 
 	// Set the size and position of the tab control, buttons, 
 	// and dialog box. 
-	/*SetWindowPos(pHdr->hwndTab, NULL, rcTab.left, rcTab.top,
+	/*SetWindowPos(m_pHdr->hwndTab, NULL, rcTab.left, rcTab.top,
 		rcTab.right - rcTab.left, rcTab.bottom - rcTab.top,
 		SWP_NOZORDER);*/
 
@@ -367,8 +369,9 @@ VOID ComponentDialog::OnSelChanged(HWND hwndDlg)
 
 	// Create the new child dialog box. Note that g_hInst is the
 	// global instance handle.
-	pHdr->hwndDisplay = CreateDialogIndirect(m_hInstance,
-		(DLGTEMPLATE *)pHdr->apRes[iSel], hwndDlg, ChildProc);
+	/*pHdr->hwndDisplay = CreateDialogIndirect(m_hInstance,
+		(DLGTEMPLATE *)pHdr->apRes[iSel], hwndDlg, ChildProc);*/
+	pHdr->hwndDisplay = CreateDialog(m_hInstance, MAKEINTRESOURCE(IDD_DIALOG4), hwndDlg, ChildProc);
 
 
 	

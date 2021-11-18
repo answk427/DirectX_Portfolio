@@ -106,6 +106,7 @@
     <ClCompile Include="MeshGeometry.cpp" />
     <ClCompile Include="AssimpLoader.cpp" />
     <ClCompile Include="MeshMgr.cpp" />
+    <ClCompile Include="MeshRendererDialog.cpp" />
     <ClCompile Include="MsgProcedure.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="BufferResource.h" />
     <ClInclude Include="AssimpLoader.h" />
     <ClInclude Include="MeshMgr.h" />
+    <ClInclude Include="MeshRendererDialog.h" />
     <ClInclude Include="MsgProcedure.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="Renderer.h" />

@@ -41,8 +41,13 @@ public:
 	void InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 	void InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 	void InitEffects(EffectMgr& effectMgr, const std::wstring& shaderPath);
+	
 	void SetMesh(Mesh* meshSrc) { mesh = meshSrc; }
+	const Mesh* GetMesh() { return mesh; }
+	
 	void SetMaterials(vector<GeneralMaterial>& materialSrc);
+	const vector<GeneralMaterial> GetMaterials() { return materials; }
+
 	void SetTransform(Transform* tr) { transform = tr; }
 };
 

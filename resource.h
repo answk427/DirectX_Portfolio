@@ -24,13 +24,28 @@
 #define IDC_COMBO1                      1013
 #define IDC_EDIT2                       1013
 #define IDC_EDIT3                       1014
+#define IDC_EDIT4                       1015
+#define IDC_EDIT5                       1016
 #define IDC_LIST2                       1017
+#define IDC_EDIT6                       1017
 #define IDC_LIST3                       1018
+#define IDC_EDIT7                       1018
+#define IDC_EDIT8                       1019
+#define IDC_EDIT9                       1020
+#define IDC_EDIT10                      1021
+#define IDC_EDIT13                      1023
+#define IDC_EDIT14                      1024
+#define IDC_EDIT15                      1025
 #define IDC_TREE1                       1026
+#define IDC_EDIT16                      1026
 #define IDC_TREE2                       1027
+#define IDC_EDIT17                      1027
+#define IDC_EDIT18                      1028
 #define IDC_MFCMENUBUTTON1              1031
 #define IDC_TAB1                        1053
 #define IDC_COMBO2                      1054
+#define IDC_LIST6                       1060
+#define IDC_EDIT11                      1064
 #define ID_40001                        40001
 #define ID_40002                        40002
 #define ID_BUTTON2                      40003
@@ -40,9 +55,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        138
+#define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         40004
-#define _APS_NEXT_CONTROL_VALUE         1055
+#define _APS_NEXT_CONTROL_VALUE         1068
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

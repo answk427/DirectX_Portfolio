@@ -147,6 +147,9 @@
     <ClCompile Include="ComponentDialog.cpp">
       <Filter>New Source Files\EngineDialog</Filter>
     </ClCompile>
+    <ClCompile Include="MeshRendererDialog.cpp">
+      <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -251,9 +254,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MsgProcedure.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ComponentMgr.h">
       <Filter>New Header Files\Manager</Filter>
     </ClInclude>
@@ -279,6 +279,12 @@
       <Filter>New Header Files\EngineDialog</Filter>
     </ClInclude>
     <ClInclude Include="DialogSizeDefine.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRendererDialog.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgProcedure.h">
       <Filter>New Header Files\EngineDialog</Filter>
     </ClInclude>
   </ItemGroup>

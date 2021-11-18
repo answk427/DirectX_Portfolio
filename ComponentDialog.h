@@ -9,17 +9,21 @@
 #include "GameObject.h"
 #include "DialogStructureEX.h"
 #include "DialogSizeDefine.h"
+#include "MeshRendererDialog.h"
 
 #pragma comment(lib,"comctl32.lib")
 
 #define TAB_TRANSFORM IDD_DIALOG3
-#define TAB_MESHRENDERER IDD_DIALOG4
 #define TAB_TERRAIN	IDD_DIALOG5
 #define COMPONENTDIALOG IDD_DIALOG6
 #define TABCONTROLID IDC_TAB1
 
+
+
 class ComponentDialog : public MsgProcedure
 {
+private:
+	DLGHDR *m_pHdr;
 public:
 	
 	static bool instantiated;
