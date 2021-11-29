@@ -11,7 +11,7 @@ class EffectMgr
 {
 private:
 	EffectMgr(const EffectMgr& effect);
-	EffectMgr& operator=(const EffectMgr& effect);
+	//EffectMgr& operator=(const EffectMgr& effect);
 private:
 	ID3D11Device* device;
 
@@ -20,10 +20,10 @@ private:
 	//쉐이더 이름과 effect Type을 매핑
 	std::unordered_map<std::wstring, EffectType> effectTypes;
 
-	static bool instantiated;
+	
 public:
+	static EffectMgr& Instance();
 	EffectMgr();
-	EffectMgr(ID3D11Device* device);
 	~EffectMgr();
 
 	void Init(ID3D11Device* device) { this->device = device; }

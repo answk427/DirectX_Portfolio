@@ -20,6 +20,9 @@ bool HierarchyDialog::OpenDialog()
 }
 bool HierarchyDialog::OpenDialog(HWND hwnd)
 {
+	inspector.Init(hwnd);
+	inspector.OpenDialog();
+	
 	hWnd = hwnd;
 	if (!IsWindow(m_hDlg))
 	{
@@ -45,7 +48,7 @@ void HierarchyDialog::treeInit(HWND hDlg)
 	TreeImageSet();
 }
 
-HierarchyDialog::HierarchyDialog(HINSTANCE hInstance) : MsgProcedure(hInstance)
+HierarchyDialog::HierarchyDialog(HINSTANCE hInstance) : MsgProcedure(hInstance), inspector(hInstance)
 {
 	assert(!instantiated);
 	instantiated = true;
@@ -78,8 +81,8 @@ INT_PTR CALLBACK HierarchyDialog::DlgProc(HWND hDlg, UINT message, WPARAM wParam
 	//case WM_MOUSEMOVE:
 	//	g_HierarchyDialog->MouseMoveProc(wParam, lParam);
 	//	return (INT_PTR)TRUE;
-	//case WM_NOTIFY: //리스트 컨트롤 클릭했을 때 발생
-	//	g_HierarchyDialog->NotifyProc(lParam);
+	case WM_NOTIFY: //Tree View에 대한 조작
+		g_HierarchyDialog->NotifyProc(lParam);
 	case WM_MOVE: //
 	{
 		g_HierarchyDialog->WindowSizing(hDlg);
@@ -116,17 +119,16 @@ void HierarchyDialog::CharProc(HWND hDlg, WPARAM wParam)
 
 void HierarchyDialog::NotifyProc(LPARAM lParam)
 {
-	//컨트롤이 선택됨
-	//switch (((LPNMHDR)lParam)->code)
-	//{
-	//case NM_CLICK:
-	//	int n = TreeView_GetCount(m_hwndTV);
-	//	TCHAR str[100];
-	//	wsprintf(str, TEXT("tree count : %d"), n);
-	//	//MessageBox(m_hDlg, str, L"test", MB_OK);
+	
+	switch (((LPNMHDR)lParam)->code)
+	{
+	//트리뷰에서 선택항목이 변경되었을 경우
+	case TVN_SELCHANGED:
+		int n = TreeView_GetCount(m_hwndTV);
+		SelectItem();
 
-	//	return;
-	//}
+		return;
+	}
 }
 
 void HierarchyDialog::WindowSizing(HWND hDlg)
@@ -155,11 +157,41 @@ void HierarchyDialog::WindowSizing(HWND hDlg)
 		dlgWndRect.bottom - dlgWndRect.top, true);
 }
 
+void HierarchyDialog::SelectItem()
+{
+	TVITEM tvi;
+	//현재 선택된 아이템
+	tvi.hItem = TreeView_GetSelection(m_hwndTV);
+	tvi.mask = TVIF_PARAM;
+
+	if (tvi.hItem == NULL) 
+	{
+		MessageBox(hWnd, TEXT("TreeView_GetSelection Fail"), TEXT("Hierarchy Select"), MB_OK);
+		return;
+	}
+		
+
+	TreeView_GetItem(m_hwndTV, &tvi);
+	Object* tempObj = (Object*)(tvi.lParam);
+
+	if (tempObj == NULL)
+	{
+		MessageBox(hWnd, TEXT("TreeView_GetItem Fail"), TEXT("Hierarchy Select"), MB_OK);
+		return;
+	}
+		
+
+	inspector.SetObject(dynamic_cast<GameObject*>(tempObj));
+
+	return;
+	
+}
+
 HTREEITEM HierarchyDialog::TreeViewInsertItem(Object* item, HTREEITEM parent)
 {
 	TVITEM tvi;
 	TVINSERTSTRUCT tvins;
-
+	
 	WCHAR itemName[100];
 	wsprintf(itemName, L"%s", item->GetName().c_str());
 
@@ -170,13 +202,13 @@ HTREEITEM HierarchyDialog::TreeViewInsertItem(Object* item, HTREEITEM parent)
 	//text 설정
 	tvi.pszText = itemName;
 	tvi.cchTextMax = wcslen(tvi.pszText) + 1;
-
-
+	
+	
 	//image 설정
 	tvi.iImage = m_Closed;
 	tvi.iSelectedImage = m_nOpen;
 
-	tvi.lParam = 1;
+	tvi.lParam = (LPARAM)item;
 	tvins.hParent = parent;
 	tvins.item = tvi;
 	tvins.hInsertAfter = TVI_FIRST;

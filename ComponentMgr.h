@@ -10,29 +10,26 @@
 #define MESHID "MESHRENDERER"
 #define SKINNEDMESHID "SKINNEDMESHRENDERER"
 
+#define MESHRENDERERSIZE 1000
+#define SKINNEDMESHRENDERERSIZE 1000
+#define COMPONENTSIZE 10000
+
 enum Command
 {
 	ENABLE,
 	DISABLE
 };
 
-enum ComponentType
-{
-	UNDEFINED,
-	MESHRENDERER,
-	SKINNEDMESHRENDERER
-};
 class ComponentMgr
 {
 private:
 	std::vector<MeshRenderer> meshRenderers;
 	std::vector<SkinnedMeshRenderer> skinnedMeshRenderers;
+	std::vector<Component*> components;
 	
 	//component의 id와 배열 index 매핑
 	std::unordered_map<std::string, int> idMap;
-	//component의 type 매핑
-	std::unordered_map<std::string, ComponentType> typeMap;
-	
+		
 private:
 	//Component를 만들때 사용할 id넘버
 	int creatingIdNum;
@@ -60,7 +57,7 @@ public:
 	Component* OnOffComponent(Component* component, Command endisable);
 	
 	Component* CreateComponent(ComponentType compType);
-	ComponentType GetComponentType(Component* component);
+	
 public:
 	void Render(ID3D11DeviceContext* context, Camera* camera);
 };

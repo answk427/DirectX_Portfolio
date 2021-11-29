@@ -46,8 +46,6 @@ void AssimpLoader::InitScene(const string& fileName)
 		}
 	}
 	
-	
-	
 }
 
 //void AssimpLoader::InitContainer()
@@ -75,6 +73,12 @@ GeneralMaterial AssimpLoader::SetMaterial(int matNumOfMesh)
 
 	aiMaterial* aiMat = m_pScene->mMaterials[matNumOfMesh];
 	GeneralMaterial tempMaterial;
+
+	//A2W(유니코드 -> 멀티바이트 변환 함수)를 사용하기위한 매크로
+	USES_CONVERSION;
+	//Material name
+	aiString& aiName = aiMat->GetName();
+	tempMaterial.name = std::wstring(A2W(aiName.C_Str()));
 	
 	aiColor4D color;
 
@@ -101,8 +105,7 @@ GeneralMaterial AssimpLoader::SetMaterial(int matNumOfMesh)
 	aiString fileName;
 
 	
-	//A2W(유니코드 -> 멀티바이트 변환 함수)를 사용하기위한 매크로
-	USES_CONVERSION;
+	
 	//DiffuseTexture 경로 저장
 	aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &fileName);
 	tempMaterial.diffuseMapName = A2W(fileName.C_Str());

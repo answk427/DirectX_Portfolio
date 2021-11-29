@@ -40,6 +40,9 @@
     <Filter Include="New Source Files\EngineDialog">
       <UniqueIdentifier>{6f7e9c6a-8776-4df8-951c-1cbebac123c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="New Header Files\Command">
+      <UniqueIdentifier>{0d4a6299-9262-457e-a7ee-66e6b97f35d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp">
@@ -144,11 +147,23 @@
     <ClCompile Include="HierarchyDialog.cpp">
       <Filter>New Source Files\EngineDialog</Filter>
     </ClCompile>
+    <ClCompile Include="MeshRendererDialog.cpp">
+      <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Inspector.cpp">
+      <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
     <ClCompile Include="ComponentDialog.cpp">
       <Filter>New Source Files\EngineDialog</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRendererDialog.cpp">
+    <ClCompile Include="TransformDialog.cpp">
       <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRendererCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputLayoutManager.cpp">
+      <Filter>New Source Files\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -272,9 +287,6 @@
     <ClInclude Include="DialogPractice.h">
       <Filter>New Header Files\EngineDialog</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentDialog.h">
-      <Filter>New Header Files\EngineDialog</Filter>
-    </ClInclude>
     <ClInclude Include="DialogStructureEX.h">
       <Filter>New Header Files\EngineDialog</Filter>
     </ClInclude>
@@ -286,6 +298,27 @@
     </ClInclude>
     <ClInclude Include="MsgProcedure.h">
       <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Inspector.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentDialog.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformDialog.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRendererCommand.h">
+      <Filter>New Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="MyCommand.h">
+      <Filter>New Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="DataManager.h">
+      <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="InputLayoutManager.h">
+      <Filter>New Header Files\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

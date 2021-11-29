@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <resource.h>
 #include <string>
+#include <vector>
+
 class MsgProcedure
 {
 protected:
@@ -14,7 +16,7 @@ public:
 public:
 	MsgProcedure(HINSTANCE hInstance) :m_hInstance(hInstance){}
 	
-	bool FileOpenDialog(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[]);
+	bool MsgProcedure::FileOpenDialog(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[], std::vector<LPCWSTR> extension);
 	bool FileSaveDialog(HWND hwnd, WCHAR fileTitle[]);
 public:	
 

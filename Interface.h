@@ -2,16 +2,22 @@
 #include <string>
 #include <vector>
 
-typedef std::string gameObjectID;
+enum ComponentType
+{
+	UNDEFINED,
+	MESHRENDERER,
+	SKINNEDMESHRENDERER
+};
 
 //오브젝트에 추가될 컴포넌트의 인터페이스
 class Component
 {
 public:
 	std::string id;
+	ComponentType componentType;
 
 public:
-	Component(const std::string& id) : id(id) {}
+	Component(const std::string& id, ComponentType type) : id(id), componentType(type) {}
 	virtual ~Component() {}
 public:
 	virtual void Init() = 0;
@@ -20,6 +26,9 @@ public:
 	virtual void LateUpdate() = 0;
 	
 };
+
+typedef std::string gameObjectID;
+
 
 class Object
 {

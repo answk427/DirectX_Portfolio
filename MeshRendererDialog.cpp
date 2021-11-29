@@ -1,7 +1,7 @@
 #include "MeshRendererDialog.h"
 
 
-MeshRendererDialog* g_MeshRendererDialog = 0;
+extern MeshRendererDialog* g_MeshRendererDialog = 0;
 bool MeshRendererDialog::instantiated = false;
 
 //-------------------*ChildProc Test *-----------------------
@@ -11,7 +11,7 @@ VOID WINAPI MeshRendererDialog::OnChildDialogInit(HWND hwndDlg)
 	HWND hwndParent = GetParent(hwndDlg);
 	RECT parentWndRect;
 	GetWindowRect(hwndParent, &parentWndRect);
-
+	
 	
 	float parentWidth = parentWndRect.right - parentWndRect.left;
 	float parentHeight = (parentWndRect.bottom - parentWndRect.top);
@@ -24,23 +24,6 @@ VOID WINAPI MeshRendererDialog::OnChildDialogInit(HWND hwndDlg)
 	return;
 }
 
-void MeshRendererDialog::UpdateView(MeshRenderer* meshRenderer)
-{
-	const Mesh* mesh = meshRenderer->GetMesh();
-
-	//ASCII -> UNICODE 변환
-	USES_CONVERSION;
-	LPCWSTR meshName = A2W(mesh->id.c_str);
-	
-	//mesh editText에 이름 설정
-	Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
-
-	const auto materials = meshRenderer->GetMaterials();
-	
-	//material Manager를 만들어서 material 리스트에 추가해야할것 같음.
-	//material에 id부여
-	
-}
 
 INT_PTR CALLBACK MeshRendererProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -53,12 +36,14 @@ INT_PTR CALLBACK MeshRendererProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 	case WM_INITDIALOG:
 	{
 		g_MeshRendererDialog->OnChildDialogInit(hDlg);
+		g_MeshRendererDialog->Init(hDlg);
+
 		
 		return (INT_PTR)TRUE;
 	}
 
 	case WM_COMMAND:
-		
+		g_MeshRendererDialog->MenuProc(hDlg, wParam);
 		return (INT_PTR)TRUE;
 	case WM_KEYDOWN:
 
@@ -86,6 +71,50 @@ bool MeshRendererDialog::OpenDialog()
 {
 	return false;
 }
+
+bool MeshRendererDialog::SetObject(GameObject* obj)
+{
+	MeshRenderer* meshRenderer = dynamic_cast<MeshRenderer*>(obj->GetComponent<MeshRenderer>());
+	m_MeshRenderer = meshRenderer;
+	if (!m_MeshRenderer)
+		return false;
+
+	materials = &(m_MeshRenderer->GetMaterials());
+	mesh = m_MeshRenderer->GetMesh();
+
+}
+
+bool MeshRendererDialog::UpdateView()
+{	
+	if (m_MeshRenderer == nullptr)
+		return false;
+
+	
+	//ASCII -> UNICODE 변환
+	USES_CONVERSION;
+	LPCWSTR meshName = A2W(mesh->id.c_str());
+
+	//mesh editText에 이름 설정
+	Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
+	
+	int listCount = ListBox_GetCount(m_hList);
+	for (int i = 0; i < listCount; i++)
+		ListBox_DeleteString(m_hList, i);
+	
+	for (GeneralMaterial& elem : (*materials))
+	{
+		int pos = (int)SendMessage(m_hList, LB_ADDSTRING, 0,
+			(LPARAM)elem.name.c_str());
+
+		//GeneralMaterial의 주소값을 data로 설정
+		SendMessage(m_hList, LB_SETITEMDATA, pos, (LPARAM)&elem);
+	}
+
+	return true;
+
+}
+
+
 bool MeshRendererDialog::OpenDialog(HWND hwnd)
 {
 
@@ -93,8 +122,8 @@ bool MeshRendererDialog::OpenDialog(HWND hwnd)
 
 	if (!IsWindow(m_hDlg))
 	{
-		m_hDlg = CreateDialog(m_hInstance, MAKEINTRESOURCE(TAB_MESHRENDERER), 0, MeshRendererProc);
-
+		m_hDlg = CreateDialog(m_hInstance, MAKEINTRESOURCE(TAB_MESHRENDERER), hwnd, MeshRendererProc);
+		
 		ShowWindow(m_hDlg, SW_SHOW);
 		return true;
 	}
@@ -102,8 +131,15 @@ bool MeshRendererDialog::OpenDialog(HWND hwnd)
 	return false;
 }
 
+void MeshRendererDialog::Init(HWND hDlg)
+{
+	m_hDlg = hDlg;
+	m_hList = GetDlgItem(hDlg, IDC_LIST6);
+}
 
-MeshRendererDialog::MeshRendererDialog(HINSTANCE hInstance) : MsgProcedure(hInstance), m_MeshRenderer(0)
+
+MeshRendererDialog::MeshRendererDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_MeshRenderer(0)
+															,mesh(0), materials(0)
 {
 	assert(!instantiated);
 	instantiated = true;
@@ -114,7 +150,41 @@ MeshRendererDialog::MeshRendererDialog(HINSTANCE hInstance) : MsgProcedure(hInst
 
 void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 {
+	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
+
+	switch (wmId)
+	{
+		
+	case DIFFUSEMAPBUTTON:
+		if (HIWORD(wParam) == BN_CLICKED)
+		{
+			WCHAR fileTitle[100];
+			WCHAR filePath[100];
+			std::vector<LPCWSTR> extensions = { L"dds"};
+			if (FileOpenDialog(m_hDlg, fileTitle, filePath, extensions))
+			{
+				MyCommand* comm = new SetMaterialMap(&(*materials)[0], filePath, mapType::Type_DiffuseMap);
+				comm->Execute();
+				delete comm;
+				MyCommand* comm2 = new SetMaterialMap(&(*materials)[1], filePath, mapType::Type_DiffuseMap);
+				comm2->Execute();
+				delete comm2;
+			}
+			else
+				MessageBox(m_hDlg, L"DiffuseMap Load Fail!", L"DiffuseMap Load", MB_OK);
+			
+		}
+		break;
+	case NORMALMAPBUTTON:
+		if (HIWORD(wParam) == BN_CLICKED)
+		{
+
+		}
+
+		break;
+	}
+
 
 }
 
@@ -146,9 +216,9 @@ void MeshRendererDialog::NotifyProc(HWND hDlg, LPARAM lParam)
 	switch (((LPNMHDR)lParam)->code)
 	{
 
-		//탭 컨트롤이 선택됨
+		
 	case TCN_SELCHANGE:
-		//return OnSelChanged(hDlg);
+		
 		return;
 
 	}

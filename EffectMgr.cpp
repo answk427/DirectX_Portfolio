@@ -1,16 +1,16 @@
 #include "EffectMgr.h"
 
-bool EffectMgr::instantiated = false;
+
+
+EffectMgr & EffectMgr::Instance()
+{
+	static EffectMgr* instance = new EffectMgr();
+	return *instance;
+}
 
 EffectMgr::EffectMgr()
 {
-	assert(!instantiated);
-	instantiated = true;
-}
-
-EffectMgr::EffectMgr(ID3D11Device * device)
-{
-	this->device = device;
+	
 }
 
 EffectMgr::~EffectMgr()
@@ -19,7 +19,7 @@ EffectMgr::~EffectMgr()
 		delete it->second;
 
 	myEffect.clear();
-	instantiated = false;
+	
 }
 
 Effect* EffectMgr::GetEffect(const std::wstring& shaderName)

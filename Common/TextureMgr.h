@@ -15,8 +15,8 @@
 class TextureMgr
 {
 public:
+	static TextureMgr& Instance();
 	TextureMgr();
-	TextureMgr(ID3D11Device* device);
 	~TextureMgr();
 
 	void Init(ID3D11Device* device);
@@ -25,15 +25,14 @@ public:
 
 private:
 	TextureMgr(const TextureMgr& rhs);
-	TextureMgr& operator=(const TextureMgr& rhs);
+	//TextureMgr& operator=(const TextureMgr& rhs);
 	
 private:
 	ID3D11Device* md3dDevice;
 	//std::map<std::wstring, ID3D11ShaderResourceView*> mTextureSRV;
 	std::unordered_map<std::wstring, ID3D11ShaderResourceView*> mTextureSRV;
 
-	//한개의 인스턴스만 생성되도록 보장하는 변수
-	static bool instantiated;
+	
 };
 
 #endif // TEXTUREMGR_H

@@ -145,7 +145,8 @@ void BasicEffect::PerObjectSet(GeneralMaterial * material,
 }
 void BasicEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
 {
-	SetDiffuseMap(diffuseMap);
+	if(diffuseMap!=nullptr)
+		SetDiffuseMap(diffuseMap);
 }
 ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 {

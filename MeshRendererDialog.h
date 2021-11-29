@@ -6,33 +6,42 @@
 #include <cassert>
 
 
-#include "MsgProcedure.h"
+#include "ComponentDialog.h"
 #include "GameObject.h"
 #include "DialogStructureEX.h"
 #include "DialogSizeDefine.h"
 #include "Renderer.h"
 
+#include "MeshRendererCommand.h"
+
+
+
 #define TAB_MESHRENDERER IDD_DIALOG4
+
+#define DIFFUSEMAPCONTROL IDC_EDIT1
+#define NORMALMAPCONTROL IDC_EDIT12
+
+#define DIFFUSEMAPBUTTON IDC_BUTTON1
+#define NORMALMAPBUTTON IDC_BUTTON3
 
 INT_PTR CALLBACK MeshRendererProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-class MeshRendererDialog : MsgProcedure
+class MeshRendererDialog : public ComponentDialog
 {
 public:
-	
 	static bool instantiated;
-
-	int m_nOpen; //오픈이미지 인덱스
-	int m_Closed; //클로즈이미지 인덱스
-
-	HWND m_hDlg; //dialog
-	HWND m_hwndParent; //main window
-
-	MeshRendererDialog(HINSTANCE hInstance);
-		
+public:
+	HWND m_hList; //list view 핸들
+public:
+	MeshRendererDialog(HINSTANCE hInstance);	
+public:
 	bool OpenDialog(HWND hwnd);
-	
+	void Init(HWND hDlg);
 
+private:
+	MeshRenderer* m_MeshRenderer;
+	std::vector<GeneralMaterial>* materials;
+	const Mesh* mesh;
 
 public:
 	//메뉴눌렸을때 WM_COMMAND 
@@ -48,14 +57,17 @@ public:
 
 	VOID WINAPI OnChildDialogInit(HWND hwndDlg);
 
-	void UpdateView(MeshRenderer* meshRenderer);
-
 private:
 	// MsgProcedure을(를) 통해 상속됨
 	virtual bool OpenDialog() override;//Tab의 자식 Dialog로 생성해야 하므로 사용하지 않는 함수
-	
-private:
-	MeshRenderer* m_MeshRenderer;
+
+public:
+	// ComponentDialog을(를) 통해 상속됨
+	virtual bool UpdateView() override;
+
+
+	// ComponentDialog을(를) 통해 상속됨
+	virtual bool SetObject(GameObject * obj) override;
 
 };
 

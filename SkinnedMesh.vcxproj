@@ -95,6 +95,8 @@
     <ClCompile Include="Common\Waves.cpp" />
     <ClCompile Include="Common\xnacollision.cpp" />
     <ClCompile Include="ComponentDialog.cpp" />
+    <ClCompile Include="InputLayoutManager.cpp" />
+    <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="ComponentMgr.cpp" />
     <ClCompile Include="EffectMgr.cpp" />
     <ClCompile Include="Effects.cpp" />
@@ -106,6 +108,7 @@
     <ClCompile Include="MeshGeometry.cpp" />
     <ClCompile Include="AssimpLoader.cpp" />
     <ClCompile Include="MeshMgr.cpp" />
+    <ClCompile Include="MeshRendererCommand.cpp" />
     <ClCompile Include="MeshRendererDialog.cpp" />
     <ClCompile Include="MsgProcedure.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
@@ -118,11 +121,15 @@
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Ssao.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TransformDialog.cpp" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicModel.h" />
     <ClInclude Include="Bones.h" />
+    <ClInclude Include="DataManager.h" />
+    <ClInclude Include="InputLayoutManager.h" />
+    <ClInclude Include="MyCommand.h" />
     <ClInclude Include="Common\Camera.h" />
     <ClInclude Include="Common\d3dApp.h" />
     <ClInclude Include="Common\d3dUtil.h" />
@@ -136,6 +143,7 @@
     <ClInclude Include="Common\Waves.h" />
     <ClInclude Include="Common\xnacollision.h" />
     <ClInclude Include="ComponentDialog.h" />
+    <ClInclude Include="Inspector.h" />
     <ClInclude Include="ComponentMgr.h" />
     <ClInclude Include="Constant.h" />
     <ClInclude Include="DialogSizeDefine.h" />
@@ -152,6 +160,7 @@
     <ClInclude Include="BufferResource.h" />
     <ClInclude Include="AssimpLoader.h" />
     <ClInclude Include="MeshMgr.h" />
+    <ClInclude Include="MeshRendererCommand.h" />
     <ClInclude Include="MeshRendererDialog.h" />
     <ClInclude Include="MsgProcedure.h" />
     <ClInclude Include="ObjectMgr.h" />
@@ -164,6 +173,7 @@
     <ClInclude Include="Sky.h" />
     <ClInclude Include="Ssao.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="TransformDialog.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Mesh.h" />
   </ItemGroup>

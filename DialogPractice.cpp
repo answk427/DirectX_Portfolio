@@ -136,9 +136,12 @@ void DialogPractice::MenuProc(HWND hDlg,WPARAM wParam)
 	switch (wmId)
 	{
 	case ID_40001: //열기
-		FileOpenDialog(hDlg, title, full_path);
+	{
+		std::vector<LPCWSTR> extensions = { L"jpg",L"bmp" };
+		FileOpenDialog(hDlg, title, full_path, extensions);
 		MessageBox(0, L"열기", L"연습", MB_OK);
 		break;
+	}
 	case ID_40002: //저장
 		FileSaveDialog(hDlg, full_path);
 		MessageBox(0, L"저장", L"연습", MB_OK);

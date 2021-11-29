@@ -2,7 +2,7 @@
 
 
 
-bool MsgProcedure::FileOpenDialog(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[])
+bool MsgProcedure::FileOpenDialog(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[], std::vector<LPCWSTR> extension)
 {
 	OPENFILENAME ofn;
 
@@ -19,22 +19,38 @@ bool MsgProcedure::FileOpenDialog(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[]
 	ofn.lpstrFileTitle = strFileTitle; //파일명
 	ofn.lpstrFile = strFile; //전체 경로
 	
+	//확장자 필터 
+	std::wstring file_extension;
+	for (LPCWSTR& elem : extension)
+	{
+		//"(*.확장자)\0*.확장자\0"
+		file_extension += L"(*.";
+		file_extension += elem;
+		file_extension += L")";
+		file_extension += (TCHAR)'\0';
+		file_extension += L"*.";
+		file_extension += elem;
+		file_extension += (TCHAR)'\0';
+	}
+	
+
 	//필터 \0으로 구분 => 설명\0실제필터\0설명\0실제필터\0
-	ofn.lpstrFilter = L"비트맵(*.bmp)\0*.bmp\0jpg 파일\0*.jpg\0";
+	//ofn.lpstrFilter = L"(*.dds)\0*.dds\0";
+	ofn.lpstrFilter = file_extension.c_str();
 	ofn.nMaxFile = MAX_PATH;
 	ofn.nMaxFileTitle = MAX_PATH;
 	if (GetOpenFileName(&ofn)!=0)
 	{
-		//필터는 1부터 시작. 지금필터에서 1.bmp 2.jpg
-		switch (ofn.nFilterIndex)
-		{
-		case 1:
-			MessageBox(hwnd, L"bmp", L"bmp파일선택", MB_OK);
-			break;
-		case2:
-			MessageBox(hwnd, L"jpg", L"jpg파일선택", MB_OK);
-			break;
-		}
+		////필터는 1부터 시작. 지금필터에서 1.bmp 2.jpg
+		//switch (ofn.nFilterIndex)
+		//{
+		//case 1:
+		//	MessageBox(hwnd, L"bmp", L"bmp파일선택", MB_OK);
+		//	break;
+		//case2:
+		//	MessageBox(hwnd, L"jpg", L"jpg파일선택", MB_OK);
+		//	break;
+		//}
 		wcscpy(fileTitle, strFileTitle);
 		wcscpy(filePath, strFile);
 		return true;

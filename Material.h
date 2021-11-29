@@ -14,6 +14,7 @@ struct BasicMaterial
 
 struct GeneralMaterial
 {
+	std::wstring name;
 	BasicMaterial basicMat;
 
 	std::wstring diffuseMapName;

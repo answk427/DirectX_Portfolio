@@ -8,6 +8,7 @@
 #define VERTEX_H
 
 #include "d3dUtil.h"
+#include "EffectMgr.h"
 
 namespace Vertex
 {
@@ -21,6 +22,7 @@ namespace Vertex
 
 	struct PosNormalTexTan
 	{
+
 		XMFLOAT3 Pos;
 		XMFLOAT3 Normal;
 		XMFLOAT2 Tex;

@@ -32,8 +32,10 @@ private:
 	//새로운 오브젝트의 id를 생성하는 함수
 	gameObjectID makeID();
 public:
-	ObjectMgr(MeshMgr& meshMgr, ComponentMgr& componentMgr, EffectMgr& effectMgr, TextureMgr& textureMgr)
-		: meshMgr(meshMgr), componentMgr(componentMgr), effectMgr(effectMgr), textureMgr(textureMgr) {}
+	ObjectMgr(MeshMgr& meshMgr, ComponentMgr& componentMgr)
+		: meshMgr(meshMgr), componentMgr(componentMgr)
+		, effectMgr(EffectMgr::Instance()), textureMgr(TextureMgr::Instance())
+	{}
 	~ObjectMgr() {}
 public:
 	std::map<gameObjectID,GameObject> gameObjects;

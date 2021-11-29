@@ -6,12 +6,15 @@
 #include "MsgProcedure.h"
 #include "GameObject.h"
 #include "DialogSizeDefine.h"
+#include "Inspector.h"
 
 #pragma comment(lib,"comctl32.lib")
 
 
 class HierarchyDialog : public MsgProcedure
 {
+private:
+	Inspector inspector;
 public:
 	static bool instantiated;
 
@@ -54,6 +57,6 @@ public:
 
 	void WindowSizing(HWND hDlg);
 
-
+	void SelectItem();
 
 };
