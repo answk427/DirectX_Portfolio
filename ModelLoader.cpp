@@ -1,3 +1,0 @@
-#include <assimp/scene.h>
-
-
