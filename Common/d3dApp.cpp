@@ -89,13 +89,20 @@ int D3DApp::Run()
  
 	mTimer.Reset();
 
+	//Accelrator 단축키 핸들
+	HACCEL hAccel;
+	hAccel = LoadAccelerators(mhAppInst, MAKEINTRESOURCE(IDR_ACCELERATOR1));
+
 	while(msg.message != WM_QUIT)
 	{
 		// If there are Window messages then process them.
 		if(PeekMessage( &msg, 0, 0, 0, PM_REMOVE ))
 		{
-            TranslateMessage( &msg );
-            DispatchMessage( &msg );
+			if (!TranslateAccelerator(mhMainWnd, hAccel, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 		// Otherwise, do animation/game stuff.
 		else
@@ -335,7 +342,7 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 	//메뉴를 눌렀을때 LOWORD(wParam)에 메뉴ID 들어있음.
 	case WM_COMMAND:
-		
+		MenuProc(hwnd, wParam);
 		return 0;
 	//키보드 눌렸을 때
 	case WM_KEYDOWN:

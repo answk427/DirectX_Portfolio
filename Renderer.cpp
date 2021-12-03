@@ -137,15 +137,9 @@ void MeshRenderer::Draw(ID3D11DeviceContext * context, Camera* camera)
 		effects[i]->PerObjectSet(&materials[i],
 			camera, world);
 		
-		//effects[i]->SetMaps(diffuseMaps[i], nullptr, nullptr);
+		effects[i]->SetMaps(diffuseMaps[i], normalMaps[i], nullptr);
 
-		//test
-		ID3D11ShaderResourceView* mBrickTexSRV;
-		mBrickTexSRV = m_texMgr.CreateTexture(L"Textures/bricks.dds");
-		
-		effects[i]->SetMaps(mBrickTexSRV, normalMaps[i], nullptr);
-		//test end
-				
+						
 		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{
 			activeTech->GetPassByIndex(p)->Apply(0, context);

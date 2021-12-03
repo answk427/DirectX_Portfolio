@@ -12,6 +12,7 @@
 #define IDD_DIALOG4                     129
 #define IDD_DIALOG5                     132
 #define IDD_DIALOG6                     134
+#define IDR_ACCELERATOR1                144
 #define IDC_BUTTON1                     1002
 #define IDC_BUTTON3                     1003
 #define IDC_BUTTON2                     1005
@@ -51,15 +52,17 @@
 #define ID_40001                        40001
 #define ID_40002                        40002
 #define ID_BUTTON2                      40003
+#define ID_40004                        40004
+#define ID_40007                        40007
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        144
-#define _APS_NEXT_COMMAND_VALUE         40004
-#define _APS_NEXT_CONTROL_VALUE         1068
+#define _APS_NEXT_RESOURCE_VALUE        145
+#define _APS_NEXT_COMMAND_VALUE         40008
+#define _APS_NEXT_CONTROL_VALUE         1069
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

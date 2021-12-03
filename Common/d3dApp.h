@@ -44,6 +44,9 @@ public:
 	virtual void OnMouseUp(WPARAM btnState, int x, int y) { }
 	virtual void OnMouseMove(WPARAM btnState, int x, int y) { }
 
+	//메뉴 선택했을 때 실행할 함수
+	virtual void MenuProc(HWND hDlg, WPARAM wParam) {}
+
 protected:
 	bool InitMainWindow();
 	bool InitDirect3D();

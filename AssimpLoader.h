@@ -51,7 +51,11 @@ public:
 	vector<NodeStruct> childs;
 public:
 	NodeStruct(const wstring& nodeName, const XMFLOAT4X4 nodeMat) : name(nodeName), mat(nodeMat), assimpMesh(0){}
-	~NodeStruct(){delete assimpMesh;}
+	~NodeStruct()
+	{
+		if(!assimpMesh)
+			delete assimpMesh;
+	}
 public:
 	wstring GetName() { return name; }
 	XMFLOAT4X4 GetMatrix() { return mat; }

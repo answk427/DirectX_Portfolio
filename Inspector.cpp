@@ -363,6 +363,7 @@ void Inspector::SetObject(GameObject * obj)
 	{
 		elem->SetObject(obj);
 	}
+	
 	OnSelChanged(m_hDlg);
 }
 

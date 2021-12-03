@@ -32,21 +32,6 @@
 
 class Scene : public D3DApp
 {
-	//test
-public:
-	ID3D11Buffer* mBoxVB;
-	ID3D11Buffer* mBoxIB;
-
-	ID3D11ShaderResourceView* mDiffuseMapSRV;
-	void BuildGeometryBuffers();
-
-	int mBoxVertexOffset;
-	UINT mBoxIndexOffset;
-	UINT mBoxIndexCount;
-
-	XMFLOAT4X4 mView;
-	XMFLOAT4X4 mProj;
-
 
 //Dialog
 public:
@@ -65,6 +50,8 @@ public:
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
+
+	void MenuProc(HWND hDlg, WPARAM wParam) override;
 
 private:
 	DataManager& dataMgr;
@@ -108,68 +95,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 }
 
 
-void Scene::BuildGeometryBuffers()
-{
-	GeometryGenerator::MeshData box;
 
-	GeometryGenerator geoGen;
-	geoGen.CreateBox(1.0f, 1.0f, 1.0f, box);
-
-	// Cache the vertex offsets to each object in the concatenated vertex buffer.
-	mBoxVertexOffset = 0;
-
-	// Cache the index count of each object.
-	mBoxIndexCount = box.Indices.size();
-
-	// Cache the starting index for each object in the concatenated index buffer.
-	mBoxIndexOffset = 0;
-
-	UINT totalVertexCount = box.Vertices.size();
-
-	UINT totalIndexCount = mBoxIndexCount;
-
-	//
-	// Extract the vertex elements we are interested in and pack the
-	// vertices of all the meshes into one vertex buffer.
-	//
-
-	std::vector<Vertex::Basic32> vertices(totalVertexCount);
-
-	UINT k = 0;
-	for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = box.Vertices[i].Position;
-		vertices[k].Normal = box.Vertices[i].Normal;
-		vertices[k].Tex = box.Vertices[i].TexC;
-	}
-
-	D3D11_BUFFER_DESC vbd;
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex::Basic32) * totalVertexCount;
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = 0;
-	D3D11_SUBRESOURCE_DATA vinitData;
-	vinitData.pSysMem = &vertices[0];
-	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mBoxVB));
-
-	//
-	// Pack the indices of all the meshes into one index buffer.
-	//
-
-	std::vector<UINT> indices;
-	indices.insert(indices.end(), box.Indices.begin(), box.Indices.end());
-
-	D3D11_BUFFER_DESC ibd;
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(UINT) * totalIndexCount;
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	ibd.MiscFlags = 0;
-	D3D11_SUBRESOURCE_DATA iinitData;
-	iinitData.pSysMem = &indices[0];
-	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mBoxIB));
-}
 
 Scene::Scene(HINSTANCE hInstance)
 	: D3DApp(hInstance), objectMgr(meshMgr, componentMgr),
@@ -209,7 +135,7 @@ Scene::Scene(HINSTANCE hInstance)
 	mDirLights[2].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	mDirLights[2].Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 	mDirLights[2].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, -1.0f);
+	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, 1.0f);
 
 	
 }
@@ -231,10 +157,13 @@ bool Scene::Init()
 	effectMgr.Init(md3dDevice);
 
 	//카메라 초기화
-	camera.SetPosition({ 50.0f, 0, -20.0f });
+	camera.SetPosition({ -50.0f, 0.0f, -70.0f });
 	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
-	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,0.1f,0.0f });
-	
+	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1.0f });
+	//
+	//camera.SetPosition({ 50.0f, 0.0f, -70.0f });
+	//camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
+	//camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f });
 	
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	//Effects::InitAll(md3dDevice);
@@ -248,8 +177,7 @@ bool Scene::Init()
 	//Hierarchy 초기화
 	m_HierarchyDialog.Init(mhMainWnd);
 	m_HierarchyDialog.OpenDialog(mhMainWnd);
-	GameObject* gameObj = objectMgr.CreateObjectFromFile("C:/Users/JS/Documents/GitRepository/DX_Portfolio/Models/18042_GonF.fbx");
-	m_HierarchyDialog.TreeInsertObject(gameObj);
+	
 			
 	
 	SetFocus(mhMainWnd);
@@ -287,74 +215,34 @@ void Scene::UpdateScene(float dt)
 	//float x = mRadius * sinf(mPhi)*cosf(mTheta);
 	//float z = mRadius * sinf(mPhi)*sinf(mTheta);
 	//float y = mRadius * cosf(mPhi);
-		
+	
+
+	CommandQueue::AllExecute();
 }
 
 void Scene::DrawScene()
 {
-	//md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
-	//md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	//md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
-	//md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//	
-	//// Set per frame constants.
-	//effectMgr.SetPerFrame(mDirLights, nullptr, nullptr, camera.GetPosition());
-	//
-	////Rendering
-	////componentMgr.Render(md3dImmediateContext, &camera);
-	//
-
-	//HR(mSwapChain->Present(0, 0));
-
-	//camera.UpdateViewMatrix();
-
-
-
-
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	UINT stride = sizeof(Vertex::Basic32);
-	UINT offset = 0;
-
-	XMMATRIX view = XMLoadFloat4x4(&mView);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX viewProj = view * proj;
-
+		
 	// Set per frame constants.
-	Effects::BasicFX->SetDirLights(mDirLights);
-	Effects::BasicFX->SetEyePosW(mEyePosW);
-
-	ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light2TexTech;
-
-	D3DX11_TECHNIQUE_DESC techDesc;
-	activeTech->GetDesc(&techDesc);
-	for (UINT p = 0; p < techDesc.Passes; ++p)
-	{
-		md3dImmediateContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
-		md3dImmediateContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
-
-		// Draw the box.
-		XMMATRIX world = XMLoadFloat4x4(&mBoxWorld);
-		XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
-		XMMATRIX worldViewProj = world * view*proj;
-
-		Effects::BasicFX->SetWorld(world);
-		Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
-		Effects::BasicFX->SetWorldViewProj(worldViewProj);
-		Effects::BasicFX->SetTexTransform(XMLoadFloat4x4(&mTexTransform));
-		Effects::BasicFX->SetMaterial(mBoxMat);
-		//Effects::BasicFX->SetDiffuseMap(mDiffuseMapSRV, mDiffuseMapSRV2); fireAnim 적용하기 위해 주석처리. Update문 참고
-		//Effects::BasicFX->SetDiffuseMap(mFires[1]);
-		activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
-		md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
-	}
+	effectMgr.SetPerFrame(mDirLights, nullptr, nullptr, camera.GetPosition());
+	
+	//Rendering
+	componentMgr.Render(md3dImmediateContext, &camera);
+	
 
 	HR(mSwapChain->Present(0, 0));
+
+	camera.UpdateViewMatrix();
+
+
+
+
+
 }
 
 void Scene::OnMouseDown(WPARAM btnState, int x, int y)
@@ -383,6 +271,44 @@ void Scene::OnMouseMove(WPARAM btnState, int x, int y)
 
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
+}
+
+
+
+void Scene::MenuProc(HWND hDlg, WPARAM wParam)
+{
+	int wmId = LOWORD(wParam);
+	static WCHAR title[50];
+	static WCHAR full_path[100];
+		
+	switch (wmId)
+	{
+	case ID_40001: //열기
+	{
+		std::vector<LPCWSTR> extensions = { L"jpg",L"bmp" };
+		dataMgr.FileOpen(hDlg, title, full_path, extensions);
+		break;
+	}
+	case ID_40002: //저장
+
+		MessageBox(0, L"저장", L"연습", MB_OK);
+		break;
+
+	case ID_40007: //Import FBX
+	{
+		USES_CONVERSION;
+		std::vector<LPCWSTR> extensions = { L"fbx" };
+		dataMgr.FileOpen(hDlg, title, full_path, extensions);
+		GameObject* gameObj = objectMgr.CreateObjectFromFile(W2A(full_path));
+		m_HierarchyDialog.TreeInsertObject(gameObj);
+		break;
+	}
+
+	case ID_40004: // Ctrl+Z
+		MessageBox(mhMainWnd, L"Undo", L"Undo", MB_OK);
+		CommandQueue::Undo();
+		break;
+	}
 }
 
 

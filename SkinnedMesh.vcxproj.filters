@@ -43,6 +43,9 @@
     <Filter Include="New Header Files\Command">
       <UniqueIdentifier>{0d4a6299-9262-457e-a7ee-66e6b97f35d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="New Source Files\Command">
+      <UniqueIdentifier>{afef21b0-8cbc-4cae-ae8c-28b550f21411}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp">
@@ -159,11 +162,20 @@
     <ClCompile Include="TransformDialog.cpp">
       <Filter>New Source Files\EngineDialog</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRendererCommand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InputLayoutManager.cpp">
       <Filter>New Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindowDialog.cpp">
+      <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyCommand.cpp">
+      <Filter>New Source Files\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRendererCommand.cpp">
+      <Filter>New Source Files\Command</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="InputLayoutManager.h">
       <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindowDialog.h">
+      <Filter>New Header Files\EngineDialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

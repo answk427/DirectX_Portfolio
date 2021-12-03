@@ -62,7 +62,19 @@ public:
 public:
 	//생성자
 	Mesh(const std::string& id) : mVB(0), mIB(0), InstanceBuffer(0), vertexBufferCount(0), id(id) {}
-	~Mesh() { ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(InstanceBuffer); }
+	~Mesh() {
+		ID3D11Buffer* VB = mVB;
+		ID3D11Buffer* IB = mIB;
+		ID3D11Buffer* inst = InstanceBuffer;
+		ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(InstanceBuffer); 
+	}
+	//복사생성자
+	Mesh(const Mesh& other);
+	//이동생성자
+	Mesh(Mesh&& other);
+
+	 
+public:
 	
 	void Init(ID3D11Device* device,
 		vector<MyVertex::BasicVertex>& vertexSrc,
@@ -79,5 +91,6 @@ public:
 
 public:
 	bool operator==(const Mesh& mesh) { return id < mesh.id; }
+	bool operator==(const std::string& name) { return id == name; }
 };
 

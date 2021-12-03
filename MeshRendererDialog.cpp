@@ -96,7 +96,7 @@ bool MeshRendererDialog::UpdateView()
 
 	//mesh editText에 이름 설정
 	Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
-	
+			
 	int listCount = ListBox_GetCount(m_hList);
 	for (int i = 0; i < listCount; i++)
 		ListBox_DeleteString(m_hList, i);
@@ -164,12 +164,13 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 			std::vector<LPCWSTR> extensions = { L"dds"};
 			if (FileOpenDialog(m_hDlg, fileTitle, filePath, extensions))
 			{
-				MyCommand* comm = new SetMaterialMap(&(*materials)[0], filePath, mapType::Type_DiffuseMap);
-				comm->Execute();
-				delete comm;
-				MyCommand* comm2 = new SetMaterialMap(&(*materials)[1], filePath, mapType::Type_DiffuseMap);
-				comm2->Execute();
-				delete comm2;
+				int idx = ListBox_GetCurSel(m_hList);
+				if (idx == -1)
+					break;
+				CommandQueue::AddCommand(new SetMaterialMap(&(*materials)[idx], filePath, mapType::Type_DiffuseMap));
+				
+				//diffuseMapText에 이름 설정
+				Edit_SetText(GetDlgItem(m_hDlg, DIFFUSEMAPCONTROL), fileTitle);
 			}
 			else
 				MessageBox(m_hDlg, L"DiffuseMap Load Fail!", L"DiffuseMap Load", MB_OK);

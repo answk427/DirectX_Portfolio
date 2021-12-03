@@ -112,7 +112,7 @@ BasicEffect::~BasicEffect()
 }
 void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW)
 {
-	if(directL == nullptr)
+	if(directL != nullptr)
 		SetDirLights(directL);	
 	
 	SetEyePosW(eyePosW);
@@ -156,6 +156,7 @@ ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 			return Light3Tech;
 		case TechniqueType::Light | TechniqueType::DiffuseMap:
 			return Light3TexTech;
+			
 		default:
 			nullptr;
 	}

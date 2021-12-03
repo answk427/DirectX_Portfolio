@@ -3,6 +3,8 @@
 #include "AssimpLoader.h"
 #include "ComponentMgr.h"
 
+#define MESHES_SIZE 10000
+
 class MeshMgr
 {
 private:
@@ -12,7 +14,7 @@ private:
 
 
 public:
-	MeshMgr(ID3D11Device* device) : device(device) {}
+	MeshMgr(ID3D11Device* device) : device(device) { meshes.reserve(MESHES_SIZE); }
 	MeshMgr() {}
 	~MeshMgr() {}
 public:

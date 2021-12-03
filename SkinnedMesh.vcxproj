@@ -95,6 +95,7 @@
     <ClCompile Include="Common\Waves.cpp" />
     <ClCompile Include="Common\xnacollision.cpp" />
     <ClCompile Include="ComponentDialog.cpp" />
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="InputLayoutManager.cpp" />
     <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="ComponentMgr.cpp" />
@@ -104,6 +105,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HierarchyDialog.cpp" />
     <ClCompile Include="LoadM3d.cpp" />
+    <ClCompile Include="MainWindowDialog.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshGeometry.cpp" />
     <ClCompile Include="AssimpLoader.cpp" />
@@ -111,6 +113,7 @@
     <ClCompile Include="MeshRendererCommand.cpp" />
     <ClCompile Include="MeshRendererDialog.cpp" />
     <ClCompile Include="MsgProcedure.cpp" />
+    <ClCompile Include="MyCommand.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderStates.cpp" />
@@ -129,6 +132,7 @@
     <ClInclude Include="Bones.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="InputLayoutManager.h" />
+    <ClInclude Include="MainWindowDialog.h" />
     <ClInclude Include="MyCommand.h" />
     <ClInclude Include="Common\Camera.h" />
     <ClInclude Include="Common\d3dApp.h" />

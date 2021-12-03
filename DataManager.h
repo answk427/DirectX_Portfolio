@@ -11,18 +11,12 @@ public:
 	~DataManager() {}
 
 public:
-	static DataManager& Instance()
-	{
-		static DataManager* instance = new DataManager();
-		return *instance;
-	}
+	static DataManager& Instance();
+	
 
 public:
-	bool LoadEffectData() 
-	{
-		if (effectMgr.CreateEffect(L"FX/Basic.fxo", EffectType::BasicEffectType) == nullptr)
-			return false;
-		else
-			return true;
-	}
+	bool LoadEffectData();
+
+	//File의 경로, 이름을 얻어오는 함수
+	bool FileOpen(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[], std::vector<LPCWSTR> extension);
 };

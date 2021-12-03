@@ -9,7 +9,7 @@ Mesh* MeshMgr::CreateMeshFromFile(const std::string fileName, AssimpMesh& loader
 {
 	
 	//이미 있는 매쉬면 반환
-	auto it = std::find(meshes.begin(), meshes.end(), Mesh(fileName));
+	auto it = std::find(meshes.begin(), meshes.end(), fileName);
 	if (it != meshes.end())
 	{
 		return &(*it);

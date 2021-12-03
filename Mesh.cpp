@@ -41,6 +41,22 @@ void Mesh::SetIB(ID3D11DeviceContext * context)
 	
 }
 
+Mesh::Mesh(const Mesh & other) : mVB(0), mIB(0), InstanceBuffer(0), vertexBufferCount(0), id(id)
+{
+	subsets = other.subsets;
+	vertices = other.vertices;
+	InstancingDatas = other.InstancingDatas;
+	indices = other.indices;
+}
+
+Mesh::Mesh(Mesh && other) : mVB(0), mIB(0), InstanceBuffer(0), vertexBufferCount(0), id(id)
+{
+	subsets.swap(other.subsets);
+	vertices.swap(other.vertices);
+	InstancingDatas.swap(other.InstancingDatas);
+	indices.swap(other.indices);
+}
+
 void Mesh::Init(ID3D11Device * device, vector<MyVertex::BasicVertex>& vertexSrc, vector<UINT>& indexSrc, vector<Subset>& subsetSrc)
 {
 	SetVertices(vertexSrc);
