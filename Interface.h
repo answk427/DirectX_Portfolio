@@ -6,7 +6,9 @@ enum ComponentType
 {
 	UNDEFINED,
 	MESHRENDERER,
-	SKINNEDMESHRENDERER
+	SKINNEDMESHRENDERER,
+	DIRECTIONALLIGHT
+	
 };
 
 //오브젝트에 추가될 컴포넌트의 인터페이스

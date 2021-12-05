@@ -46,6 +46,9 @@
     <Filter Include="New Source Files\Command">
       <UniqueIdentifier>{afef21b0-8cbc-4cae-ae8c-28b550f21411}</UniqueIdentifier>
     </Filter>
+    <Filter Include="New Header Files\Component">
+      <UniqueIdentifier>{27cba0d4-ffe6-427f-858c-4cf7e5658c86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp">
@@ -248,16 +251,7 @@
     <ClInclude Include="Common\xnacollision.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Interface.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BufferResource.h">
@@ -266,13 +260,7 @@
     <ClInclude Include="Constant.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AssimpLoader.h">
-      <Filter>New Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Bones.h">
@@ -334,6 +322,24 @@
     </ClInclude>
     <ClInclude Include="MainWindowDialog.h">
       <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>New Header Files\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -124,17 +124,17 @@ Scene::Scene(HINSTANCE hInstance)
 
 	mDirLights[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mDirLights[0].Diffuse = XMFLOAT4(1.0f, 0.9f, 0.9f, 1.0f);
-	mDirLights[0].Specular = XMFLOAT4(0.8f, 0.8f, 0.7f, 1.0f);
+	mDirLights[0].Specular = XMFLOAT4(0.8f, 0.8f, 0.7f, 3.0f);
 	mDirLights[0].Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
 
 	mDirLights[1].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	mDirLights[1].Diffuse = XMFLOAT4(0.40f, 0.40f, 0.40f, 1.0f);
-	mDirLights[1].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mDirLights[1].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
 	mDirLights[1].Direction = XMFLOAT3(0.707f, -0.707f, 0.0f);
 
 	mDirLights[2].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	mDirLights[2].Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
-	mDirLights[2].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mDirLights[2].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
 	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, 1.0f);
 
 	
@@ -157,13 +157,11 @@ bool Scene::Init()
 	effectMgr.Init(md3dDevice);
 
 	//카메라 초기화
-	camera.SetPosition({ -50.0f, 0.0f, -70.0f });
+
+	
+	camera.SetPosition({ 50.0f, 0.0f, -70.0f });
 	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
-	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-1.0f });
-	//
-	//camera.SetPosition({ 50.0f, 0.0f, -70.0f });
-	//camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
-	//camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f });
+	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f });
 	
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	//Effects::InitAll(md3dDevice);

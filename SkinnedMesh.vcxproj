@@ -132,6 +132,7 @@
     <ClInclude Include="Bones.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="InputLayoutManager.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="MainWindowDialog.h" />
     <ClInclude Include="MyCommand.h" />
     <ClInclude Include="Common\Camera.h" />

@@ -50,7 +50,7 @@ void AssimpLoader::InitScene(const string& fileName)
 
 //void AssimpLoader::InitContainer()
 //{
-//	//전부 비우는 작업
+//	//전부 비우는 작업 
 //	vector<MyVertex::BasicVertex>().swap(vertices);
 //	vector<UINT>().swap(indices);
 //	vector<Subset>().swap(subsets);
