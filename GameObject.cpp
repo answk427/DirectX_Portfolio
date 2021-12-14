@@ -1,33 +1,69 @@
 #include "GameObject.h"
 
 
-void GameObject::AddComponent(Component * component)
+
+bool GameObjectComp(const ComponentOfObject * comA, const ComponentOfObject * comB)
+{
+	int typeA = comA->GetComponentType();
+	int typeB = comB->GetComponentType();
+	if (typeA == typeB)
+	{
+		return comA->GetId() < comB->GetId();
+	}
+
+	return typeA < typeB;
+
+	//return comA->GetComponentType() < comB->GetComponentType();
+}
+
+
+bool lowerBoundCompare(const ComponentOfObject * comA, ComponentType comB)
+{
+	return comA->GetComponentType() < comB;
+}
+
+
+
+bool GameObject::AddComponent(Component * component)
 {	
-	bool search = std::binary_search(components.begin(), components.end(), 
-		component, GameObjectComp);
+	//componentT temp("temp");
+
+	//일치하는 컴포넌트가 있는지 검색
+	std::vector<ComponentOfObject*>::iterator it = std::lower_bound(
+		components.begin(), components.end(),
+		component->componentType, lowerBoundCompare);
+	
+	/*bool search = std::binary_search(components.begin(), components.end(), 
+		component->componentType, lowerBoundCompare);*/
 	
 	//중복된 컴포넌트는 추가하지 않음
-	if (search)
-		return;
+	/*if (search)
+		return false;*/
+	if (it != components.end())
+		return false;
 	
-	components.push_back(component);
+	ComponentOfObject* componentOfObject = new ComponentOfObject(component->id, component);
+	components.push_back(componentOfObject);
+
 	std::sort(components.begin(), components.end(), GameObjectComp);
+
+	return true;
 }
 
 
-
-
-bool getComponentCompare_binary(const type_info & compType, const Component* comp)
-{	
-	return typeid(*comp).raw_name()<compType.raw_name();
-}
-
-bool getComponentCompare_lowerBound(const Component* comp, const char* rawName)
+Component * ComponentOfObject::GetComponent() 
 {
-	return typeid(*comp).raw_name() < rawName;
+	UpdateComponent();
+	return component;
 }
 
-bool GameObjectComp(const Component * comA, const Component * comB)
+
+void ComponentOfObject::UpdateComponent()
 {
-	return typeid(*comA).raw_name() < typeid(*comB).raw_name();
+	//id가 일치
+	if (id == component->id)
+		return;
+
+	ComponentMgr componentMgr = ComponentMgr::Instance();
+	component = componentMgr.GetComponent(id);
 }

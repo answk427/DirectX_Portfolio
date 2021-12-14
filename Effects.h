@@ -12,6 +12,7 @@
 #include "Material.h"
 #include <Camera.h>
 #include "BufferResource.h"
+#include "Light.h"
 
 
 enum TechniqueType
@@ -78,7 +79,30 @@ public:
 	void SetFogColor(const FXMVECTOR v)                 { FogColor->SetFloatVector(reinterpret_cast<const float*>(&v)); }
 	void SetFogStart(float f)                           { FogStart->SetFloat(f); }
 	void SetFogRange(float f)                           { FogRange->SetFloat(f); }
-	void SetDirLights(const DirectionalLight* lights)   { DirLights->SetRawValue(lights, 0, 3*sizeof(DirectionalLight)); }
+	
+	void SetDirLights(const DirectionalLight* lights)   
+	{ 
+		DirLights->SetRawValue(lights, 
+			0,
+			Lighting::lightCount[LightType::DIRECTIONAL] *sizeof(DirectionalLight)); 
+		dirLightSize->SetInt(Lighting::lightCount[LightType::DIRECTIONAL]);
+	}
+	void SetPointLights(const PointLight* lights)
+	{
+		DirLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::POINTLIGHT] * sizeof(PointLight));
+		pointLightSize->SetInt(Lighting::lightCount[LightType::POINTLIGHT]);
+
+	}
+	void SetSpotLights(const SpotLight* lights)
+	{
+		DirLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::SPOTLIGHT] * sizeof(SpotLight));
+		spotLightSize->SetInt(Lighting::lightCount[LightType::SPOTLIGHT]);
+
+	}
 	void SetMaterial(const BasicMaterial& mat)               { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
 	void SetDiffuseMap(ID3D11ShaderResourceView* tex)   { DiffuseMap->SetResource(tex); }
 	void SetShadowMap(ID3D11ShaderResourceView* tex)    { ShadowMap->SetResource(tex); }
@@ -152,6 +176,16 @@ public:
 	ID3DX11EffectScalarVariable* FogStart;
 	ID3DX11EffectScalarVariable* FogRange;
 	ID3DX11EffectVariable* DirLights;
+	ID3DX11EffectScalarVariable* dirLightSize;
+
+	ID3DX11EffectVariable* pointLights;
+	ID3DX11EffectScalarVariable* pointLightSize;
+
+	ID3DX11EffectVariable* spotLights;
+	ID3DX11EffectScalarVariable* spotLightSize;
+
+
+
 	ID3DX11EffectVariable* Mat;
 
 	ID3DX11EffectShaderResourceVariable* DiffuseMap;

@@ -5,15 +5,26 @@
 //=============================================================================
 
 #include "LightHelper.fx"
- 
+
+
 cbuffer cbPerFrame
 {
-	DirectionalLight gDirLights[3];
+	DirectionalLight gDirLights[DIRECTIONALLIGHT_SIZE];
+	int dirLight_size=0;
+
+	PointLight gPointLights[POINTLIGHT_SIZE];
+	int pointLight_size=0;
+
+	SpotLight gSpotLights[SPOTLIGHT_SIZE];
+	int spotLight_size=0;
+
+
 	float3 gEyePosW;
 
 	float  gFogStart;
 	float  gFogRange;
 	float4 gFogColor; 
+	
 };
 
 cbuffer cbPerObject
@@ -112,7 +123,8 @@ float4 PS(VertexOut pin,
 	
     // Default to multiplicative identity.
     float4 texColor = float4(1, 1, 1, 1);
-    if(gUseTexure)
+    
+	if(gUseTexure)
 	{
 		// Sample texture.
 		texColor = gDiffuseMap.Sample( samLinear, pin.Tex );
@@ -148,7 +160,7 @@ float4 PS(VertexOut pin,
 
 		// Sum the light contribution from each light source.  
 		[unroll]
-		for(int i = 0; i < gLightCount; ++i)
+		for(int i = 0; i < dirLight_size; ++i)
 		{
 			float4 A, D, S;
 			ComputeDirectionalLight(gMaterial, gDirLights[i], pin.NormalW, toEye, 
@@ -158,6 +170,29 @@ float4 PS(VertexOut pin,
 			diffuse += shadow[i]*D;
 			spec    += shadow[i]*S;
 		}
+
+		for (int i = 0; i < pointLight_size; ++i)
+		{
+			float4 A, D, S;
+			ComputePointLight(gMaterial, gPointLights[i], pin.PosW,pin.NormalW, toEye,
+				A, D, S);
+			
+			ambient += ambientAccess * A;
+			diffuse += shadow[i] * D;
+			spec += shadow[i] * S;
+		}
+
+		for (int i = 0; i < spotLight_size; ++i)
+		{
+			float4 A, D, S;
+			ComputeSpotLight(gMaterial, gSpotLights[i], pin.PosW, pin.NormalW, toEye,
+				A, D, S);
+
+			ambient += ambientAccess * A;
+			diffuse += shadow[i] * D;
+			spec += shadow[i] * S;
+		}
+
 
 		litColor = texColor*(ambient + diffuse) + spec;
 

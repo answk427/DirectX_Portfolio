@@ -99,7 +99,16 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	FogColor          = mFX->GetVariableByName("gFogColor")->AsVector();
 	FogStart          = mFX->GetVariableByName("gFogStart")->AsScalar();
 	FogRange          = mFX->GetVariableByName("gFogRange")->AsScalar();
+	
 	DirLights         = mFX->GetVariableByName("gDirLights");
+	dirLightSize	  = mFX->GetVariableByName("dirLight_size")->AsScalar();
+
+	pointLights= mFX->GetVariableByName("gPointLights");
+	pointLightSize= mFX->GetVariableByName("pointLight_size")->AsScalar();
+
+	spotLights = mFX->GetVariableByName("gSpotLights");
+	spotLightSize = mFX->GetVariableByName("spotLight_size")->AsScalar();
+		
 	Mat               = mFX->GetVariableByName("gMaterial");
 	DiffuseMap        = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
 	CubeMap           = mFX->GetVariableByName("gCubeMap")->AsShaderResource();
@@ -114,6 +123,10 @@ void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, S
 {
 	if(directL != nullptr)
 		SetDirLights(directL);	
+	if (pointL != nullptr)
+		SetPointLights(pointL);
+	if (spotL != nullptr)
+		SetSpotLights(spotL);
 	
 	SetEyePosW(eyePosW);
 }

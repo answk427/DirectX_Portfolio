@@ -1,18 +1,24 @@
 #pragma once
 #include "Interface.h"
 #include "Renderer.h"
+#include "Light.h"
 
 #include <vector>
 #include <map>
 #include <string>
 #include <functional>
 
+
 #define MESHID "MESHRENDERER"
 #define SKINNEDMESHID "SKINNEDMESHRENDERER"
+#define LIGHTID "LIGHT"
 
 #define MESHRENDERERSIZE 1000
 #define SKINNEDMESHRENDERERSIZE 1000
+#define LIGHTSIZE 1000
 #define COMPONENTSIZE 10000
+
+
 
 enum Command
 {
@@ -25,10 +31,12 @@ class ComponentMgr
 private:
 	std::vector<MeshRenderer> meshRenderers;
 	std::vector<SkinnedMeshRenderer> skinnedMeshRenderers;
+	std::vector<Lighting> lightings;
+
 	std::vector<Component*> components;
 	
 	//component의 id와 배열 index 매핑
-	std::unordered_map<std::string, int> idMap;
+	std::unordered_map<componentID, int> idMap;
 		
 private:
 	//Component를 만들때 사용할 id넘버
@@ -36,7 +44,8 @@ private:
 	//활성화 된 컴포넌트의 개수
 	int enableCount_meshRenderer;
 	int enableCount_skinnedMeshRenderer;
-
+	int enableCount_lighting;
+	
 private:
 	//Enable, Disable에 따른 해당 Component 컨테이너 원소 위치조정 함수
 	template <typename compType>
@@ -51,15 +60,27 @@ private:
 
 public:
 	ComponentMgr();
-	~ComponentMgr() {}
+	~ComponentMgr();
+	static ComponentMgr& Instance();
 public:
 	//전달받은 Component를 Enable또는 Disable 시키는 함수
 	Component* OnOffComponent(Component* component, Command endisable);
-	
 	Component* CreateComponent(ComponentType compType);
+	
+	//ID에서 Component의 타입을 추출
+	ComponentType typeOfID(componentID& id);
+	//ID로 컴포넌트를 얻어오는 함수
+	Component* GetComponent(componentID& id);
 	
 public:
 	void Render(ID3D11DeviceContext* context, Camera* camera);
+	void Update();
+
+public:
+	const std::vector<Lighting> getLightings() 
+	{
+		return vector<Lighting>(lightings.begin(), lightings.begin() + enableCount_lighting);
+	}
 };
 
 template<typename compType>

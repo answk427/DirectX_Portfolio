@@ -66,7 +66,8 @@ private:
 
 private:
 	Camera camera;
-	DirectionalLight mDirLights[3];
+	//DirectionalLight mDirLights[3];
+	std::vector<DirectionalLight> mDirLights;
 	std::vector<GameObject> gameObjects;
 		
 
@@ -90,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 	if (!theApp.Init())
 		return 0;
-
+	
 	return theApp.Run();
 }
 
@@ -103,7 +104,7 @@ Scene::Scene(HINSTANCE hInstance)
 	mPhi(0.4f*MathHelper::Pi), mRadius(2.5f), 
 	m_HierarchyDialog(hInstance),
 	texMgr(TextureMgr::Instance()), effectMgr(EffectMgr::Instance()),
-	dataMgr(DataManager::Instance())
+	dataMgr(DataManager::Instance()) 
 {
 	
 	mMainWndCaption = L"Crate Demo";
@@ -122,7 +123,7 @@ Scene::Scene(HINSTANCE hInstance)
 	mDirLights[1].Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 16.0f);
 	mDirLights[1].Direction = XMFLOAT3(-0.707f, 0.0f, 0.707f);*/
 
-	mDirLights[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	/*mDirLights[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mDirLights[0].Diffuse = XMFLOAT4(1.0f, 0.9f, 0.9f, 1.0f);
 	mDirLights[0].Specular = XMFLOAT4(0.8f, 0.8f, 0.7f, 3.0f);
 	mDirLights[0].Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
@@ -135,7 +136,31 @@ Scene::Scene(HINSTANCE hInstance)
 	mDirLights[2].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	mDirLights[2].Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 	mDirLights[2].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
-	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, 1.0f);
+	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, 1.0f);*/
+
+
+	DirectionalLight a;
+	a.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	a.Diffuse = XMFLOAT4(1.0f, 0.9f, 0.9f, 1.0f);
+	a.Specular = XMFLOAT4(0.8f, 0.8f, 0.7f, 3.0f);
+	a.Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
+
+	DirectionalLight b;
+	b.Ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	b.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	b.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
+	b.Direction = XMFLOAT3(0.707f, -0.707f, 1.0f);
+
+	DirectionalLight c;
+	c.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	c.Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
+	c.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
+	c.Direction = XMFLOAT3(0.0f, 0.0, 1.0f);
+	
+	//mDirLigths.assign(1,DirectionalLight());
+	mDirLights.push_back(a);
+	mDirLights.push_back(b);
+	mDirLights.push_back(c);
 
 	
 }
@@ -176,9 +201,34 @@ bool Scene::Init()
 	m_HierarchyDialog.Init(mhMainWnd);
 	m_HierarchyDialog.OpenDialog(mhMainWnd);
 	
-			
 	
+	Lighting* l = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
+	XMFLOAT4 a(0.5f, 0.5f, 0.5f, 1.0f);
+	XMFLOAT3 b(1.0f, 1.0f, 1.0f);
+	l->SetBasic(a, a, a);
+	l->SetAtt(b);
+	l->SetDirection(b);
+
+	Lighting* l2 = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
+	b = { -1.0f,-1.0f,-1.0f};
+	l2->SetBasic(a, a, a);
+	l2->SetAtt(b);
+	l2->SetDirection(b);
+
+	Lighting* l3 = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
+	b = { -0.5f,0.5f,-0.5f };
+	l3->SetBasic(a, a, a);
+	l3->SetAtt(b);
+	l3->SetDirection(b);
+	
+	
+	Lighting* l4 = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
+	b = { +0.5f,-0.5f,0.5f };
+	l4->SetBasic(a, a, a);
+	l4->SetAtt(b);
+	l4->SetDirection(b);
 	SetFocus(mhMainWnd);
+
 
 	return true;
 }
@@ -226,9 +276,9 @@ void Scene::DrawScene()
 	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		
-	// Set per frame constants.
-	effectMgr.SetPerFrame(mDirLights, nullptr, nullptr, camera.GetPosition());
 	
+	effectMgr.SetPerFrame(componentMgr.getLightings(), camera.GetPosition());
+		
 	//Rendering
 	componentMgr.Render(md3dImmediateContext, &camera);
 	
@@ -236,10 +286,6 @@ void Scene::DrawScene()
 	HR(mSwapChain->Present(0, 0));
 
 	camera.UpdateViewMatrix();
-
-
-
-
 
 }
 

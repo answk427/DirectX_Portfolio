@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include "Effects.h"
+#include "Light.h"
 
 enum EffectType
 {
@@ -34,7 +35,7 @@ public:
 	void SetType(const std::wstring& shaderName, EffectType type);
 	void SetEffect(const std::wstring& shaderName, Effect* effect) { myEffect[shaderName] = effect; }
 
-	void SetPerFrame(DirectionalLight* directL, PointLight *pointL, SpotLight *spotL, const XMFLOAT3 &eyePosW);
+	void SetPerFrame(const std::vector<Lighting>& lightings, const XMFLOAT3 &eyePosW);
 	
 	
 };

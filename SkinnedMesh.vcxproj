@@ -104,6 +104,9 @@
     <ClCompile Include="DialogPractice.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HierarchyDialog.cpp" />
+    <ClCompile Include="InspectorCommand.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightDialog.cpp" />
     <ClCompile Include="LoadM3d.cpp" />
     <ClCompile Include="MainWindowDialog.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -132,7 +135,9 @@
     <ClInclude Include="Bones.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="InputLayoutManager.h" />
+    <ClInclude Include="InspectorCommand.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LightDialog.h" />
     <ClInclude Include="MainWindowDialog.h" />
     <ClInclude Include="MyCommand.h" />
     <ClInclude Include="Common\Camera.h" />

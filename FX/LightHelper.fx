@@ -4,6 +4,10 @@
 // Structures and functions for lighting calculations.
 //***************************************************************************************
 
+#define DIRECTIONALLIGHT_SIZE 100
+#define POINTLIGHT_SIZE 100
+#define SPOTLIGHT_SIZE 100
+
 struct DirectionalLight
 {
 	float4 Ambient;

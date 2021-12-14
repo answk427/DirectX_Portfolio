@@ -4,12 +4,13 @@
 
 enum ComponentType
 {
-	UNDEFINED,
 	MESHRENDERER,
 	SKINNEDMESHRENDERER,
-	DIRECTIONALLIGHT
-	
+	LIGHT,
+	UNDEFINED
 };
+
+typedef std::string componentID;
 
 //오브젝트에 추가될 컴포넌트의 인터페이스
 class Component
@@ -19,7 +20,7 @@ public:
 	ComponentType componentType;
 
 public:
-	Component(const std::string& id, ComponentType type) : id(id), componentType(type) {}
+	Component(const componentID& id, ComponentType type) : id(id), componentType(type) {}
 	virtual ~Component() {}
 public:
 	virtual void Init() = 0;

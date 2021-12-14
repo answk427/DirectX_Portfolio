@@ -31,6 +31,7 @@ private:
 
 	//새로운 오브젝트의 id를 생성하는 함수
 	gameObjectID makeID();
+
 public:
 	ObjectMgr(MeshMgr& meshMgr, ComponentMgr& componentMgr)
 		: meshMgr(meshMgr), componentMgr(componentMgr)
@@ -38,6 +39,7 @@ public:
 	{}
 	~ObjectMgr() {}
 public:
+	//object 컨테이너
 	std::map<gameObjectID,GameObject> gameObjects;
 
 public:
@@ -45,4 +47,6 @@ public:
 	GameObject& ObjectMgr::CreateGameObject(const gameObjectID& id, const std::wstring& name);
 	GameObject & ObjectMgr::CreateGameObject(const gameObjectID& id, const std::wstring & name, GameObject* parent);
 	GameObject* CreateObjectFromFile(const std::string& fileName);
+	
+	Component* AddComponent(GameObject* obj, ComponentType compType);
 };

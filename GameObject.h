@@ -5,18 +5,36 @@
 #include <vector>
 #include <algorithm>
 #include "Transform.h"
+#include "ComponentMgr.h"
 
-//같은 타입인지 검사
-bool getComponentCompare_binary(const type_info& compType, const Component* comp);
-bool getComponentCompare_lowerBound(const Component* comp, const char* rawName);
+class ComponentOfObject
+{
+private:
+	gameObjectID id;
+	ComponentType componentType;
+	Component* component;
+public:
+	ComponentOfObject(gameObjectID id, Component* component) : id(id), component(component) { componentType = component->componentType; }
 
-//type 이름순 정렬
-bool GameObjectComp(const Component* comA, const Component* comB);
+public:
+	bool operator<(const ComponentOfObject& other);
+public:
+	Component* GetComponent();
+	gameObjectID GetId() const {return id;}
+	ComponentType GetComponentType() const{ return component->componentType; }
+	
+	//id와 Component가 일치하지 않을경우 Component매니저에서 Component를 다시 받아옴
+	void UpdateComponent();
+};
+
+//type순, id순 정렬
+bool GameObjectComp(const ComponentOfObject* comA,const ComponentOfObject* comB);
+bool lowerBoundCompare(const ComponentOfObject* comA, ComponentType comB);
 
 
 class GameObject : public Object
 {
-
+	 
 public:
 	GameObject() : Object() {}
 	GameObject(const gameObjectID& id) : Object(id) {}
@@ -25,41 +43,29 @@ public:
 	Transform transform;
 
 public:
-	template <typename componentType>
-	Component* GetComponent();
-	void AddComponent(Component* component);
-	const std::vector<Component*>& GetComponents() { return components; }
+	template <typename componentT>
+	componentT* GetComponent();
+	bool AddComponent(Component* component);
+	std::vector<ComponentOfObject*>& GetComponents() { return components; }
 
 private:
-	std::vector<Component*> components;
+	std::vector<ComponentOfObject*> components;
 	
 };
 
 
-template<typename componentType>
-inline Component* GameObject::GetComponent()
+template<typename componentT>
+inline componentT* GameObject::GetComponent()
 {
-	////컨테이너에 있는지 확인
-	//if (!std::binary_search(components.begin(),
-	//	components.end(), typeid(componentType),
-	//	getComponentCompare_lowerBound))
-	//{
-	//	return NULL;
-	//}
-	const char* str = typeid(componentType).raw_name();
-
-	//같은타입을 이분탐색
-	std::vector<Component*>::iterator it =  std::lower_bound(
+	componentT temp("temp");
+		
+	//일치하는 컴포넌트가 있는지 검색
+	std::vector<ComponentOfObject*>::iterator it = std::lower_bound(
 		components.begin(), components.end(),
-		&componentType("test"), GameObjectComp);
-
-	//bool(const Component *, const Component *): 인수2을(를) 'const_Ty'에서 const Component*(으)로 변환할 수 없습니다.
-	//std::vector<Component*>::iterator it = std::lower_bound(
-	//	components.begin(), components.end(),
-	//	typeid(componentType).raw_name(), GameObjectComp);
+		temp.componentType, lowerBoundCompare);
 
 	if (it == components.end())
 		return nullptr;
 
-	return *it;
+	return dynamic_cast<componentT*>((*it)->GetComponent());
 }

@@ -11,6 +11,8 @@
 #include "DialogSizeDefine.h"
 #include "MeshRendererDialog.h"
 #include "TransformDialog.h"
+#include "LightDialog.h"
+
 #pragma comment(lib,"comctl32.lib")
 
 #define TAB_TRANSFORM IDD_DIALOG3
@@ -18,7 +20,8 @@
 #define INSPECTOR IDD_DIALOG6
 #define TABCONTROLID IDC_TAB1
 
-
+#define ADDCOMPONENTBTN IDC_BUTTON1
+#define COMPONENTCOMBO IDC_COMBO2
 
 
 
@@ -30,6 +33,7 @@ private:
 private:
 	MeshRendererDialog m_MeshRendererDialog;
 	TransformDialog m_TransformDialog;
+	LightDialog m_LightDialog;
 
 	std::vector<ComponentDialog*> dialogs;
 
@@ -43,7 +47,8 @@ public:
 	HWND m_hDlg; //dialog
 	HWND hWnd; //main window
 	HWND m_hTab; //탭 컨트롤 핸들
-	
+	HWND m_hBtn_addComponent; //Add Component 버튼 핸들
+	HWND m_hCombo; //component 선택 combo
 public:
 	Inspector(HINSTANCE hInstance);
 
@@ -97,6 +102,7 @@ private:
 	void AddTab(HWND hTab);
 public:
 	void SetObject(GameObject* obj);
+	bool AddComponent(ComponentType componentTyp);
 	
 	
 	

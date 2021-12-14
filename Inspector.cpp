@@ -2,6 +2,7 @@
 
 Inspector* g_Inspector = 0;
 bool Inspector::instantiated = false;
+extern std::vector<std::string> idFront;
 
 
 bool Inspector::OpenDialog()
@@ -40,7 +41,7 @@ void Inspector::Init(HWND hWnd_main)
 }
 
 Inspector::Inspector(HINSTANCE hInstance) : MsgProcedure(hInstance), m_pHdr(0), m_currObject(0),
-				m_MeshRendererDialog(hInstance), m_TransformDialog(hInstance)
+				m_MeshRendererDialog(hInstance), m_TransformDialog(hInstance), m_LightDialog(hInstance)
 {
 	assert(!instantiated);
 	instantiated = true;
@@ -91,7 +92,28 @@ INT_PTR CALLBACK Inspector::DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
 void Inspector::MenuProc(HWND hDlg, WPARAM wParam)
 {
+	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
+
+	switch (wmId)
+	{
+	case ADDCOMPONENTBTN:
+		if (HIWORD(wParam) == BN_CLICKED)
+		{
+			//콤보박스의 현재 index 확인
+			int idx = ComboBox_GetCurSel(m_hCombo);
+			if (idx == -1)
+				break;
+			//Component가 정상적으로 추가됐으면 Tab 추가
+			if (AddComponent((ComponentType)idx))
+				AddTab(hDlg);
+			else
+				MessageBox(m_hDlg, TEXT("Add Component Fail!"), TEXT("Add Component"), MB_OK);
+		}
+		
+	}
+
+	
 
 }
 
@@ -155,10 +177,10 @@ void Inspector::WindowSizing(HWND hwndDlg)
 		dlgWndRect.right - dlgWndRect.left,
 		(dlgWndRect.bottom - dlgWndRect.top) * 0.8, true);
 
-	HWND button = GetDlgItem(hwndDlg, IDC_BUTTON1);
+	HWND button = GetDlgItem(hwndDlg, ADDCOMPONENTBTN);
 	MoveWindow(button, 180, 690, 100, 30, true);
 
-	HWND combo =GetDlgItem(hwndDlg, IDC_COMBO2);
+	HWND combo =GetDlgItem(hwndDlg, COMPONENTCOMBO);
 	MoveWindow(combo , 70, 695, 100, 35,true);
 
 }
@@ -168,10 +190,24 @@ void Inspector::WindowSizing(HWND hwndDlg)
 HRESULT Inspector::OnTabbedDialogInit(HWND hwndDlg)
 {
 	INITCOMMONCONTROLSEX iccex;
+	
 	m_hTab = GetDlgItem(hwndDlg, IDC_TAB1);
-	/*DWORD dwDlgBase = GetDialogBaseUnits();
-	int cxMargin = LOWORD(dwDlgBase) / 4;
-	int cyMargin = HIWORD(dwDlgBase) / 8;*/
+	m_hBtn_addComponent = GetDlgItem(hwndDlg, ADDCOMPONENTBTN);
+	m_hCombo = GetDlgItem(hwndDlg, COMPONENTCOMBO);
+
+	USES_CONVERSION;
+	wchar_t itemName[100];
+	
+	//combo박스에 item 추가
+	for (auto& elem : idFront)
+	{	
+		swprintf(itemName, L"%s", A2W(elem.c_str()));
+		ComboBox_AddString(m_hCombo, itemName);
+		
+	}
+	
+
+	
 	RECT rcTab;
 	HWND hwndButton;
 	RECT rcButton;
@@ -190,14 +226,6 @@ HRESULT Inspector::OnTabbedDialogInit(HWND hwndDlg)
 	// data of the dialog box. 
 	SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)m_pHdr);
 
-	// Create the tab control. Note that m_hInstance is a global 
-	// instance handle. 
-	/*m_pHdr->hwndTab = CreateWindow(
-		WC_TABCONTROL, L"",
-		WS_CHILD | WS_CLIPSIBLINGS | WS_VISIBLE,
-		0, 0, 100, 100,
-		hwndDlg, NULL, m_hInstance, NULL
-	);*/
 	m_pHdr->hwndTab = GetDlgItem(hwndDlg, TABCONTROLID);
 
 	if (m_pHdr->hwndTab == NULL)
@@ -212,62 +240,17 @@ HRESULT Inspector::OnTabbedDialogInit(HWND hwndDlg)
 	m_pHdr->apRes[1] = DoLockDlgRes(MAKEINTRESOURCE(TAB_MESHRENDERER));
 	m_pHdr->apRes[2] = DoLockDlgRes(MAKEINTRESOURCE(TAB_TERRAIN));
 	
-	// Determine a bounding rectangle that is large enough to 
-	// contain the largest child dialog box. 
-	//SetRectEmpty(&rcTab);
-	//for (i = 0; i < C_PAGES; i++)
-	//{
-	//	if (m_pHdr->apRes[i]->cx > rcTab.right)
-	//		rcTab.right = m_pHdr->apRes[i]->cx;
-	//	if (m_pHdr->apRes[i]->cy > rcTab.bottom)
-	//		rcTab.bottom = m_pHdr->apRes[i]->cy;
-	//}
-
-	//// Map the rectangle from dialog box units to pixels.
-	//MapDialogRect(hwndDlg, &rcTab);
-
+	
 	// Calculate how large to make the tab control, so 
 	// the display area can accommodate all the child dialog boxes. 
 	TabCtrl_AdjustRect(m_pHdr->hwndTab, TRUE, &rcTab);
 	GetClientRect(m_pHdr->hwndTab, &rcTab);
 	
-	//OffsetRect(&rcTab, cxMargin - rcTab.left, cyMargin - rcTab.top);
+
 
 	// Calculate the display rectangle. 
 	CopyRect(&m_pHdr->rcDisplay, &rcTab);
 	TabCtrl_AdjustRect(m_pHdr->hwndTab, FALSE, &m_pHdr->rcDisplay);
-
-	// Set the size and position of the tab control, buttons, 
-	// and dialog box. 
-	/*SetWindowPos(m_pHdr->hwndTab, NULL, rcTab.left, rcTab.top,
-		rcTab.right - rcTab.left, rcTab.bottom - rcTab.top,
-		SWP_NOZORDER);*/
-
-	// Move the first button below the tab control. 
-	//hwndButton = GetDlgItem(hwndDlg, IDC_BUTTON1);
-	//SetWindowPos(hwndButton, NULL,
-	//	rcTab.left, rcTab.bottom + cyMargin, 0, 0,
-	//	SWP_NOSIZE | SWP_NOZORDER);
-
-	//// Determine the size of the button. 
-	//GetWindowRect(hwndButton, &rcButton);
-	//rcButton.right -= rcButton.left;
-	//rcButton.bottom -= rcButton.top;
-
-	//// Move the second button to the right of the first. 
-	//hwndButton = GetDlgItem(hwndDlg, IDC_BUTTON1);
-	//SetWindowPos(hwndButton, NULL,
-	//	rcTab.left + rcButton.right + cxMargin,
-	//	rcTab.bottom + cyMargin, 0, 0,
-	//	SWP_NOSIZE | SWP_NOZORDER);
-
-	//// Size the dialog box. 
-	//SetWindowPos(hwndDlg, NULL, 0, 0,
-	//	rcTab.right + cyMargin + (2 * GetSystemMetrics(SM_CXDLGFRAME)),
-	//	rcTab.bottom + rcButton.bottom + (2 * cyMargin)
-	//	+ (2 * GetSystemMetrics(SM_CYDLGFRAME))
-	//	+ GetSystemMetrics(SM_CYCAPTION),
-	//	SWP_NOMOVE | SWP_NOZORDER);
 
 	// Simulate selection of the first item. 
 	OnSelChanged(hwndDlg);
@@ -319,8 +302,8 @@ void Inspector::AddTab(HWND hTab)
 	if (m_currObject == nullptr)
 		return;
 	
-	TabCtrl_DeleteAllItems(hTab);
-	
+	TabCtrl_DeleteAllItems(m_pHdr->hwndTab);
+		
 	dialogs.clear();
 
 	// 오브젝트의 컴포넌트를 읽고 해당하는 탭을 추가
@@ -328,16 +311,16 @@ void Inspector::AddTab(HWND hTab)
 	tie.mask = TCIF_TEXT | TCIF_IMAGE;
 	tie.iImage = -1;
 
-	const std::vector<Component*> components = m_currObject->GetComponents();
+	const std::vector<ComponentOfObject*> components = m_currObject->GetComponents();
 
 	//transform은 무조건 있으므로 첫번째로 추가
 	tie.pszText = L"Transform";
 	dialogs.push_back(&m_TransformDialog);
-	TabCtrl_InsertItem(hTab, 0, &tie);
+	TabCtrl_InsertItem(m_pHdr->hwndTab, 0, &tie);
 	
 	for (int i=0; i<components.size(); i++)
 	{
-		switch (components[i]->componentType)
+		switch (components[i]->GetComponentType())
 		{
 		case ComponentType::MESHRENDERER:
 			tie.pszText = L"MeshRenderer";
@@ -345,7 +328,12 @@ void Inspector::AddTab(HWND hTab)
 			dialogs.push_back(&m_MeshRendererDialog);
 			break;
 		case ComponentType::SKINNEDMESHRENDERER:
+			tie.pszText = L"SkinnedMeshRenderer";
 			//미구현
+			break;
+		case ComponentType::LIGHT:
+			tie.pszText = L"LIGHT";
+			dialogs.push_back(&m_LightDialog);
 			break;
 		default:
 			break;
@@ -365,5 +353,19 @@ void Inspector::SetObject(GameObject * obj)
 	}
 	
 	OnSelChanged(m_hDlg);
+}
+
+bool Inspector::AddComponent(ComponentType componentType)
+{
+	if (m_currObject == nullptr)
+		return false;
+
+	ComponentMgr& componentMgr = ComponentMgr::Instance();
+	Component* component = componentMgr.CreateComponent(componentType);
+
+	if (component == nullptr)
+		return false;
+		
+	return m_currObject->AddComponent(component);
 }
 

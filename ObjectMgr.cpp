@@ -63,6 +63,29 @@ GameObject* ObjectMgr::CreateObjectFromFile(const std::string& fileName)
 	return AddNode(*root);
 }
 
+Component * ObjectMgr::AddComponent(GameObject * obj, ComponentType compType)
+{
+	Component* component = nullptr;
+	switch (compType)
+	{
+	case ComponentType::LIGHT:
+		component = componentMgr.CreateComponent(compType);
+		((Lighting*)component)->transform = &obj->transform;
+		break;
+	default:
+		break;
+	}
+	
+	if (component == nullptr)
+		return nullptr;
+	else
+	{
+		obj->AddComponent(component);
+		return component;
+	}
+		
+}
+
 Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& name)
 {
 	

@@ -71,11 +71,48 @@ void EffectMgr::SetType(const std::wstring & shaderName, EffectType type)
 	return;
 }
 
-void EffectMgr::SetPerFrame(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
+void EffectMgr::SetPerFrame(const std::vector<Lighting>& lightings, const XMFLOAT3 & eyePosW)
 {
+	//lightings는 컴포넌트 매니저에서 관리중인 lightings 배열
+	std::vector<DirectionalLight> dir;
+	std::vector<PointLight> point;
+	std::vector<SpotLight> spot;
+
+	
+	
+	for (auto& lighting : lightings)
+	{
+		switch (lighting.GetLightType())
+		{
+		case LightType::DIRECTIONAL:
+			dir.push_back(lighting.GetDirLight());
+			break;
+		case LightType::POINTLIGHT:
+			point.push_back(lighting.GetPointLight());
+			break;
+		case LightType::SPOTLIGHT:
+			spot.push_back(lighting.GetSpotLight());
+			break;
+		default:
+			break;
+		}
+	}
+	
+	//조명이 없으면 nullptr, 있으면 배열의 주소
+	DirectionalLight* dirPt = nullptr;
+	PointLight* pointPt = nullptr;
+	SpotLight* spotPt = nullptr;
+
+	if (!dir.empty())
+		dirPt = &dir[0];
+	if (!point.empty())
+		pointPt = &point[0];
+	if (!spot.empty())
+		spotPt = &spot[0];
+
 	for (auto effect : myEffect)
 	{
-		effect.second->PerFrameSet(directL, pointL, spotL, eyePosW);
+		effect.second->PerFrameSet(dirPt, pointPt, spotPt, eyePosW);
 	}
 }
 

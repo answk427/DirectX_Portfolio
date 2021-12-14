@@ -180,6 +180,15 @@
     <ClCompile Include="MeshRendererCommand.cpp">
       <Filter>New Source Files\Command</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>New Header Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="LightDialog.cpp">
+      <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="InspectorCommand.cpp">
+      <Filter>New Source Files\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -340,6 +349,12 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>New Header Files\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="LightDialog.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="InspectorCommand.h">
+      <Filter>New Header Files\Command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
