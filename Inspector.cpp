@@ -47,7 +47,7 @@ Inspector::Inspector(HINSTANCE hInstance) : MsgProcedure(hInstance), m_pHdr(0), 
 	instantiated = true;
 	g_Inspector = this;
 
-	dialogs.reserve(10);
+	dialogs.reserve(20);
 }
 
 INT_PTR CALLBACK Inspector::DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
@@ -80,7 +80,7 @@ INT_PTR CALLBACK Inspector::DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 	case WM_NOTIFY: //리스트 컨트롤 클릭했을 때 발생
 		g_Inspector->NotifyProc(hDlg,lParam);
 		return (INT_PTR)TRUE;
-	case WM_MOVE: //
+	case WM_MOVE: 
 	{
 		
 		return (INT_PTR)TRUE;
@@ -92,8 +92,19 @@ INT_PTR CALLBACK Inspector::DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
 void Inspector::MenuProc(HWND hDlg, WPARAM wParam)
 {
+	//AddComponentCommand 로부터의 호출인지 검사
+	if (wParam == (UINT)(&m_hDlg))
+	{
+		AddTab(hDlg);
+		return;
+	}
+		
+
 	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
+	
+
+
 
 	switch (wmId)
 	{
@@ -104,11 +115,10 @@ void Inspector::MenuProc(HWND hDlg, WPARAM wParam)
 			int idx = ComboBox_GetCurSel(m_hCombo);
 			if (idx == -1)
 				break;
-			//Component가 정상적으로 추가됐으면 Tab 추가
-			if (AddComponent((ComponentType)idx))
-				AddTab(hDlg);
-			else
-				MessageBox(m_hDlg, TEXT("Add Component Fail!"), TEXT("Add Component"), MB_OK);
+			//Component 추가
+			if(m_currObject != nullptr)
+				CommandQueue::AddCommand(new AddComponentCommand(m_currObject, (ComponentType)idx, &m_hDlg));
+			
 		}
 		
 	}
@@ -181,7 +191,7 @@ void Inspector::WindowSizing(HWND hwndDlg)
 	MoveWindow(button, 180, 690, 100, 30, true);
 
 	HWND combo =GetDlgItem(hwndDlg, COMPONENTCOMBO);
-	MoveWindow(combo , 70, 695, 100, 35,true);
+	MoveWindow(combo , 70, 695, 100, 150,true);
 
 }
 
@@ -311,7 +321,7 @@ void Inspector::AddTab(HWND hTab)
 	tie.mask = TCIF_TEXT | TCIF_IMAGE;
 	tie.iImage = -1;
 
-	const std::vector<ComponentOfObject*> components = m_currObject->GetComponents();
+	const std::vector<ComponentOfObject> components = m_currObject->GetComponents();
 
 	//transform은 무조건 있으므로 첫번째로 추가
 	tie.pszText = L"Transform";
@@ -320,7 +330,7 @@ void Inspector::AddTab(HWND hTab)
 	
 	for (int i=0; i<components.size(); i++)
 	{
-		switch (components[i]->GetComponentType())
+		switch (components[i].GetComponentType())
 		{
 		case ComponentType::MESHRENDERER:
 			tie.pszText = L"MeshRenderer";
@@ -365,7 +375,8 @@ bool Inspector::AddComponent(ComponentType componentType)
 
 	if (component == nullptr)
 		return false;
-		
+
+
 	return m_currObject->AddComponent(component);
 }
 

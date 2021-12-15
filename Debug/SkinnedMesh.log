@@ -1,4 +1,4 @@
-﻿  GameObject.cpp
+﻿  Inspector.cpp
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\dxgitype.h(12): warning C4005: 'DXGI_STATUS_OCCLUDED': 매크로 재정의
   c:\program files (x86)\windows kits\8.1\include\shared\winerror.h(50092): note: 'DXGI_STATUS_OCCLUDED'의 이전 정의를 참조하십시오.
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\dxgitype.h(13): warning C4005: 'DXGI_STATUS_CLIPPED': 매크로 재정의
@@ -93,4 +93,14 @@ c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathconvert.
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathvector.inl(1269): warning C4838: 'unsigned int'에서 'INT'(으)로의 변환에는 축소 변환이 필요합니다.
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(518): warning C4838: 'unsigned int'에서 'INT'(으)로의 변환에는 축소 변환이 필요합니다.
 c:\program files (x86)\microsoft directx sdk (june 2010)\include\xnamathmisc.inl(519): warning C4838: 'unsigned int'에서 'INT'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(181): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(180): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(178): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(190): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(216): warning C4996: 'swprintf': function has been changed to conform with the ISO C standard, adding an extra character count parameter. To use the traditional Microsoft version, set _CRT_NON_CONFORMING_SWPRINTFS.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdio.h(1820): note: 'swprintf' 선언을 참조하십시오.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(225): warning C4101: 'rcButton' :참조되지 않은 지역 변수입니다.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(226): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(224): warning C4101: 'hwndButton' :참조되지 않은 지역 변수입니다.
+c:\users\js\documents\gitrepository\dx_portfolio\inspector.cpp(333): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
   SkinnedMesh.vcxproj -> C:\Users\JS\Documents\GitRepository\DX_Portfolio\Debug\Portfolio_Test1.exe

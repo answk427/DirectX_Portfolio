@@ -13,6 +13,8 @@
 #include "TransformDialog.h"
 #include "LightDialog.h"
 
+#include "InspectorCommand.h"
+
 #pragma comment(lib,"comctl32.lib")
 
 #define TAB_TRANSFORM IDD_DIALOG3

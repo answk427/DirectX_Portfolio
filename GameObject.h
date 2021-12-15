@@ -10,14 +10,18 @@
 class ComponentOfObject
 {
 private:
-	gameObjectID id;
+	componentID id;
 	ComponentType componentType;
 	Component* component;
 public:
-	ComponentOfObject(gameObjectID id, Component* component) : id(id), component(component) { componentType = component->componentType; }
+	ComponentOfObject(componentID id, Component* component) : id(id), component(component) { componentType = component->componentType; }
 
 public:
 	bool operator<(const ComponentOfObject& other);
+	bool operator<(const ComponentOfObject* other);
+	friend bool operator<(const ComponentOfObject& comp, const ComponentType& other);
+	friend bool operator<(const ComponentType& other, const ComponentOfObject& comp);
+	
 public:
 	Component* GetComponent();
 	gameObjectID GetId() const {return id;}
@@ -26,10 +30,6 @@ public:
 	//id와 Component가 일치하지 않을경우 Component매니저에서 Component를 다시 받아옴
 	void UpdateComponent();
 };
-
-//type순, id순 정렬
-bool GameObjectComp(const ComponentOfObject* comA,const ComponentOfObject* comB);
-bool lowerBoundCompare(const ComponentOfObject* comA, ComponentType comB);
 
 
 class GameObject : public Object
@@ -46,10 +46,15 @@ public:
 	template <typename componentT>
 	componentT* GetComponent();
 	bool AddComponent(Component* component);
-	std::vector<ComponentOfObject*>& GetComponents() { return components; }
+	bool DeleteComponent(componentID& id);
+	
+	//현재 오브젝트에 해당타입 컴포넌트가 있는지 확인하는 함수
+	bool SearchComponent(ComponentType compType);
+	bool SearchComponent(Component* component);
+	std::vector<ComponentOfObject>& GetComponents() { return components; }
 
 private:
-	std::vector<ComponentOfObject*> components;
+	std::vector<ComponentOfObject> components;
 	
 };
 
@@ -58,14 +63,16 @@ template<typename componentT>
 inline componentT* GameObject::GetComponent()
 {
 	componentT temp("temp");
-		
+	
 	//일치하는 컴포넌트가 있는지 검색
-	std::vector<ComponentOfObject*>::iterator it = std::lower_bound(
+	std::vector<ComponentOfObject>::iterator it = std::lower_bound(
 		components.begin(), components.end(),
-		temp.componentType, lowerBoundCompare);
+		temp.componentType);
 
-	if (it == components.end())
+	if (it == components.end() || it._Ptr==NULL)
+		return nullptr;
+	if ((*it).GetComponentType() != temp.componentType)
 		return nullptr;
 
-	return dynamic_cast<componentT*>((*it)->GetComponent());
+	return dynamic_cast<componentT*>((*it).GetComponent());
 }
