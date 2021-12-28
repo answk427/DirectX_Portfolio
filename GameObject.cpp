@@ -1,6 +1,16 @@
 #include "GameObject.h"
 
 
+GameObject::~GameObject()
+{
+	ComponentMgr& componentMgr = ComponentMgr::Instance();
+	for (auto& elem : components)
+	{
+		componentMgr.OnOffComponent(elem.GetComponent(), Command::DISABLE);
+	}
+
+}
+
 bool GameObject::AddComponent(Component * component)
 {		 
 	bool test = SearchComponent(component);

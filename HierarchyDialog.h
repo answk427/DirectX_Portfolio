@@ -7,9 +7,16 @@
 #include "GameObject.h"
 #include "DialogSizeDefine.h"
 #include "Inspector.h"
+#include "ObjectMgr.h"
 
 #pragma comment(lib,"comctl32.lib")
 
+LRESULT CALLBACK myListBoxSubclassProc(HWND hWnd,
+	UINT message,
+	WPARAM wParam,
+	LPARAM lParam,
+	UINT_PTR uIdSubclass,
+	DWORD_PTR dwRefData);
 
 class HierarchyDialog : public MsgProcedure
 {
@@ -38,10 +45,17 @@ public:
 	void treeInit(HWND hDlg);
 
 
+
+
 public:
 	//TreeView 함수
 	HTREEITEM TreeViewInsertItem(Object* item, HTREEITEM parent = TVI_ROOT);
-	void TreeInsertObject(Object* obj, HTREEITEM parent = TVI_ROOT);
+	HTREEITEM TreeInsertObject(Object* obj, HTREEITEM parent = TVI_ROOT);
+
+	bool TreeViewDeleteItem(HTREEITEM item);
+	bool TreeViewDeleteItem();
+
+
 	bool TreeImageSet();
 
 	//메뉴눌렸을때 WM_COMMAND 

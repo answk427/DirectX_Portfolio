@@ -100,6 +100,7 @@ int D3DApp::Run()
 		{
 			if (!TranslateAccelerator(mhMainWnd, hAccel, &msg))
 			{
+				
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
@@ -119,6 +120,7 @@ int D3DApp::Run()
 			{
 				MessageBox(mhMainWnd, L"sleep", L"sleep", MB_OK);
 				Sleep(100);
+				
 			}
         }
     }

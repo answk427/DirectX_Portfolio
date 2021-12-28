@@ -47,11 +47,26 @@ public:
 	Object(const gameObjectID& id) : id(id), name(L"Object"), parent(0) {}
 	Object(const gameObjectID& id, const std::wstring& name) : id(id), name(name), parent(0) {}
 	
-	virtual ~Object() {}
+	virtual ~Object() {	}
 
 public:
 	std::wstring GetName() { return name; }
+	gameObjectID& GetID() { return id; }
 	void SetName(std::wstring& name) { this->name = name; }
 	void SetParent(Object* parent) { this->parent = parent; }
 	void SetChild(Object* child) { childs.push_back(child); }
+	void DeleteChild(Object* child)
+	{
+		std::vector<Object*>::iterator it = childs.begin();
+		for (it; it != childs.end(); ++it)
+		{
+			//같은 아이디인지 검사 후 제거
+			if ( ((*it)->id) == child->id)
+			{
+				childs.erase(it);
+				break;
+			}
+				
+		}
+	}
 };

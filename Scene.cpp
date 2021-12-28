@@ -26,18 +26,13 @@
 #include "MeshMgr.h"
 #include "HierarchyDialog.h"
 #include "DataManager.h"
+#include "ObjectCommand.h"
 
 
 
 
 class Scene : public D3DApp
-{
-
-//Dialog
-public:
-	HierarchyDialog m_HierarchyDialog;
-	
-	
+{	
 public:
 	Scene(HINSTANCE hInstance);
 	~Scene();
@@ -54,12 +49,13 @@ public:
 	void MenuProc(HWND hDlg, WPARAM wParam) override;
 
 private:
+	HierarchyDialog* m_HierarchyDialog;
 	DataManager& dataMgr;
 	AssimpLoader objLoader;
 	TextureMgr& texMgr;
 	EffectMgr& effectMgr;
 	ComponentMgr componentMgr;
-	ObjectMgr objectMgr;
+	ObjectMgr& objectMgr;
 	MeshMgr meshMgr;
 	
 
@@ -99,14 +95,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 
 Scene::Scene(HINSTANCE hInstance)
-	: D3DApp(hInstance), objectMgr(meshMgr, componentMgr),
+	: D3DApp(hInstance), meshMgr(md3dDevice),
 	mTheta(1.3f*MathHelper::Pi),
 	mPhi(0.4f*MathHelper::Pi), mRadius(2.5f), 
-	m_HierarchyDialog(hInstance),
+	m_HierarchyDialog(new HierarchyDialog(hInstance)),
 	texMgr(TextureMgr::Instance()), effectMgr(EffectMgr::Instance()),
-	dataMgr(DataManager::Instance()) 
+	dataMgr(DataManager::Instance()), objectMgr(ObjectMgr::Instance())
 {
-	
+	objectMgr.Init(&meshMgr, &componentMgr);
 	mMainWndCaption = L"Crate Demo";
 	
 	mLastMousePos.x = 0;
@@ -184,7 +180,7 @@ bool Scene::Init()
 	//카메라 초기화
 
 	
-	camera.SetPosition({ 50.0f, 0.0f, -70.0f });
+	camera.SetPosition({ 0.0f, 0.0f, -70.0f });
 	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
 	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f });
 	
@@ -198,8 +194,8 @@ bool Scene::Init()
 	
 
 	//Hierarchy 초기화
-	m_HierarchyDialog.Init(mhMainWnd);
-	m_HierarchyDialog.OpenDialog(mhMainWnd);
+	m_HierarchyDialog->Init(mhMainWnd);
+	m_HierarchyDialog->OpenDialog(mhMainWnd);
 	
 	
 	Lighting* l = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
@@ -247,6 +243,9 @@ void Scene::UpdateScene(float dt)
 	//
 	// Control the camera.
 	//
+	
+	
+
 	if (GetAsyncKeyState('W') & 0x8000)
 		camera.Walk(10.0f*dt);
 
@@ -344,7 +343,12 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 		std::vector<LPCWSTR> extensions = { L"fbx" };
 		dataMgr.FileOpen(hDlg, title, full_path, extensions);
 		GameObject* gameObj = objectMgr.CreateObjectFromFile(W2A(full_path));
-		m_HierarchyDialog.TreeInsertObject(gameObj);
+		m_HierarchyDialog->TreeInsertObject(gameObj);
+		break;
+	}
+	case ID_GAMEOBJECT_EMPTYOBJECT:
+	{
+		CommandQueue::AddCommand(new CreateEmptyObject(*m_HierarchyDialog));
 		break;
 	}
 
@@ -352,6 +356,7 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 		MessageBox(mhMainWnd, L"Undo", L"Undo", MB_OK);
 		CommandQueue::Undo();
 		break;
+	
 	}
 }
 

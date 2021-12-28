@@ -117,6 +117,7 @@
     <ClCompile Include="MeshRendererDialog.cpp" />
     <ClCompile Include="MsgProcedure.cpp" />
     <ClCompile Include="MyCommand.cpp" />
+    <ClCompile Include="ObjectCommand.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderStates.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="MeshRendererCommand.h" />
     <ClInclude Include="MeshRendererDialog.h" />
     <ClInclude Include="MsgProcedure.h" />
+    <ClInclude Include="ObjectCommand.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderStates.h" />

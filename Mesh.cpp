@@ -57,6 +57,16 @@ Mesh::Mesh(Mesh && other) : mVB(0), mIB(0), InstanceBuffer(0), vertexBufferCount
 	indices.swap(other.indices);
 }
 
+Mesh & Mesh::operator=(const Mesh & other)
+{
+	subsets = other.subsets;
+	vertices = other.vertices;
+	InstancingDatas = other.InstancingDatas;
+	indices = other.indices;
+
+	return *this;
+}
+
 void Mesh::Init(ID3D11Device * device, vector<MyVertex::BasicVertex>& vertexSrc, vector<UINT>& indexSrc, vector<Subset>& subsetSrc)
 {
 	SetVertices(vertexSrc);

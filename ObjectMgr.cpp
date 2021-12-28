@@ -2,8 +2,24 @@
 
 int ObjectMgr::idNumber = 1;
 
-GameObject& ObjectMgr::CreateGameObject(const gameObjectID& id)
+
+
+void ObjectMgr::Init(MeshMgr* tempMeshMgr, ComponentMgr*  tempComponentMgr)
 {
+	meshMgr = tempMeshMgr;
+	componentMgr = tempComponentMgr;
+}
+
+ObjectMgr & ObjectMgr::Instance()
+{
+	ObjectMgr* instance = new ObjectMgr();
+	return *instance;
+}
+
+GameObject& ObjectMgr::CreateGameObject()
+{
+	gameObjectID id = makeID();
+
 	if (gameObjects.find(id) != gameObjects.end())
 	{
 		return gameObjects[id];
@@ -13,8 +29,10 @@ GameObject& ObjectMgr::CreateGameObject(const gameObjectID& id)
 	return (it.first->second);
 }
 
-GameObject & ObjectMgr::CreateGameObject(const gameObjectID& id, const std::wstring & name)
+GameObject & ObjectMgr::CreateGameObject(const std::wstring & name)
 {
+	gameObjectID id = makeID();
+
 	if (gameObjects.find(id) != gameObjects.end())
 	{
 		return gameObjects[id];
@@ -25,8 +43,10 @@ GameObject & ObjectMgr::CreateGameObject(const gameObjectID& id, const std::wstr
 	return (it.first->second);
 }
 
-GameObject & ObjectMgr::CreateGameObject(const gameObjectID& id, const std::wstring & name, GameObject* parent)
+GameObject & ObjectMgr::CreateGameObject(const std::wstring & name, GameObject* parent)
 {
+	gameObjectID id = makeID();
+
 	if (gameObjects.find(id) != gameObjects.end())
 	{
 		return gameObjects[id];
@@ -69,7 +89,7 @@ Component * ObjectMgr::AddComponent(GameObject * obj, ComponentType compType)
 	switch (compType)
 	{
 	case ComponentType::LIGHT:
-		component = componentMgr.CreateComponent(compType);
+		component = componentMgr->CreateComponent(compType);
 		((Lighting*)component)->transform = &obj->transform;
 		break;
 	default:
@@ -86,16 +106,33 @@ Component * ObjectMgr::AddComponent(GameObject * obj, ComponentType compType)
 		
 }
 
+bool ObjectMgr::DeleteObject(gameObjectID & id)
+{
+	auto& it = gameObjects.find(id);
+	
+	if (it == gameObjects.end())
+		return false;
+
+	//삭제한 오브젝트의 자식오브젝트들 삭제
+	for (auto& elem : (*it).second.childs)
+	{
+		DeleteObject(elem->GetID());
+	}
+	gameObjects.erase(it);
+
+	return true;
+}
+
 Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& name)
 {
 	
-	Mesh* mesh = meshMgr.CreateMeshFromFile(name, assimpMesh);
+	Mesh* mesh = meshMgr->CreateMeshFromFile(name, assimpMesh);
 	Renderer* renderer;
 	
 	//뼈가 없는 구조
 	if (!assimpMesh.HasBone())
 	{
-		MeshRenderer* comp = (MeshRenderer*)componentMgr.CreateComponent(ComponentType::MESHRENDERER);
+		MeshRenderer* comp = (MeshRenderer*)componentMgr->CreateComponent(ComponentType::MESHRENDERER);
 		comp->SetMesh(mesh);
 		comp->SetMaterials(assimpMesh.GetMaterials());
 
@@ -107,7 +144,7 @@ Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& n
 	}
 	else
 	{
-		SkinnedMeshRenderer* comp = (SkinnedMeshRenderer*)componentMgr.CreateComponent(ComponentType::SKINNEDMESHRENDERER);
+		SkinnedMeshRenderer* comp = (SkinnedMeshRenderer*)componentMgr->CreateComponent(ComponentType::SKINNEDMESHRENDERER);
 		comp->SetMesh(mesh);
 		comp->SetMaterials(assimpMesh.GetMaterials());
 		//init 해야됨
@@ -138,7 +175,7 @@ void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 	GameObject& obj = CreateGameObject(A2W(name.c_str()));*/
 
 	//parent의 자식오브젝트로 생성
-	GameObject& obj = CreateGameObject(makeID(), name, parent);
+	GameObject& obj = CreateGameObject(name, parent);
 	
 	obj.transform.SetPosition(0, 0, 0);
 	
@@ -162,7 +199,7 @@ void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 GameObject * ObjectMgr::AddNode(NodeStruct & node)
 {
 	wstring name = node.GetName();
-	GameObject& obj = CreateGameObject(makeID(),name);
+	GameObject& obj = CreateGameObject(name);
 	obj.transform.SetPosition(0, 0, 0);
 
 	//Mesh가 있는 Node일 경우 Renderer컴포넌트 생성 후 오브젝트에 추가

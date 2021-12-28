@@ -50,6 +50,12 @@ public:
 	void Init(HWND hDlg);
 
 private:
+	bool m_updating;
+	XMFLOAT4 m_diffuse;
+	XMFLOAT4 m_specular;
+	XMFLOAT4 m_ambient;
+	
+private:
 	Lighting* m_Lighting;
 
 	//Edit Box Handles

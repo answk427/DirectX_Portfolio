@@ -189,6 +189,9 @@
     <ClCompile Include="InspectorCommand.cpp">
       <Filter>New Source Files\Command</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectCommand.cpp">
+      <Filter>New Source Files\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -354,6 +357,9 @@
       <Filter>New Header Files\EngineDialog</Filter>
     </ClInclude>
     <ClInclude Include="InspectorCommand.h">
+      <Filter>New Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectCommand.h">
       <Filter>New Header Files\Command</Filter>
     </ClInclude>
   </ItemGroup>

@@ -39,6 +39,7 @@ public:
 	GameObject() : Object() {}
 	GameObject(const gameObjectID& id) : Object(id) {}
 	GameObject(const gameObjectID& id, const std::wstring& name) : Object(id, name) {}
+	~GameObject();
 			
 	Transform transform;
 

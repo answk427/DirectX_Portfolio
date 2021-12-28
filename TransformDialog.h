@@ -44,7 +44,11 @@ private:
 	HWND m_hEdit_ScaleY;
 	HWND m_hEdit_ScaleZ;
 	
-public:
+private:
+	XMFLOAT3 m_position;
+	XMFLOAT3 m_rotation;
+	XMFLOAT3 m_scale;
+
 	
 public:
 	TransformDialog(HINSTANCE hInstance);

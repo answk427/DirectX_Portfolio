@@ -30,7 +30,7 @@ void Transform::UpdateWorld()
 	XMMATRIX rotationMat;
 	if (m_modifyFlag && ModifyFlag::MODIFY_ROTATION)
 	{
-		XMVECTOR quat = XMQuaternionRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z);
+		XMVECTOR quat = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y),XMConvertToRadians(m_rotation.z));
 		XMStoreFloat4(&m_quaternion, quat);
 		//쿼터니언을 회전행렬로 변환
 		rotationMat = XMMatrixRotationQuaternion(quat);
@@ -57,6 +57,9 @@ void Transform::UpdateWorld()
 
 void Transform::SetPosition(const float & x, const float & y, const float & z)
 {
+	//갱신하려는 정보가 현재와 같은경우 갱신할 필요가 없음.
+	if (m_position.x == x && m_position.y == y && m_position.z == z)
+		return;
 	m_position.x = x;
 	m_position.y = y;
 	m_position.z = z;
@@ -66,12 +69,18 @@ void Transform::SetPosition(const float & x, const float & y, const float & z)
 
 void Transform::SetPosition(const XMFLOAT3 & pos)
 {
+	//갱신하려는 정보가 현재와 같은경우 갱신할 필요가 없음.
+	if (m_position.x == pos.x && m_position.y == pos.y && m_position.z == pos.z)
+		return;
+	
 	 m_position = pos;
 	 m_modifyFlag |= ModifyFlag::MODIFY_POSITION; 
 }
 
 void Transform::SetRotation(const float & x, const float & y, const float & z)
 {
+	if (m_rotation.x == x && m_rotation.y == y && m_rotation.z == z)
+		return;
 	m_rotation.x = x;
 	m_rotation.y = y;
 	m_rotation.z = z;
@@ -81,6 +90,8 @@ void Transform::SetRotation(const float & x, const float & y, const float & z)
 
 void Transform::SetRotation(const XMFLOAT3 & rotation)
 {
+	if (m_rotation.x == rotation.x && m_rotation.y == rotation.y && m_rotation.z == rotation.z)
+		return;
 	 m_rotation = rotation; 
 	 m_modifyFlag |= ModifyFlag::MODIFY_ROTATION;
 }
@@ -88,6 +99,8 @@ void Transform::SetRotation(const XMFLOAT3 & rotation)
 
 void Transform::SetScale(const float & x, const float & y, const float & z)
 {
+	if (m_scale.x == x && m_scale.y == y && m_scale.z == z)
+		return;
 	m_scale.x = x;
 	m_scale.y = y;
 	m_scale.z = z;
@@ -97,6 +110,8 @@ void Transform::SetScale(const float & x, const float & y, const float & z)
 
 void Transform::SetScale(const XMFLOAT3 & scale)
 {
+	if (m_scale.x == scale.x && m_scale.y == scale.y && m_scale.z == scale.z)
+		return;
 	 m_scale = scale; 
 	 m_modifyFlag |= ModifyFlag::MODIFY_SCALE;
 }

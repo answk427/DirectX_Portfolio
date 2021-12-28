@@ -25,6 +25,7 @@ struct GeneralMaterial
 	//텍스쳐 행렬을 위한 변수
 	XMFLOAT2 textureTiling;
 	XMFLOAT2 textureOffset;
+	
 
 	GeneralMaterial() 
 	{

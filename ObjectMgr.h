@@ -15,13 +15,16 @@
 
 class ObjectMgr
 {
+public:
+	//object 컨테이너
+	std::map<gameObjectID, GameObject> gameObjects;
 private:
 	static int idNumber;
 	AssimpLoader assimpLoader;
 	TextureMgr& textureMgr;
-	MeshMgr& meshMgr;
-	ComponentMgr& componentMgr;
 	EffectMgr& effectMgr;
+	MeshMgr* meshMgr;
+	ComponentMgr* componentMgr;
 
 private:
 	//Assimp에서 읽어온 노드를 재귀적으로 탐색하는 함수
@@ -33,20 +36,20 @@ private:
 	gameObjectID makeID();
 
 public:
-	ObjectMgr(MeshMgr& meshMgr, ComponentMgr& componentMgr)
-		: meshMgr(meshMgr), componentMgr(componentMgr)
-		, effectMgr(EffectMgr::Instance()), textureMgr(TextureMgr::Instance())
-	{}
+	ObjectMgr()
+		: effectMgr(EffectMgr::Instance()), textureMgr(TextureMgr::Instance()),
+		meshMgr(0), componentMgr(0)	{}
 	~ObjectMgr() {}
-public:
-	//object 컨테이너
-	std::map<gameObjectID,GameObject> gameObjects;
 
+	void Init(MeshMgr* meshMgr, ComponentMgr* componentMgr);
+	static ObjectMgr& Instance();
 public:
-	GameObject& ObjectMgr::CreateGameObject(const gameObjectID& id);
-	GameObject& ObjectMgr::CreateGameObject(const gameObjectID& id, const std::wstring& name);
-	GameObject & ObjectMgr::CreateGameObject(const gameObjectID& id, const std::wstring & name, GameObject* parent);
+	GameObject& ObjectMgr::CreateGameObject();
+	GameObject& ObjectMgr::CreateGameObject(const std::wstring& name);
+	GameObject & ObjectMgr::CreateGameObject(const std::wstring & name, GameObject* parent);
 	GameObject* CreateObjectFromFile(const std::string& fileName);
 	
 	Component* AddComponent(GameObject* obj, ComponentType compType);
+
+	bool DeleteObject(gameObjectID& id);
 };

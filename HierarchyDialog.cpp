@@ -10,7 +10,7 @@ bool HierarchyDialog::OpenDialog()
 {
 	if (!IsWindow(m_hDlg))
 	{
-		m_hDlg = CreateDialog(0, MAKEINTRESOURCE(IDD_DIALOG2), 0, DlgProc);
+		m_hDlg = CreateDialog(m_hInstance, MAKEINTRESOURCE(IDD_DIALOG2), 0, DlgProc);
 
 		ShowWindow(m_hDlg, SW_SHOW);
 		return true;
@@ -44,8 +44,54 @@ void HierarchyDialog::Init(HWND hWnd_main)
 
 void HierarchyDialog::treeInit(HWND hDlg)
 {
+	
 	m_hwndTV = GetDlgItem(hDlg, IDC_TREE2);
 	TreeImageSet();
+	SetWindowSubclass(m_hwndTV, myListBoxSubclassProc, 0, 0);
+}
+
+bool HierarchyDialog::TreeViewDeleteItem(HTREEITEM item)
+{
+	return TreeView_DeleteItem(m_hwndTV, item);
+}
+
+bool HierarchyDialog::TreeViewDeleteItem()
+{
+	static int cnt = 0;
+	cnt++;
+	TVITEM tvi;
+	
+	//현재 선택된 아이템
+	tvi.mask = TVIF_PARAM;
+	tvi.hItem = TreeView_GetSelection(m_hwndTV);
+	
+
+	if (tvi.hItem == NULL)
+	{
+		MessageBox(m_hDlg, TEXT("TreeView_GetSelection Fail"), TEXT("Hierarchy Select"), MB_OK);
+		return nullptr;
+	}
+
+	//아이템에 등록된 object를 가져온다.
+	TreeView_GetItem(m_hwndTV, &tvi);
+	Object* tempObj = (Object*)(tvi.lParam);
+
+	if (tempObj == NULL)
+	{
+		MessageBox(m_hDlg, TEXT("TreeView_GetItem Fail"), TEXT("Hierarchy Select"), MB_OK);
+		return nullptr;
+	}
+	
+	bool result = TreeView_DeleteItem(m_hwndTV, tvi.hItem);
+
+	//삭제가 제대로 안됐을 경우
+	if (result == false)
+		return nullptr;
+
+	ObjectMgr& objectMgr = ObjectMgr::Instance();
+	
+			
+	return objectMgr.DeleteObject(tempObj->GetID());
 }
 
 HierarchyDialog::HierarchyDialog(HINSTANCE hInstance) : MsgProcedure(hInstance), inspector(hInstance)
@@ -54,6 +100,24 @@ HierarchyDialog::HierarchyDialog(HINSTANCE hInstance) : MsgProcedure(hInstance),
 	instantiated = true;
 	g_HierarchyDialog = this;
 }
+
+/////////////////////////////////////Procedure/////////////////////////
+LRESULT CALLBACK myListBoxSubclassProc(HWND hWnd,
+	UINT message,
+	WPARAM wParam,
+	LPARAM lParam,
+	UINT_PTR uIdSubclass,
+	DWORD_PTR dwRefData)
+{
+	switch (message)
+	{
+	case WM_KEYDOWN:
+		g_HierarchyDialog->KeyDownProc(wParam);
+		break;
+	}
+	return DefSubclassProc(hWnd, message, wParam, lParam);
+}
+
 INT_PTR CALLBACK HierarchyDialog::DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(lParam);
@@ -75,14 +139,15 @@ INT_PTR CALLBACK HierarchyDialog::DlgProc(HWND hDlg, UINT message, WPARAM wParam
 	//case WM_COMMAND:
 	//	g_HierarchyDialog->MenuProc(hDlg, wParam);
 	//	return (INT_PTR)TRUE;
-	//case WM_KEYDOWN:
-	//	g_HierarchyDialog->KeyDownProc(wParam);
-	//	return (INT_PTR)TRUE;
+	case WM_KEYDOWN:
+		g_HierarchyDialog->KeyDownProc(wParam);
+		return (INT_PTR)TRUE;
 	//case WM_MOUSEMOVE:
 	//	g_HierarchyDialog->MouseMoveProc(wParam, lParam);
 	//	return (INT_PTR)TRUE;
 	case WM_NOTIFY: //Tree View에 대한 조작
 		g_HierarchyDialog->NotifyProc(lParam);
+		return (INT_PTR)TRUE;
 	case WM_MOVE: //
 	{
 		g_HierarchyDialog->WindowSizing(hDlg);
@@ -92,6 +157,7 @@ INT_PTR CALLBACK HierarchyDialog::DlgProc(HWND hDlg, UINT message, WPARAM wParam
 	}
 	return (INT_PTR)FALSE;
 }
+/////////////////////////////////////Procedure/////////////////////////
 
 void HierarchyDialog::MenuProc(HWND hDlg, WPARAM wParam)
 {
@@ -104,6 +170,12 @@ void HierarchyDialog::MenuProc(HWND hDlg, WPARAM wParam)
 
 void HierarchyDialog::KeyDownProc(WPARAM wParam)
 {
+	switch (wParam)
+	{
+	case VK_DELETE:
+		TreeViewDeleteItem();
+		break;
+	}
 }
 
 
@@ -119,7 +191,8 @@ void HierarchyDialog::CharProc(HWND hDlg, WPARAM wParam)
 
 void HierarchyDialog::NotifyProc(LPARAM lParam)
 {
-	
+			
+
 	switch (((LPNMHDR)lParam)->code)
 	{
 	//트리뷰에서 선택항목이 변경되었을 경우
@@ -133,6 +206,7 @@ void HierarchyDialog::NotifyProc(LPARAM lParam)
 
 void HierarchyDialog::WindowSizing(HWND hDlg)
 {
+	
 	//컴퓨터 전체스크린의 크기
 	int width = GetSystemMetrics(SM_CXSCREEN);
 	int height = (GetSystemMetrics(SM_CYSCREEN) - 30); //30은 작업표시줄 크기
@@ -166,7 +240,7 @@ void HierarchyDialog::SelectItem()
 
 	if (tvi.hItem == NULL) 
 	{
-		MessageBox(hWnd, TEXT("TreeView_GetSelection Fail"), TEXT("Hierarchy Select"), MB_OK);
+		MessageBox(m_hDlg, TEXT("TreeView_GetSelection Fail"), TEXT("Hierarchy Select"), MB_OK);
 		return;
 	}
 		
@@ -176,7 +250,7 @@ void HierarchyDialog::SelectItem()
 
 	if (tempObj == NULL)
 	{
-		MessageBox(hWnd, TEXT("TreeView_GetItem Fail"), TEXT("Hierarchy Select"), MB_OK);
+		MessageBox(m_hDlg, TEXT("TreeView_GetItem Fail"), TEXT("Hierarchy Select"), MB_OK);
 		return;
 	}
 		
@@ -189,6 +263,7 @@ void HierarchyDialog::SelectItem()
 
 HTREEITEM HierarchyDialog::TreeViewInsertItem(Object* item, HTREEITEM parent)
 {
+	
 	TVITEM tvi;
 	TVINSERTSTRUCT tvins;
 	
@@ -212,12 +287,12 @@ HTREEITEM HierarchyDialog::TreeViewInsertItem(Object* item, HTREEITEM parent)
 	tvins.hParent = parent;
 	tvins.item = tvi;
 	tvins.hInsertAfter = TVI_FIRST;
-
+	
 
 	return TreeView_InsertItem(m_hwndTV, &tvins);
 }
 
-void HierarchyDialog::TreeInsertObject(Object* obj, HTREEITEM parent)
+HTREEITEM HierarchyDialog::TreeInsertObject(Object* obj, HTREEITEM parent)
 {
 
 	//매개변수 object가 root일 경우
@@ -226,10 +301,14 @@ void HierarchyDialog::TreeInsertObject(Object* obj, HTREEITEM parent)
 		//root 아이템 삽입
 		parent = TreeViewInsertItem(obj);
 	}
+	else
+	{
+		//object가 root가 아닐경우 parent의 자식으로 추가
+		//parent를 방금 추가한 item으로 변경
+		parent = TreeViewInsertItem(obj, parent);
+	}
 
-	//object가 root가 아닐경우 parent의 자식으로 추가
-	//parent를 방금 추가한 item으로 변경
-	parent = TreeViewInsertItem(obj, parent);
+	
 
 	//object의 자식들에 대해서 재귀
 	for (Object* child : obj->childs)
@@ -237,8 +316,10 @@ void HierarchyDialog::TreeInsertObject(Object* obj, HTREEITEM parent)
 		TreeInsertObject(child, parent);
 	}
 
-	return;
+	return parent;
 }
+
+
 
 bool HierarchyDialog::TreeImageSet()
 {

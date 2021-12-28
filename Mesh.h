@@ -72,6 +72,8 @@ public:
 	Mesh(const Mesh& other);
 	//이동생성자
 	Mesh(Mesh&& other);
+	//대입연산자
+	Mesh& operator=(const Mesh& other);
 
 	 
 public:

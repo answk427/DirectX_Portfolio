@@ -9,8 +9,8 @@ bool Inspector::OpenDialog()
 {
 	if (!IsWindow(m_hDlg))
 	{
-		m_hDlg = CreateDialog(0, MAKEINTRESOURCE(INSPECTOR), 0, Inspector::DlgProc);
-
+		m_hDlg = CreateDialog(m_hInstance, MAKEINTRESOURCE(INSPECTOR), 0, Inspector::DlgProc);
+		
 		ShowWindow(m_hDlg, SW_SHOW);
 				
 		return true;
@@ -72,6 +72,7 @@ INT_PTR CALLBACK Inspector::DlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 		g_Inspector->MenuProc(hDlg, wParam);
 		return (INT_PTR)TRUE;
 	case WM_KEYDOWN:
+		MessageBox(hDlg, L"Inspector KeyDown", L"Inspector", MB_OK);
 		g_Inspector->KeyDownProc(wParam);
 		return (INT_PTR)TRUE;
 	case WM_MOUSEMOVE:

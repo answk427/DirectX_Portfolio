@@ -79,34 +79,51 @@ bool LightDialog::SetObject(GameObject* obj)
 	
 	if (!m_Lighting)
 		return false;
-	
+	   	
 }
 
 bool LightDialog::UpdateView()
 {
-	//if (m_MeshRenderer == nullptr)
-	//	return false;
+	m_updating = true;
+	if (m_Lighting == nullptr)
+	{
+		m_updating = false;
+		return false;
+	}
+	
+	
+	const DirectionalLight& dirLight = m_Lighting->GetDirLight();
+		
+	//ASCII -> UNICODE 변환
+	USES_CONVERSION;
 
-
-	////ASCII -> UNICODE 변환
-	//USES_CONVERSION;
-	//LPCWSTR meshName = A2W(mesh->id.c_str());
-
-	////mesh editText에 이름 설정
-	//Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
-
-	//int listCount = ListBox_GetCount(m_hList);
-	//for (int i = 0; i < listCount; i++)
-	//	ListBox_DeleteString(m_hList, i);
-
-	//for (GeneralMaterial& elem : (*materials))
-	//{
-	//	int pos = (int)SendMessage(m_hList, LB_ADDSTRING, 0,
-	//		(LPARAM)elem.name.c_str());
-
-	//	//GeneralMaterial의 주소값을 data로 설정
-	//	SendMessage(m_hList, LB_SETITEMDATA, pos, (LPARAM)&elem);
-	//}
+	//변경사항이 있으면 edit 박스 수정
+	if (!compareRGBA(m_diffuse, dirLight.Diffuse))
+	{
+		m_diffuse = dirLight.Diffuse;
+		Edit_SetText(m_hEdit_DiffuseR, std::to_wstring(m_diffuse.x).c_str());
+		Edit_SetText(m_hEdit_DiffuseG, std::to_wstring(m_diffuse.y).c_str());
+		Edit_SetText(m_hEdit_DiffuseB, std::to_wstring(m_diffuse.z).c_str());
+		Edit_SetText(m_hEdit_DiffuseA, std::to_wstring(m_diffuse.w).c_str());
+	}
+	if (!compareRGBA(m_ambient, dirLight.Ambient))
+	{
+		m_ambient = dirLight.Ambient;
+		Edit_SetText(m_hEdit_AmbientR, std::to_wstring(m_ambient.x).c_str());
+		Edit_SetText(m_hEdit_AmbientG, std::to_wstring(m_ambient.y).c_str());
+		Edit_SetText(m_hEdit_AmbientB, std::to_wstring(m_ambient.z).c_str());
+		Edit_SetText(m_hEdit_AmbientA, std::to_wstring(m_ambient.w).c_str());
+	}
+	if (!compareRGBA(m_specular, dirLight.Specular))
+	{
+		m_specular = dirLight.Specular;
+		Edit_SetText(m_hEdit_SpecularR, std::to_wstring(m_specular.x).c_str());
+		Edit_SetText(m_hEdit_SpecularG, std::to_wstring(m_specular.y).c_str());
+		Edit_SetText(m_hEdit_SpecularB, std::to_wstring(m_specular.z).c_str());
+		Edit_SetText(m_hEdit_SpecularA, std::to_wstring(m_specular.w).c_str());
+	}
+		
+	m_updating = false;
 
 	return true;
 
@@ -150,7 +167,7 @@ void LightDialog::Init(HWND hDlg)
 }
 
 
-LightDialog::LightDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_Lighting(0)
+LightDialog::LightDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_Lighting(0), m_updating(0)
 
 {
 	assert(!instantiated);
@@ -159,11 +176,74 @@ LightDialog::LightDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_Li
 }
 
 
-
 void LightDialog::MenuProc(HWND hDlg, WPARAM wParam)
 {
+
 	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
+
+
+	if (HIWORD(wParam) == EN_CHANGE)
+	{
+		//프레임마다 호출되는 update View에서 edit box가 변경됨에 따라 Message가 호출된 경우 리턴
+		if (m_updating)
+			return;
+
+		switch (wmId)
+		{
+		case DIFFUSE_R:
+			m_diffuse.x = EditText2Float(m_hEdit_DiffuseR);
+			m_Lighting->SetDiffuse(m_diffuse);
+			break;
+		case DIFFUSE_G:
+			m_diffuse.y = EditText2Float(m_hEdit_DiffuseG);
+			m_Lighting->SetDiffuse(m_diffuse);
+			break;
+		case DIFFUSE_B:
+			m_diffuse.z = EditText2Float(m_hEdit_DiffuseB);
+			m_Lighting->SetDiffuse(m_diffuse);
+			break;
+		case DIFFUSE_A:
+			m_diffuse.w = EditText2Float(m_hEdit_DiffuseA);
+			m_Lighting->SetDiffuse(m_diffuse);
+			break;
+		case AMBIENT_R:
+			m_ambient.x = EditText2Float(m_hEdit_AmbientR);
+			m_Lighting->SetAmbient(m_ambient);
+			break;
+		case AMBIENT_G:
+			m_ambient.y = EditText2Float(m_hEdit_AmbientG);
+			m_Lighting->SetAmbient(m_ambient);
+			break;
+		case AMBIENT_B:
+			m_ambient.z = EditText2Float(m_hEdit_AmbientB);
+			m_Lighting->SetAmbient(m_ambient);
+			break;
+		case AMBIENT_A:
+			m_ambient.w = EditText2Float(m_hEdit_AmbientA);
+			m_Lighting->SetAmbient(m_ambient);
+			break;
+		case SPECULAR_R:
+			m_specular.x = EditText2Float(m_hEdit_SpecularR);
+			m_Lighting->SetSpecular(m_specular);
+			break;
+		case SPECULAR_G:
+			m_specular.y = EditText2Float(m_hEdit_SpecularG);
+			m_Lighting->SetSpecular(m_specular);
+			break;
+		case SPECULAR_B:
+			m_specular.z = EditText2Float(m_hEdit_SpecularB);
+			m_Lighting->SetSpecular(m_specular);
+			break;
+		case SPECULAR_A:
+			m_specular.z = EditText2Float(m_hEdit_SpecularA);
+			m_Lighting->SetSpecular(m_specular);
+			break;
+
+		}
+		
+
+	}
 	
 }
 

@@ -2,6 +2,10 @@
 #include "MsgProcedure.h"
 #include "GameObject.h"
 
+typedef std::pair<HWND, float*> handleFloatPair;
+
+
+
 class ComponentDialog : public MsgProcedure
 {
 public:
@@ -23,4 +27,6 @@ public:
 	virtual bool UpdateView() = 0;
 	virtual bool OpenDialog(HWND hwnd) = 0;
 	
+public:
+	float EditText2Float(HWND h_edit);
 };

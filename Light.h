@@ -5,6 +5,9 @@
 #include <LightHelper.h>
 #include "Transform.h"
 
+
+bool compareRGBA(const XMFLOAT4 & a, const XMFLOAT4 & b);
+
 enum LightType
 {
 	DIRECTIONAL,
@@ -54,12 +57,13 @@ public:
 	//거리에 따른 감쇠 매개변수(attenuation)
 	void SetAtt(const XMFLOAT3& att);
 		
+public:
 	const DirectionalLight& GetDirLight() const { return m_dirLight; }
 	const PointLight& GetPointLight() const { return m_pointLight; }
 	const SpotLight& GetSpotLight() const { return m_spotLight; }
 	LightType GetLightType() const { return m_lightType; }
-
-	
+		
+public:
 	// Component을(를) 통해 상속됨
 	virtual void Init() override;
 	virtual void FixedUpdate() override;
