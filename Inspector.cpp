@@ -381,3 +381,13 @@ bool Inspector::AddComponent(ComponentType componentType)
 	return m_currObject->AddComponent(component);
 }
 
+void Inspector::Update()
+{
+	if (m_pHdr != nullptr)
+	{
+		int idx = TabCtrl_GetCurSel(m_pHdr->hwndTab);
+		if(idx!=-1)
+			dialogs[idx]->UpdateView();
+	}
+}
+

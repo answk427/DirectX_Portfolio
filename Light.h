@@ -1,12 +1,10 @@
 #pragma once
 
 #include "Interface.h"
-#include <d3dUtil.h>
 #include <LightHelper.h>
 #include "Transform.h"
 
 
-bool compareRGBA(const XMFLOAT4 & a, const XMFLOAT4 & b);
 
 enum LightType
 {
@@ -32,7 +30,7 @@ public:
 public:
 
 	Lighting(std::string name) : Component(name, ComponentType::LIGHT), m_lightType(LightType::DIRECTIONAL)
-	{ lightCount[LightType::DIRECTIONAL]++; }
+	{}
 	
 	Lighting(const Lighting& other) : Component(other.id, ComponentType::LIGHT)
 	{
@@ -41,6 +39,7 @@ public:
 		m_pointLight = other.m_pointLight;
 		m_spotLight = other.m_spotLight;
 	}
+	~Lighting() {}
 	
 
 	void SetDiffuse(const XMFLOAT4& diffuse);
@@ -56,6 +55,10 @@ public:
 	void SetRange(float range);
 	//거리에 따른 감쇠 매개변수(attenuation)
 	void SetAtt(const XMFLOAT3& att);
+	//spot Light 에서 spot만큼 제곱이 됨
+	void SetSpot(float spot);
+	//transform 설정
+	void SetTransform(Transform* tr) { transform = tr; }
 		
 public:
 	const DirectionalLight& GetDirLight() const { return m_dirLight; }
@@ -69,4 +72,8 @@ public:
 	virtual void FixedUpdate() override;
 	virtual void Update() override;
 	virtual void LateUpdate() override;
+
+	// Component을(를) 통해 상속됨
+	virtual void Enable() override;
+	virtual void Disable() override;
 };

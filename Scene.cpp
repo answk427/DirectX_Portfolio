@@ -54,7 +54,7 @@ private:
 	AssimpLoader objLoader;
 	TextureMgr& texMgr;
 	EffectMgr& effectMgr;
-	ComponentMgr componentMgr;
+	ComponentMgr& componentMgr;
 	ObjectMgr& objectMgr;
 	MeshMgr meshMgr;
 	
@@ -95,7 +95,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 
 Scene::Scene(HINSTANCE hInstance)
-	: D3DApp(hInstance), meshMgr(md3dDevice),
+	: D3DApp(hInstance), meshMgr(md3dDevice), componentMgr(ComponentMgr::Instance()),
 	mTheta(1.3f*MathHelper::Pi),
 	mPhi(0.4f*MathHelper::Pi), mRadius(2.5f), 
 	m_HierarchyDialog(new HierarchyDialog(hInstance)),
@@ -107,58 +107,7 @@ Scene::Scene(HINSTANCE hInstance)
 	
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
-
-	
-	/*mDirLights[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	mDirLights[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mDirLights[0].Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 16.0f);
-	mDirLights[0].Direction = XMFLOAT3(0.707f, -0.707f, 0.0f);
-
-	mDirLights[1].Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mDirLights[1].Diffuse = XMFLOAT4(1.4f, 1.4f, 1.4f, 1.0f);
-	mDirLights[1].Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 16.0f);
-	mDirLights[1].Direction = XMFLOAT3(-0.707f, 0.0f, 0.707f);*/
-
-	/*mDirLights[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mDirLights[0].Diffuse = XMFLOAT4(1.0f, 0.9f, 0.9f, 1.0f);
-	mDirLights[0].Specular = XMFLOAT4(0.8f, 0.8f, 0.7f, 3.0f);
-	mDirLights[0].Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
-
-	mDirLights[1].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	mDirLights[1].Diffuse = XMFLOAT4(0.40f, 0.40f, 0.40f, 1.0f);
-	mDirLights[1].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
-	mDirLights[1].Direction = XMFLOAT3(0.707f, -0.707f, 0.0f);
-
-	mDirLights[2].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	mDirLights[2].Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
-	mDirLights[2].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
-	mDirLights[2].Direction = XMFLOAT3(0.0f, 0.0, 1.0f);*/
-
-
-	DirectionalLight a;
-	a.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	a.Diffuse = XMFLOAT4(1.0f, 0.9f, 0.9f, 1.0f);
-	a.Specular = XMFLOAT4(0.8f, 0.8f, 0.7f, 3.0f);
-	a.Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
-
-	DirectionalLight b;
-	b.Ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	b.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	b.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
-	b.Direction = XMFLOAT3(0.707f, -0.707f, 1.0f);
-
-	DirectionalLight c;
-	c.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	c.Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
-	c.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 3.0f);
-	c.Direction = XMFLOAT3(0.0f, 0.0, 1.0f);
-	
-	//mDirLigths.assign(1,DirectionalLight());
-	mDirLights.push_back(a);
-	mDirLights.push_back(b);
-	mDirLights.push_back(c);
-
-	
+		
 }
 
 Scene::~Scene()
@@ -198,7 +147,7 @@ bool Scene::Init()
 	m_HierarchyDialog->OpenDialog(mhMainWnd);
 	
 	
-	Lighting* l = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
+	/*Lighting* l = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
 	XMFLOAT4 a(0.5f, 0.5f, 0.5f, 1.0f);
 	XMFLOAT3 b(1.0f, 1.0f, 1.0f);
 	l->SetBasic(a, a, a);
@@ -222,7 +171,8 @@ bool Scene::Init()
 	b = { +0.5f,-0.5f,0.5f };
 	l4->SetBasic(a, a, a);
 	l4->SetAtt(b);
-	l4->SetDirection(b);
+	l4->SetDirection(b);*/
+
 	SetFocus(mhMainWnd);
 
 
@@ -263,8 +213,13 @@ void Scene::UpdateScene(float dt)
 	//float z = mRadius * sinf(mPhi)*sinf(mTheta);
 	//float y = mRadius * cosf(mPhi);
 	
-
 	CommandQueue::AllExecute();
+
+	//모든 컴포넌트 업데이트
+	componentMgr.Update();
+	//엔진 UI 업데이트
+	m_HierarchyDialog->Update();
+	
 }
 
 void Scene::DrawScene()
@@ -349,8 +304,8 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 	case ID_GAMEOBJECT_EMPTYOBJECT:
 	{
 		CommandQueue::AddCommand(new CreateEmptyObject(*m_HierarchyDialog));
-		break;
-	}
+			break;
+		}
 
 	case ID_40004: // Ctrl+Z
 		MessageBox(mhMainWnd, L"Undo", L"Undo", MB_OK);

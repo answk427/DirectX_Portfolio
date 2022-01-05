@@ -30,20 +30,3 @@ void CreateEmptyObject::Undo()
 
 	emptyCount--;
 }
-//
-//DeleteObjectFromHierarchy::DeleteObjectFromHierarchy(HierarchyDialog & hierarchy) : hierarchy(hierarchy)
-//{
-//}
-//
-//void DeleteObjectFromHierarchy::Execute()
-//{
-//	//hierarchy에서 현재 선택된 아이템 삭제
-//	Object* obj = hierarchy.TreeViewDeleteItem();
-//	//object 삭제
-//	ObjectMgr& objectMgr = ObjectMgr::Instance();
-//	objectMgr.DeleteObject(obj->GetID());
-//}
-//
-//void DeleteObjectFromHierarchy::Undo()
-//{//보류
-//}

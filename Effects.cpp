@@ -101,6 +101,7 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	FogRange          = mFX->GetVariableByName("gFogRange")->AsScalar();
 	
 	DirLights         = mFX->GetVariableByName("gDirLights");
+	
 	dirLightSize	  = mFX->GetVariableByName("dirLight_size")->AsScalar();
 
 	pointLights= mFX->GetVariableByName("gPointLights");

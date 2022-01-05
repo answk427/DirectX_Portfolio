@@ -168,4 +168,10 @@ public:
 
 };
 
+//추가 util 함수
+bool compareRGBA(const XMFLOAT4 & a, const XMFLOAT4 & b);
+
+bool compareRGB(const XMFLOAT3 & a, const XMFLOAT3 & b);
+
+
 #endif // D3DUTIL_H

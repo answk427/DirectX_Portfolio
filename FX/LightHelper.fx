@@ -43,6 +43,9 @@ struct SpotLight
 	float Spot;
 
 	float3 Att;
+
+
+
 	float pad;
 };
 

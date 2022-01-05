@@ -33,6 +33,19 @@
 #define SPECULAR_B	IDC_EDIT9
 #define SPECULAR_A	IDC_EDIT13
 
+#define COMBO_LIGHTTYPE IDC_COMBO1
+
+#define DIRECTION_X IDC_EDIT14
+#define DIRECTION_Y IDC_EDIT15
+#define DIRECTION_Z IDC_EDIT16
+
+#define EDIT_RANGE IDC_EDIT17
+#define EDIT_SPOT IDC_EDIT18
+
+#define ATT_X IDC_EDIT19
+#define ATT_Y IDC_EDIT20
+#define ATT_Z IDC_EDIT21
+
 
 
 
@@ -50,10 +63,12 @@ public:
 	void Init(HWND hDlg);
 
 private:
-	bool m_updating;
+	bool firstUpdate;
 	XMFLOAT4 m_diffuse;
 	XMFLOAT4 m_specular;
 	XMFLOAT4 m_ambient;
+	XMFLOAT3 m_direction;
+	XMFLOAT3 m_att;
 	
 private:
 	Lighting* m_Lighting;
@@ -73,6 +88,17 @@ private:
 	HWND m_hEdit_SpecularG;
 	HWND m_hEdit_SpecularB;
 	HWND m_hEdit_SpecularA;
+
+	HWND m_hCombo_LightType;
+	HWND m_hEdit_DirectionX;
+	HWND m_hEdit_DirectionY;
+	HWND m_hEdit_DirectionZ;
+	
+	HWND m_hEdit_Range;
+	HWND m_hEdit_Spot;
+	HWND m_hEdit_AttX;
+	HWND m_hEdit_AttY;
+	HWND m_hEdit_AttZ;
 
 public:
 	//메뉴눌렸을때 WM_COMMAND 

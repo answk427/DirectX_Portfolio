@@ -16,19 +16,19 @@
 
 struct DirectionalLight
 {
-	DirectionalLight() { ZeroMemory(this, sizeof(this)); }
-
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;
 	XMFLOAT3 Direction;
 	float Pad; // Pad the last float so we can set an array of lights if we wanted.
+	
+	DirectionalLight() : Ambient(1,1,1,1), Diffuse(1,1,1,1), Specular(1,1,1,1), Direction(0,0,1), Pad(0)
+	{ //ZeroMemory(this, sizeof(*this)); 
+	}
 };
 
 struct PointLight
 {
-	PointLight() { ZeroMemory(this, sizeof(this)); }
-
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;
@@ -40,15 +40,16 @@ struct PointLight
 	// Packed into 4D vector: (A0, A1, A2, Pad)
 	XMFLOAT3 Att;
 	float Pad; // Pad the last float so we can set an array of lights if we wanted.
-};
-static void functions();
 
-void functions() { return; }
+	PointLight() : Ambient(1, 1, 1, 1), Diffuse(1, 1, 1, 1), Specular(1, 1, 1, 1),
+		Position(0, 0, 0), Range(0), Att(1,1,1),Pad(0)
+	{// ZeroMemory(this, sizeof(*this)); 
+	}
+};
+
 
 struct SpotLight
 {
-	SpotLight() { ZeroMemory(this, sizeof(this)); }
-
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Specular;
@@ -64,11 +65,16 @@ struct SpotLight
 	// Packed into 4D vector: (Att, Pad)
 	XMFLOAT3 Att;
 	float Pad; // Pad the last float so we can set an array of lights if we wanted.
+	
+	SpotLight() :Ambient(1, 1, 1, 1), Diffuse(1, 1, 1, 1), Specular(1, 1, 1, 1),
+		Position(0, 0, 0), Range(0), Direction(0,0,1), Spot(1.0f), Att(1,1,1), Pad(0)
+	{// ZeroMemory(this, sizeof(*this));
+	}
 };
 
 struct Material
 {
-	Material() { ZeroMemory(this, sizeof(this)); }
+	Material() { ZeroMemory(this, sizeof(*this)); }
 
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;

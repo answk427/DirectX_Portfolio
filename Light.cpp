@@ -2,13 +2,6 @@
 
 int Lighting::lightCount[4] = { 0 };
 
-bool compareRGBA(const XMFLOAT4 & a, const XMFLOAT4 & b)
-{
-	if (a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w)
-		return true;
-	return false;
-}
-
 
 void Lighting::SetDiffuse(const XMFLOAT4& diffuse)
 {
@@ -84,6 +77,13 @@ void Lighting::SetAtt(const XMFLOAT3& att)
 	m_spotLight.Att = att;
 }
 
+void Lighting::SetSpot(float spot)
+{
+	if (m_spotLight.Spot == spot)
+		return;
+	m_spotLight.Spot = spot;
+}
+
 void Lighting::Init()
 {
 }
@@ -101,4 +101,14 @@ void Lighting::Update()
 
 void Lighting::LateUpdate()
 {
+}
+
+void Lighting::Enable()
+{
+	lightCount[m_lightType]++;
+}
+
+void Lighting::Disable()
+{
+	lightCount[m_lightType]--;
 }

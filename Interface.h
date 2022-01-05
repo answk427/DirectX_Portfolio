@@ -1,6 +1,9 @@
 #pragma once
+#include <d3dUtil.h>
 #include <string>
 #include <vector>
+
+
 
 enum ComponentType
 {
@@ -21,12 +24,16 @@ public:
 
 public:
 	Component(const componentID& id, ComponentType type) : id(id), componentType(type) {}
-	virtual ~Component() {}
+	virtual ~Component() 
+	{
+	}
 public:
 	virtual void Init() = 0;
 	virtual void FixedUpdate() = 0;
 	virtual void Update() = 0;
 	virtual void LateUpdate() = 0;
+	virtual void Enable() = 0;
+	virtual void Disable() = 0;
 	
 };
 

@@ -10,6 +10,16 @@ void AddComponentCommand::Execute()
 	//Component 생성에 실패한 경우
 	if (addedComponent == nullptr)
 		return;
+
+	switch (componentType)
+	{
+	case ComponentType::MESHRENDERER:
+	case ComponentType::SKINNEDMESHRENDERER:
+		((Renderer*)addedComponent)->SetTransform(&gameObj->transform);
+		break;
+	case ComponentType::LIGHT:
+		((Lighting*)addedComponent)->SetTransform(&gameObj->transform);
+	}
 	
 	gameObj->AddComponent(addedComponent);
 

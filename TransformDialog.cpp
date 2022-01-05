@@ -82,27 +82,39 @@ bool TransformDialog::SetObject(GameObject * obj)
 bool TransformDialog::UpdateView()
 {
 	//ASCII -> UNICODE 변환
-	USES_CONVERSION;
+	//USES_CONVERSION;
 	
-	m_position = m_transform->m_position;
-	m_rotation = m_transform->m_rotation;
-	m_scale = m_transform->m_scale;
+	m_updating = true;
+	
 
-	Edit_SetText(m_hEdit_PosX, std::to_wstring(m_position.x).c_str());
-	Edit_SetText(m_hEdit_PosY, std::to_wstring(m_position.y).c_str());
-	Edit_SetText(m_hEdit_PosZ, std::to_wstring(m_position.z).c_str());
-	
-	Edit_SetText(m_hEdit_RotX, std::to_wstring(m_rotation.x).c_str());
-	Edit_SetText(m_hEdit_RotY, std::to_wstring(m_rotation.y).c_str());
-	Edit_SetText(m_hEdit_RotZ, std::to_wstring(m_rotation.z).c_str());
+	//변경사항이 있으면 edit 박스 수정
+	if (!compareRGB(m_position, m_transform->m_position) || !firstUpdate)
+	{
+		m_position = m_transform->m_position;
+		Edit_SetText(m_hEdit_PosX, std::to_wstring(m_position.x).c_str());
+		Edit_SetText(m_hEdit_PosY, std::to_wstring(m_position.y).c_str());
+		Edit_SetText(m_hEdit_PosZ, std::to_wstring(m_position.z).c_str());
+	}
+	if (!compareRGB(m_rotation, m_transform->m_rotation) || !firstUpdate)
+	{
+		m_rotation = m_transform->m_rotation;
+		Edit_SetText(m_hEdit_RotX, std::to_wstring(m_rotation.x).c_str());
+		Edit_SetText(m_hEdit_RotY, std::to_wstring(m_rotation.y).c_str());
+		Edit_SetText(m_hEdit_RotZ, std::to_wstring(m_rotation.z).c_str());
+	}
+	if (!compareRGB(m_scale, m_transform->m_scale) || !firstUpdate)
+	{
+		m_scale = m_transform->m_scale;
+		Edit_SetText(m_hEdit_ScaleX, std::to_wstring(m_scale.x).c_str());
+		Edit_SetText(m_hEdit_ScaleY, std::to_wstring(m_scale.y).c_str());
+		Edit_SetText(m_hEdit_ScaleZ, std::to_wstring(m_scale.z).c_str());
 
-	Edit_SetText(m_hEdit_ScaleX, std::to_wstring(m_scale.x).c_str());
-	Edit_SetText(m_hEdit_ScaleY, std::to_wstring(m_scale.y).c_str());
-	Edit_SetText(m_hEdit_ScaleZ, std::to_wstring(m_scale.z).c_str());
+
+	}
+	m_updating = false;
+
 	
-	//_wtof() 유니코드 문자열 -> 실수 변환
-	
-	return false;
+	return true;
 }
 
 bool TransformDialog::OpenDialog(HWND hwnd)
@@ -135,6 +147,10 @@ void TransformDialog::Init(HWND hDlg)
 	m_hEdit_ScaleX = GetDlgItem(hDlg, SCALE_X);
 	m_hEdit_ScaleY = GetDlgItem(hDlg, SCALE_Y);
 	m_hEdit_ScaleZ = GetDlgItem(hDlg, SCALE_Z);
+
+	firstUpdate = false;
+	UpdateView();
+	firstUpdate = true;
 }
 
 
@@ -152,9 +168,13 @@ void TransformDialog::MenuProc(HWND hDlg, WPARAM wParam)
 {
 	int wmId = LOWORD(wParam);
 
-	
+	//컨트롤의 값이 변경 되었을 때
 	if (HIWORD(wParam) == EN_CHANGE)
 	{
+		//프레임마다 호출되는 update View에서 edit box가 변경됨에 따라 Message가 호출된 경우 리턴
+		if (m_updating)
+			return;
+
 		switch (wmId)
 		{
 		case POSITION_X:

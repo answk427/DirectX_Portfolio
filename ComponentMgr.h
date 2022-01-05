@@ -56,6 +56,8 @@ private:
 	//SwapEnable 함수와 SwapDisable 함수 중 하나를 선택
 	template <typename compType>
 	Component* SelectSwap(std::vector<compType>& vec, int& enableCount, int idx, Command enDisable);
+	template <typename compType>
+	Component* SelectSwap(std::vector<compType*>& vec, int& enableCount, int idx, Command enDisable);
 
 
 public:
@@ -143,10 +145,9 @@ inline Component * ComponentMgr::SelectSwap(std::vector<compType>& vec, int & en
 
 		//활성화된 카운트 수 증가
 		enableCount++;
-
-
-
-		return &vec[enableCount - 1];
+				
+		vec[enableCount - 1].Enable();
+		return &vec[enableCount - 1];		   		
 	}
 	else if(enDisable == Command::DISABLE)
 	{
@@ -164,10 +165,64 @@ inline Component * ComponentMgr::SelectSwap(std::vector<compType>& vec, int & en
 		idMap[vec[enableCount].id] = enableCount;
 		idMap[vec[idx].id] = idx;
 
+	
+	
+		vec[enableCount].Disable();
 		return &vec[enableCount];
+	
+
+		
 	}
 
 	return &vec[idx];
 }
+
+template<typename compType>
+inline Component * ComponentMgr::SelectSwap(std::vector<compType*>& vec, int & enableCount, int idx, Command enDisable)
+{
+	if (enDisable == Command::ENABLE)
+	{
+		//비활성화 컴포넌트인지 검사
+		assert(idx >= enableCount);
+
+
+		//비활성화된 컴포넌트를 제일 앞에 있는 비활성화된 컴포넌트와 바꿈
+		std::swap(vec[enableCount], vec[idx]);
+
+		//id와 index를 매핑하는 해쉬맵 업데이트
+		idMap[vec[enableCount].id] = enableCount;
+		idMap[vec[idx].id] = idx;
+
+		//활성화된 카운트 수 증가
+		enableCount++;
+
+		vec[enableCount - 1]->Enable();
+		return vec[enableCount - 1];
+	}
+	else if (enDisable == Command::DISABLE)
+	{
+		//활성화 된 컴포넌트인지 검사
+		assert(idx < enableCount);
+
+		//활성화 된 카운트 수 감소
+		enableCount--;
+
+		//현재 활성화된 컴포넌트 중 가장 마지막 컴포넌트와 바꿈
+		std::swap(vec[enableCount], vec[idx]);
+
+
+		//id와 index를 매핑하는 해쉬맵 업데이트
+		idMap[vec[enableCount].id] = enableCount;
+		idMap[vec[idx].id] = idx;
+
+
+
+		vec[enableCount]->Disable();
+		return vec[enableCount];
+	}
+
+	return vec[idx];
+}
+
 
 

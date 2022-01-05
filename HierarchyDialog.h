@@ -73,4 +73,6 @@ public:
 
 	void SelectItem();
 
+	void Update() { inspector.Update(); }
+
 };

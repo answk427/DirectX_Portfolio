@@ -58,6 +58,10 @@ public:
 	vector<GeneralMaterial>& GetMaterials() { return materials; }
 
 	void SetTransform(Transform* tr) { transform = tr; }
+
+	// Component을(를) 통해 상속됨
+	virtual void Enable() override;
+	virtual void Disable() override;
 };
 
 

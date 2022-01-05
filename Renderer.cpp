@@ -19,7 +19,7 @@ void Renderer::LateUpdate()
 }
 
 Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,type)
-, m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance())
+, m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), mesh(0)
 {
 }
 
@@ -103,6 +103,14 @@ void Renderer::SetMaterials(vector<GeneralMaterial>& materialSrc)
 	materials.swap(materialSrc);
 }
 
+void Renderer::Enable()
+{
+}
+
+void Renderer::Disable()
+{
+}
+
 
 //***********************MeshRenderer **************************//
 
@@ -112,7 +120,9 @@ MeshRenderer::MeshRenderer(const std::string& id) : Renderer(id, ComponentType::
 
 void MeshRenderer::Draw(ID3D11DeviceContext * context, Camera* camera)
 {
-	
+	if (mesh == nullptr)
+		return;
+
 	MapsInit();
 	XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
 

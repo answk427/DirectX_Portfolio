@@ -37,7 +37,7 @@ INT_PTR CALLBACK LightProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam
 	{
 		g_LightDialog->OnChildDialogInit(hDlg);
 		g_LightDialog->Init(hDlg);
-
+		
 
 		return (INT_PTR)TRUE;
 	}
@@ -93,12 +93,13 @@ bool LightDialog::UpdateView()
 	
 	
 	const DirectionalLight& dirLight = m_Lighting->GetDirLight();
+	const SpotLight& spotLight = m_Lighting->GetSpotLight();
 		
 	//ASCII -> UNICODE 변환
 	USES_CONVERSION;
 
 	//변경사항이 있으면 edit 박스 수정
-	if (!compareRGBA(m_diffuse, dirLight.Diffuse))
+	if (!compareRGBA(m_diffuse, dirLight.Diffuse) || !firstUpdate)
 	{
 		m_diffuse = dirLight.Diffuse;
 		Edit_SetText(m_hEdit_DiffuseR, std::to_wstring(m_diffuse.x).c_str());
@@ -106,7 +107,7 @@ bool LightDialog::UpdateView()
 		Edit_SetText(m_hEdit_DiffuseB, std::to_wstring(m_diffuse.z).c_str());
 		Edit_SetText(m_hEdit_DiffuseA, std::to_wstring(m_diffuse.w).c_str());
 	}
-	if (!compareRGBA(m_ambient, dirLight.Ambient))
+	if (!compareRGBA(m_ambient, dirLight.Ambient) || !firstUpdate)
 	{
 		m_ambient = dirLight.Ambient;
 		Edit_SetText(m_hEdit_AmbientR, std::to_wstring(m_ambient.x).c_str());
@@ -114,13 +115,33 @@ bool LightDialog::UpdateView()
 		Edit_SetText(m_hEdit_AmbientB, std::to_wstring(m_ambient.z).c_str());
 		Edit_SetText(m_hEdit_AmbientA, std::to_wstring(m_ambient.w).c_str());
 	}
-	if (!compareRGBA(m_specular, dirLight.Specular))
+	if (!compareRGBA(m_specular, dirLight.Specular) || !firstUpdate)
 	{
 		m_specular = dirLight.Specular;
 		Edit_SetText(m_hEdit_SpecularR, std::to_wstring(m_specular.x).c_str());
 		Edit_SetText(m_hEdit_SpecularG, std::to_wstring(m_specular.y).c_str());
 		Edit_SetText(m_hEdit_SpecularB, std::to_wstring(m_specular.z).c_str());
 		Edit_SetText(m_hEdit_SpecularA, std::to_wstring(m_specular.w).c_str());
+	}
+	if (!compareRGB(m_direction, dirLight.Direction) || !firstUpdate)
+	{
+		m_direction = dirLight.Direction;
+		Edit_SetText(m_hEdit_DirectionX, std::to_wstring(m_direction.x).c_str());
+		Edit_SetText(m_hEdit_DirectionY, std::to_wstring(m_direction.y).c_str());
+		Edit_SetText(m_hEdit_DirectionZ, std::to_wstring(m_direction.z).c_str());
+	}
+	if (!compareRGB(m_att, spotLight.Att) || !firstUpdate)
+	{
+		m_att = spotLight.Att;
+		Edit_SetText(m_hEdit_AttX, std::to_wstring(m_att.x).c_str());
+		Edit_SetText(m_hEdit_AttY, std::to_wstring(m_att.y).c_str());
+		Edit_SetText(m_hEdit_AttZ, std::to_wstring(m_att.z).c_str());
+	}
+	if (!firstUpdate)
+	{
+		Edit_SetText(m_hEdit_Range, std::to_wstring(spotLight.Range).c_str());
+		Edit_SetText(m_hEdit_Spot, std::to_wstring(spotLight.Spot).c_str());
+		ComboBox_SetCurSel(m_hCombo_LightType, m_Lighting->GetLightType());
 	}
 		
 	m_updating = false;
@@ -142,6 +163,7 @@ bool LightDialog::OpenDialog(HWND hwnd)
 		ShowWindow(m_hDlg, SW_SHOW);
 		return true;
 	}
+	
 
 	return false;
 }
@@ -164,10 +186,31 @@ void LightDialog::Init(HWND hDlg)
 	m_hEdit_SpecularG = GetDlgItem(hDlg, SPECULAR_G);
 	m_hEdit_SpecularB = GetDlgItem(hDlg, SPECULAR_B);
 	m_hEdit_SpecularA = GetDlgItem(hDlg, SPECULAR_A);
+
+	m_hCombo_LightType = GetDlgItem(hDlg, COMBO_LIGHTTYPE);
+	m_hEdit_DirectionX = GetDlgItem(hDlg, DIRECTION_X);
+	m_hEdit_DirectionY = GetDlgItem(hDlg, DIRECTION_Y);
+	m_hEdit_DirectionZ = GetDlgItem(hDlg, DIRECTION_Z);
+
+	m_hEdit_Range = GetDlgItem(hDlg, EDIT_RANGE);
+	m_hEdit_Spot = GetDlgItem(hDlg, EDIT_SPOT);
+	m_hEdit_AttX = GetDlgItem(hDlg, ATT_X);
+	m_hEdit_AttY = GetDlgItem(hDlg, ATT_Y);
+	m_hEdit_AttZ = GetDlgItem(hDlg, ATT_Z);
+
+	//콤보박스 아이템 추가
+	ComboBox_AddString(m_hCombo_LightType, TEXT("DIRECTIONAL"));
+	ComboBox_AddString(m_hCombo_LightType, TEXT("POINT"));
+	ComboBox_AddString(m_hCombo_LightType, TEXT("SPOT"));
+	
+
+	firstUpdate = false;
+	UpdateView();
+	firstUpdate = true;
 }
 
 
-LightDialog::LightDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_Lighting(0), m_updating(0)
+LightDialog::LightDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_Lighting(0)
 
 {
 	assert(!instantiated);
@@ -182,6 +225,18 @@ void LightDialog::MenuProc(HWND hDlg, WPARAM wParam)
 	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
 
+	//콤보박스 변경
+	if (HIWORD(wParam) == CBN_SELCHANGE)
+	{
+		switch (wmId)
+		{
+		case COMBO_LIGHTTYPE:
+			m_Lighting->SetLightType(
+				(LightType)ComboBox_GetCurSel(m_hCombo_LightType));
+			break;
+		}
+		
+	}
 
 	if (HIWORD(wParam) == EN_CHANGE)
 	{
@@ -239,7 +294,37 @@ void LightDialog::MenuProc(HWND hDlg, WPARAM wParam)
 			m_specular.z = EditText2Float(m_hEdit_SpecularA);
 			m_Lighting->SetSpecular(m_specular);
 			break;
-
+		
+		case DIRECTION_X:
+			m_direction.x = EditText2Float(m_hEdit_DirectionX);
+			m_Lighting->SetDirection(m_direction);
+			break;
+		case DIRECTION_Y:
+			m_direction.y = EditText2Float(m_hEdit_DirectionY);
+			m_Lighting->SetDirection(m_direction);
+			break;
+		case DIRECTION_Z:
+			m_direction.z = EditText2Float(m_hEdit_DirectionZ);
+			m_Lighting->SetDirection(m_direction);
+			break;
+		case EDIT_RANGE:
+			m_Lighting->SetRange(EditText2Float(m_hEdit_Range));
+			break;
+		case EDIT_SPOT:
+			m_Lighting->SetSpot(EditText2Float(m_hEdit_Spot));
+			break;
+		case ATT_X:
+			m_att.x = EditText2Float(m_hEdit_AttX);
+			m_Lighting->SetAtt(m_att);
+			break;
+		case ATT_Y:
+			m_att.y = EditText2Float(m_hEdit_AttY);
+			m_Lighting->SetAtt(m_att);
+			break;
+		case ATT_Z:
+			m_att.z = EditText2Float(m_hEdit_AttZ);
+			m_Lighting->SetAtt(m_att);
+			break;
 		}
 		
 

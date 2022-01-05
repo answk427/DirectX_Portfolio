@@ -94,11 +94,17 @@ bool MeshRendererDialog::UpdateView()
 	
 	//ASCII -> UNICODE 변환
 	USES_CONVERSION;
-	LPCWSTR meshName = A2W(mesh->id.c_str());
 
-	//mesh editText에 이름 설정
-	Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
-			
+	if (mesh != nullptr)
+	{
+		LPCWSTR meshName = A2W(mesh->id.c_str());
+		//mesh editText에 이름 설정
+		Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
+	}
+		
+
+	
+	
 	int listCount = ListBox_GetCount(m_hList);
 	for (int i = 0; i < listCount; i++)
 		ListBox_DeleteString(m_hList, i);
@@ -232,9 +238,11 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		}
 	}
 
+
+
 	switch (wmId)
 	{
-		
+	//파일탐색기에서 파일 선택 후 DiffuseMap 설정
 	case DIFFUSEMAPBUTTON:
 		if (HIWORD(wParam) == BN_CLICKED)
 		{

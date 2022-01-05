@@ -225,3 +225,17 @@ void ExtractFrustumPlanes(XMFLOAT4 planes[6], CXMMATRIX M)
 		XMStoreFloat4(&planes[i], v);
 	}
 }
+
+bool compareRGBA(const XMFLOAT4 & a, const XMFLOAT4 & b)
+{
+	if (a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w)
+		return true;
+	return false;
+}
+
+bool compareRGB(const XMFLOAT3 & a, const XMFLOAT3 & b)
+{
+	if (a.x == b.x && a.y == b.y && a.z == b.z)
+		return true;
+	return false;
+}

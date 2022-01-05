@@ -105,6 +105,7 @@ private:
 public:
 	void SetObject(GameObject* obj);
 	bool AddComponent(ComponentType componentTyp);
+	void Update();
 	
 	
 	

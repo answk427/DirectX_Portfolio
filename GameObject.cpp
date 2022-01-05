@@ -95,7 +95,7 @@ void ComponentOfObject::UpdateComponent()
 	if (id == component->id)
 		return;
 
-	ComponentMgr componentMgr = ComponentMgr::Instance();
+	ComponentMgr& componentMgr = ComponentMgr::Instance();
 	component = componentMgr.GetComponent(id);
 }
 

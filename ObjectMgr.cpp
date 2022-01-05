@@ -12,7 +12,7 @@ void ObjectMgr::Init(MeshMgr* tempMeshMgr, ComponentMgr*  tempComponentMgr)
 
 ObjectMgr & ObjectMgr::Instance()
 {
-	ObjectMgr* instance = new ObjectMgr();
+	static ObjectMgr* instance = new ObjectMgr();
 	return *instance;
 }
 

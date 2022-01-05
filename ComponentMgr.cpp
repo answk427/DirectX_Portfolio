@@ -98,7 +98,7 @@ ComponentType ComponentMgr::typeOfID(componentID & id)
 	std::string front = id.substr(0, idx);
 	
 	//ID와 일치하는 컴포넌트타입을 검사 후 반환
-	for (int i = 0; i < sizeof(idFront) / sizeof(idFront[0]); ++i)
+	for (int i = 0; i < idFront.size(); ++i)
 	{
 		if (idFront[i] == front)
 			return (ComponentType)i;
@@ -149,6 +149,7 @@ void ComponentMgr::Update()
 		skinnedMeshRenderers[i].Update();
 	for (int i = 0; i < enableCount_lighting; i++)
 		lightings[i].Update();
+	
 	
 }
 
