@@ -49,6 +49,12 @@
     <Filter Include="New Header Files\Component">
       <UniqueIdentifier>{27cba0d4-ffe6-427f-858c-4cf7e5658c86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="New Header Files\ReaderWriter">
+      <UniqueIdentifier>{5fe6b6ea-19e6-4e6a-9f0e-e97b1aee08f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="New Source Files\ReaderWriter">
+      <UniqueIdentifier>{ca1bdd95-7982-49e8-a3cf-656bab1016aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp">
@@ -191,6 +197,15 @@
     </ClCompile>
     <ClCompile Include="ObjectCommand.cpp">
       <Filter>New Source Files\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendStateClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshReaderWriter.cpp">
+      <Filter>New Source Files\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="UtilFunctions.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,6 +377,21 @@
     <ClInclude Include="ObjectCommand.h">
       <Filter>New Header Files\Command</Filter>
     </ClInclude>
+    <ClInclude Include="BlendStateClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshReaderWriter.h">
+      <Filter>New Header Files\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="FileReaderWriter.h">
+      <Filter>New Header Files\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="ReaderWriterConstant.h">
+      <Filter>New Header Files\ReaderWriter</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilFunctions.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FX\LightHelper.fx">
@@ -438,5 +468,10 @@
     <Image Include="..\..\..\Desktop\box16.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="FX\Basic_old.fx">
+      <Filter>FX</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

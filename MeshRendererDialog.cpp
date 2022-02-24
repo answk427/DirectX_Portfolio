@@ -83,6 +83,7 @@ bool MeshRendererDialog::SetObject(GameObject* obj)
 	mesh = m_MeshRenderer->GetMesh();
 
 
+	
 
 }
 
@@ -97,30 +98,19 @@ bool MeshRendererDialog::UpdateView()
 
 	if (mesh != nullptr)
 	{
+		WCHAR currentName[100] = L"";
+		Edit_GetText(GetDlgItem(m_hDlg, IDC_EDIT11), currentName, 100);
+		
 		LPCWSTR meshName = A2W(mesh->id.c_str());
-		//mesh editText에 이름 설정
-		Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
+
+		//현재 mesh와 editText의 이름이 다르면
+		if (wcscmp(currentName, meshName) != 0)
+		{
+			//mesh editText에 이름 설정
+			Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
+		}
 	}
 		
-
-	
-	
-	int listCount = ListBox_GetCount(m_hList);
-	for (int i = 0; i < listCount; i++)
-		ListBox_DeleteString(m_hList, i);
-	
-	
-	for (GeneralMaterial& elem : (*materials))
-	{
-		int pos = (int)SendMessage(m_hList, LB_ADDSTRING, 0,
-			(LPARAM)elem.name.c_str());
-
-		//GeneralMaterial의 주소값을 data로 설정
-		SendMessage(m_hList, LB_SETITEMDATA, pos, (LPARAM)&elem);
-		
-	}
-
-
 
 	return true;
 
@@ -168,6 +158,23 @@ void MeshRendererDialog::Init(HWND hDlg)
 	m_BoundMaxY = GetDlgItem(hDlg, BOUNDMAXY_EDIT);
 	m_BoundMaxZ = GetDlgItem(hDlg, BOUNDMAXZ_EDIT);
 
+	//List Box 목록 초기화
+	int listCount = ListBox_GetCount(m_hList);
+	for (int i = 0; i < listCount; i++)
+		ListBox_DeleteString(m_hList, i);
+
+
+	for (GeneralMaterial& elem : (*materials))
+	{
+		int pos = (int)SendMessage(m_hList, LB_ADDSTRING, 0,
+			(LPARAM)elem.name.c_str());
+
+		//GeneralMaterial의 주소값을 data로 설정
+		SendMessage(m_hList, LB_SETITEMDATA, pos, (LPARAM)&elem);
+
+	}
+
+
 }
 
 
@@ -214,6 +221,7 @@ void MeshRendererDialog::MapEditBoxUpdate(int materialIdx)
 
 void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 {
+	
 	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
 
@@ -279,6 +287,22 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 				break;
 			MapEditBoxUpdate(idx);
 		}
+		break;
+	case BLENDINGCHECK:
+		//blending check박스 체크
+		switch (Button_GetCheck(GetDlgItem(m_hDlg, BLENDINGCHECK)))
+		{
+		case BST_CHECKED:
+			if(m_MeshRenderer!=nullptr)
+				m_MeshRenderer->SetBlending(true);
+			break;
+		case BST_UNCHECKED:
+			if (m_MeshRenderer != nullptr)
+				m_MeshRenderer->SetBlending(false);
+			break;
+		}
+		
+		break;
 	}
 
 

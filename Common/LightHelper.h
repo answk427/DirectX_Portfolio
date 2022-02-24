@@ -61,7 +61,7 @@ struct SpotLight
 	// Packed into 4D vector: (Direction, Spot)
 	XMFLOAT3 Direction;
 	float Spot;
-
+	
 	// Packed into 4D vector: (Att, Pad)
 	XMFLOAT3 Att;
 	float Pad; // Pad the last float so we can set an array of lights if we wanted.

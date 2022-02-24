@@ -2,6 +2,14 @@
 
 
 
+DataManager::DataManager() : effectMgr(EffectMgr::Instance()) 
+{
+	for (auto& frw : FileReaderWriter::FRWs)
+	{
+		typeOnfrw.insert({ frw->getFileType(), frw });
+	}
+}
+
 DataManager & DataManager::Instance()
 {
 	static DataManager* instance = new DataManager();
@@ -19,7 +27,8 @@ bool DataManager::LoadEffectData()
 bool DataManager::FileOpen(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[], std::vector<LPCWSTR> extension)
 {
 	OPENFILENAME ofn;
-
+	
+	
 	//반드시 static으로 해줘야 한다고 하는데 안해도 작동중;
 	WCHAR strFileTitle[MAX_PATH] = L""; //파일명
 	WCHAR strFile[MAX_PATH] = L""; //파일경로까지포함

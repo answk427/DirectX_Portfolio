@@ -30,7 +30,6 @@
 
 
 
-
 class Scene : public D3DApp
 {	
 public:
@@ -136,7 +135,7 @@ bool Scene::Init()
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	//Effects::InitAll(md3dDevice);
 	dataMgr.LoadEffectData();
-	InputLayouts::InitAll(md3dDevice);
+	//InputLayouts::InitAll(md3dDevice);
 	
 
 
@@ -226,9 +225,6 @@ void Scene::DrawScene()
 {
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
-	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		
 	
 	effectMgr.SetPerFrame(componentMgr.getLightings(), camera.GetPosition());
@@ -276,8 +272,8 @@ void Scene::OnMouseMove(WPARAM btnState, int x, int y)
 void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 {
 	int wmId = LOWORD(wParam);
-	static WCHAR title[50];
-	static WCHAR full_path[100];
+	static WCHAR title[MAX_PATH];
+	static WCHAR full_path[MAX_PATH];
 		
 	switch (wmId)
 	{
@@ -299,6 +295,14 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 		dataMgr.FileOpen(hDlg, title, full_path, extensions);
 		GameObject* gameObj = objectMgr.CreateObjectFromFile(W2A(full_path));
 		m_HierarchyDialog->TreeInsertObject(gameObj);
+		
+		break;
+	}
+	case ID_40010: //Import mesh
+	{
+		std::vector<LPCWSTR> extensions = { L"mesh" };
+		dataMgr.FileOpen(hDlg, title, full_path, extensions);
+		meshMgr.CreateMeshFromFile(full_path);
 		break;
 	}
 	case ID_GAMEOBJECT_EMPTYOBJECT:

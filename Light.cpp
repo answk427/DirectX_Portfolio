@@ -94,6 +94,8 @@ void Lighting::FixedUpdate()
 
 void Lighting::Update()
 {
+	if (transform == nullptr)
+		return;
 	//조명 위치 업데이트
 	m_spotLight.Position = transform->m_position;
 	m_pointLight.Position = transform->m_position;

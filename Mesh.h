@@ -58,10 +58,12 @@ public:
 	
 	void SetVB(ID3D11DeviceContext* context);
 	void SetIB(ID3D11DeviceContext* context);
+	void SetID(std::string id) { this->id = id; }
 
 public:
 	//»ý¼ºÀÚ
 	Mesh(const std::string& id) : mVB(0), mIB(0), InstanceBuffer(0), vertexBufferCount(0), id(id) {}
+	Mesh() : mVB(0), mIB(0), InstanceBuffer(0), vertexBufferCount(0), id("temp") {}
 	~Mesh() {
 		ID3D11Buffer* VB = mVB;
 		ID3D11Buffer* IB = mIB;
@@ -82,6 +84,12 @@ public:
 		vector<MyVertex::BasicVertex>& vertexSrc,
 		vector<UINT>& indexSrc,
 		vector<Subset>& subsetSrc);
+	
+	void Init(vector<MyVertex::BasicVertex>& vertexSrc,
+		vector<UINT>& indexSrc,
+		vector<Subset>& subsetSrc);
+	
+	void InitBuffers(ID3D11Device* device);
 
 public:
 	void Draw(ID3D11DeviceContext* context, UINT subsetIdx);
@@ -89,7 +97,11 @@ public:
 	ID3D11Buffer* GetVB() { return mVB; }
 	ID3D11Buffer* GetIB() { return mVB; }
 	ID3D11Buffer* GetInstanceBuffer() { return InstanceBuffer; }
+
 	int GetSubsetLength() { return subsets.size(); }
+	const std::vector<Subset>& GetSubsets(){ return subsets; }
+	const std::vector<MyVertex::BasicVertex>& GetVertices() { return vertices; }
+	const std::vector<UINT>& GetIndices() { return indices; }
 
 public:
 	bool operator==(const Mesh& mesh) { return id < mesh.id; }

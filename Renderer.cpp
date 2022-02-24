@@ -18,8 +18,68 @@ void Renderer::LateUpdate()
 {
 }
 
+void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
+{
+	if (mesh == nullptr)
+		return;
+
+	MapsInit();
+	XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
+		
+
+	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
+	mesh->SetVB(context);
+	mesh->SetIB(context);
+
+	int subsetLength = mesh->GetSubsetLength();
+
+
+	ID3DX11EffectTechnique* activeTech;
+	D3DX11_TECHNIQUE_DESC techDesc;
+
+	for (int i = 0; i < subsetLength; i++)
+	{
+		//쉐이더 별로 파이프라인 설정
+		if (i == 0 || (effects[i - 1] != effects[i])) //연속으로 같은 쉐이더는 설정하지않음
+		{
+			if (!blending)
+			{
+				//setting이 제대로 되지 않았을 경우 break
+				if (!effects[i]->PipeLineSetting(context))
+					break;
+			}
+			else
+			{
+				if (!effects[i]->BlendingPipeLineSetting(context))
+					break;
+			}
+			
+		}
+		
+
+		activeTech = effects[i]->GetTechnique(TechniqueType::Light |
+			TechniqueType::DiffuseMap);
+		activeTech->GetDesc(&techDesc);
+		
+
+
+		//shader에 필요한 데이터 설정
+		effects[i]->PerObjectSet(&materials[i],
+			camera, world);
+
+		effects[i]->SetMaps(diffuseMaps[i], normalMaps[i], nullptr);
+
+
+		for (UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			activeTech->GetPassByIndex(p)->Apply(0, context);
+			mesh->Draw(context, i);
+		}
+	}
+}
+
 Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,type)
-, m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), mesh(0)
+, m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), mesh(0), blending(0)
 {
 }
 
@@ -118,45 +178,6 @@ MeshRenderer::MeshRenderer(const std::string& id) : Renderer(id, ComponentType::
 {
 }
 
-void MeshRenderer::Draw(ID3D11DeviceContext * context, Camera* camera)
-{
-	if (mesh == nullptr)
-		return;
-
-	MapsInit();
-	XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
-
-	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
-	mesh->SetVB(context);
-	mesh->SetIB(context);
-	
-	int subsetLength = mesh->GetSubsetLength();
-	
-	
-	ID3DX11EffectTechnique* activeTech;
-	D3DX11_TECHNIQUE_DESC techDesc;
-	
-	for (int i = 0; i < subsetLength; i++)
-	{
-		activeTech = effects[i]->GetTechnique(TechniqueType::Light |
-			TechniqueType::DiffuseMap);
-		activeTech->GetDesc(&techDesc);
-
-			
-		//shader에 필요한 데이터 설정
-		effects[i]->PerObjectSet(&materials[i],
-			camera, world);
-		
-		effects[i]->SetMaps(diffuseMaps[i], normalMaps[i], nullptr);
-
-						
-		for (UINT p = 0; p < techDesc.Passes; ++p)
-		{
-			activeTech->GetPassByIndex(p)->Apply(0, context);
-			mesh->Draw(context, i);
-		}
-	}
-}
 
 MeshRenderer & MeshRenderer::operator=(const MeshRenderer & meshrenderer)
 {
@@ -173,6 +194,8 @@ MeshRenderer & MeshRenderer::operator=(const MeshRenderer & meshrenderer)
 
 	// TODO: 여기에 반환 구문을 삽입합니다.
 }
+
+
 
 SkinnedMeshRenderer::SkinnedMeshRenderer(const std::string & id) : Renderer(id, ComponentType::SKINNEDMESHRENDERER)
 {
@@ -193,6 +216,3 @@ SkinnedMeshRenderer & SkinnedMeshRenderer::operator=(const SkinnedMeshRenderer &
 	// TODO: 여기에 반환 구문을 삽입합니다.
 }
 
-void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
-{
-}

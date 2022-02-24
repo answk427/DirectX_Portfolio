@@ -122,10 +122,10 @@ void ComputePointLight(Material mat, PointLight L, float3 pos, float3 normal, fl
 		
 	// Normalize the light vector.
 	lightVec /= d; 
-	
+		
 	// Ambient term.
 	ambient = mat.Ambient * L.Ambient;	
-
+	
 	// Add diffuse and specular term, provided the surface is in 
 	// the line of site of the light.
 
@@ -137,7 +137,7 @@ void ComputePointLight(Material mat, PointLight L, float3 pos, float3 normal, fl
 	{
 		float3 v         = reflect(-lightVec, normal);
 		float specFactor = pow(max(dot(v, toEye), 0.0f), mat.Specular.w);
-					
+		
 		diffuse = diffuseFactor * mat.Diffuse * L.Diffuse;
 		spec    = specFactor * mat.Specular * L.Specular;
 	}

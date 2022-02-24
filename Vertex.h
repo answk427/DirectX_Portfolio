@@ -8,7 +8,7 @@
 #define VERTEX_H
 
 #include "d3dUtil.h"
-#include "EffectMgr.h"
+
 
 namespace Vertex
 {
@@ -53,7 +53,7 @@ public:
 class InputLayouts
 {
 public:
-	static void InitAll(ID3D11Device* device);
+	//static void InitAll(ID3D11Device* device);
 	static void DestroyAll();
 
 	static ID3D11InputLayout* Pos;

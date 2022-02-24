@@ -13,6 +13,7 @@
 #include <Camera.h>
 #include "BufferResource.h"
 #include "Light.h"
+#include "Vertex.h"
 
 
 enum TechniqueType
@@ -32,6 +33,13 @@ public:
 	Effect(ID3D11Device* device, const std::wstring& filename);
 	virtual ~Effect();
 public:
+	//렌더링에 필요한 
+	virtual void Init(ID3D11Device* device);
+	//device로부터 BlendState를 생성하는 함수
+	virtual void InitBlendState(ID3D11Device* device);
+	//device로부터 inputlayout을 생성하는 함수
+	virtual void InitInputLayout(ID3D11Device* device) = 0;
+	
 	//Frame별로 필요한 세팅을 수행하는 함수
 	virtual void PerFrameSet(DirectionalLight* directL,
 		PointLight* pointL,
@@ -45,6 +53,10 @@ public:
 
 	//Technique을 얻는 함수
 	virtual ID3DX11EffectTechnique* GetTechnique(UINT techType) = 0;
+
+	//렌더링파이프라인 세팅함수
+	virtual bool PipeLineSetting(ID3D11DeviceContext* context);
+	virtual bool BlendingPipeLineSetting(ID3D11DeviceContext* context);
 	
 	//텍스쳐 맵 세팅
 	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
@@ -59,6 +71,8 @@ private:
 
 protected:
 	ID3DX11Effect* mFX;
+	ID3D11InputLayout* m_inputLayout;
+	ID3D11BlendState* m_blendState;
 };
 #pragma endregion
 
@@ -82,6 +96,11 @@ public:
 	
 	void SetDirLights(const DirectionalLight* lights)   
 	{ 
+		if (lights == nullptr)
+		{
+			dirLightSize->SetInt(0);
+			return;
+		}
 		DirLights->SetRawValue(lights, 
 			0,
 			Lighting::lightCount[LightType::DIRECTIONAL] *sizeof(DirectionalLight)); 
@@ -89,6 +108,11 @@ public:
 	}
 	void SetPointLights(const PointLight* lights)
 	{
+		if (lights == nullptr)
+		{
+			pointLightSize->SetInt(0);
+			return;
+		}
 		pointLights->SetRawValue(lights,
 			0,
 			Lighting::lightCount[LightType::POINTLIGHT] * sizeof(PointLight));
@@ -97,6 +121,11 @@ public:
 	}
 	void SetSpotLights(const SpotLight* lights)
 	{
+		if (lights == nullptr)
+		{
+			spotLightSize->SetInt(0);
+			return;
+		}
 		spotLights->SetRawValue(lights,
 			0,
 			Lighting::lightCount[LightType::SPOTLIGHT] * sizeof(SpotLight));
@@ -203,6 +232,9 @@ public:
 
 	// Effect을(를) 통해 상속됨
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+		
+	// Effect을(를) 통해 상속됨
+	virtual void InitInputLayout(ID3D11Device * device) override;
 };
 #pragma endregion
 
@@ -373,6 +405,12 @@ public:
 
 	// Effect을(를) 통해 상속됨
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+
+	
+
+
+	// Effect을(를) 통해 상속됨
+	virtual void InitInputLayout(ID3D11Device * device) override;
 
 };
 #pragma endregion

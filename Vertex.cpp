@@ -47,19 +47,19 @@ ID3D11InputLayout* InputLayouts::Basic32 = 0;
 ID3D11InputLayout* InputLayouts::PosNormalTexTan = 0;
 ID3D11InputLayout* InputLayouts::PosNormalTexTanSkinned = 0;
 
-void InputLayouts::InitAll(ID3D11Device* device)
-{
-	D3DX11_PASS_DESC passDesc;
-	EffectMgr& effectMgr = EffectMgr::Instance();
-	//
-	// Basic32
-	//
-	
-	BasicEffect* effect = dynamic_cast<BasicEffect*>(effectMgr.CreateEffect(L"FX/Basic.fxo", EffectType::BasicEffectType));
-
-	effect->Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(device->CreateInputLayout(InputLayoutDesc::Basic32, 3, passDesc.pIAInputSignature,
-		passDesc.IAInputSignatureSize, &Basic32));
+//void InputLayouts::InitAll(ID3D11Device* device)
+//{
+//	D3DX11_PASS_DESC passDesc;
+//	EffectMgr& effectMgr = EffectMgr::Instance();
+//	//
+//	// Basic32
+//	//
+//	
+//	BasicEffect* effect = dynamic_cast<BasicEffect*>(effectMgr.CreateEffect(L"FX/Basic.fxo", EffectType::BasicEffectType));
+//
+//	effect->Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
+//	HR(device->CreateInputLayout(InputLayoutDesc::Basic32, 3, passDesc.pIAInputSignature,
+//		passDesc.IAInputSignatureSize, &Basic32));
 
 	//
 	// Pos
@@ -86,11 +86,10 @@ void InputLayouts::InitAll(ID3D11Device* device)
 	//Effects::NormalMapFX->Light1SkinnedTech->GetPassByIndex(0)->GetDesc(&passDesc);
 	//HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTanSkinned, 6, passDesc.pIAInputSignature, 
 	//	passDesc.IAInputSignatureSize, &PosNormalTexTanSkinned));
-}
+//}
 
 void InputLayouts::DestroyAll()
 {
-			
 	ReleaseCOM(Pos);
 	ReleaseCOM(Basic32);
 	ReleaseCOM(PosNormalTexTan);

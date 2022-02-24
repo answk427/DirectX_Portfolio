@@ -2,3 +2,32 @@
 .vs/
 assimp-vc141-mtd.dll
 FX/NormalMap.fxo
+FX/Basic_old.fx
+FX - 복사본/Basic.cod
+FX - 복사본/Basic.fx
+FX - 복사본/Basic.fxo
+FX - 복사본/BuildShadowMap.cod
+FX - 복사본/BuildShadowMap.fx
+FX - 복사본/BuildShadowMap.fxo
+FX - 복사본/color.fx
+FX - 복사본/DebugTexture.cod
+FX - 복사본/DebugTexture.fx
+FX - 복사본/DebugTexture.fxo
+FX - 복사본/LightHelper.fx
+FX - 복사본/NormalMap.cod
+FX - 복사본/NormalMap.fx
+FX - 복사본/NormalMap.fxo
+FX - 복사본/Sky.cod
+FX - 복사본/Sky.fx
+FX - 복사본/Sky.fxo
+FX - 복사본/Ssao.cod
+FX - 복사본/Ssao.fx
+FX - 복사본/Ssao.fxo
+FX - 복사본/SsaoBlur.cod
+FX - 복사본/SsaoBlur.fx
+FX - 복사본/SsaoBlur.fxo
+FX - 복사본/SsaoNormalDepth.cod
+FX - 복사본/SsaoNormalDepth.fx
+FX - 복사본/SsaoNormalDepth.fxo
+Meshes/18042_GonF.mesh
+Meshes/hi.txt

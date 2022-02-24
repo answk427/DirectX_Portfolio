@@ -135,14 +135,57 @@ Component * ComponentMgr::GetComponent(componentID & id)
 
 void ComponentMgr::Render(ID3D11DeviceContext* context, Camera* camera)
 {
-	for(int i=0; i<enableCount_meshRenderer; i++)
-		meshRenderers[i].Draw(context, camera);
+	//혼합 객체를 나중에 그리기 위해 index를 모아두는 vector
+	static std::vector<std::pair<float,int>> blendMeshRenderers;
+	static std::vector<std::pair<float,int>> blendSkinnedMeshRenderers;
+
+	XMVECTOR cameraPos = XMLoadFloat3(&camera->GetPosition());
+	//비혼합 객체 렌더링
+	for (int i = 0; i < enableCount_meshRenderer; i++)
+	{
+		if (meshRenderers[i].GetBlending())
+		{
+			//카메라와 해당 객체 사이의 거리를 구함
+			XMVECTOR dist = XMVector3LengthEst(cameraPos - XMLoadFloat3(&meshRenderers[i].GetTransform()->m_position));
+			blendMeshRenderers.push_back({ XMVectorGetX(dist), i });
+		}
+		else
+			meshRenderers[i].Draw(context, camera);
+		
+	}
 	for (int i = 0; i < enableCount_skinnedMeshRenderer; i++)
-		skinnedMeshRenderers[i].Draw(context, camera);
+	{
+		if (skinnedMeshRenderers[i].GetBlending())
+		{
+			//카메라와 해당 객체 사이의 거리를 구함
+			XMVECTOR dist = XMVector3LengthEst(cameraPos - XMLoadFloat3(&skinnedMeshRenderers[i].GetTransform()->m_position));
+			blendSkinnedMeshRenderers.push_back({ XMVectorGetX(dist), i });
+		}
+		else
+			skinnedMeshRenderers[i].Draw(context, camera);
+	}
+		
+	//혼합객체 거리기준 정렬 후 렌더링
+	if (!blendMeshRenderers.empty())
+	{
+		std::sort(blendMeshRenderers.begin(), blendMeshRenderers.end(), std::greater<pair<float, int>>());
+		for(auto elem : blendMeshRenderers)
+			meshRenderers[elem.second].Draw(context, camera);
+		blendMeshRenderers.clear();
+	}
+	if (!blendSkinnedMeshRenderers.empty())
+	{
+		std::sort(blendSkinnedMeshRenderers.begin(), blendSkinnedMeshRenderers.end(), std::greater<pair<float,int>>());
+		for (auto elem : blendSkinnedMeshRenderers)
+			skinnedMeshRenderers[elem.second].Draw(context, camera);
+		blendSkinnedMeshRenderers.clear();
+	}
+		
 }
 
 void ComponentMgr::Update()
 {
+
 	for (int i = 0; i < enableCount_meshRenderer; i++)
 		meshRenderers[i].Update();
 	for (int i = 0; i < enableCount_skinnedMeshRenderer; i++)

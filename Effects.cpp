@@ -6,7 +6,7 @@
 
 #pragma region Effect
 Effect::Effect(ID3D11Device* device, const std::wstring& filename)
-	: mFX(0)
+	: mFX(0), m_inputLayout(0), m_blendState(0)
 {
 	std::ifstream fin(filename.c_str(), std::ios::binary);
 
@@ -25,6 +25,34 @@ Effect::Effect(ID3D11Device* device, const std::wstring& filename)
 Effect::~Effect()
 {
 	ReleaseCOM(mFX);
+	ReleaseCOM(m_inputLayout);
+	ReleaseCOM(m_blendState);
+}
+
+void Effect::Init(ID3D11Device* device)
+{
+	InitInputLayout(device);
+	InitBlendState(device);
+}
+
+void Effect::InitBlendState(ID3D11Device * device)
+{
+	D3D11_BLEND_DESC blendDesc = { 0 };
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.IndependentBlendEnable = false;
+	
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	//alpha 성분 혼합계수 설정
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	ReleaseCOM(m_blendState);
+	HR(device->CreateBlendState(&blendDesc, &m_blendState));	
 }
 
 #pragma endregion
@@ -115,6 +143,9 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	CubeMap           = mFX->GetVariableByName("gCubeMap")->AsShaderResource();
 	ShadowMap         = mFX->GetVariableByName("gShadowMap")->AsShaderResource();
 	SsaoMap           = mFX->GetVariableByName("gSsaoMap")->AsShaderResource();
+
+	//
+	Init(device);
 }
 
 BasicEffect::~BasicEffect()
@@ -122,12 +153,10 @@ BasicEffect::~BasicEffect()
 }
 void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW)
 {
-	if(directL != nullptr)
-		SetDirLights(directL);	
-	if (pointL != nullptr)
-		SetPointLights(pointL);
-	if (spotL != nullptr)
-		SetSpotLights(spotL);
+	//쉐이더에 조명설정
+	SetDirLights(directL);	
+	SetPointLights(pointL);
+	SetSpotLights(spotL);
 	
 	SetEyePosW(eyePosW);
 }
@@ -159,7 +188,7 @@ void BasicEffect::PerObjectSet(GeneralMaterial * material,
 }
 void BasicEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
 {
-	if(diffuseMap!=nullptr)
+	//if(diffuseMap!=nullptr)
 		SetDiffuseMap(diffuseMap);
 }
 ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
@@ -175,6 +204,15 @@ ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 			nullptr;
 	}
 	return nullptr;
+}
+
+void BasicEffect::InitInputLayout(ID3D11Device * device)
+{
+	D3DX11_PASS_DESC passDesc;
+
+	Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::Basic32, 3, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_inputLayout));
 }
 #pragma endregion
 
@@ -312,6 +350,10 @@ NormalMapEffect::NormalMapEffect(ID3D11Device* device, const std::wstring& filen
 	NormalMap         = mFX->GetVariableByName("gNormalMap")->AsShaderResource();
 	ShadowMap         = mFX->GetVariableByName("gShadowMap")->AsShaderResource();
 	SsaoMap           = mFX->GetVariableByName("gSsaoMap")->AsShaderResource();
+	
+	//
+	Init(device);
+
 }
 
 NormalMapEffect::~NormalMapEffect()
@@ -329,6 +371,12 @@ void NormalMapEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, 
 ID3DX11EffectTechnique * NormalMapEffect::GetTechnique(UINT techType)
 {
 	return nullptr;
+}
+
+
+
+void NormalMapEffect::InitInputLayout(ID3D11Device * device)
+{
 }
 
 #pragma endregion
@@ -504,3 +552,28 @@ void Effects::DestroyAll()
 }
 
 #pragma endregion
+
+bool Effect::PipeLineSetting(ID3D11DeviceContext * context)
+{
+	if (m_inputLayout == nullptr)
+		return false;
+	context->IASetInputLayout(m_inputLayout);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
+	context->OMSetBlendState(0, 0,0xffffffff);
+	return true;
+}
+
+bool Effect::BlendingPipeLineSetting(ID3D11DeviceContext * context)
+{
+	if (m_inputLayout == nullptr)
+		return false;
+	context->IASetInputLayout(m_inputLayout);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	//출력병합기에 혼합 설정
+	float blendFactors[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	context->OMSetBlendState(m_blendState, blendFactors, 0xffffffff);
+
+	return true;
+}

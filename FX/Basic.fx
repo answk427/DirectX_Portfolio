@@ -47,6 +47,7 @@ TextureCube gCubeMap;
 SamplerState samLinear
 {
 	Filter = MIN_MAG_MIP_LINEAR;
+	//Filter = ANISOTROPIC;
 	AddressU = WRAP;
 	AddressV = WRAP;
 };
@@ -158,7 +159,7 @@ float4 PS(VertexOut pin,
 		pin.SsaoPosH /= pin.SsaoPosH.w;
 		float ambientAccess = gSsaoMap.SampleLevel(samLinear, pin.SsaoPosH.xy, 0.0f).r;
 
-		// Sum the light contribution from each light source.  
+		// Sum the light contribution from each light source.
 		[unroll]
 		for(int i = 0; i < dirLight_size; ++i)
 		{
@@ -166,9 +167,12 @@ float4 PS(VertexOut pin,
 			ComputeDirectionalLight(gMaterial, gDirLights[i], pin.NormalW, toEye, 
 				A, D, S);
 
-			ambient += ambientAccess*A;    
+			/*ambient += ambientAccess*A;    
 			diffuse += shadow[i]*D;
-			spec    += shadow[i]*S;
+			spec    += shadow[i]*S;*/
+			ambient += A;
+			diffuse += D;
+			spec += S;
 		}
 
 		for (int i = 0; i < pointLight_size; ++i)
@@ -177,9 +181,12 @@ float4 PS(VertexOut pin,
 			ComputePointLight(gMaterial, gPointLights[i], pin.PosW,pin.NormalW, toEye,
 				A, D, S);
 			
-			ambient += ambientAccess * A;
+			/*ambient += ambientAccess * A;
 			diffuse += shadow[i] * D;
-			spec += shadow[i] * S;
+			spec += shadow[i] * S;*/
+			ambient += A;
+			diffuse += D;
+			spec += S;
 		}
 
 		for (int i = 0; i < spotLight_size; ++i)
@@ -188,9 +195,12 @@ float4 PS(VertexOut pin,
 			ComputeSpotLight(gMaterial, gSpotLights[i], pin.PosW, pin.NormalW, toEye,
 				A, D, S);
 
-			ambient += ambientAccess * A;
+		/*	ambient += ambientAccess * A;
 			diffuse += shadow[i] * D;
-			spec += shadow[i] * S;
+			spec += shadow[i] * S;*/
+			ambient += A;
+			diffuse += D;
+			spec += S;
 		}
 
 

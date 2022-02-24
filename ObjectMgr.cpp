@@ -214,7 +214,6 @@ GameObject * ObjectMgr::AddNode(NodeStruct & node)
 	//모든 하위노드들을 탐색
 	for (NodeStruct& node : node.childs)
 		AddNode(&obj, node);
-
-	
+		
 	return &obj;
 }
