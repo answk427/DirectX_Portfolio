@@ -207,6 +207,9 @@
     <ClCompile Include="UtilFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileReaderWriter.cpp">
+      <Filter>New Source Files\ReaderWriter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">

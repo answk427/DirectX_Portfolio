@@ -98,6 +98,7 @@
     <ClCompile Include="Common\xnacollision.cpp" />
     <ClCompile Include="ComponentDialog.cpp" />
     <ClCompile Include="DataManager.cpp" />
+    <ClCompile Include="FileReaderWriter.cpp" />
     <ClCompile Include="InputLayoutManager.cpp" />
     <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="ComponentMgr.cpp" />

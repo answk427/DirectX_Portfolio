@@ -2,18 +2,20 @@
 
 
 
-DataManager::DataManager() : effectMgr(EffectMgr::Instance()) 
-{
-	for (auto& frw : FileReaderWriter::FRWs)
-	{
-		typeOnfrw.insert({ frw->getFileType(), frw });
-	}
-}
+DataManager::DataManager() : effectMgr(EffectMgr::Instance()) {}
 
 DataManager & DataManager::Instance()
 {
 	static DataManager* instance = new DataManager();
 	return *instance;
+}
+
+void DataManager::Init()
+{
+	for (auto& frw : FileReaderWriter::FRWs)
+	{
+		typeOnfrw.insert({ frw->getFileType(), frw });
+	}
 }
 
 bool DataManager::LoadEffectData()

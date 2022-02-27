@@ -124,6 +124,7 @@ bool Scene::Init()
 	meshMgr.Init(md3dDevice);
 	texMgr.Init(md3dDevice);
 	effectMgr.Init(md3dDevice);
+	dataMgr.Init();
 
 	//카메라 초기화
 

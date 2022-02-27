@@ -20,41 +20,27 @@ protected:
 public:
 	static std::vector<FileReaderWriter*> FRWs;
 public:
-	FileReaderWriter(const fileTypeStr& type, const std::wstring& directory) 
-	{
-		fileType = type; 
-		fileDirectory = std::wstring(fs::current_path().c_str()) + L"/" + directory;
-	}
-	FileReaderWriter(const fileTypeStr& type, const std::string& directory)
-	{
-		fileType = type;
-		fileDirectory = std::wstring(fs::current_path().c_str()) + +L"/"+ConvertWSTR(directory);
-	}
+	FileReaderWriter(const fileTypeStr& type, const std::wstring& directory);
+	FileReaderWriter(const fileTypeStr& type, const std::string& directory);
+	
 	virtual ~FileReaderWriter() {}
 
 public:
 	virtual bool ReadFile(const FR_fileName& fileName, char* dest) = 0;
 	virtual bool WriteFile(void* data) = 0;
+
+public:
 	virtual void AddFRW(FileReaderWriter* frw) { FRWs.push_back(frw); }
-	
-	
-	bool FileExist(const FR_fileName& fileName, int mode)
-	{
-		//파일이 존재하는지 확인
-		if (_waccess(fileName.c_str(), 0) != -1)
-			return true;
-		else
-			return false;
-	}
-	bool FileExist(const std::string& fileName, int mode)
-	{
-		//파일이 존재하는지 확인
-		if (access(fileName.c_str(), 0) != -1)
-			return true;
-		else
-			return false;
-	}
-
 	const fileTypeStr& getFileType() { return fileType; }
+	
+	bool FileExist(const FR_fileName& fileName, int mode);
+	bool FileExist(const std::string& fileName, int mode);
 
+	//directory 경로까지 포함한 파일 위치 반환
+	FR_fileName GetFileFullName(const FR_fileName& fileName);
+	
+
+	
 };
+
+
