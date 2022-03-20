@@ -13,7 +13,15 @@ namespace MyVertex
 		XMFLOAT3 biTan; //바이탄젠트(종접선) 벡터
 		
 		
-		BasicVertex() :pos(0,0,0), normal(1,1,1), tex(0, 0), tan(1,1,1), biTan(1,1,1)  {}
+		BasicVertex() :pos(0,0,0), normal(1,1,1), tex(0, 0), tan(0,0,0), biTan(0,0,0)  {}
+		BasicVertex(float px, float py, float pz) : pos(px, py, pz), normal(1, 1, 1), tex(0, 0), tan(0, 0, 0), biTan(0, 0, 0) {}
+		BasicVertex(
+			float px, float py, float pz,
+			float nx, float ny, float nz,
+			float tx, float ty, float tz,
+			float u, float v)
+			: pos(px, py, pz), normal(nx, ny, nz),
+			tan(tx, ty, tz), tex(u, v), biTan(0,0,0) {}
 	};
 
 	//뼈가 있는 모델에 사용, 다른 버퍼슬롯에 넣을것.
@@ -27,6 +35,17 @@ namespace MyVertex
 //다른 버퍼슬롯에 들어갈 인스턴싱자료
 struct InstancingData
 {
-	XMCOLOR color; //기본색상
-	XMMATRIX world; //월드좌표
+	XMFLOAT4X4 world; //월드좌표
+	XMFLOAT4X4 worldInvTranspose; //역전치행렬
+	XMFLOAT4 color; //기본색상
+};
+
+struct AABB_MaxMin
+{
+	XMFLOAT3 m_max;
+	XMFLOAT3 m_min;
+
+	AABB_MaxMin() : m_max(1, 1, 1), m_min(0, 0, 0) {}
+	AABB_MaxMin(const XMFLOAT3& maxVector, const XMFLOAT3& minVector) :m_max(maxVector), m_min(minVector) {}
+	
 };

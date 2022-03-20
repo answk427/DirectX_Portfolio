@@ -31,6 +31,7 @@ cbuffer cbPerObject
 {
 	float4x4 gWorld;
 	float4x4 gWorldInvTranspose;
+	float4x4 gViewProj;
 	float4x4 gWorldViewProj;
 	float4x4 gWorldViewProjTex;
 	float4x4 gTexTransform;
@@ -70,6 +71,18 @@ struct VertexIn
 	float2 Tex     : TEXCOORD;
 };
 
+struct InstanceVertexIn
+{
+	float3 PosL    : POSITION;
+	float3 NormalL : NORMAL;
+	float2 Tex     : TEXCOORD;
+	//여기부터 인스턴싱 자료
+	row_major float4x4 World : WORLD;
+	row_major float4x4 WorldInvTranspose : INVTRANSPOSE;
+	float4 Color : COLOR;
+	uint InstanceId : SV_InstanceID;
+};
+
 struct VertexOut
 {
 	float4 PosH       : SV_POSITION;
@@ -91,6 +104,31 @@ VertexOut VS(VertexIn vin)
 	// Transform to homogeneous clip space.
 	vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
 	
+	// Output vertex attributes for interpolation across triangle.
+	vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
+
+	// Generate projective tex-coords to project shadow map onto scene.
+	vout.ShadowPosH = mul(float4(vin.PosL, 1.0f), gShadowTransform);
+
+	// Generate projective tex-coords to project SSAO map onto scene.
+	vout.SsaoPosH = mul(float4(vin.PosL, 1.0f), gWorldViewProjTex);
+
+	return vout;
+}
+
+VertexOut InstanceVS(InstanceVertexIn vin)
+{
+	VertexOut vout;
+
+	//상수버퍼가 아닌 인스턴스버퍼로 입력한 세계행렬 사용
+	vout.PosW = mul(float4(vin.PosL, 1.0f), vin.World).xyz;
+	
+	//노말벡터에 역전치행렬 곱
+	vout.NormalW = mul(vin.NormalL, (float3x3)vin.WorldInvTranspose);
+
+	// Transform to homogeneous clip space.
+	vout.PosH = mul(float4(vout.PosW, 1.0f), gViewProj);
+
 	// Output vertex attributes for interpolation across triangle.
 	vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
 
@@ -302,6 +340,16 @@ technique11 Light3Tex
 		SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_5_0, PS(3, true, false, false, false) ) );
     }
+}
+
+technique11 Light3TexInstancing
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_5_0, InstanceVS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_5_0, PS(3, true, false, false, false)));
+	}
 }
 
 technique11 Light0TexAlphaClip

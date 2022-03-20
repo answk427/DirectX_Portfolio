@@ -42,6 +42,7 @@
 #define IDC_EDIT11                      1064
 #define IDC_COMBO1                      1069
 #define IDC_CHECK1                      1070
+#define IDC_CHECK2                      1071
 #define ID_40001                        40001
 #define ID_40002                        40002
 #define ID_BUTTON2                      40003

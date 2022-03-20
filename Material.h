@@ -4,7 +4,9 @@
 
 struct BasicMaterial
 {
-	BasicMaterial() { ZeroMemory(this, sizeof(this)); }
+	BasicMaterial() : Ambient(1.0f,1.0f,1.0f,1.0f), Diffuse(1.0f,1.0f,1.0f,1.0f),
+		Specular(1.0f,1.0f,1.0f,1.0f), Reflect(1.0f,1.0f,1.0f,1.0f)
+	{ }
 
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Diffuse;

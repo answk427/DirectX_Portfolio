@@ -55,6 +55,15 @@
     <Filter Include="New Source Files\ReaderWriter">
       <UniqueIdentifier>{ca1bdd95-7982-49e8-a3cf-656bab1016aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="New Source Files\Component">
+      <UniqueIdentifier>{62f932b4-9e36-4b06-b844-e47a5f85d300}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="New Header Files\Physics">
+      <UniqueIdentifier>{3f9e53c5-60a3-4282-8f66-1159d0bd7767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="New Source Files\Physics">
+      <UniqueIdentifier>{d45fa7cb-a34a-43b2-9ff8-093fe34b23c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Effects.cpp">
@@ -90,15 +99,6 @@
     <ClCompile Include="Common\xnacollision.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>New Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>New Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>New Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -132,12 +132,6 @@
     <ClCompile Include="RenderStates.cpp">
       <Filter>OldRendering</Filter>
     </ClCompile>
-    <ClCompile Include="AssimpLoader.cpp">
-      <Filter>New Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>New Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ComponentMgr.cpp">
       <Filter>New Source Files\Manager</Filter>
     </ClCompile>
@@ -149,9 +143,6 @@
     </ClCompile>
     <ClCompile Include="ObjectMgr.cpp">
       <Filter>New Source Files\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="MsgProcedure.cpp">
-      <Filter>New Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DialogPractice.cpp">
       <Filter>New Source Files\EngineDialog</Filter>
@@ -186,9 +177,6 @@
     <ClCompile Include="MeshRendererCommand.cpp">
       <Filter>New Source Files\Command</Filter>
     </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>New Header Files\Component</Filter>
-    </ClCompile>
     <ClCompile Include="LightDialog.cpp">
       <Filter>New Source Files\EngineDialog</Filter>
     </ClCompile>
@@ -204,11 +192,38 @@
     <ClCompile Include="MeshReaderWriter.cpp">
       <Filter>New Source Files\ReaderWriter</Filter>
     </ClCompile>
-    <ClCompile Include="UtilFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FileReaderWriter.cpp">
       <Filter>New Source Files\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBoxRenderer.cpp">
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="AssimpLoader.cpp">
+      <Filter>New Source Files\ReaderWriter</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgProcedure.cpp">
+      <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="UtilFunctions.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Culling.cpp">
+      <Filter>New Source Files\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +409,12 @@
     </ClInclude>
     <ClInclude Include="UtilFunctions.h">
       <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBoxRenderer.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Culling.h">
+      <Filter>New Header Files\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

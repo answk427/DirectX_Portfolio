@@ -23,18 +23,27 @@ private:
 	vector<UINT> indices;
 	vector<Subset> subsets;
 	vector<GeneralMaterial> materials;
+	AABB_MaxMin* m_AABB_MaxMin;
 public:
 	
 	int vertexCount;
 	int indexCount;
 public:
-	AssimpMesh() :vertexCount(0), indexCount(0) {}
-	~AssimpMesh(){}
+	AssimpMesh() :vertexCount(0), indexCount(0), m_AABB_MaxMin(0) {}
+	~AssimpMesh()
+	{
+		if (m_AABB_MaxMin != nullptr)
+		{
+			delete m_AABB_MaxMin;
+			m_AABB_MaxMin = nullptr;
+		}
+	}
 public:
 	vector<MyVertex::BasicVertex> GetVertices() { return vertices; }
 	vector<UINT> GetIndices() { return indices; }
 	vector<Subset> GetSubsets() { return subsets; }
 	vector<GeneralMaterial> GetMaterials() { return materials; }
+	AABB_MaxMin* GetAABB_MaxMin() { return m_AABB_MaxMin; }
 	bool HasBone() { return false; } //임시로 false만 반환
 };
 

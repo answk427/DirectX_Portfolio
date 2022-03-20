@@ -77,3 +77,4 @@ inline componentT* GameObject::GetComponent()
 
 	return dynamic_cast<componentT*>((*it).GetComponent());
 }
+  

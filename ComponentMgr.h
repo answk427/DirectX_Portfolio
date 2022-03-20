@@ -73,6 +73,9 @@ public:
 	ComponentType typeOfID(componentID& id);
 	//ID로 컴포넌트를 얻어오는 함수
 	Component* GetComponent(componentID& id);
+
+	//현재 렌더링가능한 렌더러들을 반환한다.
+	const std::vector<Renderer*> GetDrawableRenderers();
 	
 public:
 	void Render(ID3D11DeviceContext* context, Camera* camera);

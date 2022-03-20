@@ -131,6 +131,18 @@ Component * ComponentMgr::GetComponent(componentID & id)
 	return nullptr;
 }
 
+const std::vector<Renderer*> ComponentMgr::GetDrawableRenderers()
+{
+	std::vector<Renderer*> result;
+
+	for (int i = 0; i < enableCount_meshRenderer; ++i)
+		result.push_back(&meshRenderers[i]);
+	for (int i = 0; i < enableCount_skinnedMeshRenderer; ++i)
+		result.push_back(&skinnedMeshRenderers[i]);
+	
+	return result;
+}
+
 
 
 void ComponentMgr::Render(ID3D11DeviceContext* context, Camera* camera)

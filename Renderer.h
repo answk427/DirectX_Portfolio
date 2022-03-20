@@ -10,15 +10,14 @@
 #include "EffectMgr.h"
 #include "Transform.h"
 #include "Vertex.h"
+#include <MathHelper.h>
 
 
 
 
 
 class Renderer : public Component
-{
-private:
-	bool blending; //혼합 여부를 나타내는 변수
+{	
 protected:
 	Transform* transform;
 	Mesh* mesh;
@@ -28,10 +27,37 @@ protected:
 	vector<Effect*> effects;
 	TextureMgr& m_texMgr;
 	EffectMgr& m_effectMgr;
+	
 
+protected:
+	UINT m_technique_type;
+	//혼합 여부를 나타내는 변수
+	bool m_blending; 
+	//해당 렌더러가 인스턴싱의 몇번째 인덱스인지 저장해두는 변수
+	UINT m_instancingIdx;
 public:
-	bool GetBlending() { return blending; }
-	bool SetBlending(bool blend) { return blending = blend;}
+	bool GetBlending() { return m_blending; }
+	bool SetBlending(bool blend) { return m_blending = blend;}
+
+	//인스턴싱 관련 함수
+	bool GetInstancing()
+	{ 
+		if (mesh != nullptr)
+			return mesh->GetInstancing();
+		return	false;
+	}
+	bool SetInstancing(bool instancing) 
+	{ 
+		if (mesh != nullptr)
+		{
+			return mesh->SetInstancing(instancing);
+		}
+			
+		return false;
+	}
+	void AddInstancingQueue();
+	void InstancingUpdate();
+
 	// Component을(를) 통해 상속됨
 	virtual void Init() override;
 	virtual void Update() override;
@@ -47,25 +73,38 @@ public:
 	~Renderer();
 
 public:
+	//맵 초기화
+	void MapsInit();
+
 	void InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 	void InitDiffuseMaps();
 
 	void InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 	void InitNormalMaps();
-
+	
+	//쉐이더 이펙트 초기화
 	void InitEffects(EffectMgr& effectMgr, const std::wstring& shaderPath);
 	void InitEffects();
 
-	void MapsInit();
 	
-	void SetMesh(Mesh* meshSrc) { mesh = meshSrc; }
-	const Mesh* GetMesh() { return mesh; }
+	void SetMesh(Mesh* meshSrc)
+	{
+		//원래 설정되어 있던 mesh의 InstancingData에서 현재 오브젝트의 데이터를 지움.
+		if (mesh != nullptr)
+			mesh->InstancingDatas.erase(mesh->InstancingDatas.begin()+ m_instancingIdx);
+		mesh = meshSrc; 
+		AddInstancingQueue();
+	}
+
+	Mesh* GetMesh() { return mesh; }
 	
 	void SetMaterials(vector<GeneralMaterial>& materialSrc);
 	vector<GeneralMaterial>& GetMaterials() { return materials; }
 
 	void SetTransform(Transform* tr) { transform = tr; }
 	Transform* GetTransform() { return transform; }
+
+	void SetTechniqueType(int orTechnique) { m_technique_type = orTechnique; }
 
 	// Component을(를) 통해 상속됨
 	virtual void Enable() override;
@@ -78,7 +117,7 @@ class MeshRenderer : public Renderer
 public:
 	MeshRenderer(const std::string& id);
 	MeshRenderer& operator=(const MeshRenderer& meshrenderer);
-
+	 
 };
 
 class SkinnedMeshRenderer : public Renderer

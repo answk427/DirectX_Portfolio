@@ -180,6 +180,7 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 	Subset tempSubset;
 	//material인덱스 
 	tempSubset.materialNum = mesh->mMaterialIndex;
+
 	//현재 vertex, index 갯수가 이 다음 subset의 시작점
 	tempSubset.VertexStart = assimpMesh.vertexCount;
 	tempSubset.IndexStart = assimpMesh.indexCount;
@@ -200,6 +201,32 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 	//Material 데이터 적재
 	assimpMesh.materials.push_back(SetMaterial(mesh->mMaterialIndex));
 	
+
+	
+	//AABB BoundingBox 적재
+	XMFLOAT3 tempAabbMax(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z);
+	XMFLOAT3 tempAabbMin(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z);
+
+	if (assimpMesh.m_AABB_MaxMin == nullptr)
+		assimpMesh.m_AABB_MaxMin = new AABB_MaxMin(tempAabbMax, tempAabbMin);
+	else
+	{
+		//현재 바운딩박스와 비교
+		XMVECTOR aabbMax = XMLoadFloat3(&assimpMesh.m_AABB_MaxMin->m_max);
+		XMVECTOR aabbMin = XMLoadFloat3(&assimpMesh.m_AABB_MaxMin->m_min);
+
+		//MaxVector
+		XMStoreFloat3(&assimpMesh.m_AABB_MaxMin->m_max,
+			XMVectorMax(aabbMax, XMLoadFloat3(&tempAabbMax)));
+
+		//MinVector
+		XMStoreFloat3(&assimpMesh.m_AABB_MaxMin->m_min,
+			XMVectorMin(aabbMin, XMLoadFloat3(&tempAabbMin)));
+	}
+	
+
+
+	assimpMesh.m_AABB_MaxMin->m_min = { mesh->mAABB.mMin.x,mesh->mAABB.mMin.y,mesh->mAABB.mMin.z };
 
 	//정점 구조체 데이터
 	for (int i = 0; i < mesh->mNumVertices; i++)
@@ -252,6 +279,9 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 			assimpMesh.indices.push_back(face.mIndices[2]);
 		}
 	}
+
+
+		
 
 	/*if (mesh->HasVertexColors(mesh->GetNumColorChannels()))
 	{

@@ -85,7 +85,7 @@ bool DataManager::FileOpen(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[], std::
 		DWORD dw = CommDlgExtendedError();
 		return false;
 	}
-	return false;
+	return true;
 }
 
 

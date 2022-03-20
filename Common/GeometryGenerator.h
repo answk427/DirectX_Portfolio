@@ -16,6 +16,8 @@
 #define GEOMETRYGENERATOR_H
 
 #include "d3dUtil.h"
+#include <BufferResource.h>
+#include <Mesh.h>
 
 class GeometryGenerator
 {
@@ -48,7 +50,7 @@ public:
 	///<summary>
 	/// Creates a box centered at the origin with the given dimensions.
 	///</summary>
-	void CreateBox(float width, float height, float depth, MeshData& meshData);
+	void CreateBox(float width, float height, float depth, Mesh& meshData);
 
 	///<summary>
 	/// Creates a sphere centered at the origin with the given radius.  The

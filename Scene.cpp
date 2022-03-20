@@ -27,11 +27,13 @@
 #include "HierarchyDialog.h"
 #include "DataManager.h"
 #include "ObjectCommand.h"
+#include "BoundingBoxRenderer.h"
+#include "Culling.h"
 
 
 
 class Scene : public D3DApp
-{	
+{
 public:
 	Scene(HINSTANCE hInstance);
 	~Scene();
@@ -47,16 +49,19 @@ public:
 
 	void MenuProc(HWND hDlg, WPARAM wParam) override;
 
-private:
+private://엔진기능
 	HierarchyDialog* m_HierarchyDialog;
-	DataManager& dataMgr;
 	AssimpLoader objLoader;
+	BoundingBoxRenderer* m_boundingBoxRenderer;
+
+private:
+	DataManager& dataMgr;
 	TextureMgr& texMgr;
 	EffectMgr& effectMgr;
 	ComponentMgr& componentMgr;
 	ObjectMgr& objectMgr;
 	MeshMgr meshMgr;
-	
+
 
 
 private:
@@ -64,11 +69,11 @@ private:
 	//DirectionalLight mDirLights[3];
 	std::vector<DirectionalLight> mDirLights;
 	std::vector<GameObject> gameObjects;
-		
+
 
 private:
 	POINT mLastMousePos;
-	
+
 	float mTheta;
 	float mPhi;
 	float mRadius;
@@ -86,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 	if (!theApp.Init())
 		return 0;
-	
+
 	return theApp.Run();
 }
 
@@ -96,17 +101,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 Scene::Scene(HINSTANCE hInstance)
 	: D3DApp(hInstance), meshMgr(md3dDevice), componentMgr(ComponentMgr::Instance()),
 	mTheta(1.3f*MathHelper::Pi),
-	mPhi(0.4f*MathHelper::Pi), mRadius(2.5f), 
+	mPhi(0.4f*MathHelper::Pi), mRadius(2.5f),
 	m_HierarchyDialog(new HierarchyDialog(hInstance)),
 	texMgr(TextureMgr::Instance()), effectMgr(EffectMgr::Instance()),
 	dataMgr(DataManager::Instance()), objectMgr(ObjectMgr::Instance())
+	, m_boundingBoxRenderer(0)
 {
 	objectMgr.Init(&meshMgr, &componentMgr);
 	mMainWndCaption = L"Crate Demo";
-	
+
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
-		
+
 }
 
 Scene::~Scene()
@@ -125,28 +131,29 @@ bool Scene::Init()
 	texMgr.Init(md3dDevice);
 	effectMgr.Init(md3dDevice);
 	dataMgr.Init();
+	m_boundingBoxRenderer = new BoundingBoxRenderer(md3dDevice, md3dImmediateContext);
 
 	//카메라 초기화
 
-	
+
 	camera.SetPosition({ 0.0f, 0.0f, -70.0f });
 	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
 	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f });
-	
+
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	//Effects::InitAll(md3dDevice);
 	dataMgr.LoadEffectData();
 	//InputLayouts::InitAll(md3dDevice);
-	
 
 
-	
+
+
 
 	//Hierarchy 초기화
-	m_HierarchyDialog->Init(mhMainWnd);
+	m_HierarchyDialog->Init(mhMainWnd, m_boundingBoxRenderer);
 	m_HierarchyDialog->OpenDialog(mhMainWnd);
-	
-	
+
+
 	/*Lighting* l = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
 	XMFLOAT4 a(0.5f, 0.5f, 0.5f, 1.0f);
 	XMFLOAT3 b(1.0f, 1.0f, 1.0f);
@@ -165,8 +172,8 @@ bool Scene::Init()
 	l3->SetBasic(a, a, a);
 	l3->SetAtt(b);
 	l3->SetDirection(b);
-	
-	
+
+
 	Lighting* l4 = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
 	b = { +0.5f,-0.5f,0.5f };
 	l4->SetBasic(a, a, a);
@@ -189,12 +196,12 @@ void Scene::OnResize()
 
 void Scene::UpdateScene(float dt)
 {
-	
+
 	//
 	// Control the camera.
 	//
-	
-	
+
+
 
 	if (GetAsyncKeyState('W') & 0x8000)
 		camera.Walk(10.0f*dt);
@@ -212,27 +219,45 @@ void Scene::UpdateScene(float dt)
 	//float x = mRadius * sinf(mPhi)*cosf(mTheta);
 	//float z = mRadius * sinf(mPhi)*sinf(mTheta);
 	//float y = mRadius * cosf(mPhi);
-	
+
 	CommandQueue::AllExecute();
 
 	//모든 컴포넌트 업데이트
 	componentMgr.Update();
 	//엔진 UI 업데이트
 	m_HierarchyDialog->Update();
-	
+	//현재 선택된 object의 boundingBox 업데이트
+	m_boundingBoxRenderer->Update();
+
+	//절두체 선별
+	//현재 렌더링목록들을 가져온다.
+	const std::vector<Renderer*> drawableRenderers = componentMgr.GetDrawableRenderers();
+
+	for (auto elem : drawableRenderers)
+	{
+		int cullingResult = FrustumCulling::ComputeFrustumCulling(&elem->GetMesh()->GetAABB(),
+			&camera,
+			&XMLoadFloat4x4(&elem->GetTransform()->m_world));
+
+		if (cullingResult != 0)
+			elem->InstancingUpdate();
+	}
+
 }
 
 void Scene::DrawScene()
 {
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-		
-	
+
+
 	effectMgr.SetPerFrame(componentMgr.getLightings(), camera.GetPosition());
-		
+
 	//Rendering
+	//바운딩박스 렌더링
+	m_boundingBoxRenderer->Draw(md3dImmediateContext, &camera);
 	componentMgr.Render(md3dImmediateContext, &camera);
-	
+
 
 	HR(mSwapChain->Present(0, 0));
 
@@ -275,13 +300,13 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 	int wmId = LOWORD(wParam);
 	static WCHAR title[MAX_PATH];
 	static WCHAR full_path[MAX_PATH];
-		
+
 	switch (wmId)
 	{
 	case ID_40001: //열기
 	{
 		std::vector<LPCWSTR> extensions = { L"jpg",L"bmp" };
-		dataMgr.FileOpen(hDlg, title, full_path, extensions);
+		bool success = dataMgr.FileOpen(hDlg, title, full_path, extensions);
 		break;
 	}
 	case ID_40002: //저장
@@ -293,30 +318,35 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 	{
 		USES_CONVERSION;
 		std::vector<LPCWSTR> extensions = { L"fbx" };
-		dataMgr.FileOpen(hDlg, title, full_path, extensions);
-		GameObject* gameObj = objectMgr.CreateObjectFromFile(W2A(full_path));
-		m_HierarchyDialog->TreeInsertObject(gameObj);
-		
+		bool success = dataMgr.FileOpen(hDlg, title, full_path, extensions);
+		if (success)
+		{
+			GameObject* gameObj = objectMgr.CreateObjectFromFile(W2A(full_path));
+			m_HierarchyDialog->TreeInsertObject(gameObj);
+		}
+
+
 		break;
 	}
 	case ID_40010: //Import mesh
 	{
 		std::vector<LPCWSTR> extensions = { L"mesh" };
-		dataMgr.FileOpen(hDlg, title, full_path, extensions);
-		meshMgr.CreateMeshFromFile(full_path);
+		bool success = dataMgr.FileOpen(hDlg, title, full_path, extensions);
+		if(success)
+			meshMgr.CreateMeshFromFile(full_path);
 		break;
 	}
 	case ID_GAMEOBJECT_EMPTYOBJECT:
 	{
 		CommandQueue::AddCommand(new CreateEmptyObject(*m_HierarchyDialog));
-			break;
-		}
+		break;
+	}
 
 	case ID_40004: // Ctrl+Z
 		MessageBox(mhMainWnd, L"Undo", L"Undo", MB_OK);
 		CommandQueue::Undo();
 		break;
-	
+
 	}
 }
 

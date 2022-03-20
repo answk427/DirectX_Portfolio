@@ -81,9 +81,7 @@ bool MeshRendererDialog::SetObject(GameObject* obj)
 
 	materials = &(m_MeshRenderer->GetMaterials());
 	mesh = m_MeshRenderer->GetMesh();
-
-
-	
+	m_aabb = mesh->GetAABB_MaxMin();
 
 }
 
@@ -91,24 +89,26 @@ bool MeshRendererDialog::UpdateView()
 {	
 	if (m_MeshRenderer == nullptr)
 		return false;
-
 	
-	//ASCII -> UNICODE 변환
-	USES_CONVERSION;
-
+	
+	
 	if (mesh != nullptr)
 	{
+		static HWND h_meshNameBox = GetDlgItem(m_hDlg, IDC_EDIT11);
+		//ASCII -> UNICODE 변환
+		USES_CONVERSION;
+
 		WCHAR currentName[100] = L"";
-		Edit_GetText(GetDlgItem(m_hDlg, IDC_EDIT11), currentName, 100);
-		
+		Edit_GetText(h_meshNameBox, currentName, 100);
 		LPCWSTR meshName = A2W(mesh->id.c_str());
 
 		//현재 mesh와 editText의 이름이 다르면
 		if (wcscmp(currentName, meshName) != 0)
 		{
 			//mesh editText에 이름 설정
-			Edit_SetText(GetDlgItem(m_hDlg, IDC_EDIT11), meshName);
+			Edit_SetText(h_meshNameBox, meshName);
 		}
+
 	}
 		
 
@@ -150,19 +150,18 @@ void MeshRendererDialog::Init(HWND hDlg)
 	m_hNormalOffsetY = GetDlgItem(hDlg, NORMALOFFSETY_EDIT);
 
 	//BOUNDING BOX 수정 에디트박스 핸들
-	m_BoundMinX = GetDlgItem(hDlg, BOUNDMINX_EDIT);
-	m_BoundMinY = GetDlgItem(hDlg, BOUNDMINY_EDIT);
-	m_BoundMinZ = GetDlgItem(hDlg, BOUNDMINZ_EDIT);
+	m_hBoundMinX = GetDlgItem(hDlg, BOUNDMINX_EDIT);
+	m_hBoundMinY = GetDlgItem(hDlg, BOUNDMINY_EDIT);
+	m_hBoundMinZ = GetDlgItem(hDlg, BOUNDMINZ_EDIT);
 
-	m_BoundMaxX = GetDlgItem(hDlg, BOUNDMAXX_EDIT);
-	m_BoundMaxY = GetDlgItem(hDlg, BOUNDMAXY_EDIT);
-	m_BoundMaxZ = GetDlgItem(hDlg, BOUNDMAXZ_EDIT);
+	m_hBoundMaxX = GetDlgItem(hDlg, BOUNDMAXX_EDIT);
+	m_hBoundMaxY = GetDlgItem(hDlg, BOUNDMAXY_EDIT);
+	m_hBoundMaxZ = GetDlgItem(hDlg, BOUNDMAXZ_EDIT);
 
 	//List Box 목록 초기화
 	int listCount = ListBox_GetCount(m_hList);
 	for (int i = 0; i < listCount; i++)
 		ListBox_DeleteString(m_hList, i);
-
 
 	for (GeneralMaterial& elem : (*materials))
 	{
@@ -171,9 +170,17 @@ void MeshRendererDialog::Init(HWND hDlg)
 
 		//GeneralMaterial의 주소값을 data로 설정
 		SendMessage(m_hList, LB_SETITEMDATA, pos, (LPARAM)&elem);
-
 	}
 
+
+
+	//blending 체크박스 설정
+	HWND h_blendingCheck = GetDlgItem(m_hDlg, BLENDINGCHECK);
+	Button_SetCheck(h_blendingCheck, m_MeshRenderer->GetBlending());
+
+	//instancing 체크박스 설정
+	HWND h_instancingCheck = GetDlgItem(m_hDlg, INSTANCINGCHECK);
+	Button_SetCheck(h_instancingCheck, m_MeshRenderer->GetInstancing());
 
 }
 
@@ -187,19 +194,37 @@ MeshRendererDialog::MeshRendererDialog(HINSTANCE hInstance) : ComponentDialog(hI
 }
 	
 
-
+//Material이 선택되면 각 EditBox를 업데이트함.
 void MeshRendererDialog::MapEditBoxUpdate(int materialIdx)
 {
+	//텍스쳐행렬 EditBox의 컨트롤 id와 수정해야할 값의 주소를 매핑
 	float* textureTileX = &((*materials)[materialIdx].textureTiling.x);
 	float* textureTileY = &((*materials)[materialIdx].textureTiling.y);
 	float* textureOffsetX = &((*materials)[materialIdx].textureOffset.x);
 	float* textureOffsetY = &((*materials)[materialIdx].textureOffset.y);
-
-	
+		
 	controlMap[DIFFUSETILEX_EDIT] = handleFloatPair{ m_hDiffuseTileX, textureTileX };
 	controlMap[DIFFUSETILEY_EDIT] = handleFloatPair{ m_hDiffuseTileY, textureTileY };
 	controlMap[DIFFUSEOFFSETX_EDIT] = handleFloatPair{ m_hDiffuseOffsetX, textureOffsetX };
 	controlMap[DIFFUSEOFFSETY_EDIT] = handleFloatPair{ m_hDiffuseOffsetY, textureOffsetY };
+
+	//바운딩박스 EdidtBox~위와 동일
+	float* aabbMaxX = &(m_aabb.m_max.x);
+	float* aabbMaxY = &(m_aabb.m_max.y);
+	float* aabbMaxZ = &(m_aabb.m_max.z);
+	
+	float* aabbMinX = &(m_aabb.m_min.x);
+	float* aabbMinY = &(m_aabb.m_min.y);
+	float* aabbMinZ = &(m_aabb.m_min.z);
+
+
+	controlMap[BOUNDMAXX_EDIT] = handleFloatPair{ m_hBoundMaxX, aabbMaxX };
+	controlMap[BOUNDMAXY_EDIT] = handleFloatPair{ m_hBoundMaxY, aabbMaxY };
+	controlMap[BOUNDMAXZ_EDIT] = handleFloatPair{ m_hBoundMaxZ, aabbMaxZ };
+
+	controlMap[BOUNDMINX_EDIT] = handleFloatPair{ m_hBoundMinX, aabbMinX };
+	controlMap[BOUNDMINY_EDIT] = handleFloatPair{ m_hBoundMinY, aabbMinY };
+	controlMap[BOUNDMINZ_EDIT] = handleFloatPair{ m_hBoundMinZ, aabbMinZ };
 
 	
 	//diffuse map editbox 설정
@@ -217,6 +242,15 @@ void MeshRendererDialog::MapEditBoxUpdate(int materialIdx)
 	Edit_SetText(m_hNormalTileY, std::to_wstring(1.0f).c_str());
 	Edit_SetText(m_hNormalOffsetX, std::to_wstring(1.0f).c_str());
 	Edit_SetText(m_hNormalOffsetY, std::to_wstring(1.0f).c_str());
+	
+	//bounding Box editbox 설정
+	Edit_SetText(m_hBoundMaxX, std::to_wstring(*aabbMaxX).c_str());
+	Edit_SetText(m_hBoundMaxY, std::to_wstring(*aabbMaxY).c_str());
+	Edit_SetText(m_hBoundMaxZ, std::to_wstring(*aabbMaxZ).c_str());
+	Edit_SetText(m_hBoundMinX, std::to_wstring(*aabbMinX).c_str());
+	Edit_SetText(m_hBoundMinY, std::to_wstring(*aabbMinY).c_str());
+	Edit_SetText(m_hBoundMinZ, std::to_wstring(*aabbMinZ).c_str());
+	
 }
 
 void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
@@ -225,24 +259,31 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
 
-	//texture 행렬 editbox가 수정되었을 때
+	//editbox가 수정되었을 때
 	for (auto& elem : controlMap)
 	{
 		if (wmId == elem.first)
-		{
+		{	
 			switch(HIWORD(wParam))
 			{
 			case EN_CHANGE:
 			{
-				WCHAR str[20];
-				Edit_GetText(elem.second.first, str, 20);
+				WCHAR str[30];
+				//Handle을 통해 텍스트를 얻어옴.
+				Edit_GetText(elem.second.first, str, 30);
 				
-				//해당 editbox와 매칭된 texture 행렬의 값 변경
+				//해당 editbox와 매칭된 값 변경
 				(*elem.second.second) = _wtof(str);
+
+				//boundingBox 수정일 때
+				if (wmId == BOUNDMAXX_EDIT || wmId == BOUNDMAXY_EDIT || wmId == BOUNDMAXZ_EDIT ||
+					wmId == BOUNDMINX_EDIT || wmId == BOUNDMINY_EDIT || wmId == BOUNDMINZ_EDIT)
+				{
+					mesh->SetAABB_MaxMin(m_aabb.m_max, m_aabb.m_min);
+				}
 			}
 				
 			}
-			
 		}
 	}
 
@@ -300,6 +341,19 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 			if (m_MeshRenderer != nullptr)
 				m_MeshRenderer->SetBlending(false);
 			break;
+		}
+	case INSTANCINGCHECK:
+		//Instancing check박스 체크
+		switch (Button_GetCheck(GetDlgItem(m_hDlg, INSTANCINGCHECK)))
+		{
+			case BST_CHECKED:
+				if (m_MeshRenderer != nullptr)
+					m_MeshRenderer->SetInstancing(true);
+				break;
+			case BST_UNCHECKED:
+				if (m_MeshRenderer != nullptr)
+					m_MeshRenderer->SetInstancing(false);
+				break;
 		}
 		
 		break;

@@ -35,9 +35,10 @@ bool HierarchyDialog::OpenDialog(HWND hwnd)
 	return false;
 }
 
-void HierarchyDialog::Init(HWND hWnd_main)
+void HierarchyDialog::Init(HWND hWnd_main, BoundingBoxRenderer* bbr)
 {
 	hWnd = hWnd_main;
+	m_boundingBoxRenderer = bbr;
 
 	InitCommonControls();
 }
@@ -95,6 +96,7 @@ bool HierarchyDialog::TreeViewDeleteItem()
 }
 
 HierarchyDialog::HierarchyDialog(HINSTANCE hInstance) : MsgProcedure(hInstance), inspector(hInstance)
+,m_boundingBoxRenderer(0)
 {
 	assert(!instantiated);
 	instantiated = true;
@@ -256,6 +258,7 @@ void HierarchyDialog::SelectItem()
 		
 
 	inspector.SetObject(dynamic_cast<GameObject*>(tempObj));
+	m_boundingBoxRenderer->SetObject(dynamic_cast<GameObject*>(tempObj));
 
 	return;
 	

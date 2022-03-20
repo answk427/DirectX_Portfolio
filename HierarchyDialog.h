@@ -8,6 +8,7 @@
 #include "DialogSizeDefine.h"
 #include "Inspector.h"
 #include "ObjectMgr.h"
+#include "BoundingBoxRenderer.h"
 
 #pragma comment(lib,"comctl32.lib")
 
@@ -22,6 +23,7 @@ class HierarchyDialog : public MsgProcedure
 {
 private:
 	Inspector inspector;
+	BoundingBoxRenderer* m_boundingBoxRenderer;
 public:
 	static bool instantiated;
 
@@ -41,7 +43,7 @@ public:
 	virtual bool OpenDialog() override;
 
 	bool OpenDialog(HWND hwnd);
-	void Init(HWND hWnd_main);
+	void Init(HWND hWnd_main, BoundingBoxRenderer* bbr);
 	void treeInit(HWND hDlg);
 
 

@@ -122,6 +122,7 @@ bool MeshReaderWriter::WriteFile(void * data)
 	}
 
 	outFile.close();
-		
+
+
 	return true;
 }

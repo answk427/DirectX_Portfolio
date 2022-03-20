@@ -44,6 +44,7 @@
 #define BOUNDMAXZ_EDIT IDC_EDIT18
 
 #define BLENDINGCHECK IDC_CHECK1
+#define INSTANCINGCHECK IDC_CHECK2
 
 
 
@@ -60,6 +61,9 @@ public:
 public:
 	bool OpenDialog(HWND hwnd);
 	void Init(HWND hDlg);
+public:
+	AABB_MaxMin m_aabb;
+	
 private:
 	//control ID에 해당하는 핸들, 수정해야될 값 포인터
 	std::map<int, handleFloatPair> controlMap;
@@ -74,20 +78,20 @@ private:
 	HWND m_hNormalOffsetX;
 	HWND m_hNormalOffsetY;
 
-	HWND m_BoundMinX;
-	HWND m_BoundMinY;
-	HWND m_BoundMinZ;
-	HWND m_BoundMaxX;
-	HWND m_BoundMaxY;
-	HWND m_BoundMaxZ;
+	HWND m_hBoundMinX;
+	HWND m_hBoundMinY;
+	HWND m_hBoundMinZ;
+	HWND m_hBoundMaxX;
+	HWND m_hBoundMaxY;
+	HWND m_hBoundMaxZ;
 
 
 
 private:
 	MeshRenderer* m_MeshRenderer;
 	std::vector<GeneralMaterial>* materials;
-	const Mesh* mesh;
-
+	Mesh* mesh;
+	
 private:
 	void MapEditBoxUpdate(int materialIdx);
 public:
@@ -97,7 +101,7 @@ public:
 	virtual void KeyDownProc(WPARAM wParam) override;
 
 	virtual void MouseMoveProc(WPARAM btnState, LPARAM mousePos) override;
-
+		
 	virtual void CharProc(HWND hDlg, WPARAM wParam) override;
 	
 	void NotifyProc(HWND hDlg, LPARAM lParam);

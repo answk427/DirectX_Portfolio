@@ -23,7 +23,8 @@ enum TechniqueType
 	AlphaClip = 4,
 	Fog = 8,
 	Reflect = 16,
-	Skinned = 32
+	Skinned = 32,
+	Instancing = 64
 };
 
 #pragma region Effect
@@ -39,6 +40,7 @@ public:
 	virtual void InitBlendState(ID3D11Device* device);
 	//device로부터 inputlayout을 생성하는 함수
 	virtual void InitInputLayout(ID3D11Device* device) = 0;
+	virtual void InitInstancingInputLayout(ID3D11Device* device) = 0;
 	
 	//Frame별로 필요한 세팅을 수행하는 함수
 	virtual void PerFrameSet(DirectionalLight* directL,
@@ -55,8 +57,9 @@ public:
 	virtual ID3DX11EffectTechnique* GetTechnique(UINT techType) = 0;
 
 	//렌더링파이프라인 세팅함수
-	virtual bool PipeLineSetting(ID3D11DeviceContext* context);
-	virtual bool BlendingPipeLineSetting(ID3D11DeviceContext* context);
+	virtual bool IASetting(ID3D11DeviceContext* context, UINT techType);
+	virtual bool OMSetting(ID3D11DeviceContext* context, bool blending);
+	
 	
 	//텍스쳐 맵 세팅
 	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
@@ -72,6 +75,7 @@ private:
 protected:
 	ID3DX11Effect* mFX;
 	ID3D11InputLayout* m_inputLayout;
+	ID3D11InputLayout* m_instancing_inputLayout;
 	ID3D11BlendState* m_blendState;
 };
 #pragma endregion
@@ -83,6 +87,7 @@ public:
 	BasicEffect(ID3D11Device* device, const std::wstring& filename);
 	~BasicEffect();
 
+	void SetViewProj(CXMMATRIX M)						{ ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorldViewProj(CXMMATRIX M)                  { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorldViewProjTex(CXMMATRIX M)               { WorldViewProjTex->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorld(CXMMATRIX M)                          { World->SetMatrix(reinterpret_cast<const float*>(&M)); }
@@ -146,6 +151,9 @@ public:
 	ID3DX11EffectTechnique* Light1TexTech;
 	ID3DX11EffectTechnique* Light2TexTech;
 	ID3DX11EffectTechnique* Light3TexTech;
+	
+	//인스턴싱 technique
+	ID3DX11EffectTechnique* Light3TexInstancingTech;
 
 	ID3DX11EffectTechnique* Light0TexAlphaClipTech;
 	ID3DX11EffectTechnique* Light1TexAlphaClipTech;
@@ -194,6 +202,7 @@ public:
 	ID3DX11EffectTechnique* Light2TexAlphaClipFogReflectTech;
 	ID3DX11EffectTechnique* Light3TexAlphaClipFogReflectTech;
 
+	ID3DX11EffectMatrixVariable* ViewProj;
 	ID3DX11EffectMatrixVariable* WorldViewProj;
 	ID3DX11EffectMatrixVariable* WorldViewProjTex;
 	ID3DX11EffectMatrixVariable* World;
@@ -235,6 +244,9 @@ public:
 		
 	// Effect을(를) 통해 상속됨
 	virtual void InitInputLayout(ID3D11Device * device) override;
+
+	// Effect을(를) 통해 상속됨
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
 };
 #pragma endregion
 

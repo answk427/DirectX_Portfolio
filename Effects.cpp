@@ -6,7 +6,7 @@
 
 #pragma region Effect
 Effect::Effect(ID3D11Device* device, const std::wstring& filename)
-	: mFX(0), m_inputLayout(0), m_blendState(0)
+	: mFX(0), m_inputLayout(0), m_blendState(0), m_instancing_inputLayout(0)
 {
 	std::ifstream fin(filename.c_str(), std::ios::binary);
 
@@ -32,6 +32,7 @@ Effect::~Effect()
 void Effect::Init(ID3D11Device* device)
 {
 	InitInputLayout(device);
+	InitInstancingInputLayout(device);
 	InitBlendState(device);
 }
 
@@ -69,6 +70,8 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	Light1TexTech = mFX->GetTechniqueByName("Light1Tex");
 	Light2TexTech = mFX->GetTechniqueByName("Light2Tex");
 	Light3TexTech = mFX->GetTechniqueByName("Light3Tex");
+
+	Light3TexInstancingTech = mFX->GetTechniqueByName("Light3TexInstancing");
 
 	Light0TexAlphaClipTech = mFX->GetTechniqueByName("Light0TexAlphaClip");
 	Light1TexAlphaClipTech = mFX->GetTechniqueByName("Light1TexAlphaClip");
@@ -117,6 +120,7 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	Light2TexAlphaClipFogReflectTech = mFX->GetTechniqueByName("Light2TexAlphaClipFogReflect");
 	Light3TexAlphaClipFogReflectTech = mFX->GetTechniqueByName("Light3TexAlphaClipFogReflect");
 
+	ViewProj	      = mFX->GetVariableByName("gViewProj")->AsMatrix();
 	WorldViewProj     = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
 	WorldViewProjTex  = mFX->GetVariableByName("gWorldViewProjTex")->AsMatrix();
 	World             = mFX->GetVariableByName("gWorld")->AsMatrix();
@@ -175,6 +179,9 @@ void BasicEffect::PerObjectSet(GeneralMaterial * material,
 	XMMATRIX worldViewProj = world * camera->ViewProj();
 	SetWorldViewProj(worldViewProj);
 
+	//인스턴스의 세계행렬과 곱해질 시야투영행렬
+	SetViewProj(camera->ViewProj());
+
 	//텍스쳐 변환 I * S * (R) * T
 	XMMATRIX texTransform = XMMatrixIdentity() *
 		XMMatrixScaling(material->textureTiling.x,
@@ -182,6 +189,8 @@ void BasicEffect::PerObjectSet(GeneralMaterial * material,
 		XMMatrixTranslation(material->textureOffset.x,
 			material->textureOffset.y, 0.0f);
 	SetTexTransform(texTransform);
+
+	
 
 	//재질 설정
 	SetMaterial(material->basicMat);
@@ -199,6 +208,8 @@ ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 			return Light3Tech;
 		case TechniqueType::Light | TechniqueType::DiffuseMap:
 			return Light3TexTech;
+		case TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Instancing:
+			return Light3TexInstancingTech;
 			
 		default:
 			nullptr;
@@ -214,6 +225,17 @@ void BasicEffect::InitInputLayout(ID3D11Device * device)
 	HR(device->CreateInputLayout(InputLayoutDesc::Basic32, 3, passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize, &m_inputLayout));
 }
+void BasicEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+	D3DX11_PASS_DESC passDesc;
+
+	//입력서명
+	Light3TexInstancingTech->GetPassByIndex(0)->GetDesc(&passDesc);
+
+	HR(device->CreateInputLayout(InputLayoutDesc::Basic32Instancing, 12, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_instancing_inputLayout));
+}
+
 #pragma endregion
 
 #pragma region NormalMapEffect
@@ -228,6 +250,7 @@ NormalMapEffect::NormalMapEffect(ID3D11Device* device, const std::wstring& filen
 	Light1TexTech = mFX->GetTechniqueByName("Light1Tex");
 	Light2TexTech = mFX->GetTechniqueByName("Light2Tex");
 	Light3TexTech = mFX->GetTechniqueByName("Light3Tex");
+		
 
 	Light0TexAlphaClipTech = mFX->GetTechniqueByName("Light0TexAlphaClip");
 	Light1TexAlphaClipTech = mFX->GetTechniqueByName("Light1TexAlphaClip");
@@ -241,6 +264,7 @@ NormalMapEffect::NormalMapEffect(ID3D11Device* device, const std::wstring& filen
 	Light0TexFogTech = mFX->GetTechniqueByName("Light0TexFog");
 	Light1TexFogTech = mFX->GetTechniqueByName("Light1TexFog");
 	Light2TexFogTech = mFX->GetTechniqueByName("Light2TexFog");
+
 	Light3TexFogTech = mFX->GetTechniqueByName("Light3TexFog");
 
 	Light0TexAlphaClipFogTech = mFX->GetTechniqueByName("Light0TexAlphaClipFog");
@@ -332,6 +356,7 @@ NormalMapEffect::NormalMapEffect(ID3D11Device* device, const std::wstring& filen
 	Light2TexAlphaClipFogReflectSkinnedTech = mFX->GetTechniqueByName("Light2TexAlphaClipFogReflectSkinned");
 	Light3TexAlphaClipFogReflectSkinnedTech = mFX->GetTechniqueByName("Light3TexAlphaClipFogReflectSkinned");
 
+	//ViewProj		  = mFX->GetVariableByName("gViewProj")->AsMatrix();
 	WorldViewProj     = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
 	WorldViewProjTex  = mFX->GetVariableByName("gWorldViewProjTex")->AsMatrix();
 	World             = mFX->GetVariableByName("gWorld")->AsMatrix();
@@ -530,7 +555,7 @@ void Effects::InitAll(ID3D11Device* device)
 {
 	BasicFX           = new BasicEffect(device, L"FX/Basic.fxo");
 	
-	NormalMapFX       = new NormalMapEffect(device, L"FX/NormalMap.fxo");
+	//NormalMapFX       = new NormalMapEffect(device, L"FX/NormalMap.fxo");
 	//BuildShadowMapFX  = new BuildShadowMapEffect(device, L"FX/BuildShadowMap.fxo");
 	//SsaoNormalDepthFX = new SsaoNormalDepthEffect(device, L"FX/SsaoNormalDepth.fxo");
 	//SsaoFX            = new SsaoEffect(device, L"FX/Ssao.fxo");
@@ -553,27 +578,45 @@ void Effects::DestroyAll()
 
 #pragma endregion
 
-bool Effect::PipeLineSetting(ID3D11DeviceContext * context)
+bool Effect::IASetting(ID3D11DeviceContext* context, UINT techType)
 {
-	if (m_inputLayout == nullptr)
-		return false;
-	context->IASetInputLayout(m_inputLayout);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//instancing으로 렌더링 할 때
+	if (techType & TechniqueType::Instancing)
+	{
+		if (m_instancing_inputLayout == nullptr)
+			return false;
+		context->IASetInputLayout(m_instancing_inputLayout);
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);		
+	}
+	else
+	{
+		if (m_inputLayout == nullptr)
+			return false;
+		context->IASetInputLayout(m_inputLayout);
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	}
 	
-	context->OMSetBlendState(0, 0,0xffffffff);
+
 	return true;
 }
 
-bool Effect::BlendingPipeLineSetting(ID3D11DeviceContext * context)
+bool Effect::OMSetting(ID3D11DeviceContext* context, bool blending)
 {
-	if (m_inputLayout == nullptr)
-		return false;
-	context->IASetInputLayout(m_inputLayout);
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	//출력병합기에 혼합 설정
-	float blendFactors[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	context->OMSetBlendState(m_blendState, blendFactors, 0xffffffff);
-
+	if (blending)
+	{
+		if (!m_blendState)
+			return false;
+		//출력병합기에 혼합 설정
+		float blendFactors[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		context->OMSetBlendState(m_blendState, blendFactors, 0xffffffff);
+	}
+	else
+	{
+		//기본설정?
+		context->OMSetBlendState(0, 0, 0xffffffff);
+	}
+	
 	return true;
 }
+
