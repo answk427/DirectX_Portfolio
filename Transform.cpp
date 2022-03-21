@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-Transform::Transform() :m_position(0, 0, 0), m_rotation(0, 0, 0), m_scale(1, 1, 1), m_modifyFlag(0)
+Transform::Transform(void* objectAddr) :m_position(0, 0, 0), m_rotation(0, 0, 0), m_scale(1, 1, 1), m_modifyFlag(0), m_owner_obj(objectAddr) 
 {
 	XMMATRIX tempMat = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
 	XMStoreFloat4x4(&m_scaleMatrix, tempMat);

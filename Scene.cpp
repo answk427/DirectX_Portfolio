@@ -29,6 +29,7 @@
 #include "ObjectCommand.h"
 #include "BoundingBoxRenderer.h"
 #include "Culling.h"
+#include "RayPicking.h"
 
 
 
@@ -62,8 +63,6 @@ private:
 	ObjectMgr& objectMgr;
 	MeshMgr meshMgr;
 
-
-
 private:
 	Camera camera;
 	//DirectionalLight mDirLights[3];
@@ -77,6 +76,11 @@ private:
 	float mTheta;
 	float mPhi;
 	float mRadius;
+	
+	D3D11_VIEWPORT m_currentViewPort;
+	//매 프레임마다 렌더링 할 Renderer 컴포넌트들의 집합
+	std::vector<Renderer*> m_drawableRenderers;
+
 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
@@ -192,6 +196,9 @@ void Scene::OnResize()
 
 	//종횡비가 바뀌었을 수 있으니 다시 설정
 	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	//viewport 정보를 가져옴.
+	UINT nums[1] = { 1 };
+	md3dImmediateContext->RSGetViewports(nums, &m_currentViewPort);
 }
 
 void Scene::UpdateScene(float dt)
@@ -231,9 +238,9 @@ void Scene::UpdateScene(float dt)
 
 	//절두체 선별
 	//현재 렌더링목록들을 가져온다.
-	const std::vector<Renderer*> drawableRenderers = componentMgr.GetDrawableRenderers();
+	m_drawableRenderers = componentMgr.GetDrawableRenderers();
 
-	for (auto elem : drawableRenderers)
+	for (auto elem : m_drawableRenderers)
 	{
 		int cullingResult = FrustumCulling::ComputeFrustumCulling(&elem->GetMesh()->GetAABB(),
 			&camera,
@@ -242,7 +249,7 @@ void Scene::UpdateScene(float dt)
 		if (cullingResult != 0)
 			elem->InstancingUpdate();
 	}
-
+	
 }
 
 void Scene::DrawScene()
@@ -258,6 +265,7 @@ void Scene::DrawScene()
 	m_boundingBoxRenderer->Draw(md3dImmediateContext, &camera);
 	componentMgr.Render(md3dImmediateContext, &camera);
 
+	
 
 	HR(mSwapChain->Present(0, 0));
 
@@ -267,9 +275,28 @@ void Scene::DrawScene()
 
 void Scene::OnMouseDown(WPARAM btnState, int x, int y)
 {
-	mLastMousePos.x = x;
-	mLastMousePos.y = y;
-	SetCapture(mhMainWnd);
+	if ((btnState & MK_LBUTTON) != 0)
+	{
+		mLastMousePos.x = x;
+		mLastMousePos.y = y;
+		SetCapture(mhMainWnd);
+
+		//반직선교차로 오브젝트를 선택
+		Renderer* picked = RayPicking::NearestOfIntersectRayAABB(&m_currentViewPort, m_drawableRenderers, &camera, x, y);
+		if (picked != nullptr)
+		{
+			GameObject* pickedObj = reinterpret_cast<GameObject*>(picked->GetTransform()->m_owner_obj);
+			m_boundingBoxRenderer->SetObject(pickedObj);
+			m_HierarchyDialog->SelectObject(pickedObj->GetID());
+		}
+			
+	}
+	else if ((btnState & MK_RBUTTON) != 0)
+	{
+		//
+	}
+		
+	
 }
 
 void Scene::OnMouseUp(WPARAM btnState, int x, int y)

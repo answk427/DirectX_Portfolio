@@ -26,9 +26,11 @@ public:
 	XMFLOAT4X4 m_translateMatrix;
 	XMFLOAT4X4 m_rotationMatrix;
 	XMFLOAT4X4 m_scaleMatrix;
+public:
+	void* m_owner_obj;
 
 public:
-	Transform();
+	Transform(void* objectAddr);
 	~Transform() {}
 public:
 	void UpdateWorld();
@@ -41,6 +43,8 @@ public:
 
 	void SetScale(const float& x, const float& y, const float& z);
 	void SetScale(const XMFLOAT3& scale);
+
+	XMFLOAT4X4* GetWorld() { return &m_world; }
 	
 
 };	

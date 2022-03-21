@@ -158,6 +158,12 @@ void MeshRendererDialog::Init(HWND hDlg)
 	m_hBoundMaxY = GetDlgItem(hDlg, BOUNDMAXY_EDIT);
 	m_hBoundMaxZ = GetDlgItem(hDlg, BOUNDMAXZ_EDIT);
 
+	//color BOX 수정 에디트박스 핸들
+	m_hColorR = GetDlgItem(hDlg, COLOR_R_EDIT);
+	m_hColorG = GetDlgItem(hDlg, COLOR_G_EDIT);
+	m_hColorB = GetDlgItem(hDlg, COLOR_B_EDIT);
+	m_hColorA = GetDlgItem(hDlg, COLOR_A_EDIT);
+
 	//List Box 목록 초기화
 	int listCount = ListBox_GetCount(m_hList);
 	for (int i = 0; i < listCount; i++)
@@ -226,7 +232,18 @@ void MeshRendererDialog::MapEditBoxUpdate(int materialIdx)
 	controlMap[BOUNDMINY_EDIT] = handleFloatPair{ m_hBoundMinY, aabbMinY };
 	controlMap[BOUNDMINZ_EDIT] = handleFloatPair{ m_hBoundMinZ, aabbMinZ };
 
-	
+	//color 에디트박스 위와 동일
+	float *r = &m_MeshRenderer->m_color.x;
+	float *g = &m_MeshRenderer->m_color.y;
+	float *b = &m_MeshRenderer->m_color.z;
+	float *a = &m_MeshRenderer->m_color.w;
+
+	controlMap[COLOR_R_EDIT] = handleFloatPair{ m_hColorR, r };
+	controlMap[COLOR_G_EDIT] = handleFloatPair{ m_hColorG, g };
+	controlMap[COLOR_B_EDIT] = handleFloatPair{ m_hColorB, b };
+	controlMap[COLOR_A_EDIT] = handleFloatPair{ m_hColorA, a };
+
+		
 	//diffuse map editbox 설정
 	Edit_SetText(m_hDiffuseTileX,
 		std::to_wstring((*materials)[materialIdx].textureTiling.x).c_str());
@@ -250,6 +267,12 @@ void MeshRendererDialog::MapEditBoxUpdate(int materialIdx)
 	Edit_SetText(m_hBoundMinX, std::to_wstring(*aabbMinX).c_str());
 	Edit_SetText(m_hBoundMinY, std::to_wstring(*aabbMinY).c_str());
 	Edit_SetText(m_hBoundMinZ, std::to_wstring(*aabbMinZ).c_str());
+
+	//color editbox 설정
+	Edit_SetText(m_hColorR, std::to_wstring(*r).c_str());
+	Edit_SetText(m_hColorG, std::to_wstring(*g).c_str());
+	Edit_SetText(m_hColorB, std::to_wstring(*b).c_str());
+	Edit_SetText(m_hColorA, std::to_wstring(*a).c_str());
 	
 }
 

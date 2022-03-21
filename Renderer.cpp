@@ -46,6 +46,8 @@ void Renderer::InstancingUpdate()
 	XMStoreFloat4x4(&mesh->InstancingDatas[m_instancingIdx].worldInvTranspose,
 		MathHelper::InverseTranspose(
 			XMLoadFloat4x4(&mesh->InstancingDatas[m_instancingIdx].world)));
+	//rgb 업데이트
+	mesh->InstancingDatas[m_instancingIdx].color = m_color;
 
 	//이번 프레임에 렌더링할 오브젝트로 등록
 	mesh->enableInstancingIndexes.push_back(m_instancingIdx);
@@ -130,8 +132,8 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 }
 
 Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,type)
-, m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()),
-mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0)
+, m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f,1.0f,1.0f,1.0f),
+mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0) 
 {
 	
 }

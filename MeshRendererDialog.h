@@ -43,6 +43,11 @@
 #define BOUNDMAXY_EDIT IDC_EDIT16
 #define BOUNDMAXZ_EDIT IDC_EDIT18
 
+#define COLOR_R_EDIT IDC_EDIT20
+#define COLOR_G_EDIT IDC_EDIT22
+#define COLOR_B_EDIT IDC_EDIT23
+#define COLOR_A_EDIT IDC_EDIT24
+
 #define BLENDINGCHECK IDC_CHECK1
 #define INSTANCINGCHECK IDC_CHECK2
 
@@ -77,6 +82,12 @@ private:
 	HWND m_hNormalTileY;
 	HWND m_hNormalOffsetX;
 	HWND m_hNormalOffsetY;
+
+	HWND m_hColorR;
+	HWND m_hColorG;
+	HWND m_hColorB;
+	HWND m_hColorA;
+
 
 	HWND m_hBoundMinX;
 	HWND m_hBoundMinY;

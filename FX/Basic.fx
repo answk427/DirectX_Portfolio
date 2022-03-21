@@ -20,11 +20,9 @@ cbuffer cbPerFrame
 
 
 	float3 gEyePosW;
-
 	float  gFogStart;
 	float  gFogRange;
 	float4 gFogColor; 
-	
 };
 
 cbuffer cbPerObject
@@ -91,6 +89,7 @@ struct VertexOut
 	float2 Tex        : TEXCOORD0;
 	float4 ShadowPosH : TEXCOORD1;
 	float4 SsaoPosH   : TEXCOORD2;
+	float4 Color : COLOR;
 };
 
 VertexOut VS(VertexIn vin)
@@ -126,6 +125,8 @@ VertexOut InstanceVS(InstanceVertexIn vin)
 	//노말벡터에 역전치행렬 곱
 	vout.NormalW = mul(vin.NormalL, (float3x3)vin.WorldInvTranspose);
 
+	vout.Color = vin.Color;
+
 	// Transform to homogeneous clip space.
 	vout.PosH = mul(float4(vout.PosW, 1.0f), gViewProj);
 
@@ -141,12 +142,18 @@ VertexOut InstanceVS(InstanceVertexIn vin)
 	return vout;
 }
  
+/*uniform변수는 API함수를 사용해서 화면에 그려질때만 값이 바뀔수 있다.
+uniform float fConstant_Between_Draw_Calls = 0.2f; 
+이 말은 일단 값이 설정되면, 모든 정점들(정점셰이더)이나 픽셀들(픽셀셰이더)에서 초기설정값이 일정하게 계속 유지된다는 뜻이다.
+*/
+
 float4 PS(VertexOut pin, 
           uniform int gLightCount, 
 		  uniform bool gUseTexure, 
 		  uniform bool gAlphaClip, 
 		  uniform bool gFogEnabled, 
-		  uniform bool gReflectionEnabled) : SV_Target
+		  uniform bool gReflectionEnabled,
+		  uniform bool gInstancing=false) : SV_Target
 {
 	// Interpolating normal can unnormalize it, so normalize it.
     pin.NormalW = normalize(pin.NormalW);
@@ -240,7 +247,13 @@ float4 PS(VertexOut pin,
 			diffuse += D;
 			spec += S;
 		}
-
+		
+		//인스턴싱 자료에 있는 색상
+		if (gInstancing)
+		{
+			ambient *= pin.Color;
+			diffuse *= pin.Color;
+		}
 
 		litColor = texColor*(ambient + diffuse) + spec;
 
@@ -348,7 +361,7 @@ technique11 Light3TexInstancing
 	{
 		SetVertexShader(CompileShader(vs_5_0, InstanceVS()));
 		SetGeometryShader(NULL);
-		SetPixelShader(CompileShader(ps_5_0, PS(3, true, false, false, false)));
+		SetPixelShader(CompileShader(ps_5_0, PS(3, true, false, false, false, true)));
 	}
 }
 

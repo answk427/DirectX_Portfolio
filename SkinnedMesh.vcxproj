@@ -110,6 +110,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HierarchyDialog.cpp" />
     <ClCompile Include="InspectorCommand.cpp" />
+    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightDialog.cpp" />
     <ClCompile Include="LoadM3d.cpp" />
@@ -125,6 +126,7 @@
     <ClCompile Include="MyCommand.cpp" />
     <ClCompile Include="ObjectCommand.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
+    <ClCompile Include="RayPicking.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
@@ -188,6 +190,7 @@
     <ClInclude Include="MsgProcedure.h" />
     <ClInclude Include="ObjectCommand.h" />
     <ClInclude Include="ObjectMgr.h" />
+    <ClInclude Include="RayPicking.h" />
     <ClInclude Include="ReaderWriterConstant.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderStates.h" />

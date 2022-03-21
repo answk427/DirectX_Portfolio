@@ -36,6 +36,10 @@ protected:
 	//해당 렌더러가 인스턴싱의 몇번째 인덱스인지 저장해두는 변수
 	UINT m_instancingIdx;
 public:
+	//color
+	XMFLOAT4 m_color;
+	
+public:
 	bool GetBlending() { return m_blending; }
 	bool SetBlending(bool blend) { return m_blending = blend;}
 
@@ -55,6 +59,7 @@ public:
 			
 		return false;
 	}
+	
 	void AddInstancingQueue();
 	void InstancingUpdate();
 

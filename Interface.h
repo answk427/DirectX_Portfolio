@@ -53,6 +53,13 @@ public:
 	Object() :id(""), name(L"") {}
 	Object(const gameObjectID& id) : id(id), name(L"Object"), parent(0) {}
 	Object(const gameObjectID& id, const std::wstring& name) : id(id), name(name), parent(0) {}
+	Object(const Object& other)
+	{
+		id = other.id;
+		name = other.name;
+		parent = other.parent;
+		childs = other.childs;
+	}
 	
 	virtual ~Object() {	}
 

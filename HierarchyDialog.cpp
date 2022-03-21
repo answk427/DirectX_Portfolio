@@ -51,6 +51,12 @@ void HierarchyDialog::treeInit(HWND hDlg)
 	SetWindowSubclass(m_hwndTV, myListBoxSubclassProc, 0, 0);
 }
 
+void HierarchyDialog::SelectObject(gameObjectID & objID)
+{
+	TreeView_SelectItem(m_hwndTV, Map_idItem[objID]);
+	return;
+}
+
 bool HierarchyDialog::TreeViewDeleteItem(HTREEITEM item)
 {
 	return TreeView_DeleteItem(m_hwndTV, item);
@@ -176,6 +182,19 @@ void HierarchyDialog::KeyDownProc(WPARAM wParam)
 	{
 	case VK_DELETE:
 		TreeViewDeleteItem();
+		break;
+	case VK_F2:
+		TVITEM tvi;
+
+		//현재 선택된 아이템
+		TCHAR buf[512];
+		
+		//TreeView_GetISearchString(m_hwndTV, TEXT("EmptyObject"));
+		//HWND editTV = TreeView_EditLabel(m_hwndTV, TreeView_GetSelection(m_hwndTV));
+		//SendMessage(editTV, WM_GETTEXT, sizeof(buf) / sizeof(TCHAR), (LPARAM)(void*)buf);
+		//TreeView_EndEditLabelNow(m_hwndTV, true);
+	
+		int a = 0;
 		break;
 	}
 }
@@ -303,12 +322,14 @@ HTREEITEM HierarchyDialog::TreeInsertObject(Object* obj, HTREEITEM parent)
 	{
 		//root 아이템 삽입
 		parent = TreeViewInsertItem(obj);
+		Map_idItem.insert({ obj->GetID(), parent });
 	}
 	else
 	{
 		//object가 root가 아닐경우 parent의 자식으로 추가
 		//parent를 방금 추가한 item으로 변경
 		parent = TreeViewInsertItem(obj, parent);
+		Map_idItem.insert({ obj->GetID(), parent });
 	}
 
 	

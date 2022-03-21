@@ -1,6 +1,13 @@
 #include "GameObject.h"
 
 
+GameObject::GameObject(const GameObject & other) : Object(other), transform(this)
+{
+	transform = other.transform;
+	transform.m_owner_obj = this;
+	components = other.components;
+}
+
 GameObject::~GameObject()
 {
 	ComponentMgr& componentMgr = ComponentMgr::Instance();

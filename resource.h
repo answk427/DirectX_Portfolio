@@ -36,6 +36,9 @@
 #define IDC_EDIT19                      1029
 #define IDC_EDIT20                      1030
 #define IDC_EDIT21                      1031
+#define IDC_EDIT22                      1032
+#define IDC_EDIT23                      1033
+#define IDC_EDIT24                      1034
 #define IDC_TAB1                        1053
 #define IDC_COMBO2                      1054
 #define IDC_LIST6                       1060

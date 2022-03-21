@@ -13,8 +13,8 @@ VOID WINAPI LightDialog::OnChildDialogInit(HWND hwndDlg)
 	GetWindowRect(hwndParent, &parentWndRect);
 
 
-	float parentWidth = parentWndRect.right - parentWndRect.left;
-	float parentHeight = (parentWndRect.bottom - parentWndRect.top);
+	LONG parentWidth = parentWndRect.right - parentWndRect.left;
+	LONG parentHeight = (parentWndRect.bottom - parentWndRect.top);
 	SetWindowPos(hwndDlg, HWND_TOP, parentWndRect.left,
 		parentWndRect.top + parentHeight * 0.03,//-2,
 		parentWidth,

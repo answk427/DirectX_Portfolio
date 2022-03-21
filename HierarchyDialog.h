@@ -9,6 +9,7 @@
 #include "Inspector.h"
 #include "ObjectMgr.h"
 #include "BoundingBoxRenderer.h"
+#include <unordered_map>
 
 #pragma comment(lib,"comctl32.lib")
 
@@ -24,6 +25,9 @@ class HierarchyDialog : public MsgProcedure
 private:
 	Inspector inspector;
 	BoundingBoxRenderer* m_boundingBoxRenderer;
+	//hierarchy에 등록된 오브젝트의 id와 item을 매핑(id를 통해 item을 선택)
+	std::unordered_map<gameObjectID, HTREEITEM> Map_idItem;
+	
 public:
 	static bool instantiated;
 
@@ -45,7 +49,7 @@ public:
 	bool OpenDialog(HWND hwnd);
 	void Init(HWND hWnd_main, BoundingBoxRenderer* bbr);
 	void treeInit(HWND hDlg);
-
+	void SelectObject(gameObjectID& objID);
 
 
 
@@ -56,8 +60,6 @@ public:
 
 	bool TreeViewDeleteItem(HTREEITEM item);
 	bool TreeViewDeleteItem();
-
-
 	bool TreeImageSet();
 
 	//메뉴눌렸을때 WM_COMMAND 

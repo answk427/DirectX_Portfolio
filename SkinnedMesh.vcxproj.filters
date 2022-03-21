@@ -225,6 +225,12 @@
     <ClCompile Include="Culling.cpp">
       <Filter>New Source Files\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="RayPicking.cpp">
+      <Filter>New Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -414,6 +420,9 @@
       <Filter>New Header Files\Component</Filter>
     </ClInclude>
     <ClInclude Include="Culling.h">
+      <Filter>New Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="RayPicking.h">
       <Filter>New Header Files\Physics</Filter>
     </ClInclude>
   </ItemGroup>

@@ -35,6 +35,7 @@ namespace MyVertex
 //다른 버퍼슬롯에 들어갈 인스턴싱자료
 struct InstancingData
 {
+	InstancingData() : color{ 1.0f,1.0f,1.0f,1.0f } {}
 	XMFLOAT4X4 world; //월드좌표
 	XMFLOAT4X4 worldInvTranspose; //역전치행렬
 	XMFLOAT4 color; //기본색상

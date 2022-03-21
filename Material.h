@@ -27,6 +27,9 @@ struct GeneralMaterial
 	//텍스쳐 행렬을 위한 변수
 	XMFLOAT2 textureTiling;
 	XMFLOAT2 textureOffset;
+
+	//메테리얼 별로 설정하는 색상
+	XMFLOAT4 m_color;
 	
 
 	GeneralMaterial() 
@@ -35,7 +38,7 @@ struct GeneralMaterial
 		textureTiling = { 1.0f,1.0f };
 		textureOffset = { 0.0f, 0.0f };
 		diffuseMapName = L"StandardDiffuseMap";
-		
+		m_color = { 1.0f,1.0f,1.0f,1.0f };
 	}
 };
 

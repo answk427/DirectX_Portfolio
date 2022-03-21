@@ -36,9 +36,11 @@ class GameObject : public Object
 {
 	 
 public:
-	GameObject() : Object() {}
-	GameObject(const gameObjectID& id) : Object(id) {}
-	GameObject(const gameObjectID& id, const std::wstring& name) : Object(id, name) {}
+	GameObject() : Object(), transform(this)  {}
+	GameObject(const gameObjectID& id) : Object(id), transform(this) {}
+	GameObject(const gameObjectID& id, const std::wstring& name) : Object(id, name), transform(this) {}
+	//복사 생성자
+	GameObject(const GameObject& other);
 	~GameObject();
 			
 	Transform transform;
@@ -63,6 +65,8 @@ private:
 template<typename componentT>
 inline componentT* GameObject::GetComponent()
 {
+	if (components.empty())
+		return nullptr;
 	componentT temp("temp");
 	
 	//일치하는 컴포넌트가 있는지 검색
