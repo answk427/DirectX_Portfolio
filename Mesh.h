@@ -46,6 +46,11 @@ public:
 	//버퍼초기화 함수들
 	//정점버퍼 생성
 	void InitVB(ID3D11Device* device);
+	
+	//여러 vertex 구조체를 이용해 버퍼를 초기화하는 함수
+	template <typename vertex>
+	void InitVB(ID3D11Device* device, std::vector<vertex> vertices);
+
 	void InitIB(ID3D11Device* device);
 	void InitInstanceBuffer(ID3D11Device* device, UINT bufferSize);
 	//현재 클래스의 m_instanceBufferSize 멤버변수로 버퍼사이즈 설정
@@ -149,3 +154,24 @@ public:
 	bool operator==(const std::string& name) { return id == name; }
 };
 
+template<typename vertex>
+inline void Mesh::InitVB(ID3D11Device * device, std::vector<vertex> vertices)
+{
+	ReleaseCOM(mVB);
+
+	//bufferDesc 작성
+	D3D11_BUFFER_DESC desc;
+	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	desc.ByteWidth = sizeof(vertices[0]) * vertices.size();
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+	desc.StructureByteStride = 0; //구조적버퍼에 저장된 원소 하나의 크기, 구조적버퍼 사용할때 필요
+	desc.Usage = D3D11_USAGE_IMMUTABLE;
+
+	D3D11_SUBRESOURCE_DATA subRes;
+	subRes.pSysMem = &vertices[0];
+
+	HR(device->CreateBuffer(&desc, &subRes, &mVB));
+
+	vertexBufferCount++;
+}

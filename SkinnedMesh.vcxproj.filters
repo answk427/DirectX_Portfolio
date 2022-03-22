@@ -459,6 +459,9 @@
     <CustomBuild Include="FX\SsaoNormalDepth.fx">
       <Filter>FX</Filter>
     </CustomBuild>
+    <CustomBuild Include="FX\TreeSprite.fx">
+      <Filter>FX</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Common\Effects11.lib">

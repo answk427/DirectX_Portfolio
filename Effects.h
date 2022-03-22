@@ -40,6 +40,7 @@ public:
 	virtual void InitBlendState(ID3D11Device* device);
 	//device로부터 inputlayout을 생성하는 함수
 	virtual void InitInputLayout(ID3D11Device* device) = 0;
+
 	virtual void InitInstancingInputLayout(ID3D11Device* device) = 0;
 	
 	//Frame별로 필요한 세팅을 수행하는 함수
@@ -77,6 +78,10 @@ protected:
 	ID3D11InputLayout* m_inputLayout;
 	ID3D11InputLayout* m_instancing_inputLayout;
 	ID3D11BlendState* m_blendState;
+
+public:
+	void SetBlendState(ID3D11BlendState* blendState) { m_blendState = blendState; }
+
 };
 #pragma endregion
 
@@ -621,5 +626,95 @@ public:
 	static DebugTexEffect* DebugTexFX;
 };
 #pragma endregion
+
+class TreebilboardEffect : public Effect
+{
+public:
+	TreebilboardEffect(ID3D11Device* device, const std::wstring& filename);
+protected:
+	ID3DX11EffectTechnique* Light3Tech;
+	ID3DX11EffectTechnique* Light3TexAlphaClipTech;
+	ID3DX11EffectTechnique* Light3TexAlphaClipFogTech;
+	
+
+	ID3DX11EffectMatrixVariable* ViewProj;
+	ID3DX11EffectVectorVariable* EyePosW;
+	ID3DX11EffectVectorVariable* FogColor;
+	ID3DX11EffectScalarVariable* FogStart;
+	ID3DX11EffectScalarVariable* FogRange;
+	
+	ID3DX11EffectVariable* DirLights;
+	ID3DX11EffectScalarVariable* dirLightSize;
+
+	ID3DX11EffectVariable* pointLights;
+	ID3DX11EffectScalarVariable* pointLightSize;
+
+	ID3DX11EffectVariable* spotLights;
+	ID3DX11EffectScalarVariable* spotLightSize;
+
+	ID3DX11EffectVariable* Mat;
+
+	ID3DX11EffectShaderResourceVariable* TreeTextureMapArray;
+
+public:
+	void SetViewProj(CXMMATRIX M) { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetEyePosW(const XMFLOAT3& v) { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }
+	void SetFogColor(const FXMVECTOR v) { FogColor->SetFloatVector(reinterpret_cast<const float*>(&v)); }
+	void SetFogStart(float f) { FogStart->SetFloat(f); }
+	void SetFogRange(float f) { FogRange->SetFloat(f); }
+
+	void SetMaterial(const BasicMaterial& mat) { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
+	void SetTreeTextureMapArray(ID3D11ShaderResourceView* tex) { TreeTextureMapArray->SetResource(tex); }
+
+	void SetDirLights(const DirectionalLight* lights)
+	{
+		if (lights == nullptr)
+		{
+			dirLightSize->SetInt(0);
+			return;
+		}
+		DirLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::DIRECTIONAL] * sizeof(DirectionalLight));
+		dirLightSize->SetInt(Lighting::lightCount[LightType::DIRECTIONAL]);
+	}
+	void SetPointLights(const PointLight* lights)
+	{
+		if (lights == nullptr)
+		{
+			pointLightSize->SetInt(0);
+			return;
+		}
+		pointLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::POINTLIGHT] * sizeof(PointLight));
+		pointLightSize->SetInt(Lighting::lightCount[LightType::POINTLIGHT]);
+
+	}
+	void SetSpotLights(const SpotLight* lights)
+	{
+		if (lights == nullptr)
+		{
+			spotLightSize->SetInt(0);
+			return;
+		}
+		spotLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::SPOTLIGHT] * sizeof(SpotLight));
+		spotLightSize->SetInt(Lighting::lightCount[LightType::SPOTLIGHT]);
+
+	}
+
+	
+
+
+public:
+	// Effect을(를) 통해 상속됨
+	virtual void InitInputLayout(ID3D11Device * device) override;
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+};
 
 #endif // EFFECTS_H

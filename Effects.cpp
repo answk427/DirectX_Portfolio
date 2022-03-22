@@ -56,6 +56,7 @@ void Effect::InitBlendState(ID3D11Device * device)
 	HR(device->CreateBlendState(&blendDesc, &m_blendState));	
 }
 
+
 #pragma endregion
 
 #pragma region BasicEffect
@@ -219,6 +220,7 @@ ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 
 void BasicEffect::InitInputLayout(ID3D11Device * device)
 {
+	ReleaseCOM(m_inputLayout);
 	D3DX11_PASS_DESC passDesc;
 
 	Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
@@ -227,6 +229,8 @@ void BasicEffect::InitInputLayout(ID3D11Device * device)
 }
 void BasicEffect::InitInstancingInputLayout(ID3D11Device * device)
 {
+	ReleaseCOM(m_instancing_inputLayout);
+
 	D3DX11_PASS_DESC passDesc;
 
 	//입력서명
@@ -620,3 +624,104 @@ bool Effect::OMSetting(ID3D11DeviceContext* context, bool blending)
 	return true;
 }
 
+TreebilboardEffect::TreebilboardEffect(ID3D11Device* device, const std::wstring& filename)
+	: Effect(device, filename)
+{
+	Light3Tech = mFX->GetTechniqueByName("Light3");
+	Light3TexAlphaClipTech = mFX->GetTechniqueByName("Light3TexAlphaClip");
+	Light3TexAlphaClipFogTech = mFX->GetTechniqueByName("Light3TexAlphaClipFog");
+	
+	ViewProj = mFX->GetVariableByName("gViewProj")->AsMatrix();
+	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
+	FogColor = mFX->GetVariableByName("gFogColor")->AsVector();
+	FogStart = mFX->GetVariableByName("gFogStart")->AsScalar();
+	FogRange = mFX->GetVariableByName("gFogRange")->AsScalar();
+
+	DirLights = mFX->GetVariableByName("gDirLights");
+	dirLightSize = mFX->GetVariableByName("dirLight_size")->AsScalar();
+
+	pointLights = mFX->GetVariableByName("gPointLights");
+	pointLightSize = mFX->GetVariableByName("pointLight_size")->AsScalar();
+
+	spotLights = mFX->GetVariableByName("gSpotLights");
+	spotLightSize = mFX->GetVariableByName("spotLight_size")->AsScalar();
+
+	Mat = mFX->GetVariableByName("gMaterial");
+		
+	TreeTextureMapArray = mFX->GetVariableByName("gTreeMapArray")->AsShaderResource();
+	
+	Init(device);
+}
+
+void TreebilboardEffect::InitInputLayout(ID3D11Device * device)
+{
+	ReleaseCOM(m_inputLayout);
+	D3DX11_PASS_DESC passDesc;
+
+	Light3TexAlphaClipTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::TreePointSprite, 2, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_inputLayout));
+}
+
+void TreebilboardEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+
+}
+
+void TreebilboardEffect::InitBlendState(ID3D11Device * device)
+{
+	ReleaseCOM(m_blendState);
+
+	D3D11_BLEND_DESC a2CDesc = { 0 };
+	a2CDesc.AlphaToCoverageEnable = true;
+	a2CDesc.IndependentBlendEnable = false;
+	a2CDesc.RenderTarget[0].BlendEnable = false;
+	a2CDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	HR(device->CreateBlendState(&a2CDesc, &m_blendState));
+}
+
+bool TreebilboardEffect::OMSetting(ID3D11DeviceContext * context, bool blending)
+{		
+	context->OMSetBlendState(m_blendState, 0, 0xffffffff);
+
+
+	return true;
+}
+
+void TreebilboardEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
+{	//쉐이더에 조명설정
+	SetDirLights(directL);
+	SetPointLights(pointL);
+	SetSpotLights(spotL);
+	SetEyePosW(eyePosW);
+}
+
+void TreebilboardEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
+{
+	//비균등 비례로 인한 법선벡터 계산에 쓰이는 행렬
+	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
+	
+	//인스턴스의 세계행렬과 곱해질 시야투영행렬
+	SetViewProj(camera->ViewProj());
+	
+
+	//재질 설정
+	SetMaterial(material->basicMat);
+}
+
+ID3DX11EffectTechnique * TreebilboardEffect::GetTechnique(UINT techType)
+{
+	switch (techType)
+	{
+	case TechniqueType::Light:
+		return Light3Tech;
+	case TechniqueType::Light | TechniqueType::DiffuseMap:
+		return Light3TexAlphaClipTech;
+
+	default:
+		nullptr;
+	}
+	
+	return nullptr;
+}

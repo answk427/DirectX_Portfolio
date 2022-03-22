@@ -35,7 +35,8 @@ cbuffer cbPerObject
 	float4x4 gTexTransform;
 	float4x4 gShadowTransform; 
 	Material gMaterial;
-}; 
+};
+
 
 // Nonnumeric values cannot be added to a cbuffer.
 Texture2D gDiffuseMap;

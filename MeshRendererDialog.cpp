@@ -339,7 +339,21 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 	case NORMALMAPBUTTON:
 		if (HIWORD(wParam) == BN_CLICKED)
 		{
+			WCHAR fileTitle[100];
+			WCHAR filePath[100];
+			std::vector<LPCWSTR> extensions = { L"dds" };
+			if (FileOpenDialog(m_hDlg, fileTitle, filePath, extensions))
+			{
+				int idx = ListBox_GetCurSel(m_hList);
+				if (idx == -1)
+					break;
+				CommandQueue::AddCommand(new SetMaterialMap(&(*materials)[idx], filePath, mapType::Type_NormalMap));
 
+				//diffuseMapText에 이름 설정
+				Edit_SetText(GetDlgItem(m_hDlg, NORMALMAPCONTROL), fileTitle);
+			}
+			else
+				MessageBox(m_hDlg, L"NormalMap Load Fail!", L"NormalMap Load", MB_OK);
 		}
 		break;
 	case  MATERIALLIST:
