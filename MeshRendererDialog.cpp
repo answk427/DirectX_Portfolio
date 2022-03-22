@@ -326,7 +326,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 				int idx = ListBox_GetCurSel(m_hList);
 				if (idx == -1)
 					break;
-				CommandQueue::AddCommand(new SetMaterialMap(&(*materials)[idx], filePath, mapType::Type_DiffuseMap));
+				CommandQueue::AddCommand(new SetMaterialMap(m_MeshRenderer, idx, filePath, mapType::Type_DiffuseMap));
 				
 				//diffuseMapText에 이름 설정
 				Edit_SetText(GetDlgItem(m_hDlg, DIFFUSEMAPCONTROL), fileTitle);
@@ -347,7 +347,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 				int idx = ListBox_GetCurSel(m_hList);
 				if (idx == -1)
 					break;
-				CommandQueue::AddCommand(new SetMaterialMap(&(*materials)[idx], filePath, mapType::Type_NormalMap));
+				CommandQueue::AddCommand(new SetMaterialMap(m_MeshRenderer,idx, filePath, mapType::Type_NormalMap));
 
 				//diffuseMapText에 이름 설정
 				Edit_SetText(GetDlgItem(m_hDlg, NORMALMAPCONTROL), fileTitle);

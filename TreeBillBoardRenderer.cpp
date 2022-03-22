@@ -9,6 +9,7 @@ TreeBillBoardRenderer::TreeBillBoardRenderer() : Renderer("TreeBillBoardRenderer
 	//텍스처배열을 사용하도록 수정해야함
 	treeMaterial.diffuseMapName = L"Textures/tree0.dds";
 	materials.push_back(treeMaterial);
+	InitDiffuseMaps();
 }
 
 void TreeBillBoardRenderer::AddTree(ID3D11Device* device, XMFLOAT3 & pos, XMFLOAT2 & size)

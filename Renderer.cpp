@@ -58,7 +58,6 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	if (mesh == nullptr)
 		return;
 
-	MapsInit();
 	XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
 		
 
@@ -162,6 +161,25 @@ void Renderer::InitDiffuseMaps()
 	}
 }
 
+void Renderer::ModifyDiffuseMap(int materialIdx, const std::wstring & mapName, UINT mapType)
+{
+	if (mapType == 0)
+	{
+		materials[materialIdx].diffuseMapName = mapName;
+		ReleaseCOM(diffuseMaps[materialIdx]);
+		ID3D11ShaderResourceView* srv = m_texMgr.CreateTexture(mapName);
+		diffuseMaps[materialIdx] = srv;
+	}
+	else if (mapType == 1)
+	{
+		materials[materialIdx].normalMapName = mapName;
+		ReleaseCOM(normalMaps[materialIdx]);
+		ID3D11ShaderResourceView* srv = m_texMgr.CreateTexture(mapName);
+		normalMaps[materialIdx] = srv;
+	}
+		
+}
+
 void Renderer::InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePath)
 {
 	normalMaps.clear();
@@ -216,6 +234,7 @@ void Renderer::SetMaterials(vector<GeneralMaterial>& materialSrc)
 	vector<GeneralMaterial>().swap(materials);
 	//매개변수 벡터와 교환
 	materials.swap(materialSrc);
+	MapsInit();
 }
 
 void Renderer::Enable()

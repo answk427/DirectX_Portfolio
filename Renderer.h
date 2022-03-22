@@ -83,6 +83,8 @@ public:
 
 	void InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 	void InitDiffuseMaps();
+	//idx번째 메테리얼의 Map을 수정하는 함수
+	void ModifyDiffuseMap(int materialIdx, const std::wstring& mapName, UINT mapType);
 
 	void InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePath);
 	void InitNormalMaps();

@@ -712,6 +712,10 @@ public:
 	// Effect을(를) 통해 상속됨
 	virtual void InitInputLayout(ID3D11Device * device) override;
 	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+	virtual void InitBlendState(ID3D11Device* device);
+	virtual bool OMSetting(ID3D11DeviceContext* context, bool blending);
+	
+
 	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
 	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;

@@ -231,6 +231,9 @@
     <ClCompile Include="Interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TreeBillBoardRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -424,6 +427,9 @@
     </ClInclude>
     <ClInclude Include="RayPicking.h">
       <Filter>New Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeBillBoardRenderer.h">
+      <Filter>New Header Files\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

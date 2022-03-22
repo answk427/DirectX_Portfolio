@@ -137,6 +137,7 @@
     <ClCompile Include="Ssao.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformDialog.cpp" />
+    <ClCompile Include="TreeBillBoardRenderer.cpp" />
     <ClCompile Include="UtilFunctions.cpp" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
@@ -202,6 +203,7 @@
     <ClInclude Include="Ssao.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformDialog.h" />
+    <ClInclude Include="TreeBillBoardRenderer.h" />
     <ClInclude Include="UtilFunctions.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Mesh.h" />

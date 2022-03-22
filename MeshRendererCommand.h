@@ -11,11 +11,13 @@ class SetMaterialMap : public MyCommand
 public:
 	
 public:
-	SetMaterialMap(GeneralMaterial* mat, const std::wstring& diffuseMap, mapType mt) : material(mat), textureMapName(diffuseMap),map_type(mt) {}
+	SetMaterialMap(MeshRenderer* renderer, UINT idx, const std::wstring& diffuseMap, mapType mt) : 
+		m_meshRenderer(renderer), materialIdx(idx), textureMapName(diffuseMap),map_type(mt) {}
 
 private:
 	mapType map_type;
-	GeneralMaterial* material;
+	MeshRenderer* m_meshRenderer;
+	UINT materialIdx;
 	std::wstring textureMapName;
 	std::wstring beforeTextureMapName;
 
