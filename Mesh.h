@@ -5,6 +5,7 @@
 #include <d3dUtil.h>
 #include "BufferResource.h"
 #include <UtilFunctions.h>
+#include <unordered_map>
 
 using namespace std;
 
@@ -71,9 +72,21 @@ public:
 	vector<MyVertex::BasicVertex> vertices;
 	vector<UINT> indices;
 	//실제 instancingData를 담고 있는 vector
-	vector<InstancingData> InstancingDatas;
+	std::vector<InstancingData*> InstancingDatas;
 	//이번 렌더링에서 사용할 instancingData의 index.
 	vector<UINT> enableInstancingIndexes;
+
+#pragma region InstancingTextureBuffer
+	//Texture 배열에서 사용할 텍스쳐들의 경로
+	vector<std::wstring>* textureNames{0};
+	//Subset별로 사용할 Texture배열들
+	vector<ID3D11ShaderResourceView*> textureArrays;
+	//Texture 배열의 크기가 달라졌거나 다시 만들어야할 경우 사용하는 함수
+	void CreateTextureArrayResourceView(ID3D11Device* device, ID3D11DeviceContext* context);
+	//Texture 배열의 부분만 수정하는 함수
+	void ModifyTextureArraySubResource(ID3D11Device* device, ID3D11DeviceContext* context, 
+		UINT rendererIdx, UINT subsetIdx, const std::wstring& textureName);
+#pragma endregion
 
 	
 	
@@ -106,12 +119,7 @@ public:
 	{	SetInstanceBufferSize(MAX_INSTSANCING);	}
 	Mesh() : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCount(0), id("temp"), m_instanceBufferSize(MAX_INSTSANCING), m_instancing(0)
 	{	SetInstanceBufferSize(MAX_INSTSANCING);	}
-	~Mesh() {
-		ID3D11Buffer* VB = mVB;
-		ID3D11Buffer* IB = mIB;
-		ID3D11Buffer* inst = m_InstanceBuffer;
-		ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(m_InstanceBuffer); 
-	}
+	~Mesh(); 
 	//복사생성자
 	Mesh(const Mesh& other);
 	//이동생성자

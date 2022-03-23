@@ -94,18 +94,14 @@ public:
 	void InitEffects();
 
 	
-	void SetMesh(Mesh* meshSrc)
-	{
-		//원래 설정되어 있던 mesh의 InstancingData에서 현재 오브젝트의 데이터를 지움.
-		if (mesh != nullptr)
-			mesh->InstancingDatas.erase(mesh->InstancingDatas.begin()+ m_instancingIdx);
-		mesh = meshSrc; 
-		AddInstancingQueue();
-	}
-
+	//반드시 SetMesh가 SetMaterial보다 먼저 실행되야 하기 때문에 함수를 합침.
+	//기본 메테리얼로 생성
+	void SetMesh(Mesh* meshSrc);
+	//메테리얼 데이터를 로드해서 생성
+	void SetMesh(Mesh* meshSrc, vector<GeneralMaterial>& materialSrc);
 	Mesh* GetMesh() { return mesh; }
 	
-	void SetMaterials(vector<GeneralMaterial>& materialSrc);
+	
 	vector<GeneralMaterial>& GetMaterials() { return materials; }
 
 	void SetTransform(Transform* tr) { transform = tr; }
@@ -116,6 +112,8 @@ public:
 	// Component을(를) 통해 상속됨
 	virtual void Enable() override;
 	virtual void Disable() override;
+protected:
+	void SetMaterials(vector<GeneralMaterial>& materialSrc);
 };
 
 

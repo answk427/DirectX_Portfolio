@@ -7,7 +7,7 @@ TextureMgr & TextureMgr::Instance()
 	return *instance;
 }
 
-TextureMgr::TextureMgr() : md3dDevice(0)
+TextureMgr::TextureMgr() : md3dDevice(0), m_context(0)
 {
 	
 }
@@ -23,19 +23,30 @@ TextureMgr::~TextureMgr()
 	
 }
 
-void TextureMgr::Init(ID3D11Device* device)
+void TextureMgr::Init(ID3D11Device* device, ID3D11DeviceContext* context)
 {
 	md3dDevice = device;
+	m_context = context;
 }
 
-ID3D11ShaderResourceView* TextureMgr::CreateTexture(std::wstring filename)
+bool TextureMgr::FileCheck(const std::wstring & fileName)
 {
 	USES_CONVERSION;
 
-	if (filename.empty())
-		return nullptr;
+	if (fileName.empty())
+		return false;
 	//파일이 존재하는지 검사
-	else if (_access(W2A(filename.c_str()), 0) < 0)
+	else if (_access(W2A(fileName.c_str()), 0) < 0)
+		return false;
+
+	return true;
+}
+
+ID3D11ShaderResourceView* TextureMgr::CreateTexture(const std::wstring& filename)
+{
+	USES_CONVERSION;
+
+	if (!FileCheck(filename))
 		return nullptr;
 
 	ID3D11ShaderResourceView* srv = 0;

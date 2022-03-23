@@ -43,6 +43,7 @@ Texture2D gDiffuseMap;
 Texture2D gShadowMap;
 Texture2D gSsaoMap;
 TextureCube gCubeMap;
+Texture2DArray gDiffuseMapArray;
 
 SamplerState samLinear
 {
@@ -79,6 +80,7 @@ struct InstanceVertexIn
 	row_major float4x4 World : WORLD;
 	row_major float4x4 WorldInvTranspose : INVTRANSPOSE;
 	float4 Color : COLOR;
+	uint RendererIdx : RENDERERIDX;
 	uint InstanceId : SV_InstanceID;
 };
 
@@ -91,6 +93,7 @@ struct VertexOut
 	float4 ShadowPosH : TEXCOORD1;
 	float4 SsaoPosH   : TEXCOORD2;
 	float4 Color : COLOR;
+	uint InstanceId : instanceID;
 };
 
 VertexOut VS(VertexIn vin)
@@ -139,6 +142,9 @@ VertexOut InstanceVS(InstanceVertexIn vin)
 
 	// Generate projective tex-coords to project SSAO map onto scene.
 	vout.SsaoPosH = mul(float4(vin.PosL, 1.0f), gWorldViewProjTex);
+	
+	//instanceid 그대로 넘겨줌
+	vout.InstanceId = vin.RendererIdx;
 
 	return vout;
 }
@@ -174,7 +180,17 @@ float4 PS(VertexOut pin,
 	if(gUseTexure)
 	{
 		// Sample texture.
-		texColor = gDiffuseMap.Sample( samLinear, pin.Tex );
+		if (gInstancing)
+		{
+			//인스턴싱 하는경우 텍스처배열 사용
+			float3 uvw = float3(pin.Tex, pin.InstanceId);
+			texColor = gDiffuseMapArray.Sample(samLinear, uvw);
+		}
+		else
+		{
+			texColor = gDiffuseMap.Sample(samLinear, pin.Tex);
+		}
+		
 
 		if(gAlphaClip)
 		{

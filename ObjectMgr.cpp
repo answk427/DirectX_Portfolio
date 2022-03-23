@@ -133,9 +133,8 @@ Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& n
 	if (!assimpMesh.HasBone())
 	{
 		MeshRenderer* comp = (MeshRenderer*)componentMgr->CreateComponent(ComponentType::MESHRENDERER);
-		comp->SetMesh(mesh);
-		comp->SetMaterials(assimpMesh.GetMaterials());
-
+		comp->SetMesh(mesh, assimpMesh.GetMaterials());
+		
 		//init ÇØ¾ßµÊ
 		comp->InitDiffuseMaps(textureMgr, L"Textures/");
 		comp->InitEffects(effectMgr, L"FX/");
@@ -145,8 +144,8 @@ Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& n
 	else
 	{
 		SkinnedMeshRenderer* comp = (SkinnedMeshRenderer*)componentMgr->CreateComponent(ComponentType::SKINNEDMESHRENDERER);
-		comp->SetMesh(mesh);
-		comp->SetMaterials(assimpMesh.GetMaterials());
+		comp->SetMesh(mesh, assimpMesh.GetMaterials());
+		
 		//init ÇØ¾ßµÊ
 		//...
 		renderer = comp;

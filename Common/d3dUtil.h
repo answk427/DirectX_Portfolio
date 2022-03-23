@@ -77,6 +77,15 @@ public:
 		UINT filter = D3DX11_FILTER_NONE, 
 		UINT mipFilter = D3DX11_FILTER_LINEAR);
 
+	static bool ModifyTexture2DArraySRV(
+		ID3D11Device* device, ID3D11DeviceContext* context,
+		ID3D11ShaderResourceView* destTextureArray,
+		UINT destIdx,
+		const std::wstring& newFileName,
+		DXGI_FORMAT format = DXGI_FORMAT_FROM_FILE,
+		UINT filter = D3DX11_FILTER_NONE,
+		UINT mipFilter = D3DX11_FILTER_LINEAR);
+
 	static ID3D11ShaderResourceView* CreateRandomTexture1DSRV(ID3D11Device* device);
 };
 

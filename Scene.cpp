@@ -132,7 +132,7 @@ bool Scene::Init()
 
 	//test
 	meshMgr.Init(md3dDevice);
-	texMgr.Init(md3dDevice);
+	texMgr.Init(md3dDevice, md3dImmediateContext);
 	effectMgr.Init(md3dDevice);
 	dataMgr.Init();
 	m_boundingBoxRenderer = new BoundingBoxRenderer(md3dDevice, md3dImmediateContext);

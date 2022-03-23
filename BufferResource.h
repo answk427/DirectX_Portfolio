@@ -39,6 +39,7 @@ struct InstancingData
 	XMFLOAT4X4 world; //월드좌표
 	XMFLOAT4X4 worldInvTranspose; //역전치행렬
 	XMFLOAT4 color; //기본색상
+	UINT RendererIdx; //어떤 렌더러에서 그렸는지 확인하기 위한 변수
 };
 
 struct AABB_MaxMin

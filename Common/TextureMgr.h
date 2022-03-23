@@ -19,16 +19,18 @@ public:
 	TextureMgr();
 	~TextureMgr();
 
-	void Init(ID3D11Device* device);
+	void Init(ID3D11Device* device, ID3D11DeviceContext* context);
+	bool FileCheck(const std::wstring& fileName);
 
-	ID3D11ShaderResourceView* CreateTexture(std::wstring filename);
+	ID3D11ShaderResourceView* CreateTexture(const std::wstring& filename);
 
+	ID3D11Device* md3dDevice;
+	ID3D11DeviceContext* m_context;
 private:
 	TextureMgr(const TextureMgr& rhs);
 	//TextureMgr& operator=(const TextureMgr& rhs);
 	
 private:
-	ID3D11Device* md3dDevice;
 	//std::map<std::wstring, ID3D11ShaderResourceView*> mTextureSRV;
 	std::unordered_map<std::wstring, ID3D11ShaderResourceView*> mTextureSRV;
 

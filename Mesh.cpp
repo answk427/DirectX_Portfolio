@@ -24,6 +24,42 @@ void Mesh::SetSubsets(vector<Subset>& subsetSrc)
 	//매개변수 벡터와 교환
 	subsets.swap(subsetSrc);
 
+	//subset 사이즈만큼 설정되야 하는 컨테니어들 초기화
+	if (textureNames != nullptr)
+		delete[] textureNames;
+	textureNames = new vector<std::wstring>[subsets.size()];
+	textureArrays.assign(subsets.size(), 0);
+
+}
+
+void Mesh::CreateTextureArrayResourceView(ID3D11Device* device, ID3D11DeviceContext* context)
+{
+
+	for (int i = 0; i < textureArrays.size(); ++i)
+	{
+		ReleaseCOM(textureArrays[i]);
+		textureArrays[i] = 
+			d3dHelper::CreateTexture2DArraySRV(device, context, textureNames[i], DXGI_FORMAT_R8G8B8A8_UNORM);
+	}
+}
+
+void Mesh::ModifyTextureArraySubResource(ID3D11Device* device, ID3D11DeviceContext* context,
+	UINT rendererIdx, UINT subsetIdx, const std::wstring& textureName)
+{
+	textureNames[subsetIdx][rendererIdx] = textureName;
+	//텍스쳐배열이 없는상태면 새로 만든다.
+	if (textureArrays[subsetIdx] == nullptr)
+	{
+		textureArrays[subsetIdx] = d3dHelper::CreateTexture2DArraySRV(device, context,
+			textureNames[subsetIdx], DXGI_FORMAT_R8G8B8A8_UNORM);
+	}
+	else //텍스쳐배열이 있다면 부분만 수정
+	{
+		if (d3dHelper::ModifyTexture2DArraySRV(device, context, textureArrays[subsetIdx], rendererIdx,
+			textureNames[subsetIdx][rendererIdx], DXGI_FORMAT_R8G8B8A8_UNORM))
+		{
+		}//실패했을시 코드
+	}
 }
 
 void Mesh::SetVB(ID3D11DeviceContext * context)
@@ -66,15 +102,28 @@ void Mesh::InstancingUpdate(ID3D11DeviceContext* context)
 
 	for (int i = 0; i < enableInstancingIndexes.size(); ++i)
 	{
-		dataView[i] = InstancingDatas[enableInstancingIndexes[i]];
+		if(InstancingDatas[enableInstancingIndexes[i]] != nullptr)
+			dataView[i] = *InstancingDatas[enableInstancingIndexes[i]];
 	}
 
 	context->Unmap(m_InstanceBuffer, 0);
 }
 
+Mesh::~Mesh()
+{
+	for (int i = 0; i < InstancingDatas.size(); ++i)
+	{
+		if (InstancingDatas[i] != nullptr)
+			delete InstancingDatas[i];
+	}
+	if (textureNames != nullptr)
+		delete[] textureNames;
+	ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(m_InstanceBuffer);
+}
 Mesh::Mesh(const Mesh & other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCount(0), id(other.id), m_instancing(0)
 {
-	subsets = other.subsets;
+	std::vector<Subset> tempSubsets = other.subsets;
+	SetSubsets(tempSubsets);
 	vertices = other.vertices;
 	InstancingDatas = other.InstancingDatas;
 	indices = other.indices;
@@ -85,7 +134,9 @@ Mesh::Mesh(const Mesh & other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBuff
 
 Mesh::Mesh(Mesh && other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCount(0), id(other.id), m_instancing(0)
 {
-	subsets.swap(other.subsets);
+	std::vector<Subset> tempSubsets = other.subsets;
+	SetSubsets(tempSubsets);
+
 	vertices.swap(other.vertices);
 	InstancingDatas.swap(other.InstancingDatas);
 	indices.swap(other.indices);
@@ -96,7 +147,9 @@ Mesh::Mesh(Mesh && other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCou
 
 Mesh & Mesh::operator=(const Mesh & other)
 {
-	subsets = other.subsets;
+	std::vector<Subset> tempSubsets = other.subsets;
+	SetSubsets(tempSubsets);
+
 	vertices = other.vertices;
 	InstancingDatas = other.InstancingDatas;
 	indices = other.indices;

@@ -22,16 +22,17 @@ void Renderer::LateUpdate()
 
 void Renderer::AddInstancingQueue()
 {
-	InstancingData data;
-	
-	//color 임시로 지정
-	/*data.color = { 1,1,1,1 };
-	data.world = transform->m_world;*/
-	//세계행렬의 역전치행렬
-	/*XMStoreFloat4x4(&data.worldInvTranspose,MathHelper::InverseTranspose(XMLoadFloat4x4(&data.world)));*/
-
-	mesh->InstancingDatas.push_back(data);
+	mesh->InstancingDatas.push_back(new InstancingData());
 	m_instancingIdx = mesh->InstancingDatas.size() - 1;
+	
+	for (int i = 0; i < materials.size(); ++i)
+	{
+		//i번째 subset에 해당하는 diffuseMap 이름을 설정
+		mesh->textureNames[i].push_back(materials[i].diffuseMapName);
+	}
+	//texture배열의 사이즈를 변경하거나 새로생성
+	TextureMgr& textureMgr = TextureMgr::Instance();
+	mesh->CreateTextureArrayResourceView(textureMgr.md3dDevice, textureMgr.m_context);
 }
 
 void Renderer::InstancingUpdate()
@@ -41,13 +42,15 @@ void Renderer::InstancingUpdate()
 		return;
 	
 	//세계행렬 업데이트
-	mesh->InstancingDatas[m_instancingIdx].world = transform->m_world;
+	mesh->InstancingDatas[m_instancingIdx]->world = transform->m_world;
 	//역전치행렬 업데이트
-	XMStoreFloat4x4(&mesh->InstancingDatas[m_instancingIdx].worldInvTranspose,
+	XMStoreFloat4x4(&mesh->InstancingDatas[m_instancingIdx]->worldInvTranspose,
 		MathHelper::InverseTranspose(
-			XMLoadFloat4x4(&mesh->InstancingDatas[m_instancingIdx].world)));
+			XMLoadFloat4x4(&mesh->InstancingDatas[m_instancingIdx]->world)));
 	//rgb 업데이트
-	mesh->InstancingDatas[m_instancingIdx].color = m_color;
+	mesh->InstancingDatas[m_instancingIdx]->color = m_color;
+	//현재 렌더러를 알려주는 인덱스
+	mesh->InstancingDatas[m_instancingIdx]->RendererIdx = m_instancingIdx;
 
 	//이번 프레임에 렌더링할 오브젝트로 등록
 	mesh->enableInstancingIndexes.push_back(m_instancingIdx);
@@ -60,7 +63,7 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 
 	XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
 		
-
+	
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
 	if (!GetInstancing())
 		mesh->SetVB(context);
@@ -116,7 +119,12 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		effects[i]->PerObjectSet(&materials[i],
 			camera, world);
 
-		effects[i]->SetMaps(diffuseMaps[i], normalMaps[i], nullptr);
+		//인스턴싱일 때 텍스쳐배열 사용
+		if(GetInstancing())
+			effects[i]->SetMapArray(mesh->textureArrays[i]);
+		else
+			effects[i]->SetMaps(diffuseMaps[i], normalMaps[i], nullptr);
+
 
 
 		for (UINT p = 0; p < techDesc.Passes; ++p)
@@ -139,6 +147,7 @@ mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(
 
 Renderer::~Renderer()
 {
+
 }
 
 void Renderer::InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath)
@@ -163,17 +172,21 @@ void Renderer::InitDiffuseMaps()
 
 void Renderer::ModifyDiffuseMap(int materialIdx, const std::wstring & mapName, UINT mapType)
 {
+	TextureMgr& textureMgr = TextureMgr::Instance();
 	if (mapType == 0)
 	{
 		materials[materialIdx].diffuseMapName = mapName;
-		ReleaseCOM(diffuseMaps[materialIdx]);
+		
 		ID3D11ShaderResourceView* srv = m_texMgr.CreateTexture(mapName);
 		diffuseMaps[materialIdx] = srv;
+
+		mesh->ModifyTextureArraySubResource(textureMgr.md3dDevice, textureMgr.m_context,
+			m_instancingIdx, materialIdx, mapName);
 	}
 	else if (mapType == 1)
 	{
 		materials[materialIdx].normalMapName = mapName;
-		ReleaseCOM(normalMaps[materialIdx]);
+		
 		ID3D11ShaderResourceView* srv = m_texMgr.CreateTexture(mapName);
 		normalMaps[materialIdx] = srv;
 	}
@@ -220,6 +233,41 @@ void Renderer::InitEffects()
 		Effect* effect = m_effectMgr.GetEffect(elem.ShaderName);
 		effects.push_back(effect);
 	}
+}
+
+void Renderer::SetMesh(Mesh * meshSrc)
+{
+	//원래 설정되어 있던 mesh의 InstancingData에서 현재 오브젝트의 데이터를 지움.
+	if (mesh != nullptr)
+	{
+		if (mesh->InstancingDatas[m_instancingIdx] != nullptr)
+			delete mesh->InstancingDatas[m_instancingIdx];
+		mesh->InstancingDatas[m_instancingIdx] = nullptr;
+	}
+
+	mesh = meshSrc;
+
+	//Material을 Subset 개수만큼 기본으로 설정
+	materials.clear();
+	materials.assign(mesh->GetSubsetLength(), GeneralMaterial());
+
+	AddInstancingQueue();
+}
+
+void Renderer::SetMesh(Mesh * meshSrc, vector<GeneralMaterial>& materialSrc)
+{
+	//원래 설정되어 있던 mesh의 InstancingData에서 현재 오브젝트의 데이터를 지움.
+	if (mesh != nullptr)
+	{
+		if (mesh->InstancingDatas[m_instancingIdx] != nullptr)
+			delete mesh->InstancingDatas[m_instancingIdx];
+		mesh->InstancingDatas[m_instancingIdx] = nullptr;
+	}
+
+	mesh = meshSrc;
+
+	SetMaterials(materialSrc);
+	AddInstancingQueue();
 }
 
 void Renderer::MapsInit()

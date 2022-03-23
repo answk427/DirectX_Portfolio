@@ -66,6 +66,8 @@ public:
 	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
 		ID3D11ShaderResourceView* normalMap,
 		ID3D11ShaderResourceView* specularMap) {}
+	//텍스쳐배열 세팅
+	virtual void SetMapArray(ID3D11ShaderResourceView* arr) {}
 
 	
 private:
@@ -218,6 +220,7 @@ public:
 	ID3DX11EffectVectorVariable* FogColor;
 	ID3DX11EffectScalarVariable* FogStart;
 	ID3DX11EffectScalarVariable* FogRange;
+	
 	ID3DX11EffectVariable* DirLights;
 	
 	ID3DX11EffectScalarVariable* dirLightSize;
@@ -236,6 +239,7 @@ public:
 	ID3DX11EffectShaderResourceVariable* ShadowMap;
 	ID3DX11EffectShaderResourceVariable* SsaoMap;
 	ID3DX11EffectShaderResourceVariable* CubeMap;
+	ID3DX11EffectShaderResourceVariable* DiffuseMapArray;
 
 	// Effect을(를) 통해 상속됨
 	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW) override;
@@ -243,6 +247,7 @@ public:
 	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
 		ID3D11ShaderResourceView* normalMap,
 		ID3D11ShaderResourceView* specularMap);
+	virtual void SetMapArray(ID3D11ShaderResourceView* arr);
 
 	// Effect을(를) 통해 상속됨
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;

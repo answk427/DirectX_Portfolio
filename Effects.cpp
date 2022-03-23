@@ -148,6 +148,8 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	CubeMap           = mFX->GetVariableByName("gCubeMap")->AsShaderResource();
 	ShadowMap         = mFX->GetVariableByName("gShadowMap")->AsShaderResource();
 	SsaoMap           = mFX->GetVariableByName("gSsaoMap")->AsShaderResource();
+	DiffuseMapArray   = mFX->GetVariableByName("gDiffuseMapArray")->AsShaderResource();
+
 
 	//
 	Init(device);
@@ -201,10 +203,15 @@ void BasicEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderRes
 	//if(diffuseMap!=nullptr)
 		SetDiffuseMap(diffuseMap);
 }
+void BasicEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+	DiffuseMapArray->SetResource(arr);
+}
 ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 {
 	switch (techType)
 	{
+		
 		case TechniqueType::Light:
 			return Light3Tech;
 		case TechniqueType::Light | TechniqueType::DiffuseMap:
@@ -236,7 +243,7 @@ void BasicEffect::InitInstancingInputLayout(ID3D11Device * device)
 	//입력서명
 	Light3TexInstancingTech->GetPassByIndex(0)->GetDesc(&passDesc);
 
-	HR(device->CreateInputLayout(InputLayoutDesc::Basic32Instancing, 12, passDesc.pIAInputSignature,
+	HR(device->CreateInputLayout(InputLayoutDesc::Basic32Instancing, 13, passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize, &m_instancing_inputLayout));
 }
 
