@@ -65,9 +65,9 @@ public:
 	//텍스쳐 맵 세팅
 	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
 		ID3D11ShaderResourceView* normalMap,
-		ID3D11ShaderResourceView* specularMap) {}
+		ID3D11ShaderResourceView* specularMap) = 0;
 	//텍스쳐배열 세팅
-	virtual void SetMapArray(ID3D11ShaderResourceView* arr) {}
+	virtual void SetMapArray(ID3D11ShaderResourceView* arr) = 0;
 
 	
 private:
@@ -718,12 +718,17 @@ public:
 	virtual void InitInputLayout(ID3D11Device * device) override;
 	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
 	virtual void InitBlendState(ID3D11Device* device);
+	virtual bool IASetting(ID3D11DeviceContext* context, UINT techType);
 	virtual bool OMSetting(ID3D11DeviceContext* context, bool blending);
 	
 
 	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
 	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+
+	// Effect을(를) 통해 상속됨
+	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
+	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
 };
 
 #endif // EFFECTS_H

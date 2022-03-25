@@ -30,7 +30,6 @@ public:
 class Mesh
 {
 private:
-	vector<Subset> subsets;
 	ID3D11Buffer* mVB;
 	ID3D11Buffer* mIB;
 	ID3D11Buffer* m_InstanceBuffer;
@@ -47,16 +46,20 @@ public:
 	//버퍼초기화 함수들
 	//정점버퍼 생성
 	void InitVB(ID3D11Device* device);
-	
+	void InitIB(ID3D11Device* device);
+
 	//여러 vertex 구조체를 이용해 버퍼를 초기화하는 함수
 	template <typename vertex>
 	void InitVB(ID3D11Device* device, std::vector<vertex> vertices);
-
-	void InitIB(ID3D11Device* device);
+	
 	void InitInstanceBuffer(ID3D11Device* device, UINT bufferSize);
 	//현재 클래스의 m_instanceBufferSize 멤버변수로 버퍼사이즈 설정
 	void InitInstanceBuffer(ID3D11Device* device);
-	void InitWritableVB(ID3D11Device* device);
+
+	//여러 vertex 구조체를 이용해 쓰기가능 버퍼를 초기화하는 함수
+	template <typename vertex>
+	void InitWritableVB(ID3D11Device* device, UINT bufferSize);
+	void InitWritableIB(ID3D11Device* device, UINT bufferSize);
 
 private:
 	//ObjectLoader에서 매쉬정보들을 전달받는 함수
@@ -71,6 +74,7 @@ public:
 	//반직선 검출등에 사용할 정점과 색인		
 	vector<MyVertex::BasicVertex> vertices;
 	vector<UINT> indices;
+	vector<Subset> subsets;
 	//실제 instancingData를 담고 있는 vector
 	std::vector<InstancingData*> InstancingDatas;
 	//이번 렌더링에서 사용할 instancingData의 index.
@@ -165,12 +169,14 @@ public:
 template<typename vertex>
 inline void Mesh::InitVB(ID3D11Device * device, std::vector<vertex> vertices)
 {
+	if (vertices.empty())
+		return;
 	ReleaseCOM(mVB);
 
 	//bufferDesc 작성
 	D3D11_BUFFER_DESC desc;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	desc.ByteWidth = sizeof(vertices[0]) * vertices.size();
+	desc.ByteWidth = sizeof(vertex) * vertices.size();
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 	desc.StructureByteStride = 0; //구조적버퍼에 저장된 원소 하나의 크기, 구조적버퍼 사용할때 필요
@@ -180,6 +186,22 @@ inline void Mesh::InitVB(ID3D11Device * device, std::vector<vertex> vertices)
 	subRes.pSysMem = &vertices[0];
 
 	HR(device->CreateBuffer(&desc, &subRes, &mVB));
+
+	vertexBufferCount++;
+}
+
+template<typename vertex>
+inline void Mesh::InitWritableVB(ID3D11Device * device, UINT bufferSize)
+{
+	ReleaseCOM(mVB);
+
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_DYNAMIC;
+	vbd.ByteWidth = sizeof(vertex) * bufferSize;
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	vbd.MiscFlags = 0;
+	HR(device->CreateBuffer(&vbd, 0, &mVB));
 
 	vertexBufferCount++;
 }

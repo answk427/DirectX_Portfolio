@@ -30,12 +30,14 @@ bool BoundingBoxRenderer::SetObject(GameObject * gameObj)
 		vector<UINT> indices(idx, idx + 24);
 
 		mesh->Init(AABBtoVertices(m_meshOfCurrentObj->GetAABB()), indices);
-		mesh->InitWritableVB(m_device);
+		mesh->InitWritableVB<MyVertex::BasicVertex>(m_device, mesh->vertices.size());
 		mesh->InitIB(m_device);
 	}
 	
 	m_obj = gameObj;
 	SetTransform(&gameObj->transform);
+
+	VertexUpdate();
 
 	return true;
 }
@@ -151,15 +153,14 @@ BoundingBoxRenderer::~BoundingBoxRenderer()
 	mesh = nullptr;
 }
 
-void BoundingBoxRenderer::Update()
+void BoundingBoxRenderer::VertexUpdate()
 {
-	
 	if (m_obj == nullptr || m_meshOfCurrentObj == nullptr)
 		return;
 
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_context->Map(mesh->GetVB(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
-	
+
 
 	MyVertex::BasicVertex* v = reinterpret_cast<MyVertex::BasicVertex*>(mappedData.pData);
 	std::vector<MyVertex::BasicVertex> tempVertices = AABBtoVertices(m_meshOfCurrentObj->GetAABB());

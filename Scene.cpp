@@ -30,6 +30,7 @@
 #include "BoundingBoxRenderer.h"
 #include "Culling.h"
 #include "RayPicking.h"
+#include "TreeBillBoardRenderer.h"
 
 
 
@@ -54,6 +55,7 @@ private://엔진기능
 	HierarchyDialog* m_HierarchyDialog;
 	AssimpLoader objLoader;
 	BoundingBoxRenderer* m_boundingBoxRenderer;
+	TreeBillBoardRenderer* m_treeBillBoardRenderer;
 
 private:
 	DataManager& dataMgr;
@@ -109,7 +111,7 @@ Scene::Scene(HINSTANCE hInstance)
 	m_HierarchyDialog(new HierarchyDialog(hInstance)),
 	texMgr(TextureMgr::Instance()), effectMgr(EffectMgr::Instance()),
 	dataMgr(DataManager::Instance()), objectMgr(ObjectMgr::Instance())
-	, m_boundingBoxRenderer(0)
+	, m_boundingBoxRenderer(0), m_treeBillBoardRenderer(0)
 {
 	objectMgr.Init(&meshMgr, &componentMgr);
 	mMainWndCaption = L"Crate Demo";
@@ -136,10 +138,9 @@ bool Scene::Init()
 	effectMgr.Init(md3dDevice);
 	dataMgr.Init();
 	m_boundingBoxRenderer = new BoundingBoxRenderer(md3dDevice, md3dImmediateContext);
-
+	m_treeBillBoardRenderer = new TreeBillBoardRenderer();
+	
 	//카메라 초기화
-
-
 	camera.SetPosition({ 0.0f, 0.0f, -70.0f });
 	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
 	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f });
@@ -156,8 +157,7 @@ bool Scene::Init()
 	//Hierarchy 초기화
 	m_HierarchyDialog->Init(mhMainWnd, m_boundingBoxRenderer);
 	m_HierarchyDialog->OpenDialog(mhMainWnd);
-
-
+	
 	/*Lighting* l = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
 	XMFLOAT4 a(0.5f, 0.5f, 0.5f, 1.0f);
 	XMFLOAT3 b(1.0f, 1.0f, 1.0f);
@@ -233,8 +233,7 @@ void Scene::UpdateScene(float dt)
 	componentMgr.Update();
 	//엔진 UI 업데이트
 	m_HierarchyDialog->Update();
-	//현재 선택된 object의 boundingBox 업데이트
-	m_boundingBoxRenderer->Update();
+	
 
 	//절두체 선별
 	//현재 렌더링목록들을 가져온다.
@@ -263,6 +262,8 @@ void Scene::DrawScene()
 	//Rendering
 	//바운딩박스 렌더링
 	m_boundingBoxRenderer->Draw(md3dImmediateContext, &camera);
+	//treeBillBoard 렌더링
+	m_treeBillBoardRenderer->Draw(md3dImmediateContext, &camera);
 	componentMgr.Render(md3dImmediateContext, &camera);
 
 	

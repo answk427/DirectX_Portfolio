@@ -8,7 +8,7 @@ class BoundingBoxRenderer : public Renderer
 public:
 	BoundingBoxRenderer(ID3D11Device* device, ID3D11DeviceContext* context);
 	~BoundingBoxRenderer();
-	virtual void Update();
+	void VertexUpdate();
 	
 private:
 	ID3D11Device* m_device;

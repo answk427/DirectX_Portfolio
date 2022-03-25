@@ -66,7 +66,7 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
 	if (!GetInstancing())
-		mesh->SetVB(context);
+		SetVB(context);
 	else
 	{
 		//이미 렌더링을 했거나, 그릴 오브젝트들이 없는 경우 리턴

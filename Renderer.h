@@ -71,6 +71,9 @@ public:
 
 	//렌더링 시 호출되는 함수
 	virtual void Draw(ID3D11DeviceContext* context, Camera* camera);
+
+	//버퍼 세팅
+	virtual void SetVB(ID3D11DeviceContext* context) { mesh->SetVB(context); }
 	
 public:
 	Renderer(const std::string& id, ComponentType type);
@@ -82,7 +85,7 @@ public:
 	void MapsInit();
 
 	void InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath);
-	void InitDiffuseMaps();
+	virtual void InitDiffuseMaps();
 	//idx번째 메테리얼의 Map을 수정하는 함수
 	void ModifyDiffuseMap(int materialIdx, const std::wstring& mapName, UINT mapType);
 

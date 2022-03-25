@@ -5,7 +5,8 @@
 
 enum EffectType
 {
-	BasicEffectType
+	BasicEffectType,
+	BillBoardEffectType
 };
 
 class EffectMgr

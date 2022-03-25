@@ -232,7 +232,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TreeBillBoardRenderer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>New Header Files\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

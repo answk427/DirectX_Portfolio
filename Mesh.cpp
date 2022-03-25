@@ -1,6 +1,8 @@
 #include "Mesh.h"
 
 
+
+
 void Mesh::SetVertices(vector<MyVertex::BasicVertex>& vertexSrc)
 {
 	//vertices를 빈 벡터로 만듬
@@ -80,7 +82,6 @@ void Mesh::SetInstanceVB(ID3D11DeviceContext * context)
 void Mesh::SetIB(ID3D11DeviceContext * context)
 {
 	context->IASetIndexBuffer(mIB, DXGI_FORMAT_R32_UINT, 0);
-	
 }
 
 void Mesh::SetAABB_MaxMin(XMFLOAT3 & maxV, XMFLOAT3 & minV)
@@ -250,6 +251,8 @@ void Mesh::InitVB(ID3D11Device * device)
 //인덱스버퍼 생성
 void Mesh::InitIB(ID3D11Device * device)
 {
+	if (indices.empty())
+		return;
 	ReleaseCOM(mIB);
 
 	//bufferDesc 작성
@@ -260,6 +263,25 @@ void Mesh::InitIB(ID3D11Device * device)
 	desc.MiscFlags = 0;
 	desc.StructureByteStride = 0; //구조적버퍼에 저장된 원소 하나의 크기, 구조적버퍼 사용할때 필요
 	desc.Usage = D3D11_USAGE_IMMUTABLE;
+
+	D3D11_SUBRESOURCE_DATA subRes;
+	subRes.pSysMem = &indices[0];
+
+	HR(device->CreateBuffer(&desc, &subRes, &mIB));
+}
+
+void Mesh::InitWritableIB(ID3D11Device * device, UINT bufferSize)
+{
+	ReleaseCOM(mIB);
+
+	//bufferDesc 작성
+	D3D11_BUFFER_DESC desc;
+	desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	desc.ByteWidth = sizeof(UINT) * bufferSize;
+	desc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	desc.MiscFlags = 0;
+	desc.StructureByteStride = 0; //구조적버퍼에 저장된 원소 하나의 크기, 구조적버퍼 사용할때 필요
+	desc.Usage = D3D11_USAGE_DYNAMIC;
 
 	D3D11_SUBRESOURCE_DATA subRes;
 	subRes.pSysMem = &indices[0];
@@ -302,18 +324,4 @@ void Mesh::InitInstanceBuffer(ID3D11Device * device)
 	HR(device->CreateBuffer(&desc, 0, &m_InstanceBuffer));
 }
 
-void Mesh::InitWritableVB(ID3D11Device * device)
-{
-	ReleaseCOM(mVB);
 
-
-	D3D11_BUFFER_DESC vbd;
-	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = sizeof(vertices[0]) * vertices.size();
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	vbd.MiscFlags = 0;
-	HR(device->CreateBuffer(&vbd, 0, &mVB));
-
-	vertexBufferCount++;
-}

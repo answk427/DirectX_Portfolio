@@ -56,6 +56,10 @@ Effect * EffectMgr::CreateEffect(const std::wstring& shaderName, EffectType type
 			effect = new BasicEffect(device, shaderName);
 			myEffect[shaderName] = effect;
 			break;
+		case EffectType::BillBoardEffectType:
+			effect = new TreebilboardEffect(device, shaderName);
+			myEffect[shaderName] = effect;
+			break;
 	}
 
 	return effect;
