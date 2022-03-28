@@ -188,6 +188,9 @@ void MeshRendererDialog::Init(HWND hDlg)
 	HWND h_instancingCheck = GetDlgItem(m_hDlg, INSTANCINGCHECK);
 	Button_SetCheck(h_instancingCheck, m_MeshRenderer->GetInstancing());
 
+	//Static 체크박스 설정
+	HWND h_staticCheck = GetDlgItem(m_hDlg, STATICCHECK);
+	Button_SetCheck(h_staticCheck, m_MeshRenderer->GetStaticObject());
 }
 
 
@@ -379,6 +382,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 				m_MeshRenderer->SetBlending(false);
 			break;
 		}
+		break;
 	case INSTANCINGCHECK:
 		//Instancing check박스 체크
 		switch (Button_GetCheck(GetDlgItem(m_hDlg, INSTANCINGCHECK)))
@@ -392,7 +396,20 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 					m_MeshRenderer->SetInstancing(false);
 				break;
 		}
-		
+		break;
+	case STATICCHECK:
+		//static check박스 체크
+		switch (Button_GetCheck(GetDlgItem(m_hDlg, STATICCHECK)))
+		{
+		case BST_CHECKED:
+			if (m_MeshRenderer != nullptr)
+				CommandQueue::AddCommand(new OctreeAddObject(m_MeshRenderer));
+			break;
+		case BST_UNCHECKED:
+			if (m_MeshRenderer != nullptr)
+				CommandQueue::AddCommand(new OctreePopObject(m_MeshRenderer));
+			break;
+		}
 		break;
 	}
 

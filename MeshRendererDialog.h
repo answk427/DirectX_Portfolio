@@ -13,6 +13,7 @@
 #include "Renderer.h"
 
 #include "MeshRendererCommand.h"
+#include "OctreeCommand.h"
 
 
 #define TAB_MESHRENDERER IDD_DIALOG4
@@ -50,6 +51,7 @@
 
 #define BLENDINGCHECK IDC_CHECK1
 #define INSTANCINGCHECK IDC_CHECK2
+#define STATICCHECK IDC_CHECK3
 
 
 

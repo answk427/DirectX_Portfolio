@@ -126,10 +126,13 @@
     <ClCompile Include="MyCommand.cpp" />
     <ClCompile Include="ObjectCommand.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
+    <ClCompile Include="Octree.cpp" />
+    <ClCompile Include="OctreeCommand.cpp" />
     <ClCompile Include="RayPicking.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
+    <ClCompile Include="SimpleLineRenderer.cpp" />
     <ClCompile Include="SkinnedData.cpp" />
     <ClCompile Include="SkinnedModel.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -191,12 +194,15 @@
     <ClInclude Include="MsgProcedure.h" />
     <ClInclude Include="ObjectCommand.h" />
     <ClInclude Include="ObjectMgr.h" />
+    <ClInclude Include="Octree.h" />
+    <ClInclude Include="OctreeCommand.h" />
     <ClInclude Include="RayPicking.h" />
     <ClInclude Include="ReaderWriterConstant.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShadowMap.h" />
+    <ClInclude Include="SimpleLineRenderer.h" />
     <ClInclude Include="SkinnedData.h" />
     <ClInclude Include="SkinnedModel.h" />
     <ClInclude Include="Sky.h" />
@@ -307,6 +313,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </FxCompile>
     <CustomBuild Include="FX\TreeSprite.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /Fc /Od /Zi /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="FX\SimpleLine.fx">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /Fc /Od /Zi /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>

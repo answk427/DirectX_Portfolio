@@ -731,4 +731,41 @@ public:
 	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
 };
 
+class SimpleLineEffect : public Effect
+{
+public:
+	SimpleLineEffect(ID3D11Device* device, const std::wstring& filename);
+public:
+	ID3DX11EffectTechnique* Light1Tech;
+	ID3DX11EffectMatrixVariable* ViewProj;	
+	ID3DX11EffectMatrixVariable* World;
+	ID3DX11EffectVectorVariable* EyePosW;
+	ID3DX11EffectVariable* DirLights;
+public:
+	// Effect을(를) 통해 상속됨
+	virtual void InitInputLayout(ID3D11Device * device) override;
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
+	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
+
+public:
+	
+	void SetDirLights(const DirectionalLight* lights)
+	{
+		if (lights == nullptr)
+		{
+			return;
+		}
+		DirLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::DIRECTIONAL] * sizeof(DirectionalLight));
+		
+	}
+	void SetEyePosW(const XMFLOAT3& v) { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }
+	void SetWorld(CXMMATRIX M) { World->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetViewProj(CXMMATRIX M) { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+};
 #endif // EFFECTS_H

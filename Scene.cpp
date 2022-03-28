@@ -31,7 +31,9 @@
 #include "Culling.h"
 #include "RayPicking.h"
 #include "TreeBillBoardRenderer.h"
-
+#include "Octree.h"
+#include "SimpleLineRenderer.h"
+#include <random>
 
 
 class Scene : public D3DApp
@@ -55,8 +57,12 @@ private://엔진기능
 	HierarchyDialog* m_HierarchyDialog;
 	AssimpLoader objLoader;
 	BoundingBoxRenderer* m_boundingBoxRenderer;
+	SimpleLineRenderer* m_OctreeRenderer;
 	TreeBillBoardRenderer* m_treeBillBoardRenderer;
-
+	Frustum* m_Frustum;
+	Octree* m_Octree;
+	std::vector<unique_ptr<Renderer>> boxes;
+	
 private:
 	DataManager& dataMgr;
 	TextureMgr& texMgr;
@@ -96,7 +102,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	Scene theApp(hInstance);
 
 	if (!theApp.Init())
-		return 0;
+		return 0;	
 
 	return theApp.Run();
 }
@@ -131,19 +137,28 @@ bool Scene::Init()
 {
 	if (!D3DApp::Init())
 		return false;
+		
 
 	//test
 	meshMgr.Init(md3dDevice);
 	texMgr.Init(md3dDevice, md3dImmediateContext);
 	effectMgr.Init(md3dDevice);
 	dataMgr.Init();
+	
+	//renderer 메모리할당
 	m_boundingBoxRenderer = new BoundingBoxRenderer(md3dDevice, md3dImmediateContext);
+	m_OctreeRenderer = new SimpleLineRenderer(md3dDevice, md3dImmediateContext);
 	m_treeBillBoardRenderer = new TreeBillBoardRenderer();
 	
 	//카메라 초기화
 	camera.SetPosition({ 0.0f, 0.0f, -70.0f });
-	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
+	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 2000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
 	camera.LookAt(camera.GetPosition(), { 0.0f,0.0f,0.0f }, { 0.0f,1.0f,0.0f });
+
+	//Frustum Class 생성
+	m_Frustum = new Frustum(&camera);
+	m_Octree = new Octree(m_Frustum, m_OctreeRenderer);
+	OctreeCommand::Init(m_Octree);
 
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	//Effects::InitAll(md3dDevice);
@@ -186,6 +201,38 @@ bool Scene::Init()
 
 	SetFocus(mhMainWnd);
 
+	//test
+	// 시드값을 얻기 위한 random_device 생성.
+	std::random_device rd;
+
+	// random_device 를 통해 난수 생성 엔진을 초기화 한다.
+	std::mt19937 gen(rd());
+
+	// 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
+	std::uniform_int_distribution<int> dis(-100, 100);
+		
+	GeometryGenerator geo;
+	for (int i = 0; i < 10; ++i)
+	{
+		for (int j = 0; j < 10; ++j)
+		{
+			for (int k = 0; k < 10; ++k)
+			{
+				Mesh* mesh = new Mesh();
+				geo.CreateBox(2, 2, 2, *mesh);
+				mesh->InitVB(md3dDevice);
+				mesh->InitIB(md3dDevice);
+				Transform* tr = new Transform(nullptr);
+				tr->SetPosition(i * dis(gen), j * dis(gen), k * dis(gen));
+				tr->UpdateWorld();
+				unique_ptr<Renderer> box = make_unique<Renderer>("tempId", ComponentType::MESHRENDERER, mesh);
+				box->SetTransform(tr);
+				boxes.push_back(std::move(box));
+				CommandQueue::AddCommand(new OctreeAddObject(boxes.back().get()));
+			}
+		}
+	}
+
 
 	return true;
 }
@@ -209,18 +256,18 @@ void Scene::UpdateScene(float dt)
 	//
 
 
-
+	//원래 10이었음
 	if (GetAsyncKeyState('W') & 0x8000)
-		camera.Walk(10.0f*dt);
+		camera.Walk(50.0f*dt);
 
 	if (GetAsyncKeyState('S') & 0x8000)
-		camera.Walk(-10.0f*dt);
+		camera.Walk(-50.0f*dt);
 
 	if (GetAsyncKeyState('A') & 0x8000)
-		camera.Strafe(-10.0f*dt);
+		camera.Strafe(-50.0f*dt);
 
 	if (GetAsyncKeyState('D') & 0x8000)
-		camera.Strafe(10.0f*dt);
+		camera.Strafe(50.0f*dt);
 
 	//// Convert Spherical to Cartesian coordinates.
 	//float x = mRadius * sinf(mPhi)*cosf(mTheta);
@@ -233,6 +280,9 @@ void Scene::UpdateScene(float dt)
 	componentMgr.Update();
 	//엔진 UI 업데이트
 	m_HierarchyDialog->Update();
+	//카메라 위치에 따른 Frustum 업데이트
+	camera.UpdateViewMatrix();
+	m_Frustum->Update();
 	
 
 	//절두체 선별
@@ -253,6 +303,8 @@ void Scene::UpdateScene(float dt)
 
 void Scene::DrawScene()
 {
+	
+
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -260,18 +312,25 @@ void Scene::DrawScene()
 	effectMgr.SetPerFrame(componentMgr.getLightings(), camera.GetPosition());
 
 	//Rendering
+	
 	//바운딩박스 렌더링
 	m_boundingBoxRenderer->Draw(md3dImmediateContext, &camera);
+	//Octree 렌더링
+	m_OctreeRenderer->Draw(md3dImmediateContext, &camera);
 	//treeBillBoard 렌더링
 	m_treeBillBoardRenderer->Draw(md3dImmediateContext, &camera);
-	componentMgr.Render(md3dImmediateContext, &camera);
+	//componentMgr.Render(md3dImmediateContext, &camera);
+	/*for (auto& elem : boxes)
+	{
+		(*elem).Draw(md3dImmediateContext, &camera);
+	}*/
+	m_Octree->Render(md3dImmediateContext);
 
 	
 
 	HR(mSwapChain->Present(0, 0));
 
-	camera.UpdateViewMatrix();
-
+	
 }
 
 void Scene::OnMouseDown(WPARAM btnState, int x, int y)

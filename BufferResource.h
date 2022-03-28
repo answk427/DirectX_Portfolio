@@ -3,6 +3,13 @@
 
 namespace MyVertex
 {
+	struct PosColorVertex
+	{
+		PosColorVertex(float x, float y, float z) : pos(x, y, z), color(0.0f, 1.0f, 0.0f, 1.0f) {}
+		XMFLOAT3 pos;
+		XMFLOAT4 color;
+	};
+
 	//공통으로 사용되는 정점구조체
 	struct BasicVertex
 	{

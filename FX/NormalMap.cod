@@ -315,11 +315,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -335,7 +335,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -350,13 +350,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -385,7 +385,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -721,11 +721,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -741,7 +741,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -756,13 +756,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -791,7 +791,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -1178,11 +1178,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -1198,7 +1198,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -1213,13 +1213,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -1248,7 +1248,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -1909,11 +1909,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -1929,7 +1929,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -1944,13 +1944,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -1979,7 +1979,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -2320,11 +2320,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -2340,7 +2340,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -2355,13 +2355,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -2390,7 +2390,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -2782,11 +2782,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -2802,7 +2802,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -2817,13 +2817,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -2852,7 +2852,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -3525,11 +3525,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -3545,7 +3545,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -3560,13 +3560,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -3595,7 +3595,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -3942,11 +3942,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -3962,7 +3962,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -3977,13 +3977,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -4012,7 +4012,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -4410,11 +4410,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -4430,7 +4430,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -4445,13 +4445,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -4480,7 +4480,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -4918,11 +4918,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -4938,7 +4938,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -4953,13 +4953,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -4988,7 +4988,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -5337,11 +5337,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -5357,7 +5357,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -5372,13 +5372,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -5407,7 +5407,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -5807,11 +5807,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -5827,7 +5827,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -5842,13 +5842,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -5877,7 +5877,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -6595,11 +6595,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -6615,7 +6615,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -6630,13 +6630,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -6665,7 +6665,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -7019,11 +7019,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -7039,7 +7039,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -7054,13 +7054,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -7089,7 +7089,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -7494,11 +7494,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -7514,7 +7514,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -7529,13 +7529,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -7564,7 +7564,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -8294,11 +8294,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -8314,7 +8314,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -8329,13 +8329,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -8364,7 +8364,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -8724,11 +8724,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -8744,7 +8744,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -8759,13 +8759,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -8794,7 +8794,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -9205,11 +9205,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -9225,7 +9225,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -9240,13 +9240,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -9275,7 +9275,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -9728,11 +9728,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -9748,7 +9748,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -9763,13 +9763,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -9798,7 +9798,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -10148,11 +10148,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -10168,7 +10168,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -10183,13 +10183,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -10218,7 +10218,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -10619,11 +10619,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -10639,7 +10639,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -10654,13 +10654,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -10689,7 +10689,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -11364,11 +11364,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -11384,7 +11384,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -11399,13 +11399,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -11434,7 +11434,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -11789,11 +11789,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -11809,7 +11809,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -11824,13 +11824,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -11859,7 +11859,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -12265,11 +12265,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -12285,7 +12285,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -12300,13 +12300,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -12335,7 +12335,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -13022,11 +13022,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -13042,7 +13042,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -13057,13 +13057,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -13092,7 +13092,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -13453,11 +13453,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -13473,7 +13473,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -13488,13 +13488,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -13523,7 +13523,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -13935,11 +13935,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -13955,7 +13955,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -13970,13 +13970,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -14005,7 +14005,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -14457,11 +14457,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -14477,7 +14477,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -14492,13 +14492,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -14527,7 +14527,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -14890,11 +14890,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -14910,7 +14910,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -14925,13 +14925,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -14960,7 +14960,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -15374,11 +15374,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -15394,7 +15394,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -15409,13 +15409,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -15444,7 +15444,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -16176,11 +16176,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -16196,7 +16196,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -16211,13 +16211,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -16246,7 +16246,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -16614,11 +16614,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -16634,7 +16634,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -16649,13 +16649,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -16684,7 +16684,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -17103,11 +17103,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -17123,7 +17123,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -17138,13 +17138,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -17173,7 +17173,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -17917,11 +17917,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -17937,7 +17937,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -17952,13 +17952,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -17987,7 +17987,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -18361,11 +18361,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -18381,7 +18381,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -18396,13 +18396,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -18431,7 +18431,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -18856,11 +18856,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -18876,7 +18876,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -18891,13 +18891,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -18926,7 +18926,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -19456,11 +19456,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -19476,7 +19476,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -19491,13 +19491,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -19526,7 +19526,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -19929,11 +19929,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -19949,7 +19949,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -19964,13 +19964,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -19999,7 +19999,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -20453,11 +20453,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -20473,7 +20473,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -20488,13 +20488,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -20523,7 +20523,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -21318,11 +21318,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -21338,7 +21338,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -21353,13 +21353,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -21388,7 +21388,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -21796,11 +21796,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -21816,7 +21816,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -21831,13 +21831,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -21866,7 +21866,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -22325,11 +22325,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -22345,7 +22345,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -22360,13 +22360,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -22395,7 +22395,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -23202,11 +23202,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -23222,7 +23222,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -23237,13 +23237,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -23272,7 +23272,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -23686,11 +23686,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -23706,7 +23706,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -23721,13 +23721,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -23756,7 +23756,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -24221,11 +24221,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -24241,7 +24241,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -24256,13 +24256,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -24291,7 +24291,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -24796,11 +24796,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -24816,7 +24816,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -24831,13 +24831,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -24866,7 +24866,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -25282,11 +25282,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -25302,7 +25302,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -25317,13 +25317,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -25352,7 +25352,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -25819,11 +25819,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -25839,7 +25839,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -25854,13 +25854,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -25889,7 +25889,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -26741,11 +26741,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -26761,7 +26761,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -26776,13 +26776,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -26811,7 +26811,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -27232,11 +27232,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -27252,7 +27252,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -27267,13 +27267,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -27302,7 +27302,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -27774,11 +27774,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -27794,7 +27794,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -27809,13 +27809,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -27844,7 +27844,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -28708,11 +28708,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -28728,7 +28728,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -28743,13 +28743,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -28778,7 +28778,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -29205,11 +29205,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -29225,7 +29225,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -29240,13 +29240,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -29275,7 +29275,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -29753,11 +29753,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -29773,7 +29773,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -29788,13 +29788,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -29823,7 +29823,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -30343,11 +30343,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -30363,7 +30363,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -30378,13 +30378,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -30413,7 +30413,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -30830,11 +30830,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -30850,7 +30850,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -30865,13 +30865,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -30900,7 +30900,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -31368,11 +31368,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r0.wwww
@@ -31388,7 +31388,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -31403,13 +31403,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -31438,7 +31438,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -32247,11 +32247,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -32267,7 +32267,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -32282,13 +32282,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -32317,7 +32317,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -32739,11 +32739,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -32759,7 +32759,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -32774,13 +32774,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -32809,7 +32809,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -33282,11 +33282,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -33302,7 +33302,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -33317,13 +33317,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -33352,7 +33352,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -34173,11 +34173,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -34193,7 +34193,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -34208,13 +34208,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -34243,7 +34243,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -34671,11 +34671,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -34691,7 +34691,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -34706,13 +34706,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -34741,7 +34741,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -35220,11 +35220,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r0.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r0.wwww
@@ -35240,7 +35240,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -35255,13 +35255,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r0.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -35290,7 +35290,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r0.w, r0.w, r1.x  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r0.w, r0.w, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -35809,11 +35809,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -35829,7 +35829,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -35844,13 +35844,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -35879,7 +35879,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -36309,11 +36309,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -36329,7 +36329,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -36344,13 +36344,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -36379,7 +36379,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -36860,11 +36860,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r4.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r3.xyz, r3.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r4.zxyz, r1.xyzx
                 mul r5.xyz, r1.yzxy, r1.wwww
@@ -36880,7 +36880,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r6.xyzx
                 mul r1.xyz, r1.xyzx, r4.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r4.xyz, r3.xxxx, r4.xyzx
                 mul r1.xyz, r1.xyzx, r3.yyyy
                 add r1.xyz, r1.xyzx, r4.xyzx
@@ -36895,13 +36895,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r3.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r3.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -36930,7 +36930,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -37796,11 +37796,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -37816,7 +37816,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -37831,13 +37831,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -37866,7 +37866,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -38301,11 +38301,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -38321,7 +38321,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -38336,13 +38336,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -38371,7 +38371,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -38857,11 +38857,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -38877,7 +38877,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -38892,13 +38892,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -38927,7 +38927,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -39805,11 +39805,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -39825,7 +39825,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -39840,13 +39840,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -39875,7 +39875,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -40316,11 +40316,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -40336,7 +40336,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -40351,13 +40351,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -40386,7 +40386,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"
@@ -40878,11 +40878,11 @@ fxgroup
                 mov r1.xyz, r1.xyzx  // unitNormalW<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 mov r5.xyzw, v3.xyzw  // tangentW<0,1,2,3>
                 
-                #line 217 "LightHelper.fx"
+                #line 214 "LightHelper.fx"
                 mul r4.xyz, r4.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
                 add r4.xyz, r4.xyzx, l(-1.000000, -1.000000, -1.000000, 0.000000)  // normalT<0:Inf,1:Inf,2:Inf>
                 
-                #line 220
+                #line 217
                 mov r1.xyz, r1.xyzx  // N<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 dp3 r1.w, r5.zxyz, r1.xyzx
                 mul r6.xyz, r1.yzxy, r1.wwww
@@ -40898,7 +40898,7 @@ fxgroup
                 add r1.xyz, r1.xyzx, r7.xyzx
                 mul r1.xyz, r1.xyzx, r5.wwww  // B<0:NaN:Inf,1:NaN:Inf,2:NaN:Inf>
                 
-                #line 227
+                #line 224
                 mul r5.xyz, r4.xxxx, r5.xyzx
                 mul r1.xyz, r1.xyzx, r4.yyyy
                 add r1.xyz, r1.xyzx, r5.xyzx
@@ -40913,13 +40913,13 @@ fxgroup
                 nop 
                 mov r1.xyzw, v5.xyzw  // shadowPosH<0,1,2,3>
                 
-                #line 244 "LightHelper.fx"
+                #line 241 "LightHelper.fx"
                 div r1.xyz, r1.zxyz, r1.wwww  // shadowPosH<2:NaN:Inf,0:NaN:Inf,1:NaN:Inf>
                 
-                #line 247
+                #line 244
                 mov r1.x, r1.x  // depth<0:NaN:Inf>
                 
-                #line 264
+                #line 261
                 add r4.xy, r1.yzyy, l(-0.000488, -0.000488, 0.000000, 0.000000)
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.w, r4.xyxx, t0.xxxx, s1, r1.x
                 add r1.w, r1.w, l(0.000000)  // percentLit<0:[0f,1f]>
@@ -40948,7 +40948,7 @@ fxgroup
                 sample_c_lz_indexable(texture2d)(float,float,float,float) r1.x, r1.yzyy, t0.xxxx, s1, r1.x
                 add r1.x, r1.x, r1.w  // percentLit<0:[0f,9f]>
                 
-                #line 267
+                #line 264
                 div r1.x, r1.x, l(9.000000)  // percentLit<0:[0f,1f]>
                 
                 #line 215 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\NormalMap.fx"

@@ -755,3 +755,57 @@ void TreebilboardEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 		return;
 	SetTreeTextureMapArray(arr);
 }
+
+SimpleLineEffect::SimpleLineEffect(ID3D11Device * device, const std::wstring & filename)
+	: Effect(device, filename)
+{
+	Light1Tech = mFX->GetTechniqueByName("Light1");
+
+	ViewProj = mFX->GetVariableByName("gViewProj")->AsMatrix();
+	World = mFX->GetVariableByName("gWorld")->AsMatrix();
+	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
+
+	Init(device);
+}
+
+void SimpleLineEffect::InitInputLayout(ID3D11Device * device)
+{
+	ReleaseCOM(m_inputLayout);
+	D3DX11_PASS_DESC passDesc;
+
+	Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::PosColor, 2, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_inputLayout));
+}
+
+void SimpleLineEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+}
+
+void SimpleLineEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
+{
+	//쉐이더에 조명설정
+	SetDirLights(directL);
+	SetEyePosW(eyePosW);
+}
+
+void SimpleLineEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
+{
+	SetWorld(world);
+	//인스턴스의 세계행렬과 곱해질 시야투영행렬
+	SetViewProj(camera->ViewProj());
+		
+}
+
+ID3DX11EffectTechnique * SimpleLineEffect::GetTechnique(UINT techType)
+{
+	return Light1Tech;
+}
+
+void SimpleLineEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+}
+
+void SimpleLineEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+}

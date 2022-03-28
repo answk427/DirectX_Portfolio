@@ -29,8 +29,8 @@ bool BoundingBoxRenderer::SetObject(GameObject * gameObj)
 
 		vector<UINT> indices(idx, idx + 24);
 
-		mesh->Init(AABBtoVertices(m_meshOfCurrentObj->GetAABB()), indices);
-		mesh->InitWritableVB<MyVertex::BasicVertex>(m_device, mesh->vertices.size());
+		mesh->Init(std::vector<MyVertex::BasicVertex>(), indices);
+		mesh->InitWritableVB<MyVertex::PosColorVertex>(m_device, 8);
 		mesh->InitIB(m_device);
 	}
 	
@@ -42,11 +42,11 @@ bool BoundingBoxRenderer::SetObject(GameObject * gameObj)
 	return true;
 }
 
-vector<MyVertex::BasicVertex> BoundingBoxRenderer::AABBtoVertices(XNA::AxisAlignedBox aabb)
+vector<MyVertex::PosColorVertex> BoundingBoxRenderer::AABBtoVertices(XNA::AxisAlignedBox aabb)
 {
 	int multiply[2] = { 1,-1 };
-	vector<MyVertex::BasicVertex> vertices;
-
+	vector<MyVertex::PosColorVertex> vertices;
+	
 	//aabb로부터 정점들의 위치를 구함.
 	for (int i = 0; i < 2; i++)
 	{
@@ -67,7 +67,6 @@ vector<MyVertex::BasicVertex> BoundingBoxRenderer::AABBtoVertices(XNA::AxisAlign
 			}
 		}
 	}
-
 	return vertices;
 }
 
@@ -87,7 +86,7 @@ void BoundingBoxRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
 
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
-	mesh->SetVB(context);
+	SetVB(context);
 	mesh->SetIB(context);
 
 	int subsetLength = mesh->GetSubsetLength();
@@ -128,10 +127,17 @@ void BoundingBoxRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		}
 	}
 }
+void BoundingBoxRenderer::SetVB(ID3D11DeviceContext * context)
+{
+	UINT stride[1] = { sizeof(MyVertex::PosColorVertex) };
+	UINT offset[1] = { 0 };
+	ID3D11Buffer* vb = mesh->GetVB();
+	context->IASetVertexBuffers(0, 1, &vb, stride, offset);
+}
 void BoundingBoxRenderer::InitEffects()
 {
 	effects.clear();
-	Effect* effect = m_effectMgr.GetEffect(L"FX/Basic.fxo");
+	Effect* effect = new SimpleLineEffect(TextureMgr::Instance().md3dDevice, L"FX/SimpleLine.fxo");
 	effects.push_back(effect);
 }
 
@@ -143,7 +149,6 @@ BoundingBoxRenderer::BoundingBoxRenderer(ID3D11Device * device, ID3D11DeviceCont
 	std::vector<GeneralMaterial> tempMaterials(1);
 	SetMaterials(tempMaterials);
 	InitEffects();
-	
 }
 
 BoundingBoxRenderer::~BoundingBoxRenderer()
@@ -162,8 +167,8 @@ void BoundingBoxRenderer::VertexUpdate()
 	HR(m_context->Map(mesh->GetVB(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 
 
-	MyVertex::BasicVertex* v = reinterpret_cast<MyVertex::BasicVertex*>(mappedData.pData);
-	std::vector<MyVertex::BasicVertex> tempVertices = AABBtoVertices(m_meshOfCurrentObj->GetAABB());
+	MyVertex::PosColorVertex* v = reinterpret_cast<MyVertex::PosColorVertex*>(mappedData.pData);
+	std::vector<MyVertex::PosColorVertex> tempVertices = AABBtoVertices(m_meshOfCurrentObj->GetAABB());
 
 	for (UINT i = 0; i < tempVertices.size(); ++i)
 	{

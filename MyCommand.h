@@ -26,7 +26,7 @@ public:
 	static void Undo();
 	static void AllExecute();
 private:
-	static const int QUEUE_SIZE = 1000;
+	static const int QUEUE_SIZE = 2000;
 	static MyCommand* queue[QUEUE_SIZE];
 	static int head; //현재 실행해야 할 명령 위치
 	static int tail; //새로운 명령이 추가될 위치

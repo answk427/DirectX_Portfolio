@@ -104,6 +104,7 @@ public:
 	void SetAABB_MaxMin(XMFLOAT3& maxV, XMFLOAT3& minV);
 	AABB_MaxMin& GetAABB_MaxMin() { return m_Aabb_MaxMin; }
 	XNA::AxisAlignedBox& GetAABB() { return m_AABB; }
+	const XNA::AxisAlignedBox& GetAABB() const { return m_AABB; }
 
 	//instancing 관련 함수
 	void SetInstanceBufferSize(UINT n) 

@@ -140,9 +140,18 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 
 Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,type)
 , m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f,1.0f,1.0f,1.0f),
-mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0) 
+mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 })
 {
-	
+	InitEffects();
+}
+
+Renderer::Renderer(const std::string & id, ComponentType type, Mesh * mesh) : Component(id, type)
+, m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f, 1.0f, 1.0f, 1.0f),
+mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 })
+{
+	SetMesh(mesh);
+	SetMaterials(std::vector<GeneralMaterial>(1));
+	InitEffects();
 }
 
 Renderer::~Renderer()
@@ -230,7 +239,8 @@ void Renderer::InitEffects()
 	for (auto& elem : materials)
 	{
 		//Effect* effect = effectMgr.GetEffect(shaderPath + elem.ShaderName);
-		Effect* effect = m_effectMgr.GetEffect(elem.ShaderName);
+		//Effect* effect = m_effectMgr.GetEffect(elem.ShaderName);
+		Effect* effect = m_effectMgr.GetEffect(L"FX/Basic.fxo");
 		effects.push_back(effect);
 	}
 }

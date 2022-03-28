@@ -15,4 +15,5 @@ public:
 	//반직선교차 판정 후, 가장 가까운 물체를 반환
 	static Renderer* NearestOfIntersectRayAABB(D3D11_VIEWPORT* viewPort, 
 		const std::vector<Renderer*>& objects,Camera* camera, float sx, float sy);
+	
 };

@@ -168,9 +168,6 @@
     <ClCompile Include="MainWindowDialog.cpp">
       <Filter>New Source Files\EngineDialog</Filter>
     </ClCompile>
-    <ClCompile Include="DataManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MyCommand.cpp">
       <Filter>New Source Files\Command</Filter>
     </ClCompile>
@@ -228,11 +225,23 @@
     <ClCompile Include="RayPicking.cpp">
       <Filter>New Source Files\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="Octree.cpp">
+      <Filter>New Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="OctreeCommand.cpp">
+      <Filter>New Source Files\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>New Source Files\Manager</Filter>
+    </ClCompile>
     <ClCompile Include="Interface.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>New Source Files\Component</Filter>
     </ClCompile>
     <ClCompile Include="TreeBillBoardRenderer.cpp">
-      <Filter>New Header Files\Component</Filter>
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleLineRenderer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -431,6 +440,15 @@
     <ClInclude Include="TreeBillBoardRenderer.h">
       <Filter>New Header Files\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Octree.h">
+      <Filter>New Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="OctreeCommand.h">
+      <Filter>New Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleLineRenderer.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FX\LightHelper.fx">
@@ -466,6 +484,9 @@
       <Filter>FX</Filter>
     </CustomBuild>
     <CustomBuild Include="FX\TreeSprite.fx">
+      <Filter>FX</Filter>
+    </CustomBuild>
+    <CustomBuild Include="FX\SimpleLine.fx">
       <Filter>FX</Filter>
     </CustomBuild>
   </ItemGroup>

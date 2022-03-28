@@ -44,7 +44,7 @@ public:
 	void SetScale(const float& x, const float& y, const float& z);
 	void SetScale(const XMFLOAT3& scale);
 
-	XMFLOAT4X4* GetWorld() { return &m_world; }
+	const XMFLOAT4X4* GetWorld() const { return &m_world; }
 	
 
 };	

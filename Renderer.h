@@ -35,9 +35,13 @@ protected:
 	bool m_blending; 
 	//해당 렌더러가 인스턴싱의 몇번째 인덱스인지 저장해두는 변수
 	UINT m_instancingIdx;
+	//static 오브젝트 여부를 나타내는 변수
+	bool m_static;
 public:
 	//color
 	XMFLOAT4 m_color;
+	//해당 렌더러를 가지고 있는 Octree Node와 Object List에서의 iterator
+	std::pair<std::list<Renderer*>*, std::list<Renderer*>::iterator*> m_octreeData;
 	
 public:
 	bool GetBlending() { return m_blending; }
@@ -77,6 +81,7 @@ public:
 	
 public:
 	Renderer(const std::string& id, ComponentType type);
+	Renderer(const std::string& id, ComponentType type, Mesh* mesh);
 	//Renderer(std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
 	~Renderer();
 
@@ -103,14 +108,19 @@ public:
 	//메테리얼 데이터를 로드해서 생성
 	void SetMesh(Mesh* meshSrc, vector<GeneralMaterial>& materialSrc);
 	Mesh* GetMesh() { return mesh; }
+	const Mesh* GetMesh() const { return mesh; }
 	
-	
+public:
 	vector<GeneralMaterial>& GetMaterials() { return materials; }
 
 	void SetTransform(Transform* tr) { transform = tr; }
 	Transform* GetTransform() { return transform; }
+	const Transform* GetTransform() const { return transform; }
 
 	void SetTechniqueType(int orTechnique) { m_technique_type = orTechnique; }
+
+	void SetStaticObject(bool setting) { m_static = setting; }
+	bool GetStaticObject() {return m_static;}
 
 	// Component을(를) 통해 상속됨
 	virtual void Enable() override;
