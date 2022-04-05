@@ -211,7 +211,7 @@ bool Scene::Init()
 	// 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
 	std::uniform_int_distribution<int> dis(-100, 100);
 		
-	GeometryGenerator geo;
+	/*GeometryGenerator geo;
 	for (int i = 0; i < 10; ++i)
 	{
 		for (int j = 0; j < 10; ++j)
@@ -231,7 +231,7 @@ bool Scene::Init()
 				CommandQueue::AddCommand(new OctreeAddObject(boxes.back().get()));
 			}
 		}
-	}
+	}*/
 
 
 	return true;
@@ -319,12 +319,9 @@ void Scene::DrawScene()
 	m_OctreeRenderer->Draw(md3dImmediateContext, &camera);
 	//treeBillBoard 렌더링
 	m_treeBillBoardRenderer->Draw(md3dImmediateContext, &camera);
-	//componentMgr.Render(md3dImmediateContext, &camera);
-	/*for (auto& elem : boxes)
-	{
-		(*elem).Draw(md3dImmediateContext, &camera);
-	}*/
-
+	
+	componentMgr.Render(md3dImmediateContext, &camera);
+	
 	m_Octree->Render(md3dImmediateContext);
 
 	
@@ -429,6 +426,18 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 		CommandQueue::AddCommand(new CreateEmptyObject(*m_HierarchyDialog));
 		break;
 	}
+	case ID_GAMEOBJECT_BOX:
+	{
+		GameObject& gameObj = objectMgr.CreateBasicBoxObject();
+		m_HierarchyDialog->TreeInsertObject(&gameObj);
+		break;
+	}
+	case ID_GAMEOBJECT_GRID:
+	{
+		GameObject& gameObj = objectMgr.CreateBasicGrid();
+		m_HierarchyDialog->TreeInsertObject(&gameObj);
+		break;
+	}
 
 	case ID_40004: // Ctrl+Z
 		MessageBox(mhMainWnd, L"Undo", L"Undo", MB_OK);
@@ -437,9 +446,3 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 
 	}
 }
-
-
-
-
-
-

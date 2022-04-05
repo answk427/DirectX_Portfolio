@@ -11,6 +11,8 @@
 
 #include <map>
 
+
+
 #define PRETEXTID "GAMEOBJECTID_"
 
 class ObjectMgr
@@ -31,6 +33,7 @@ private:
 	void AddNode(GameObject* parent, NodeStruct& node);
 	GameObject* AddNode(NodeStruct& node);
 	Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& name);
+	
 
 	//새로운 오브젝트의 id를 생성하는 함수
 	gameObjectID makeID();
@@ -48,6 +51,8 @@ public:
 	GameObject& ObjectMgr::CreateGameObject(const std::wstring& name);
 	GameObject & ObjectMgr::CreateGameObject(const std::wstring & name, GameObject* parent);
 	GameObject* CreateObjectFromFile(const std::string& fileName);
+	GameObject& CreateBasicBoxObject();
+	GameObject& CreateBasicGrid();
 	
 	Component* AddComponent(GameObject* obj, ComponentType compType);
 

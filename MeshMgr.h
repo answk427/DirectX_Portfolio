@@ -14,7 +14,7 @@ private:
 	vector<Mesh> meshes;
 	MeshReaderWriter& meshReaderWriter;
 	unique_ptr<GeometryGenerator> geo;
-	
+
 
 public:
 	MeshMgr(ID3D11Device* device) : device(device), meshReaderWriter(MeshReaderWriter::Instance()),
@@ -29,6 +29,7 @@ public:
 	Mesh* CreateMeshFromFile(const std::wstring fileName);
 	//기본 상자 생성
 	Mesh* CreateBasicBox(float width, float height, float depth);
+	Mesh* CreateBasicGrid(float widht, float depth, UINT m, UINT n);
 	
 	
 

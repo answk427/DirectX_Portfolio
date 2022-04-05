@@ -516,7 +516,7 @@ void GeometryGenerator::BuildCylinderBottomCap(float bottomRadius, float topRadi
 	}
 }
 
-void GeometryGenerator::CreateGrid(float width, float depth, UINT m, UINT n, MeshData& meshData)
+void GeometryGenerator::CreateGrid(float width, float depth, UINT m, UINT n, Mesh& meshData)
 {
 	UINT vertexCount = m*n;
 	UINT faceCount   = (m-1)*(n-1)*2;
@@ -534,21 +534,22 @@ void GeometryGenerator::CreateGrid(float width, float depth, UINT m, UINT n, Mes
 	float du = 1.0f / (n-1);
 	float dv = 1.0f / (m-1);
 
-	meshData.Vertices.resize(vertexCount);
+	vector<MyVertex::BasicVertex> vertices;
+	vertices.resize(vertexCount);
+
 	for(UINT i = 0; i < m; ++i)
 	{
 		float z = halfDepth - i*dz;
-		for(UINT j = 0; j < n; ++j)
+		for (UINT j = 0; j < n; ++j)
 		{
-			float x = -halfWidth + j*dx;
+			float x = -halfWidth + j * dx;
 
-			meshData.Vertices[i*n+j].Position = XMFLOAT3(x, 0.0f, z);
-			meshData.Vertices[i*n+j].Normal   = XMFLOAT3(0.0f, 1.0f, 0.0f);
-			meshData.Vertices[i*n+j].TangentU = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[i*n + j].pos = XMFLOAT3(x, 0.0f, z);
+			vertices[i*n + j].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			vertices[i*n + j].tan = XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 			// Stretch texture over grid.
-			meshData.Vertices[i*n+j].TexC.x = j*du;
-			meshData.Vertices[i*n+j].TexC.y = i*dv;
+			vertices[i*n + j].tex = XMFLOAT2(j * du, i*dv);
 		}
 	}
  
@@ -556,7 +557,8 @@ void GeometryGenerator::CreateGrid(float width, float depth, UINT m, UINT n, Mes
 	// Create the indices.
 	//
 
-	meshData.Indices.resize(faceCount*3); // 3 indices per face
+	std::vector<UINT> indices;
+	indices.resize(faceCount*3); // 3 indices per face
 
 	// Iterate over each quad and compute indices.
 	UINT k = 0;
@@ -564,17 +566,19 @@ void GeometryGenerator::CreateGrid(float width, float depth, UINT m, UINT n, Mes
 	{
 		for(UINT j = 0; j < n-1; ++j)
 		{
-			meshData.Indices[k]   = i*n+j;
-			meshData.Indices[k+1] = i*n+j+1;
-			meshData.Indices[k+2] = (i+1)*n+j;
+			indices[k]   = i*n+j;
+			indices[k+1] = i*n+j+1;
+			indices[k+2] = (i+1)*n+j;
 
-			meshData.Indices[k+3] = (i+1)*n+j;
-			meshData.Indices[k+4] = i*n+j+1;
-			meshData.Indices[k+5] = (i+1)*n+j+1;
+			indices[k+3] = (i+1)*n+j;
+			indices[k+4] = i*n+j+1;
+			indices[k+5] = (i+1)*n+j+1;
 
 			k += 6; // next quad
 		}
 	}
+
+	meshData.Init(vertices, indices);
 }
 
 void GeometryGenerator::CreateFullscreenQuad(MeshData& meshData)

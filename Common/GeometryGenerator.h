@@ -19,6 +19,16 @@
 #include <BufferResource.h>
 #include <Mesh.h>
 
+enum BasicGeometry
+{
+	BOX,
+	SPHERE,
+	GEOSPHERE,
+	CYLINDER,
+	GRID,
+	FULLSCREEN
+};
+
 class GeometryGenerator
 {
 public:
@@ -75,7 +85,7 @@ public:
 	/// Creates an mxn grid in the xz-plane with m rows and n columns, centered
 	/// at the origin with the specified width and depth.
 	///</summary>
-	void CreateGrid(float width, float depth, UINT m, UINT n, MeshData& meshData);
+	void CreateGrid(float width, float depth, UINT m, UINT n, Mesh& meshData);
 
 	///<summary>
 	/// Creates a quad covering the screen in NDC coordinates.  This is useful for
