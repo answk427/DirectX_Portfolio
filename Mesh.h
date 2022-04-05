@@ -121,9 +121,15 @@ public:
 	//持失切
 	Mesh(const std::string& id) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCount(0),
 		id(id), m_instanceBufferSize(MAX_INSTSANCING), m_instancing(0)
-	{	SetInstanceBufferSize(MAX_INSTSANCING);	}
+	{
+		SetInstanceBufferSize(MAX_INSTSANCING);	
+		SetAABB_MaxMin(XMFLOAT3(2.0f, 2.0f, 2.0f), XMFLOAT3(-2.0f, -2.0f, -2.0f));
+	}
 	Mesh() : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCount(0), id("temp"), m_instanceBufferSize(MAX_INSTSANCING), m_instancing(0)
-	{	SetInstanceBufferSize(MAX_INSTSANCING);	}
+	{	
+		SetInstanceBufferSize(MAX_INSTSANCING);	
+		SetAABB_MaxMin(XMFLOAT3(2.0f, 2.0f, 2.0f), XMFLOAT3(-2.0f, -2.0f, -2.0f));
+	}
 	~Mesh(); 
 	//差紫持失切
 	Mesh(const Mesh& other);

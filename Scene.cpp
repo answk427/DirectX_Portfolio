@@ -219,13 +219,13 @@ bool Scene::Init()
 			for (int k = 0; k < 10; ++k)
 			{
 				Mesh* mesh = new Mesh();
-				geo.CreateBox(2, 2, 2, *mesh);
+				geo.CreateBox(4, 4, 4, *mesh);
 				mesh->InitVB(md3dDevice);
 				mesh->InitIB(md3dDevice);
 				Transform* tr = new Transform(nullptr);
 				tr->SetPosition(i * dis(gen), j * dis(gen), k * dis(gen));
 				tr->UpdateWorld();
-				unique_ptr<Renderer> box = make_unique<Renderer>("tempId", ComponentType::MESHRENDERER, mesh);
+				unique_ptr<Renderer> box = make_unique<Renderer>("tempId"+to_string(i+j*10+k*100), ComponentType::MESHRENDERER, mesh);
 				box->SetTransform(tr);
 				boxes.push_back(std::move(box));
 				CommandQueue::AddCommand(new OctreeAddObject(boxes.back().get()));
@@ -324,6 +324,7 @@ void Scene::DrawScene()
 	{
 		(*elem).Draw(md3dImmediateContext, &camera);
 	}*/
+
 	m_Octree->Render(md3dImmediateContext);
 
 	

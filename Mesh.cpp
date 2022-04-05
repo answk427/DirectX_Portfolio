@@ -128,6 +128,10 @@ Mesh::Mesh(const Mesh & other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBuff
 	vertices = other.vertices;
 	InstancingDatas = other.InstancingDatas;
 	indices = other.indices;
+	//boundingBox
+	m_AABB = other.m_AABB;
+	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
+	//instanceBuffer
 	enableInstancingIndexes = other.enableInstancingIndexes;
 	m_InstanceBuffer = other.m_InstanceBuffer;
 	SetInstanceBufferSize(MAX_INSTSANCING);
@@ -141,6 +145,10 @@ Mesh::Mesh(Mesh && other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCou
 	vertices.swap(other.vertices);
 	InstancingDatas.swap(other.InstancingDatas);
 	indices.swap(other.indices);
+	//boundingBox
+	m_AABB = other.m_AABB;
+	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
+	//instanceBuffer
 	enableInstancingIndexes = other.enableInstancingIndexes;
 	m_InstanceBuffer = other.m_InstanceBuffer;
 	SetInstanceBufferSize(MAX_INSTSANCING);
@@ -156,6 +164,9 @@ Mesh & Mesh::operator=(const Mesh & other)
 	indices = other.indices;
 	enableInstancingIndexes = other.enableInstancingIndexes;
 	id = other.id;
+	//boundingBox
+	m_AABB = other.m_AABB;
+	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
 	m_instancing = other.m_instancing;
 	m_instanceBufferSize = other.m_instanceBufferSize;
 	m_InstanceBuffer = other.m_InstanceBuffer;
