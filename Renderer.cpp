@@ -142,6 +142,8 @@ Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,typ
 , m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f,1.0f,1.0f,1.0f),
 mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 })
 {
+	MapsInit();
+	SetMaterials(std::vector<GeneralMaterial>(1));
 	InitEffects();
 }
 
@@ -151,6 +153,7 @@ mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(
 {
 	SetMesh(mesh);
 	SetMaterials(std::vector<GeneralMaterial>(1));
+	MapsInit();
 	InitEffects();
 }
 
@@ -241,6 +244,17 @@ void Renderer::InitEffects()
 		//Effect* effect = effectMgr.GetEffect(shaderPath + elem.ShaderName);
 		//Effect* effect = m_effectMgr.GetEffect(elem.ShaderName);
 		Effect* effect = m_effectMgr.GetEffect(L"FX/Basic.fxo");
+		effects.push_back(effect);
+	}
+}
+
+void Renderer::InitEffects(const std::vector<std::wstring>& shaderNames)
+{
+	effects.clear();
+	for (auto& shaderName : shaderNames)
+	{
+		Effect* effect = m_effectMgr.GetEffect(shaderName);
+		assert(!effect);
 		effects.push_back(effect);
 	}
 }

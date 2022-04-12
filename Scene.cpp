@@ -88,7 +88,6 @@ private:
 	D3D11_VIEWPORT m_currentViewPort;
 	//매 프레임마다 렌더링 할 Renderer 컴포넌트들의 집합
 	std::vector<Renderer*> m_drawableRenderers;
-
 };
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
@@ -98,7 +97,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
 	Scene theApp(hInstance);
 
 	if (!theApp.Init())

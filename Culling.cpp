@@ -93,7 +93,7 @@ void FrustumCulling::ConvertFrustumViewToLocal(XNA::Frustum * pOut, const XNA::F
 	XMMatrixDecompose(&scale, &rotQuat, &translation, toLocal);
 
 	//절두체를 시야공간 -> 국소공간으로 변환
-	XNA::TransformFrustum(pOut, pViewFrustum, XMVectorGetX(scale), rotQuat, translation);
+	XNA::TransformFrustum(pOut, pViewFrustum, XMVectorGetX(scale), XMQuaternionNormalize(rotQuat), translation);
 	
 }
 

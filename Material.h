@@ -39,6 +39,7 @@ struct GeneralMaterial
 		textureOffset = { 0.0f, 0.0f };
 		diffuseMapName = L"StandardDiffuseMap";
 		m_color = { 1.0f,1.0f,1.0f,1.0f };
+		name = L"Material";
 	}
 };
 
