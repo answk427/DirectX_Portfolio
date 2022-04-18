@@ -143,6 +143,23 @@ const std::vector<Renderer*> ComponentMgr::GetDrawableRenderers()
 	return result;
 }
 
+int ComponentMgr::getTotalRendererCount()
+{
+	return meshRenderers.size() + skinnedMeshRenderers.size();
+}
+
+const std::vector<Renderer*> ComponentMgr::GetAllRenderers()
+{
+	std::vector<Renderer*> result;
+
+	for (int i = 0; i < meshRenderers.size(); ++i)
+		result.push_back(&meshRenderers[i]);
+	for (int i = 0; i < skinnedMeshRenderers.size(); ++i)
+		result.push_back(&skinnedMeshRenderers[i]);
+
+	return result;
+}
+
 
 
 void ComponentMgr::Render(ID3D11DeviceContext* context, Camera* camera)

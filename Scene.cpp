@@ -33,6 +33,7 @@
 #include "TreeBillBoardRenderer.h"
 #include "Octree.h"
 #include "SimpleLineRenderer.h"
+#include "ShadowMap.h"
 #include <random>
 
 
@@ -41,11 +42,12 @@ class Scene : public D3DApp
 public:
 	Scene(HINSTANCE hInstance);
 	~Scene();
-
+	
 	bool Init();
 	void OnResize();
 	void UpdateScene(float dt);
 	void DrawScene();
+	void ShadowMapDraw();
 
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
@@ -62,6 +64,7 @@ private://엔진기능
 	Frustum* m_Frustum;
 	Octree* m_Octree;
 	std::vector<unique_ptr<Renderer>> boxes;
+	unique_ptr<ShadowMap> m_shadowMap;
 	
 private:
 	DataManager& dataMgr;
@@ -157,6 +160,9 @@ bool Scene::Init()
 	m_Frustum = new Frustum(&camera);
 	m_Octree = new Octree(m_Frustum, m_OctreeRenderer);
 	OctreeCommand::Init(m_Octree);
+
+	//ShadowMap class 생성
+	m_shadowMap = make_unique<ShadowMap>(md3dDevice, 1920, 1080, L"FX/BuildShadowMap.fxo");
 
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	//Effects::InitAll(md3dDevice);
@@ -301,16 +307,24 @@ void Scene::UpdateScene(float dt)
 
 void Scene::DrawScene()
 {
-	
+	//그림자맵 렌더링
+	ShadowMapDraw();
+
+	md3dImmediateContext->RSSetState(0);
+
+
+	// Restore the back and depth buffer to the OM stage.
+	ID3D11RenderTargetView* renderTargets[1] = { mRenderTargetView };
+	md3dImmediateContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
+	md3dImmediateContext->RSSetViewports(1, &mScreenViewport);
 
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-
-	effectMgr.SetPerFrame(componentMgr.getLightings(), camera.GetPosition());
-
-	//Rendering
 	
+
+	effectMgr.SetPerFrame(componentMgr.getLightings(), camera);
+	
+	//Rendering
 	//바운딩박스 렌더링
 	m_boundingBoxRenderer->Draw(md3dImmediateContext, &camera);
 	//Octree 렌더링
@@ -320,13 +334,61 @@ void Scene::DrawScene()
 	
 	componentMgr.Render(md3dImmediateContext, &camera);
 	
-	m_Octree->Render(md3dImmediateContext);
+	//m_Octree->Render(md3dImmediateContext);
 
 	
 
 	HR(mSwapChain->Present(0, 0));
 
 	
+}
+
+void Scene::ShadowMapDraw()
+{
+	//뷰포트 설정, 렌더타겟뷰 null 설정, 깊이버퍼 설정
+	m_shadowMap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
+	auto lightings = componentMgr.getLightings();
+
+	if (lightings.empty())
+		return;
+
+	for (int i = 0; i < lightings.size(); ++i)
+	{
+		//첫번째 평행광만 계산
+		if (lightings[i].GetLightType() == LightType::DIRECTIONAL)
+		{
+			//광원공간의 시야,투영행렬 계산
+			bool result = m_shadowMap->BuildShadowTransform(lightings[i].GetDirLight(),
+				XMLoadFloat3(&camera.GetUp()));
+			if(result)
+				SetShadowMatrix(XMLoadFloat4x4(&m_shadowMap->mShadowTransform));
+			break;
+		}
+	}
+
+		
+	
+	static int currObjectCount = -1;
+	int objectCount = componentMgr.getTotalRendererCount();
+	if (currObjectCount != objectCount)
+	{
+		currObjectCount = objectCount;
+		m_shadowMap->ComputeBoundingSphere(componentMgr.GetAllRenderers());
+	}
+	for (auto renderer : m_drawableRenderers)
+	{
+		if (renderer->isShadowBaking == false)
+			continue;
+		//renderer의 쉐이더를 그림자맵 빌드를 위한 쉐이더로 변경
+		std::vector<std::wstring> effectNames = { m_shadowMap->m_shaderName };
+		std::vector<EffectType> effectType = { EffectType::BuildShadowMap };
+	
+		renderer->InitEffects(effectNames, effectType);
+		renderer->Draw(md3dImmediateContext, m_shadowMap->m_shadowMapCamera.get());
+
+		//원래 쉐이더로 복구
+		renderer->InitEffects();
+	}
 }
 
 void Scene::OnMouseDown(WPARAM btnState, int x, int y)

@@ -7,7 +7,7 @@
 #include "SimpleLineRenderer.h"
 
 #define WIDTH 1000
-#define DEPTH_LIMIT 4
+#define DEPTH_LIMIT 8
 //느슨한 옥트리를 위한 계수
 #define OctreeFactor 2
 

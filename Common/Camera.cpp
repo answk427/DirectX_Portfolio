@@ -129,6 +129,19 @@ void Camera::SetLens(float fovY, float aspect, float zn, float zf)
 	XMStoreFloat4x4(&mProj, P);
 }
 
+void Camera::SetOrthographicLens(const XMFLOAT3& viewTargetPos, float radius)
+{
+	// 직교절두체
+	float l = viewTargetPos.x - radius;
+	float b = viewTargetPos.y - radius;
+	float n = viewTargetPos.z - radius;
+	float r = viewTargetPos.x + radius;
+	float t = viewTargetPos.y + radius;
+	float f = viewTargetPos.z + radius;
+	XMMATRIX proj = XMMatrixOrthographicOffCenterLH(l, r, b, t, n, f);
+	XMStoreFloat4x4(&mProj, proj);
+}
+
 //시야행렬
 void Camera::LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp)
 {

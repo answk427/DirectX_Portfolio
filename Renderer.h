@@ -28,7 +28,6 @@ protected:
 	TextureMgr& m_texMgr;
 	EffectMgr& m_effectMgr;
 	
-
 protected:
 	UINT m_technique_type;
 	//혼합 여부를 나타내는 변수
@@ -43,6 +42,21 @@ public:
 	//해당 렌더러를 가지고 있는 Octree Node와 Object List에서의 iterator
 	std::pair<std::list<Renderer*>*, std::list<Renderer*>::iterator*> m_octreeData;
 	
+
+#pragma region ShadowVariable
+	//그림자를 받을 것인지 나타내는 변수
+	bool isShadowed;
+	//그림자맵을 렌더링 할 것인지 나타내는 변수
+	bool isShadowBaking;
+private:
+	//현재 쉐도우맵이 렌더링 됐는지 안됐는지 나타내는 변수
+	bool isShadowMapBaked;
+#pragma endregion
+
+
+
+	
+	
 public:
 	bool GetBlending() { return m_blending; }
 	bool SetBlending(bool blend) { return m_blending = blend;}
@@ -51,7 +65,7 @@ public:
 	bool GetInstancing()
 	{ 
 		if (mesh != nullptr)
-			return mesh->GetInstancing();
+			return mesh->GetInstancing() && ((isShadowBaking && isShadowMapBaked) || !isShadowBaking);
 		return	false;
 	}
 	bool SetInstancing(bool instancing) 
@@ -100,6 +114,7 @@ public:
 	//쉐이더 이펙트 초기화
 	void InitEffects(EffectMgr& effectMgr, const std::wstring& shaderPath);
 	void InitEffects();
+	void InitEffects(const std::vector<std::wstring>& shaderNames, vector<EffectType>& effectTypes);
 
 	
 	//반드시 SetMesh가 SetMaterial보다 먼저 실행되야 하기 때문에 함수를 합침.
@@ -135,7 +150,6 @@ class MeshRenderer : public Renderer
 public:
 	MeshRenderer(const std::string& id);
 	MeshRenderer& operator=(const MeshRenderer& meshrenderer);
-	 
 };
 
 class SkinnedMeshRenderer : public Renderer

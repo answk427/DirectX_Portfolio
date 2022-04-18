@@ -4,6 +4,9 @@
 
 #include "Effects.h"
 
+XMMATRIX g_shadowMatrix;
+void SetShadowMatrix(XMMATRIX shadowMatrix) { g_shadowMatrix = shadowMatrix; }
+
 #pragma region Effect
 Effect::Effect(ID3D11Device* device, const std::wstring& filename)
 	: mFX(0), m_inputLayout(0), m_blendState(0), m_instancing_inputLayout(0)
@@ -132,6 +135,7 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	FogColor = mFX->GetVariableByName("gFogColor")->AsVector();
 	FogStart = mFX->GetVariableByName("gFogStart")->AsScalar();
 	FogRange = mFX->GetVariableByName("gFogRange")->AsScalar();
+	isShadowed = mFX->GetVariableByName("isShadowed")->AsScalar();
 
 	DirLights = mFX->GetVariableByName("gDirLights");
 
@@ -158,14 +162,14 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 BasicEffect::~BasicEffect()
 {
 }
-void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW)
+void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
 {
 	//쉐이더에 조명설정
 	SetDirLights(directL);
 	SetPointLights(pointL);
 	SetSpotLights(spotL);
 
-	SetEyePosW(eyePosW);
+	SetEyePosW(camera.GetPosition());
 }
 
 void BasicEffect::PerObjectSet(GeneralMaterial * material,
@@ -193,8 +197,9 @@ void BasicEffect::PerObjectSet(GeneralMaterial * material,
 			material->textureOffset.y, 0.0f);
 	SetTexTransform(texTransform);
 
-
-
+	//세계공간 -> 광원의 ndc좌표 -> 텍스쳐공간 좌표 변환 행렬
+	SetShadowTransform(world * g_shadowMatrix);
+	
 	//재질 설정
 	SetMaterial(material->basicMat);
 }
@@ -209,6 +214,13 @@ void BasicEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 }
 ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 {
+	if (techType || TechniqueType::Shadowed)
+		SetIsShadowed(true);
+	else
+		SetIsShadowed(false);
+
+	techType = techType & ~TechniqueType::Shadowed;
+
 	switch (techType)
 	{
 
@@ -396,7 +408,7 @@ NormalMapEffect::~NormalMapEffect()
 {
 }
 
-void NormalMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
+void NormalMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
 {
 }
 
@@ -444,10 +456,86 @@ BuildShadowMapEffect::BuildShadowMapEffect(ID3D11Device* device, const std::wstr
 	MaxTessFactor = mFX->GetVariableByName("gMaxTessFactor")->AsScalar();
 	DiffuseMap = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
 	NormalMap = mFX->GetVariableByName("gNormalMap")->AsShaderResource();
+
+	Init(device);
 }
 
 BuildShadowMapEffect::~BuildShadowMapEffect()
 {
+}
+void BuildShadowMapEffect::InitInputLayout(ID3D11Device * device)
+{
+	ReleaseCOM(m_inputLayout);
+	D3DX11_PASS_DESC passDesc;
+
+	//HR(BuildShadowMapTech->GetPassByIndex(0)->GetDesc(&passDesc));
+	HR(BuildShadowMapAlphaClipTech->GetPassByIndex(0)->GetDesc(&passDesc));
+		
+	HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTan, 4, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_inputLayout));
+}
+void BuildShadowMapEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+	ReleaseCOM(m_inputLayout);
+	D3DX11_PASS_DESC passDesc;
+
+	BuildShadowMapTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTan, 4, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_inputLayout));
+}
+
+void BuildShadowMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
+{
+	//쉐이더에 조명설정
+	SetEyePosW(camera.GetPosition());
+
+	//물체공간 -> 투영공간 변환행렬
+	//XMMATRIX worldViewProj = world * camera->ViewProj();
+	//SetWorldViewProj(worldViewProj);
+	
+	//인스턴스의 세계행렬과 곱해질 시야투영행렬
+	SetViewProj(camera.ViewProj());	
+}
+void BuildShadowMapEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
+{
+	SetWorld(world);
+
+	//비균등 비례로 인한 법선벡터 계산에 쓰이는 행렬
+	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
+	SetWorldInvTranspose(worldInvTranspose);
+
+	//텍스쳐 변환 I * S * (R) * T
+	XMMATRIX texTransform = XMMatrixIdentity() *
+		XMMatrixScaling(material->textureTiling.x,
+			material->textureTiling.y, 0.0f) *
+		XMMatrixTranslation(material->textureOffset.x,
+			material->textureOffset.y, 0.0f);
+	SetTexTransform(texTransform);
+}
+ID3DX11EffectTechnique * BuildShadowMapEffect::GetTechnique(UINT techType)
+{
+	techType = techType & ~TechniqueType::Shadowed;
+
+	switch (techType)
+	{
+	case TechniqueType::Light:
+		return BuildShadowMapTech;
+	case TechniqueType::Light | TechniqueType::DiffuseMap:
+		return BuildShadowMapAlphaClipTech;
+	case TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Instancing:
+		return BuildShadowMapTech;
+	default:
+		nullptr;
+	}
+	return nullptr;
+}
+void BuildShadowMapEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+	SetDiffuseMap(diffuseMap);
+}
+void BuildShadowMapEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+	//미구현
 }
 #pragma endregion
 
@@ -707,12 +795,13 @@ bool TreebilboardEffect::OMSetting(ID3D11DeviceContext * context, bool blending)
 	return true;
 }
 
-void TreebilboardEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
+void TreebilboardEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
 {	//쉐이더에 조명설정
 	SetDirLights(directL);
 	SetPointLights(pointL);
 	SetSpotLights(spotL);
-	SetEyePosW(eyePosW);
+	SetEyePosW(camera.GetPosition());
+		
 }
 
 void TreebilboardEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
@@ -734,9 +823,8 @@ ID3DX11EffectTechnique * TreebilboardEffect::GetTechnique(UINT techType)
 		return Light3Tech;
 	case TechniqueType::Light | TechniqueType::DiffuseMap:
 		return Light3TexAlphaClipTech;
-
 	default:
-		nullptr;
+		return Light3Tech;
 	}
 
 	return nullptr;
@@ -782,11 +870,11 @@ void SimpleLineEffect::InitInstancingInputLayout(ID3D11Device * device)
 {
 }
 
-void SimpleLineEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW)
+void SimpleLineEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
 {
 	//쉐이더에 조명설정
 	SetDirLights(directL);
-	SetEyePosW(eyePosW);
+	SetEyePosW(camera.GetPosition());
 }
 
 void SimpleLineEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)

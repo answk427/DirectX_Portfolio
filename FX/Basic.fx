@@ -35,6 +35,7 @@ cbuffer cbPerObject
 	float4x4 gTexTransform;
 	float4x4 gShadowTransform; 
 	Material gMaterial;
+	bool isShadowed;
 };
 
 
@@ -215,7 +216,11 @@ float4 PS(VertexOut pin,
 
 		// Only the first light casts a shadow.
 		float3 shadow = float3(1.0f, 1.0f, 1.0f);
-		shadow[0] = CalcShadowFactor(samShadow, gShadowMap, pin.ShadowPosH);
+		if (isShadowed)
+		{
+			shadow[0] = CalcShadowFactor(samShadow, gShadowMap, pin.ShadowPosH);
+		}
+		
 
 		// Finish texture projection and sample SSAO map.
 		pin.SsaoPosH /= pin.SsaoPosH.w;
@@ -229,9 +234,9 @@ float4 PS(VertexOut pin,
 			ComputeDirectionalLight(gMaterial, gDirLights[i], pin.NormalW, toEye, 
 				A, D, S);
 
-			/*ambient += ambientAccess*A;    
+			//ambient += ambientAccess*A;    
 			diffuse += shadow[i]*D;
-			spec    += shadow[i]*S;*/
+			spec    += shadow[i]*S;
 			ambient += A;
 			diffuse += D;
 			spec += S;
@@ -243,9 +248,9 @@ float4 PS(VertexOut pin,
 			ComputePointLight(gMaterial, gPointLights[i], pin.PosW,pin.NormalW, toEye,
 				A, D, S);
 			
-			/*ambient += ambientAccess * A;
+			//ambient += ambientAccess * A;
 			diffuse += shadow[i] * D;
-			spec += shadow[i] * S;*/
+			spec += shadow[i] * S;
 			ambient += A;
 			diffuse += D;
 			spec += S;
@@ -257,9 +262,9 @@ float4 PS(VertexOut pin,
 			ComputeSpotLight(gMaterial, gSpotLights[i], pin.PosW, pin.NormalW, toEye,
 				A, D, S);
 
-		/*	ambient += ambientAccess * A;
+			//ambient += ambientAccess * A;
 			diffuse += shadow[i] * D;
-			spec += shadow[i] * S;*/
+			spec += shadow[i] * S;
 			ambient += A;
 			diffuse += D;
 			spec += S;

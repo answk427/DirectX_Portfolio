@@ -76,6 +76,10 @@ public:
 
 	//현재 렌더링가능한 렌더러들을 반환한다.
 	const std::vector<Renderer*> GetDrawableRenderers();
+	//렌더러의 총 개수 반환
+	int getTotalRendererCount();
+	//모든 렌더러 반환
+	const std::vector<Renderer*> GetAllRenderers();
 	
 public:
 	void Render(ID3D11DeviceContext* context, Camera* camera);

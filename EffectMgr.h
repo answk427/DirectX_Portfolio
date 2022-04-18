@@ -6,7 +6,8 @@
 enum EffectType
 {
 	BasicEffectType,
-	BillBoardEffectType
+	BillBoardEffectType,
+	BuildShadowMap
 };
 
 class EffectMgr
@@ -36,7 +37,7 @@ public:
 	void SetType(const std::wstring& shaderName, EffectType type);
 	void SetEffect(const std::wstring& shaderName, Effect* effect) { myEffect[shaderName] = effect; }
 
-	void SetPerFrame(const std::vector<Lighting>& lightings, const XMFLOAT3 &eyePosW);
+	void SetPerFrame(const std::vector<Lighting>& lightings, const Camera & camera);
 	
 	
 };

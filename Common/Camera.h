@@ -48,6 +48,8 @@ public:
 	
 	// Set frustum.
 	void SetLens(float fovY, float aspect, float zn, float zf);
+	// 직교투영 절두체
+	void SetOrthographicLens(const XMFLOAT3& viewTargetPos, float radius);
 
 	// Define camera space via LookAt parameters.
 	void LookAt(FXMVECTOR pos, FXMVECTOR target, FXMVECTOR worldUp);

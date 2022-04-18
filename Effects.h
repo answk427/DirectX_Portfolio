@@ -15,6 +15,9 @@
 #include "Light.h"
 #include "Vertex.h"
 
+//광원공간의 시야 * 투영 * 텍스쳐공간변환행렬
+extern XMMATRIX g_shadowMatrix;
+extern void SetShadowMatrix(XMMATRIX shadowMatrix); 
 
 enum TechniqueType
 {
@@ -24,7 +27,8 @@ enum TechniqueType
 	Fog = 8,
 	Reflect = 16,
 	Skinned = 32,
-	Instancing = 64
+	Instancing = 64,
+	Shadowed = 128
 };
 
 #pragma region Effect
@@ -45,9 +49,10 @@ public:
 	
 	//Frame별로 필요한 세팅을 수행하는 함수
 	virtual void PerFrameSet(DirectionalLight* directL,
+
 		PointLight* pointL,
-		SpotLight* spotL,
-		const XMFLOAT3& eyePosW) = 0;
+
+		SpotLight* spotL, const Camera & camera) = 0;
 	
 	//Object별로 필요한 세팅을 수행하는 함수
 	virtual void PerObjectSet(GeneralMaterial* material,
@@ -81,8 +86,11 @@ protected:
 	ID3D11InputLayout* m_instancing_inputLayout;
 	ID3D11BlendState* m_blendState;
 
+	
+
 public:
 	void SetBlendState(ID3D11BlendState* blendState) { m_blendState = blendState; }
+	
 
 };
 #pragma endregion
@@ -105,6 +113,7 @@ public:
 	void SetFogColor(const FXMVECTOR v)                 { FogColor->SetFloatVector(reinterpret_cast<const float*>(&v)); }
 	void SetFogStart(float f)                           { FogStart->SetFloat(f); }
 	void SetFogRange(float f)                           { FogRange->SetFloat(f); }
+	void SetIsShadowed(bool b)							{ isShadowed->SetBool(b); }
 	
 	void SetDirLights(const DirectionalLight* lights)   
 	{ 
@@ -220,6 +229,7 @@ public:
 	ID3DX11EffectVectorVariable* FogColor;
 	ID3DX11EffectScalarVariable* FogStart;
 	ID3DX11EffectScalarVariable* FogRange;
+	ID3DX11EffectScalarVariable* isShadowed;
 	
 	ID3DX11EffectVariable* DirLights;
 	
@@ -242,7 +252,7 @@ public:
 	ID3DX11EffectShaderResourceVariable* DiffuseMapArray;
 
 	// Effect을(를) 통해 상속됨
-	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3& eyePosW) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
 	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX& world) override;
 	virtual void SetMaps(ID3D11ShaderResourceView* diffuseMap,
 		ID3D11ShaderResourceView* normalMap,
@@ -420,7 +430,7 @@ public:
 
 
 	// Effect을(를) 통해 상속됨
-	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
 
 	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
 
@@ -483,6 +493,15 @@ public:
  
 	ID3DX11EffectShaderResourceVariable* DiffuseMap;
 	ID3DX11EffectShaderResourceVariable* NormalMap;
+
+	// Effect을(를) 통해 상속됨
+	virtual void InitInputLayout(ID3D11Device * device) override;
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
+	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
 };
 #pragma endregion
 
@@ -722,7 +741,7 @@ public:
 	virtual bool OMSetting(ID3D11DeviceContext* context, bool blending);
 	
 
-	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
 	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
 
@@ -745,7 +764,7 @@ public:
 	// Effect을(를) 통해 상속됨
 	virtual void InitInputLayout(ID3D11Device * device) override;
 	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
-	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const XMFLOAT3 & eyePosW) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
 	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
 	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;

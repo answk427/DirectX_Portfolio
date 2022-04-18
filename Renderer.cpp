@@ -65,9 +65,7 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		
 	
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
-	if (!GetInstancing())
-		SetVB(context);
-	else
+	if (GetInstancing())
 	{
 		//이미 렌더링을 했거나, 그릴 오브젝트들이 없는 경우 리턴
 		if (mesh->enableInstancingIndexes.empty())
@@ -75,7 +73,9 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		mesh->InstancingUpdate(context);
 		mesh->SetInstanceVB(context);
 	}
-		
+	else
+		SetVB(context);
+	
 
 	mesh->SetIB(context);
 
@@ -105,11 +105,16 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 			if (!effects[i]->OMSetting(context, m_blending))
 				break;
 		}
+
+		UINT tempTechType = m_technique_type;
+		if (isShadowed && isShadowMapBaked)
+			tempTechType = tempTechType | TechniqueType::Shadowed;
+		
 		
 		if(GetInstancing())
-			activeTech = effects[i]->GetTechnique(m_technique_type | TechniqueType::Instancing);
+			activeTech = effects[i]->GetTechnique(tempTechType | TechniqueType::Instancing);
 		else
-			activeTech = effects[i]->GetTechnique(m_technique_type);
+			activeTech = effects[i]->GetTechnique(tempTechType);
 
 		activeTech->GetDesc(&techDesc);
 		
@@ -130,12 +135,20 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{
 			activeTech->GetPassByIndex(p)->Apply(0, context);
+						
 			mesh->Draw(context, i);
 		}
 	}
 	//instancing 렌더링은 Draw 호출 한번만 하도록 벡터를 비워줌.
 	if (GetInstancing())
 		mesh->enableInstancingIndexes.clear();
+	
+	//이미 그림자맵이 렌더링 된 상태면
+	if (isShadowBaking && isShadowMapBaked)
+		isShadowMapBaked = false;
+	else
+		isShadowMapBaked = true;
+
 }
 
 Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,type)
@@ -248,13 +261,15 @@ void Renderer::InitEffects()
 	}
 }
 
-void Renderer::InitEffects(const std::vector<std::wstring>& shaderNames)
+void Renderer::InitEffects(const std::vector<std::wstring>& shaderNames, vector<EffectType>& effectTypes)
 {
 	effects.clear();
-	for (auto& shaderName : shaderNames)
+	
+	for (int i=0; i<shaderNames.size(); ++i)
 	{
-		Effect* effect = m_effectMgr.GetEffect(shaderName);
-		assert(!effect);
+		m_effectMgr.SetType(shaderNames[i], effectTypes[i]);
+		Effect* effect = m_effectMgr.GetEffect(shaderNames[i]);
+		assert(effect!=nullptr);
 		effects.push_back(effect);
 	}
 }

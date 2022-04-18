@@ -18,8 +18,7 @@ EffectMgr::~EffectMgr()
 	for (auto it = myEffect.begin(); it != myEffect.end(); ++it)
 		delete it->second;
 
-	myEffect.clear();
-	
+	myEffect.clear();	
 }
 
 Effect* EffectMgr::GetEffect(const std::wstring& shaderName)
@@ -60,6 +59,10 @@ Effect * EffectMgr::CreateEffect(const std::wstring& shaderName, EffectType type
 			effect = new TreebilboardEffect(device, shaderName);
 			myEffect[shaderName] = effect;
 			break;
+		case EffectType::BuildShadowMap:
+			effect = new BuildShadowMapEffect(device, shaderName);
+			myEffect[shaderName] = effect;
+			break;
 	}
 
 	return effect;
@@ -75,14 +78,13 @@ void EffectMgr::SetType(const std::wstring & shaderName, EffectType type)
 	return;
 }
 
-void EffectMgr::SetPerFrame(const std::vector<Lighting>& lightings, const XMFLOAT3 & eyePosW)
+void EffectMgr::SetPerFrame(const std::vector<Lighting>& lightings, const Camera & camera)
 {
 	//lightings는 컴포넌트 매니저에서 관리중인 lightings 배열
 	std::vector<DirectionalLight> dir;
 	std::vector<PointLight> point;
 	std::vector<SpotLight> spot;
 
-	
 	
 	for (auto& lighting : lightings)
 	{
@@ -116,7 +118,7 @@ void EffectMgr::SetPerFrame(const std::vector<Lighting>& lightings, const XMFLOA
 
 	for (auto effect : myEffect)
 	{
-		effect.second->PerFrameSet(dirPt, pointPt, spotPt, eyePosW);
+		effect.second->PerFrameSet(dirPt, pointPt, spotPt, camera);
 	}
 }
 
