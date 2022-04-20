@@ -60,6 +60,8 @@ public:
 	XMMATRIX Proj()const;
 	XMMATRIX ViewProj()const;
 
+	void SetView(XMFLOAT4X4& viewF) { mView = viewF; }
+
 	// Strafe/Walk the camera a distance d.
 	void Strafe(float d);
 	void Walk(float d);

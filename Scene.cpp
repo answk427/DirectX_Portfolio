@@ -40,6 +40,13 @@
 class Scene : public D3DApp
 {
 public:
+	void BuildScreenQuadGeometryBuffers();
+	ID3D11Buffer* mScreenQuadVB;
+	ID3D11Buffer* mScreenQuadIB;
+	void DrawScreenQuad();
+
+
+public:
 	Scene(HINSTANCE hInstance);
 	~Scene();
 	
@@ -111,6 +118,83 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 
 
+void Scene::BuildScreenQuadGeometryBuffers()
+{
+	GeometryGenerator::MeshData quad;
+
+	GeometryGenerator geoGen;
+	geoGen.CreateFullscreenQuad(quad);
+
+	//
+	// Extract the vertex elements we are interested in and pack the
+	// vertices of all the meshes into one vertex buffer.
+	//
+
+	std::vector<Vertex::Basic32> vertices(quad.Vertices.size());
+
+	for (UINT i = 0; i < quad.Vertices.size(); ++i)
+	{
+		vertices[i].Pos = quad.Vertices[i].Position;
+		vertices[i].Normal = quad.Vertices[i].Normal;
+		vertices[i].Tex = quad.Vertices[i].TexC;
+	}
+
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.ByteWidth = sizeof(Vertex::Basic32) * quad.Vertices.size();
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = 0;
+	vbd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA vinitData;
+	vinitData.pSysMem = &vertices[0];
+	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mScreenQuadVB));
+
+	//
+	// Pack the indices of all the meshes into one index buffer.
+	//
+
+	D3D11_BUFFER_DESC ibd;
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof(UINT) * quad.Indices.size();
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	ibd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA iinitData;
+	iinitData.pSysMem = &quad.Indices[0];
+	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mScreenQuadIB));
+}
+
+void Scene::DrawScreenQuad()
+{
+	UINT stride = sizeof(Vertex::Basic32);
+	UINT offset = 0;
+
+	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
+	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	md3dImmediateContext->IASetVertexBuffers(0, 1, &mScreenQuadVB, &stride, &offset);
+	md3dImmediateContext->IASetIndexBuffer(mScreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+
+	// Scale and shift quad to lower-right corner.
+	XMMATRIX world(
+		0.5f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.5f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.0f, 1.0f);
+
+	ID3DX11EffectTechnique* tech = Effects::DebugTexFX->ViewRedTech;
+	D3DX11_TECHNIQUE_DESC techDesc;
+
+	tech->GetDesc(&techDesc);
+	for (UINT p = 0; p < techDesc.Passes; ++p)
+	{
+		Effects::DebugTexFX->SetWorldViewProj(world);
+		Effects::DebugTexFX->SetTexture(m_shadowMap->DepthMapSRV());
+
+		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+		md3dImmediateContext->DrawIndexed(6, 0, 0);
+	}
+}
+
 Scene::Scene(HINSTANCE hInstance)
 	: D3DApp(hInstance), meshMgr(md3dDevice), componentMgr(ComponentMgr::Instance()),
 	mTheta(1.3f*MathHelper::Pi),
@@ -118,7 +202,7 @@ Scene::Scene(HINSTANCE hInstance)
 	m_HierarchyDialog(new HierarchyDialog(hInstance)),
 	texMgr(TextureMgr::Instance()), effectMgr(EffectMgr::Instance()),
 	dataMgr(DataManager::Instance()), objectMgr(ObjectMgr::Instance())
-	, m_boundingBoxRenderer(0), m_treeBillBoardRenderer(0)
+	, m_boundingBoxRenderer(0), m_treeBillBoardRenderer(0), mScreenQuadVB(0), mScreenQuadIB(0)
 {
 	objectMgr.Init(&meshMgr, &componentMgr);
 	mMainWndCaption = L"Crate Demo";
@@ -165,9 +249,9 @@ bool Scene::Init()
 	m_shadowMap = make_unique<ShadowMap>(md3dDevice, 1920, 1080, L"FX/BuildShadowMap.fxo");
 
 	// Must init Effects first since InputLayouts depend on shader signatures.
-	//Effects::InitAll(md3dDevice);
+	Effects::InitAll(md3dDevice);
 	dataMgr.LoadEffectData();
-	//InputLayouts::InitAll(md3dDevice);
+	InputLayouts::InitAll(md3dDevice);
 
 
 
@@ -237,6 +321,7 @@ bool Scene::Init()
 		}
 	}*/
 
+	BuildScreenQuadGeometryBuffers();
 
 	return true;
 }
@@ -330,13 +415,19 @@ void Scene::DrawScene()
 	//Octree 렌더링
 	m_OctreeRenderer->Draw(md3dImmediateContext, &camera);
 	//treeBillBoard 렌더링
-	m_treeBillBoardRenderer->Draw(md3dImmediateContext, &camera);
+	//m_treeBillBoardRenderer->Draw(md3dImmediateContext, &camera);
 	
 	componentMgr.Render(md3dImmediateContext, &camera);
 	
 	//m_Octree->Render(md3dImmediateContext);
 
-	
+//그림자맵 텍스쳐 우측하단에 렌더링
+	DrawScreenQuad();
+
+	//ShaderResourceView로 쉐도우맵을 이번 렌더링의 자원으로 binding 했기 때문에
+	//다음 프레임에서 RenderTargetView로 쉐도우맵에 렌더링 하기 전 해제 해 준다.
+	ID3D11ShaderResourceView* nullSRV[16] = { 0 };
+	md3dImmediateContext->PSSetShaderResources(0, 16, nullSRV);
 
 	HR(mSwapChain->Present(0, 0));
 
@@ -347,7 +438,9 @@ void Scene::ShadowMapDraw()
 {
 	//뷰포트 설정, 렌더타겟뷰 null 설정, 깊이버퍼 설정
 	m_shadowMap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
+	
 	auto lightings = componentMgr.getLightings();
+	DirectionalLight* selectedLighting;
 
 	if (lightings.empty())
 		return;
@@ -357,14 +450,20 @@ void Scene::ShadowMapDraw()
 		//첫번째 평행광만 계산
 		if (lightings[i].GetLightType() == LightType::DIRECTIONAL)
 		{
+			selectedLighting = &lightings[i].GetDirLight();
 			//광원공간의 시야,투영행렬 계산
-			bool result = m_shadowMap->BuildShadowTransform(lightings[i].GetDirLight(),
-				XMLoadFloat3(&camera.GetUp()));
+			bool result = m_shadowMap->BuildShadowTransform(*selectedLighting,
+				XMVectorSet(0.0f,1.0f,0.0f,0.0f));
 			if(result)
 				SetShadowMatrix(XMLoadFloat4x4(&m_shadowMap->mShadowTransform));
 			break;
 		}
 	}
+
+	// FX sets tessellation stages, but it does not disable them.  So do that here
+	// to turn off tessellation.
+	md3dImmediateContext->HSSetShader(0, 0, 0);
+	md3dImmediateContext->DSSetShader(0, 0, 0);
 
 		
 	
@@ -382,13 +481,18 @@ void Scene::ShadowMapDraw()
 		//renderer의 쉐이더를 그림자맵 빌드를 위한 쉐이더로 변경
 		std::vector<std::wstring> effectNames = { m_shadowMap->m_shaderName };
 		std::vector<EffectType> effectType = { EffectType::BuildShadowMap };
-	
+		Effect* shadowEffect = effectMgr.GetEffect(effectNames[0]);
+		shadowEffect->PerFrameSet(selectedLighting, nullptr, nullptr, 
+			*(m_shadowMap->m_shadowMapCamera.get()));
+
 		renderer->InitEffects(effectNames, effectType);
+		renderer->isRenderShadowMapBaking = true;
 		renderer->Draw(md3dImmediateContext, m_shadowMap->m_shadowMapCamera.get());
 
 		//원래 쉐이더로 복구
 		renderer->InitEffects();
 	}
+	SetShadowSRV(m_shadowMap->DepthMapSRV());
 }
 
 void Scene::OnMouseDown(WPARAM btnState, int x, int y)

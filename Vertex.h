@@ -58,6 +58,7 @@ class InputLayouts
 public:
 	//static void InitAll(ID3D11Device* device);
 	static void DestroyAll();
+	static void InitAll(ID3D11Device* device);
 
 	static ID3D11InputLayout* Pos;
 	static ID3D11InputLayout* Basic32;

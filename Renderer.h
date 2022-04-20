@@ -48,15 +48,12 @@ public:
 	bool isShadowed;
 	//그림자맵을 렌더링 할 것인지 나타내는 변수
 	bool isShadowBaking;
-private:
+
 	//현재 쉐도우맵이 렌더링 됐는지 안됐는지 나타내는 변수
-	bool isShadowMapBaked;
+	bool isRenderShadowMapBaking = { 0 };
 #pragma endregion
 
 
-
-	
-	
 public:
 	bool GetBlending() { return m_blending; }
 	bool SetBlending(bool blend) { return m_blending = blend;}
@@ -65,7 +62,7 @@ public:
 	bool GetInstancing()
 	{ 
 		if (mesh != nullptr)
-			return mesh->GetInstancing() && ((isShadowBaking && isShadowMapBaked) || !isShadowBaking);
+			return mesh->GetInstancing() && !isRenderShadowMapBaking;
 		return	false;
 	}
 	bool SetInstancing(bool instancing) 

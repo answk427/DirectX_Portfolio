@@ -107,7 +107,7 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		}
 
 		UINT tempTechType = m_technique_type;
-		if (isShadowed && isShadowMapBaked)
+		if (isShadowed && isRenderShadowMapBaking)
 			tempTechType = tempTechType | TechniqueType::Shadowed;
 		
 		
@@ -143,17 +143,14 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	if (GetInstancing())
 		mesh->enableInstancingIndexes.clear();
 	
-	//ÀÌ¹Ì ±×¸²ÀÚ¸ÊÀÌ ·»´õ¸µ µÈ »óÅÂ¸é
-	if (isShadowBaking && isShadowMapBaked)
-		isShadowMapBaked = false;
-	else
-		isShadowMapBaked = true;
-
+	//ÇöÀç ·»´õ¸µÀÌ ±×¸²ÀÚ¸Ê ·»´õ¸µÀÌ¸é
+	if (isShadowBaking && isRenderShadowMapBaking)
+		isRenderShadowMapBaking = false;
 }
 
 Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,type)
 , m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f,1.0f,1.0f,1.0f),
-mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 })
+mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 }), isRenderShadowMapBaking(0)
 {
 	MapsInit();
 	SetMaterials(std::vector<GeneralMaterial>(1));
@@ -162,7 +159,7 @@ mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(
 
 Renderer::Renderer(const std::string & id, ComponentType type, Mesh * mesh) : Component(id, type)
 , m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f, 1.0f, 1.0f, 1.0f),
-mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 })
+mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 }), isRenderShadowMapBaking(0)
 {
 	SetMesh(mesh);
 	SetMaterials(std::vector<GeneralMaterial>(1));
@@ -264,12 +261,21 @@ void Renderer::InitEffects()
 void Renderer::InitEffects(const std::vector<std::wstring>& shaderNames, vector<EffectType>& effectTypes)
 {
 	effects.clear();
+
+	UINT subsetSize = mesh->GetSubsetLength();
 	
 	for (int i=0; i<shaderNames.size(); ++i)
-	{
+	{		
 		m_effectMgr.SetType(shaderNames[i], effectTypes[i]);
 		Effect* effect = m_effectMgr.GetEffect(shaderNames[i]);
 		assert(effect!=nullptr);
+		effects.push_back(effect);
+	}
+	
+	for (int i = shaderNames.size(); i < subsetSize; ++i)
+	{
+		Effect* effect = m_effectMgr.GetEffect(shaderNames[0]);
+		assert(effect != nullptr);
 		effects.push_back(effect);
 	}
 }

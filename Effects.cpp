@@ -7,6 +7,12 @@
 XMMATRIX g_shadowMatrix;
 void SetShadowMatrix(XMMATRIX shadowMatrix) { g_shadowMatrix = shadowMatrix; }
 
+ID3D11ShaderResourceView* g_shadowSRV = nullptr;
+void SetShadowSRV(ID3D11ShaderResourceView * shadowSRV)
+{
+	g_shadowSRV = shadowSRV;
+}
+
 #pragma region Effect
 Effect::Effect(ID3D11Device* device, const std::wstring& filename)
 	: mFX(0), m_inputLayout(0), m_blendState(0), m_instancing_inputLayout(0)
@@ -168,6 +174,9 @@ void BasicEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, S
 	SetDirLights(directL);
 	SetPointLights(pointL);
 	SetSpotLights(spotL);
+
+	//그림자 맵 설정
+	SetShadowMap(g_shadowSRV);
 
 	SetEyePosW(camera.GetPosition());
 }
@@ -488,10 +497,7 @@ void BuildShadowMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * 
 {
 	//쉐이더에 조명설정
 	SetEyePosW(camera.GetPosition());
-
-	//물체공간 -> 투영공간 변환행렬
-	//XMMATRIX worldViewProj = world * camera->ViewProj();
-	//SetWorldViewProj(worldViewProj);
+	
 	
 	//인스턴스의 세계행렬과 곱해질 시야투영행렬
 	SetViewProj(camera.ViewProj());	
@@ -499,6 +505,10 @@ void BuildShadowMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * 
 void BuildShadowMapEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
 {
 	SetWorld(world);
+
+	//물체공간 -> 투영공간 변환행렬
+	XMMATRIX worldViewProj = world * camera->ViewProj();
+	SetWorldViewProj(worldViewProj);
 
 	//비균등 비례로 인한 법선벡터 계산에 쓰이는 행렬
 	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
@@ -521,7 +531,8 @@ ID3DX11EffectTechnique * BuildShadowMapEffect::GetTechnique(UINT techType)
 	case TechniqueType::Light:
 		return BuildShadowMapTech;
 	case TechniqueType::Light | TechniqueType::DiffuseMap:
-		return BuildShadowMapAlphaClipTech;
+		//return BuildShadowMapAlphaClipTech;
+		return BuildShadowMapTech;
 	case TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Instancing:
 		return BuildShadowMapTech;
 	default:
@@ -637,6 +648,35 @@ DebugTexEffect::~DebugTexEffect()
 
 }
 
+void DebugTexEffect::InitInputLayout(ID3D11Device * device)
+{
+}
+
+void DebugTexEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+}
+
+void DebugTexEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
+{
+}
+
+void DebugTexEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
+{
+}
+
+ID3DX11EffectTechnique * DebugTexEffect::GetTechnique(UINT techType)
+{
+	return nullptr;
+}
+
+void DebugTexEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+}
+
+void DebugTexEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+}
+
 #pragma endregion
 
 #pragma region Effects
@@ -660,7 +700,7 @@ void Effects::InitAll(ID3D11Device* device)
 	//SsaoFX            = new SsaoEffect(device, L"FX/Ssao.fxo");
 	//SsaoBlurFX        = new SsaoBlurEffect(device, L"FX/SsaoBlur.fxo");
 	//SkyFX             = new SkyEffect(device, L"FX/Sky.fxo");
-	//DebugTexFX        = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
+	DebugTexFX        = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
 }
 
 void Effects::DestroyAll()

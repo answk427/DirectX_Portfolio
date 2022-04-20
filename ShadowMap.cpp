@@ -131,7 +131,9 @@ bool ShadowMap::BuildShadowTransform(const DirectionalLight & dirLight, XMVECTOR
 
 	//시야행렬
 	XMMATRIX view = XMMatrixLookAtLH(lightPos, targetPos, worldUp);
-	
+	XMFLOAT4X4 tempView;
+	XMStoreFloat4x4(&tempView, view);
+	m_shadowMapCamera->SetView(tempView);
 
 	//광원공간에서 경계구의 원점 위치
 	XMFLOAT3 viewTargetPos;
@@ -147,7 +149,7 @@ bool ShadowMap::BuildShadowTransform(const DirectionalLight & dirLight, XMVECTOR
 		0.5f, 0.5f, 0.0f, 1.0f);
 
 	//XMMATRIX S = m_shadowMapCamera->ViewProj() *ndc2Tex;
-	XMMATRIX S = view * m_shadowMapCamera->Proj() *ndc2Tex;
+	XMMATRIX S = m_shadowMapCamera->ViewProj() *ndc2Tex;
 
 	XMStoreFloat4x4(&mShadowTransform, S);
 
