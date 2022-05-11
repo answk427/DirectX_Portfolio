@@ -37,6 +37,8 @@ cbuffer cbSkinned
 // Nonnumeric values cannot be added to a cbuffer.
 Texture2D gDiffuseMap;
 Texture2D gNormalMap;
+Texture2DArray gDiffuseMapArray;
+
  
 SamplerState samLinear
 {
@@ -72,7 +74,8 @@ VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
 	
-	vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
+	//vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
+	vout.PosH = mul(float4(vin.PosL, 1.0f), mul(gWorld, gViewProj));
 	vout.Tex  = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
 
 	return vout;
@@ -98,7 +101,9 @@ VertexOut SkinnedVS(SkinnedVertexIn vin)
 	}
  
 	// Transform to homogeneous clip space.
-	vout.PosH = mul(float4(posL, 1.0f), gWorldViewProj);
+	//vout.PosH = mul(float4(posL, 1.0f), gWorldViewProj);
+	vout.PosH = mul(float4(vin.PosL, 1.0f), mul(gWorld, gViewProj));
+
 	
 	// Output vertex attributes for interpolation across triangle.
 	vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;

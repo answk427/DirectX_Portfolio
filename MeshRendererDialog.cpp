@@ -59,6 +59,12 @@ INT_PTR CALLBACK MeshRendererProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 
 		return (INT_PTR)TRUE;
 	}
+	case WM_PAINT:
+	{
+		//CPaintDC dc(hDlg);
+		HDC dc = GetDC(hDlg);
+		g_MeshRendererDialog->m_CImage.Draw(dc, 0, 0, 100, 100);
+	}
 
 	}
 	return (INT_PTR)FALSE;
@@ -135,8 +141,16 @@ bool MeshRendererDialog::OpenDialog(HWND hwnd)
 
 void MeshRendererDialog::Init(HWND hDlg)
 {
+	m_CImage.Load(L"Textures/bricks.bmp");
+
+	if (m_CImage.IsNull())
+		MessageBox(hDlg, TEXT("안되냐"), TEXT("init"), MB_OK);
+	else
+		MessageBox(hDlg, TEXT("되냐"), TEXT("init"), MB_OK);
+
 	m_hDlg = hDlg;
 	m_hList = GetDlgItem(hDlg, MATERIALLIST);
+	
 	
 	//material 텍스쳐행렬 수정 에디트박스 핸들
 	m_hDiffuseTileX = GetDlgItem(hDlg, DIFFUSETILEX_EDIT);
@@ -284,7 +298,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 	
 	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
-
+	
 	//editbox가 수정되었을 때
 	for (auto& elem : controlMap)
 	{
@@ -330,13 +344,16 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 				if (idx == -1)
 					break;
 				CommandQueue::AddCommand(new SetMaterialMap(m_MeshRenderer, idx, filePath, mapType::Type_DiffuseMap));
-				
+				m_CImage.Load(filePath); //Cimage로 dds파일 로딩ㅇ실험
+				if (m_CImage.IsNull())
+					MessageBox(hDlg, TEXT("안되냐"), TEXT("diffuseButton"), MB_OK);
 				//diffuseMapText에 이름 설정
 				Edit_SetText(GetDlgItem(m_hDlg, DIFFUSEMAPCONTROL), fileTitle);
 			}
 			else
 				MessageBox(m_hDlg, L"DiffuseMap Load Fail!", L"DiffuseMap Load", MB_OK);
 			
+			InvalidateRect(hDlg, NULL, true);
 		}
 		break;
 	case NORMALMAPBUTTON:

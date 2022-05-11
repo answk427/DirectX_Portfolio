@@ -197,7 +197,7 @@ gameObjectID ObjectMgr::makeID()
 void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 {
 	
-	wstring name = node.GetName();
+	std::wstring name = node.GetName();
 	
 	//파일경로에서 파일명만 추출
 	/*int pos = fileName.rfind('/');
@@ -231,7 +231,7 @@ void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 
 GameObject * ObjectMgr::AddNode(NodeStruct & node)
 {
-	wstring name = node.GetName();
+	std::wstring name = node.GetName();
 	GameObject& obj = CreateGameObject(name);
 	obj.transform.SetPosition(0, 0, 0);
 

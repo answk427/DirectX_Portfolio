@@ -84,7 +84,7 @@ Mesh * MeshMgr::CreateBasicBox(float width, float height, float depth)
 Mesh * MeshMgr::CreateBasicGrid(float width, float depth, UINT m, UINT n)
 {
 	static int num = 0;
-	meshes.push_back(Mesh("BasicBox" + to_string(num++)));
+	meshes.push_back(Mesh("BasicBox" + std::to_string(num++)));
 	
 	//Box 정점,인덱스 초기화
 	geo->CreateGrid(width, depth, m, n, meshes.back());

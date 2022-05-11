@@ -27,7 +27,7 @@ bool BoundingBoxRenderer::SetObject(GameObject * gameObj)
 		mesh = new Mesh("BoundingBoxMesh");
 		UINT idx[24] = { 0,1,0,4,4,5,1,5,0,2,4,6,5,7,1,3,2,3,2,6,6,7,3,7 };
 
-		vector<UINT> indices(idx, idx + 24);
+		std::vector<UINT> indices(idx, idx + 24);
 
 		mesh->Init(std::vector<MyVertex::BasicVertex>(), indices);
 		mesh->InitWritableVB<MyVertex::PosColorVertex>(m_device, 8);
@@ -42,10 +42,10 @@ bool BoundingBoxRenderer::SetObject(GameObject * gameObj)
 	return true;
 }
 
-vector<MyVertex::PosColorVertex> BoundingBoxRenderer::AABBtoVertices(XNA::AxisAlignedBox aabb)
+std::vector<MyVertex::PosColorVertex> BoundingBoxRenderer::AABBtoVertices(XNA::AxisAlignedBox aabb)
 {
 	int multiply[2] = { 1,-1 };
-	vector<MyVertex::PosColorVertex> vertices;
+	std::vector<MyVertex::PosColorVertex> vertices;
 	
 	//aabb로부터 정점들의 위치를 구함.
 	for (int i = 0; i < 2; i++)

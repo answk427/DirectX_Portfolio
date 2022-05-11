@@ -3,33 +3,33 @@
 
 
 
-void Mesh::SetVertices(vector<MyVertex::BasicVertex>& vertexSrc)
+void Mesh::SetVertices(std::vector<MyVertex::BasicVertex>& vertexSrc)
 {
 	//vertices를 빈 벡터로 만듬
-	vector<MyVertex::BasicVertex>().swap(vertices);
+	std::vector<MyVertex::BasicVertex>().swap(vertices);
 	//매개변수 벡터와 교환
 	vertices.swap(vertexSrc);
 }
 
-void Mesh::SetIndices(vector<UINT>& indexSrc)
+void Mesh::SetIndices(std::vector<UINT>& indexSrc)
 {
 	//Indices를 빈 벡터로 만듬
-	vector<UINT>().swap(indices);
+	std::vector<UINT>().swap(indices);
 	//매개변수 벡터와 교환
 	indices.swap(indexSrc);
 }
 
-void Mesh::SetSubsets(vector<Subset>& subsetSrc)
+void Mesh::SetSubsets(std::vector<Subset>& subsetSrc)
 {
 	//subsets를 빈 벡터로 만듬
-	vector<Subset>().swap(subsets);
+	std::vector<Subset>().swap(subsets);
 	//매개변수 벡터와 교환
 	subsets.swap(subsetSrc);
 
 	//subset 사이즈만큼 설정되야 하는 컨테니어들 초기화
 	if (textureNames != nullptr)
 		delete[] textureNames;
-	textureNames = new vector<std::wstring>[subsets.size()];
+	textureNames = new std::vector<std::wstring>[subsets.size()];
 	textureArrays.assign(subsets.size(), 0);
 
 }
@@ -173,7 +173,7 @@ Mesh & Mesh::operator=(const Mesh & other)
 	return *this;
 }
 
-void Mesh::Init(ID3D11Device * device, vector<MyVertex::BasicVertex>& vertexSrc, vector<UINT>& indexSrc, vector<Subset>& subsetSrc)
+void Mesh::Init(ID3D11Device * device, std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc, std::vector<Subset>& subsetSrc)
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);
@@ -181,14 +181,14 @@ void Mesh::Init(ID3D11Device * device, vector<MyVertex::BasicVertex>& vertexSrc,
 	InitBuffers(device);
 }
 
-void Mesh::Init(vector<MyVertex::BasicVertex>& vertexSrc, vector<UINT>& indexSrc, vector<Subset>& subsetSrc)
+void Mesh::Init(std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc, std::vector<Subset>& subsetSrc)
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);
 	SetSubsets(subsetSrc);
 }
 
-void Mesh::Init(vector<MyVertex::BasicVertex>& vertexSrc, vector<UINT>& indexSrc)
+void Mesh::Init(std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc)
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);

@@ -2,7 +2,7 @@
 #include <atlconv.h>
 
 
-void AssimpLoader::InitScene(const string& fileName)
+void AssimpLoader::InitScene(const std::string& fileName)
 {
 	m_pScene = aiImportFile(fileName.c_str(),
 		aiProcess_GenBoundingBoxes | //BoundingBox 계산?
@@ -131,7 +131,7 @@ void AssimpLoader::NodeTravel()
 	aiNode* node = m_pScene->mRootNode;
 	
 	//변환행렬 적재
-	root = new NodeStruct(wstring(A2W(node->mName.C_Str()))
+	root = new NodeStruct(std::wstring(A2W(node->mName.C_Str()))
 		, ConvertMatrix(node->mTransformation));
 	
 	//해당 노드의 매쉬를 적재
@@ -154,7 +154,7 @@ void AssimpLoader::NodeTravel(NodeStruct& parent ,aiNode * node)
 	USES_CONVERSION;
 	
 	
-	parent.childs.push_back(NodeStruct(wstring(A2W(node->mName.C_Str())),
+	parent.childs.push_back(NodeStruct(std::wstring(A2W(node->mName.C_Str())),
 		ConvertMatrix(node->mTransformation)));
 	NodeStruct& current = parent.childs.back();
 	

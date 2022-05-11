@@ -258,7 +258,7 @@ void Renderer::InitEffects()
 	}
 }
 
-void Renderer::InitEffects(const std::vector<std::wstring>& shaderNames, vector<EffectType>& effectTypes)
+void Renderer::InitEffects(const std::vector<std::wstring>& shaderNames, std::vector<EffectType>& effectTypes)
 {
 	effects.clear();
 
@@ -299,7 +299,7 @@ void Renderer::SetMesh(Mesh * meshSrc)
 	AddInstancingQueue();
 }
 
-void Renderer::SetMesh(Mesh * meshSrc, vector<GeneralMaterial>& materialSrc)
+void Renderer::SetMesh(Mesh * meshSrc, std::vector<GeneralMaterial>& materialSrc)
 {
 	//원래 설정되어 있던 mesh의 InstancingData에서 현재 오브젝트의 데이터를 지움.
 	if (mesh != nullptr)
@@ -321,10 +321,10 @@ void Renderer::MapsInit()
 	InitNormalMaps();
 }
 
-void Renderer::SetMaterials(vector<GeneralMaterial>& materialSrc)
+void Renderer::SetMaterials(std::vector<GeneralMaterial>& materialSrc)
 {
 	//materials를 빈 벡터로 만듬
-	vector<GeneralMaterial>().swap(materials);
+	std::vector<GeneralMaterial>().swap(materials);
 	//매개변수 벡터와 교환
 	materials.swap(materialSrc);
 	MapsInit();

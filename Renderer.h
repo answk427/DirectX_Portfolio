@@ -2,7 +2,6 @@
 #include <TextureMgr.h>
 #include <D3D11.h>
 #include <d3dUtil.h>
-#include <vector>
 
 #include "Interface.h"
 #include "Mesh.h"
@@ -21,10 +20,10 @@ class Renderer : public Component
 protected:
 	Transform* transform;
 	Mesh* mesh;
-	vector<GeneralMaterial> materials;
-	vector<ID3D11ShaderResourceView*> diffuseMaps;
-	vector<ID3D11ShaderResourceView*> normalMaps;
-	vector<Effect*> effects;
+	std::vector<GeneralMaterial> materials;
+	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
+	std::vector<ID3D11ShaderResourceView*> normalMaps;
+	std::vector<Effect*> effects;
 	TextureMgr& m_texMgr;
 	EffectMgr& m_effectMgr;
 	
@@ -110,20 +109,20 @@ public:
 	
 	//쉐이더 이펙트 초기화
 	void InitEffects(EffectMgr& effectMgr, const std::wstring& shaderPath);
-	void InitEffects();
-	void InitEffects(const std::vector<std::wstring>& shaderNames, vector<EffectType>& effectTypes);
+	virtual void InitEffects();
+	virtual void InitEffects(const std::vector<std::wstring>& shaderNames, std::vector<EffectType>& effectTypes);
 
 	
 	//반드시 SetMesh가 SetMaterial보다 먼저 실행되야 하기 때문에 함수를 합침.
 	//기본 메테리얼로 생성
 	void SetMesh(Mesh* meshSrc);
 	//메테리얼 데이터를 로드해서 생성
-	void SetMesh(Mesh* meshSrc, vector<GeneralMaterial>& materialSrc);
+	void SetMesh(Mesh* meshSrc, std::vector<GeneralMaterial>& materialSrc);
 	Mesh* GetMesh() { return mesh; }
 	const Mesh* GetMesh() const { return mesh; }
 	
 public:
-	vector<GeneralMaterial>& GetMaterials() { return materials; }
+	std::vector<GeneralMaterial>& GetMaterials() { return materials; }
 
 	void SetTransform(Transform* tr) { transform = tr; }
 	Transform* GetTransform() { return transform; }
@@ -138,7 +137,7 @@ public:
 	virtual void Enable() override;
 	virtual void Disable() override;
 protected:
-	void SetMaterials(vector<GeneralMaterial>& materialSrc);
+	void SetMaterials(std::vector<GeneralMaterial>& materialSrc);
 };
 
 

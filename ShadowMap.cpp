@@ -6,7 +6,7 @@
 
 ShadowMap::ShadowMap(ID3D11Device* device, UINT width, UINT height, const std::wstring& shaderName)
 	: mWidth(width), mHeight(height), mDepthMapSRV(0), mDepthMapDSV(0), m_shaderName(shaderName),
-	 m_shadowMapCamera(make_unique<Camera>())
+	 m_shadowMapCamera(std::make_unique<Camera>())
 {
 
 	EffectMgr& effectMgr = EffectMgr::Instance();
@@ -93,16 +93,35 @@ void ShadowMap::ComputeBoundingSphere(std::vector<Renderer*> renderers)
 		Mesh* mesh = renderer->GetMesh();
 		XMMATRIX world = XMLoadFloat4x4(renderer->GetTransform()->GetWorld());
 		
-		//모든 정점 중에 최소정점과 최대정점을 구함.
-		auto& vertices = mesh->GetVertices();
-		for (auto& vertex : vertices)
+		//모든 오브젝트의 aabb를 검사해 최소정점과 최대정점을 구함.
+		XNA::AxisAlignedBox& aabb = mesh->GetAABB();
+		int xFactor, yFactor, zFactor;
+		float xPos, yPos, zPos;
+		for (int i = 0; i < 8; ++i)
 		{
-			//월드좌표에서의 정점위치
-			XMVECTOR P = XMVector3TransformCoord(XMLoadFloat3(&vertex.pos), world);
+			xFactor = (i & 1) ? 1 : -1;
+			yFactor = (i & 2) ? 1 : -1;
+			zFactor = (i & 4) ? 1 : -1;
+			
+			xPos = aabb.Center.x + xFactor * aabb.Extents.x;
+			yPos = aabb.Center.y + yFactor * aabb.Extents.y;
+			zPos = aabb.Center.z + zFactor * aabb.Extents.z;
+
+			XMVECTOR P = XMVector3TransformCoord(XMLoadFloat3(&XMFLOAT3(xPos,yPos,zPos)), world);
 			maxPosV = XMVectorMax(maxPosV, P);
 			minPosV = XMVectorMin(minPosV, P);
 		}
 
+		//모든 정점 중에 최소정점과 최대정점을 구함.
+		//auto& vertices = mesh->GetVertices();
+		//
+		//for (auto& vertex : vertices)
+		//{
+		//	//월드좌표에서의 정점위치
+		//	XMVECTOR P = XMVector3TransformCoord(XMLoadFloat3(&vertex.pos), world);
+		//	maxPosV = XMVectorMax(maxPosV, P);
+		//	minPosV = XMVectorMin(minPosV, P);
+		//}
 	}
 
 

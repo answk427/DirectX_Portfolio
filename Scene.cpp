@@ -45,6 +45,8 @@ public:
 	ID3D11Buffer* mScreenQuadIB;
 	void DrawScreenQuad();
 
+	//임시로 트리빌보드 추가하려고 만든 함수
+	void AddTreeBilBoard();
 
 public:
 	Scene(HINSTANCE hInstance);
@@ -70,8 +72,8 @@ private://엔진기능
 	TreeBillBoardRenderer* m_treeBillBoardRenderer;
 	Frustum* m_Frustum;
 	Octree* m_Octree;
-	std::vector<unique_ptr<Renderer>> boxes;
-	unique_ptr<ShadowMap> m_shadowMap;
+	std::vector<std::unique_ptr<Renderer>> boxes;
+	std::unique_ptr<ShadowMap> m_shadowMap;
 	
 private:
 	DataManager& dataMgr;
@@ -195,6 +197,32 @@ void Scene::DrawScreenQuad()
 	}
 }
 
+void Scene::AddTreeBilBoard()
+{
+	// 시드값을 얻기 위한 random_device 생성.
+	std::random_device rd;
+
+	// random_device 를 통해 난수 생성 엔진을 초기화 한다.
+	std::mt19937 gen(rd());
+
+	// 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
+	std::uniform_int_distribution<int> dis(-10, 10);
+	//TREE 랜덤 생성
+	for (int i = 0; i < 10; ++i)
+	{
+		for (int j = 0; j < 10; ++j)
+		{
+			for (int k = 0; k < 10; ++k)
+			{
+				float height = dis(gen) + 10;
+				m_treeBillBoardRenderer->AddTree(md3dDevice,
+					XMFLOAT3(i * dis(gen), height * 0.5f, k * dis(gen)),
+					XMFLOAT2(dis(gen) + 10, height));
+			}
+		}
+	}
+}
+
 Scene::Scene(HINSTANCE hInstance)
 	: D3DApp(hInstance), meshMgr(md3dDevice), componentMgr(ComponentMgr::Instance()),
 	mTheta(1.3f*MathHelper::Pi),
@@ -246,7 +274,7 @@ bool Scene::Init()
 	OctreeCommand::Init(m_Octree);
 
 	//ShadowMap class 생성
-	m_shadowMap = make_unique<ShadowMap>(md3dDevice, 1920, 1080, L"FX/BuildShadowMap.fxo");
+	m_shadowMap = std::make_unique<ShadowMap>(md3dDevice, 1920, 1080, L"FX/BuildShadowMap.fxo");
 
 	// Must init Effects first since InputLayouts depend on shader signatures.
 	Effects::InitAll(md3dDevice);
@@ -297,10 +325,10 @@ bool Scene::Init()
 	std::mt19937 gen(rd());
 
 	// 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
-	std::uniform_int_distribution<int> dis(-100, 100);
+	std::uniform_int_distribution<int> dis(-10, 10);
 		
-	/*GeometryGenerator geo;
-	for (int i = 0; i < 10; ++i)
+	GeometryGenerator geo;
+	/*for (int i = 0; i < 10; ++i)
 	{
 		for (int j = 0; j < 10; ++j)
 		{
@@ -320,6 +348,7 @@ bool Scene::Init()
 			}
 		}
 	}*/
+	
 
 	BuildScreenQuadGeometryBuffers();
 
@@ -474,24 +503,41 @@ void Scene::ShadowMapDraw()
 		currObjectCount = objectCount;
 		m_shadowMap->ComputeBoundingSphere(componentMgr.GetAllRenderers());
 	}
+
+	
+	//그림자맵 빌드 쉐이더들의 세팅
+	//기하쉐이더 사용하는 빌보드 그림자맵 쉐이더
+	m_treeBillBoardRenderer->shadowEffect->PerFrameSet(selectedLighting, nullptr, nullptr,
+		*(m_shadowMap->m_shadowMapCamera.get()));
+
+	//일반 그림자맵 쉐이더
+	std::vector<std::wstring> effectNames = { m_shadowMap->m_shaderName };
+	std::vector<EffectType> effectType = { EffectType::BuildShadowMap };
+	Effect* shadowEffect = effectMgr.GetEffect(effectNames[0]);
+	shadowEffect->PerFrameSet(selectedLighting, nullptr, nullptr,
+		*(m_shadowMap->m_shadowMapCamera.get()));
+
+
+	//트리빌보드 그림자맵 렌더링을 위해 잠시 추가
+	m_drawableRenderers.push_back(m_treeBillBoardRenderer);
+
 	for (auto renderer : m_drawableRenderers)
 	{
 		if (renderer->isShadowBaking == false)
 			continue;
 		//renderer의 쉐이더를 그림자맵 빌드를 위한 쉐이더로 변경
-		std::vector<std::wstring> effectNames = { m_shadowMap->m_shaderName };
-		std::vector<EffectType> effectType = { EffectType::BuildShadowMap };
-		Effect* shadowEffect = effectMgr.GetEffect(effectNames[0]);
-		shadowEffect->PerFrameSet(selectedLighting, nullptr, nullptr, 
-			*(m_shadowMap->m_shadowMapCamera.get()));
-
 		renderer->InitEffects(effectNames, effectType);
 		renderer->isRenderShadowMapBaking = true;
-		renderer->Draw(md3dImmediateContext, m_shadowMap->m_shadowMapCamera.get());
+		//renderer->Draw(md3dImmediateContext, m_shadowMap->m_shadowMapCamera.get());
+		renderer->Draw(md3dImmediateContext, &camera);
 
 		//원래 쉐이더로 복구
 		renderer->InitEffects();
 	}
+	//잠시 추가 했던 트리빌보드 렌더러 제거
+	m_drawableRenderers.pop_back();
+
+	
 	SetShadowSRV(m_shadowMap->DepthMapSRV());
 }
 

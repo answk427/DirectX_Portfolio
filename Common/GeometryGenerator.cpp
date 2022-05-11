@@ -131,7 +131,7 @@ void GeometryGenerator::CreateSphere(float radius, UINT sliceCount, UINT stackCo
 
 			XMVECTOR T = XMLoadFloat3(&v.TangentU);
 			XMStoreFloat3(&v.TangentU, XMVector3Normalize(T));
-
+			
 			XMVECTOR p = XMLoadFloat3(&v.Position);
 			XMStoreFloat3(&v.Normal, XMVector3Normalize(p));
 
@@ -412,6 +412,7 @@ void GeometryGenerator::CreateCylinder(float bottomRadius, float topRadius, floa
 			XMVECTOR T = XMLoadFloat3(&vertex.TangentU);
 			XMVECTOR B = XMLoadFloat3(&bitangent);
 			XMVECTOR N = XMVector3Normalize(XMVector3Cross(T, B));
+			
 			XMStoreFloat3(&vertex.Normal, N);
 
 			meshData.Vertices.push_back(vertex);
@@ -534,7 +535,7 @@ void GeometryGenerator::CreateGrid(float width, float depth, UINT m, UINT n, Mes
 	float du = 1.0f / (n-1);
 	float dv = 1.0f / (m-1);
 
-	vector<MyVertex::BasicVertex> vertices;
+	std::vector<MyVertex::BasicVertex> vertices;
 	vertices.resize(vertexCount);
 
 	for(UINT i = 0; i < m; ++i)

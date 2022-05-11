@@ -489,6 +489,9 @@
     <CustomBuild Include="FX\SimpleLine.fx">
       <Filter>FX</Filter>
     </CustomBuild>
+    <CustomBuild Include="FX\BuildShadowMapBilboard.fx">
+      <Filter>FX</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Library Include="Common\Effects11.lib">

@@ -88,7 +88,7 @@ public:
 public:
 	const std::vector<Lighting> getLightings() 
 	{
-		return vector<Lighting>(lightings.begin(), lightings.begin() + enableCount_lighting);
+		return std::vector<Lighting>(lightings.begin(), lightings.begin() + enableCount_lighting);
 	}
 };
 

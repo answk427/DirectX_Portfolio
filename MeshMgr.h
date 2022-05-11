@@ -11,14 +11,14 @@ class MeshMgr
 {
 private:
 	ID3D11Device* device;	
-	vector<Mesh> meshes;
+	std::vector<Mesh> meshes;
 	MeshReaderWriter& meshReaderWriter;
-	unique_ptr<GeometryGenerator> geo;
+	std::unique_ptr<GeometryGenerator> geo;
 
 
 public:
 	MeshMgr(ID3D11Device* device) : device(device), meshReaderWriter(MeshReaderWriter::Instance()),
-		geo(make_unique<GeometryGenerator>())
+		geo(std::make_unique<GeometryGenerator>())
 	{ meshes.reserve(MESHES_SIZE); }
 	MeshMgr() : meshReaderWriter(MeshReaderWriter::Instance()){}
 	~MeshMgr();

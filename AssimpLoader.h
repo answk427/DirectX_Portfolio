@@ -19,10 +19,10 @@ class AssimpMesh
 private:
 	friend class AssimpLoader;
 	//메쉬구조를 저장할 컨테이너들
-	vector<MyVertex::BasicVertex> vertices;
-	vector<UINT> indices;
-	vector<Subset> subsets;
-	vector<GeneralMaterial> materials;
+	std::vector<MyVertex::BasicVertex> vertices;
+	std::vector<UINT> indices;
+	std::vector<Subset> subsets;
+	std::vector<GeneralMaterial> materials;
 	AABB_MaxMin* m_AABB_MaxMin;
 public:
 	
@@ -39,10 +39,10 @@ public:
 		}
 	}
 public:
-	vector<MyVertex::BasicVertex> GetVertices() { return vertices; }
-	vector<UINT> GetIndices() { return indices; }
-	vector<Subset> GetSubsets() { return subsets; }
-	vector<GeneralMaterial> GetMaterials() { return materials; }
+	std::vector<MyVertex::BasicVertex> GetVertices() { return vertices; }
+	std::vector<UINT> GetIndices() { return indices; }
+	std::vector<Subset> GetSubsets() { return subsets; }
+	std::vector<GeneralMaterial> GetMaterials() { return materials; }
 	AABB_MaxMin* GetAABB_MaxMin() { return m_AABB_MaxMin; }
 	bool HasBone() { return false; } //임시로 false만 반환
 };
@@ -50,31 +50,29 @@ public:
 class NodeStruct
 {
 private:
-	wstring name;
+	std::wstring name;
 	XMFLOAT4X4 mat;
 
 public:
 	//Assimp에서 읽어들인 메쉬
 	AssimpMesh* assimpMesh;
 	//현재 노드의 하위노드들
-	vector<NodeStruct> childs;
+	std::vector<NodeStruct> childs;
 public:
-	NodeStruct(const wstring& nodeName, const XMFLOAT4X4 nodeMat) : name(nodeName), mat(nodeMat), assimpMesh(0){}
+	NodeStruct(const std::wstring& nodeName, const XMFLOAT4X4 nodeMat) : name(nodeName), mat(nodeMat), assimpMesh(0){}
 	~NodeStruct()
 	{
 		if(!assimpMesh)
 			delete assimpMesh;
 	}
 public:
-	wstring GetName() { return name; }
+	std::wstring GetName() { return name; }
 	XMFLOAT4X4 GetMatrix() { return mat; }
 };
 
 
 
 #pragma comment(lib, "assimp.lib")
-
-using namespace std;
 
 class AssimpLoader
 {
@@ -112,7 +110,7 @@ public:
 	
 public:
 	//모델파일을 읽어와 scene 초기화
-	void InitScene(const string & fileName);
+	void InitScene(const std::string & fileName);
 	//Data 읽기
 	bool LoadData();
 	bool IsEmpty() { return m_pScene == nullptr; }

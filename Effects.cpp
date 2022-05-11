@@ -208,7 +208,7 @@ void BasicEffect::PerObjectSet(GeneralMaterial * material,
 
 	//세계공간 -> 광원의 ndc좌표 -> 텍스쳐공간 좌표 변환 행렬
 	SetShadowTransform(world * g_shadowMatrix);
-	
+
 	//재질 설정
 	SetMaterial(material->basicMat);
 }
@@ -464,6 +464,7 @@ BuildShadowMapEffect::BuildShadowMapEffect(ID3D11Device* device, const std::wstr
 	MinTessFactor = mFX->GetVariableByName("gMinTessFactor")->AsScalar();
 	MaxTessFactor = mFX->GetVariableByName("gMaxTessFactor")->AsScalar();
 	DiffuseMap = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
+	DiffuseMapArray = mFX->GetVariableByName("gDiffuseMapArray")->AsShaderResource();
 	NormalMap = mFX->GetVariableByName("gNormalMap")->AsShaderResource();
 
 	Init(device);
@@ -479,7 +480,7 @@ void BuildShadowMapEffect::InitInputLayout(ID3D11Device * device)
 
 	//HR(BuildShadowMapTech->GetPassByIndex(0)->GetDesc(&passDesc));
 	HR(BuildShadowMapAlphaClipTech->GetPassByIndex(0)->GetDesc(&passDesc));
-		
+
 	HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTan, 4, passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize, &m_inputLayout));
 }
@@ -496,19 +497,19 @@ void BuildShadowMapEffect::InitInstancingInputLayout(ID3D11Device * device)
 void BuildShadowMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
 {
 	//쉐이더에 조명설정
-	SetEyePosW(camera.GetPosition());
-	
-	
+	//SetEyePosW(camera.GetPosition());
+
 	//인스턴스의 세계행렬과 곱해질 시야투영행렬
-	SetViewProj(camera.ViewProj());	
+	SetViewProj(camera.ViewProj());
 }
 void BuildShadowMapEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
 {
 	SetWorld(world);
 
+	SetEyePosW(camera->GetPosition());
 	//물체공간 -> 투영공간 변환행렬
-	XMMATRIX worldViewProj = world * camera->ViewProj();
-	SetWorldViewProj(worldViewProj);
+	//XMMATRIX worldViewProj = world * camera->ViewProj();
+	//SetWorldViewProj(worldViewProj);
 
 	//비균등 비례로 인한 법선벡터 계산에 쓰이는 행렬
 	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
@@ -546,7 +547,7 @@ void BuildShadowMapEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11
 }
 void BuildShadowMapEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 {
-	//미구현
+	SetDiffuseMapArray(arr);
 }
 #pragma endregion
 
@@ -700,7 +701,7 @@ void Effects::InitAll(ID3D11Device* device)
 	//SsaoFX            = new SsaoEffect(device, L"FX/Ssao.fxo");
 	//SsaoBlurFX        = new SsaoBlurEffect(device, L"FX/SsaoBlur.fxo");
 	//SkyFX             = new SkyEffect(device, L"FX/Sky.fxo");
-	DebugTexFX        = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
+	DebugTexFX = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
 }
 
 void Effects::DestroyAll()
@@ -823,7 +824,7 @@ bool TreebilboardEffect::IASetting(ID3D11DeviceContext * context, UINT techType)
 		return false;
 	context->IASetInputLayout(m_inputLayout);
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	   	 
+
 	return true;
 }
 
@@ -841,12 +842,12 @@ void TreebilboardEffect::PerFrameSet(DirectionalLight * directL, PointLight * po
 	SetPointLights(pointL);
 	SetSpotLights(spotL);
 	SetEyePosW(camera.GetPosition());
-		
+
 }
 
 void TreebilboardEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
 {
-	
+
 	//인스턴스의 세계행렬과 곱해질 시야투영행렬
 	SetViewProj(camera->ViewProj());
 
@@ -864,7 +865,7 @@ ID3DX11EffectTechnique * TreebilboardEffect::GetTechnique(UINT techType)
 	case TechniqueType::Light | TechniqueType::DiffuseMap:
 		return Light3TexAlphaClipTech;
 	default:
-		return Light3Tech;
+		return Light3TexAlphaClipTech;
 	}
 
 	return nullptr;
@@ -922,7 +923,7 @@ void SimpleLineEffect::PerObjectSet(GeneralMaterial * material, Camera * camera,
 	SetWorld(world);
 	//인스턴스의 세계행렬과 곱해질 시야투영행렬
 	SetViewProj(camera->ViewProj());
-		
+
 }
 
 ID3DX11EffectTechnique * SimpleLineEffect::GetTechnique(UINT techType)
@@ -936,4 +937,90 @@ void SimpleLineEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11Shad
 
 void SimpleLineEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 {
+}
+
+void BuildShadowMapBilboardEffect::InitInputLayout(ID3D11Device * device)
+{
+	ReleaseCOM(m_inputLayout);
+	D3DX11_PASS_DESC passDesc;
+
+	BuildShadowMapAlphaClipTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::TreePointSprite, 2, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_inputLayout));
+}
+
+ID3DX11EffectTechnique * BuildShadowMapBilboardEffect::GetTechnique(UINT techType)
+{
+	return BuildShadowMapAlphaClipTech;
+}
+
+void BuildShadowMapBilboardEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+	SetDiffuseMapArray(diffuseMap);
+}
+
+void BuildShadowMapBilboardEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+}
+
+void BuildShadowMapBilboardEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
+{
+	//인스턴스의 세계행렬과 곱해질 시야투영행렬
+	SetViewProj(camera.ViewProj());
+	//광원의 위치
+	SetEyePosW(camera.GetPosition());
+
+}
+
+void BuildShadowMapBilboardEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
+{
+	SetWorld(world);
+
+	//물체공간 -> 투영공간 변환행렬
+	//XMMATRIX worldViewProj = world * camera->ViewProj();
+	//SetWorldViewProj(worldViewProj);
+
+	//비균등 비례로 인한 법선벡터 계산에 쓰이는 행렬
+	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
+	SetWorldInvTranspose(worldInvTranspose);
+
+	//텍스쳐 변환 I * S * (R) * T
+	XMMATRIX texTransform = XMMatrixIdentity() *
+		XMMatrixScaling(material->textureTiling.x,
+			material->textureTiling.y, 0.0f) *
+		XMMatrixTranslation(material->textureOffset.x,
+			material->textureOffset.y, 0.0f);
+	SetTexTransform(texTransform);
+}
+
+void BuildShadowMapBilboardEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+}
+
+BuildShadowMapBilboardEffect::BuildShadowMapBilboardEffect(ID3D11Device * device, const std::wstring & filename)
+	:Effect(device, filename)
+{
+	BuildShadowMapTech = mFX->GetTechniqueByName("BuildShadowMapTech");
+	BuildShadowMapAlphaClipTech = mFX->GetTechniqueByName("BuildShadowMapAlphaClipTech");
+
+	ViewProj = mFX->GetVariableByName("gViewProj")->AsMatrix();
+	WorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
+	World = mFX->GetVariableByName("gWorld")->AsMatrix();
+	WorldInvTranspose = mFX->GetVariableByName("gWorldInvTranspose")->AsMatrix();
+
+	TexTransform = mFX->GetVariableByName("gTexTransform")->AsMatrix();
+	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
+
+	DiffuseMap = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
+	DiffuseMapArray = mFX->GetVariableByName("gDiffuseMapArray")->AsShaderResource();
+
+	Init(device);
+}
+
+bool BuildShadowMapBilboardEffect::IASetting(ID3D11DeviceContext * context, UINT techType)
+{
+	if (m_inputLayout == nullptr)
+		return false;
+	context->IASetInputLayout(m_inputLayout);
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 }

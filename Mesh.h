@@ -7,8 +7,6 @@
 #include <UtilFunctions.h>
 #include <unordered_map>
 
-using namespace std;
-
 #define MAX_INSTSANCING 1000
 
 //정점버퍼, 인덱스버퍼를 1개씩 사용할 경우
@@ -63,28 +61,28 @@ public:
 
 private:
 	//ObjectLoader에서 매쉬정보들을 전달받는 함수
-	void SetVertices(vector<MyVertex::BasicVertex>& vertexSrc);
-	void SetIndices(vector<UINT>& indexSrc);
-	void SetSubsets(vector<Subset>& subsetSrc);
+	void SetVertices(std::vector<MyVertex::BasicVertex>& vertexSrc);
+	void SetIndices(std::vector<UINT>& indexSrc);
+	void SetSubsets(std::vector<Subset>& subsetSrc);
 
 	
 public:
 	std::string id;
 
 	//반직선 검출등에 사용할 정점과 색인		
-	vector<MyVertex::BasicVertex> vertices;
-	vector<UINT> indices;
-	vector<Subset> subsets;
-	//실제 instancingData를 담고 있는 vector
+	std::vector<MyVertex::BasicVertex> vertices;
+	std::vector<UINT> indices;
+	std::vector<Subset> subsets;
+	//실제 instancingData를 담고 있는 std::vector
 	std::vector<InstancingData*> InstancingDatas;
 	//이번 렌더링에서 사용할 instancingData의 index.
-	vector<UINT> enableInstancingIndexes;
+	std::vector<UINT> enableInstancingIndexes;
 
 #pragma region InstancingTextureBuffer
 	//Texture 배열에서 사용할 텍스쳐들의 경로
-	vector<std::wstring>* textureNames{0};
+	std::vector<std::wstring>* textureNames{0};
 	//Subset별로 사용할 Texture배열들
-	vector<ID3D11ShaderResourceView*> textureArrays;
+	std::vector<ID3D11ShaderResourceView*> textureArrays;
 	//Texture 배열의 크기가 달라졌거나 다시 만들어야할 경우 사용하는 함수
 	void CreateTextureArrayResourceView(ID3D11Device* device, ID3D11DeviceContext* context);
 	//Texture 배열의 부분만 수정하는 함수
@@ -141,17 +139,17 @@ public:
 	 
 public:
 	void Init(ID3D11Device* device,
-		vector<MyVertex::BasicVertex>& vertexSrc,
-		vector<UINT>& indexSrc,
-		vector<Subset>& subsetSrc);
+		std::vector<MyVertex::BasicVertex>& vertexSrc,
+		std::vector<UINT>& indexSrc,
+		std::vector<Subset>& subsetSrc);
 	
-	void Init(vector<MyVertex::BasicVertex>& vertexSrc,
-		vector<UINT>& indexSrc,
-		vector<Subset>& subsetSrc);
+	void Init(std::vector<MyVertex::BasicVertex>& vertexSrc,
+		std::vector<UINT>& indexSrc,
+		std::vector<Subset>& subsetSrc);
 
 	//기본 Subset 1개인걸로 생성
-	void Init(vector<MyVertex::BasicVertex>& vertexSrc,
-		vector<UINT>& indexSrc);
+	void Init(std::vector<MyVertex::BasicVertex>& vertexSrc,
+		std::vector<UINT>& indexSrc);
 	
 	void InitBuffers(ID3D11Device* device);
 

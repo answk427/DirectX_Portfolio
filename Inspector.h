@@ -1,4 +1,5 @@
 #pragma once
+#include "MeshRendererDialog.h"
 #include "stdafx.h"
 #include <CommCtrl.h>
 #include <resource.h>
@@ -9,7 +10,6 @@
 #include "GameObject.h"
 #include "DialogStructureEX.h"
 #include "DialogSizeDefine.h"
-#include "MeshRendererDialog.h"
 #include "TransformDialog.h"
 #include "LightDialog.h"
 

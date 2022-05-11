@@ -16,6 +16,10 @@
 #include "OctreeCommand.h"
 
 
+#include <atlimage.h>
+#include <afxwin.h>
+
+
 #define TAB_MESHRENDERER IDD_DIALOG4
 
 #define DIFFUSEMAPCONTROL IDC_EDIT1
@@ -61,8 +65,10 @@ class MeshRendererDialog : public ComponentDialog
 {
 public:
 	static bool instantiated;
+	
 public:
 	HWND m_hList; //list view 핸들
+	CImage m_CImage;
 public:
 	MeshRendererDialog(HINSTANCE hInstance);	
 public:
@@ -70,6 +76,7 @@ public:
 	void Init(HWND hDlg);
 public:
 	AABB_MaxMin m_aabb;
+	
 	
 private:
 	//control ID에 해당하는 핸들, 수정해야될 값 포인터

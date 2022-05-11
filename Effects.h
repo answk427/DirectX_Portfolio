@@ -473,6 +473,7 @@ public:
 	void SetMaxTessFactor(float f)                      { MaxTessFactor->SetFloat(f); }
 
 	void SetDiffuseMap(ID3D11ShaderResourceView* tex)   { DiffuseMap->SetResource(tex); }
+	void SetDiffuseMapArray(ID3D11ShaderResourceView* tex) { DiffuseMapArray->SetResource(tex); }
 	void SetNormalMap(ID3D11ShaderResourceView* tex)    { NormalMap->SetResource(tex); }
 
 	ID3DX11EffectTechnique* BuildShadowMapTech;
@@ -496,6 +497,7 @@ public:
 	ID3DX11EffectScalarVariable* MaxTessFactor;
  
 	ID3DX11EffectShaderResourceVariable* DiffuseMap;
+	ID3DX11EffectShaderResourceVariable* DiffuseMapArray;
 	ID3DX11EffectShaderResourceVariable* NormalMap;
 
 	// Effect을(를) 통해 상속됨
@@ -508,6 +510,58 @@ public:
 	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
 };
 #pragma endregion
+
+class BuildShadowMapBilboardEffect : public Effect
+{
+public:
+	ID3DX11EffectTechnique* BuildShadowMapTech;
+	ID3DX11EffectTechnique* BuildShadowMapAlphaClipTech;
+	
+	
+	ID3DX11EffectMatrixVariable* ViewProj;
+	ID3DX11EffectMatrixVariable* WorldViewProj;
+	ID3DX11EffectMatrixVariable* World;
+	ID3DX11EffectMatrixVariable* WorldInvTranspose;
+	
+	ID3DX11EffectMatrixVariable* TexTransform;
+	ID3DX11EffectVectorVariable* EyePosW;
+	
+	ID3DX11EffectShaderResourceVariable* DiffuseMap;
+	ID3DX11EffectShaderResourceVariable* DiffuseMapArray;
+	
+public:
+	BuildShadowMapBilboardEffect(ID3D11Device* device, const std::wstring& filename);
+	bool IASetting(ID3D11DeviceContext* context, UINT techType);
+	
+
+public:
+	void SetViewProj(CXMMATRIX M) { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetWorldViewProj(CXMMATRIX M) { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetWorld(CXMMATRIX M) { World->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetWorldInvTranspose(CXMMATRIX M) { WorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetTexTransform(CXMMATRIX M) { TexTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetEyePosW(const XMFLOAT3& v) { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }
+		
+
+	void SetDiffuseMap(ID3D11ShaderResourceView* tex) { DiffuseMap->SetResource(tex); }
+	void SetDiffuseMapArray(ID3D11ShaderResourceView* tex) { DiffuseMapArray->SetResource(tex); }
+	
+	
+	// Effect을(를) 통해 상속됨
+	void InitInputLayout(ID3D11Device* device) override;
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
+
+	
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
+
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
+
+	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
+
+};
 
 #pragma region SsaoNormalDepthEffect
 class SsaoNormalDepthEffect : public Effect

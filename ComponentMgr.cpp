@@ -197,14 +197,14 @@ void ComponentMgr::Render(ID3D11DeviceContext* context, Camera* camera)
 	//È¥ÇÕ°´Ã¼ °Å¸®±âÁØ Á¤·Ä ÈÄ ·»´õ¸µ
 	if (!blendMeshRenderers.empty())
 	{
-		std::sort(blendMeshRenderers.begin(), blendMeshRenderers.end(), std::greater<pair<float, int>>());
+		std::sort(blendMeshRenderers.begin(), blendMeshRenderers.end(), std::greater<std::pair<float, int>>());
 		for(auto elem : blendMeshRenderers)
 			meshRenderers[elem.second].Draw(context, camera);
 		blendMeshRenderers.clear();
 	}
 	if (!blendSkinnedMeshRenderers.empty())
 	{
-		std::sort(blendSkinnedMeshRenderers.begin(), blendSkinnedMeshRenderers.end(), std::greater<pair<float,int>>());
+		std::sort(blendSkinnedMeshRenderers.begin(), blendSkinnedMeshRenderers.end(), std::greater<std::pair<float,int>>());
 		for (auto elem : blendSkinnedMeshRenderers)
 			skinnedMeshRenderers[elem.second].Draw(context, camera);
 		blendSkinnedMeshRenderers.clear();
