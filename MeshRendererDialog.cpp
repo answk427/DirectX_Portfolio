@@ -59,12 +59,7 @@ INT_PTR CALLBACK MeshRendererProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 
 		return (INT_PTR)TRUE;
 	}
-	case WM_PAINT:
-	{
-		//CPaintDC dc(hDlg);
-		HDC dc = GetDC(hDlg);
-		g_MeshRendererDialog->m_CImage.Draw(dc, 0, 0, 100, 100);
-	}
+
 
 	}
 	return (INT_PTR)FALSE;
@@ -141,13 +136,6 @@ bool MeshRendererDialog::OpenDialog(HWND hwnd)
 
 void MeshRendererDialog::Init(HWND hDlg)
 {
-	m_CImage.Load(L"Textures/bricks.bmp");
-
-	if (m_CImage.IsNull())
-		MessageBox(hDlg, TEXT("안되냐"), TEXT("init"), MB_OK);
-	else
-		MessageBox(hDlg, TEXT("되냐"), TEXT("init"), MB_OK);
-
 	m_hDlg = hDlg;
 	m_hList = GetDlgItem(hDlg, MATERIALLIST);
 	
@@ -207,6 +195,33 @@ void MeshRendererDialog::Init(HWND hDlg)
 	Button_SetCheck(h_staticCheck, m_MeshRenderer->GetStaticObject());
 }
 
+bool MeshRendererDialog::printMap()
+{
+	//컨트롤의 위치,크기 얻어오기
+	RECT diffuseControlRect;
+	GetWindowRect(GetDlgItem(m_hDlg, DIFFUSEMAPCONTROL), &diffuseControlRect);
+	Screen2Client(m_hDlg, &diffuseControlRect);
+
+	RECT normalControlRect;
+	GetWindowRect(GetDlgItem(m_hDlg, NORMALMAPCONTROL), &normalControlRect);
+	Screen2Client(m_hDlg, &normalControlRect);
+
+	//선택한 텍스쳐를 diffuseControl 박스 위에 그리기
+	if (mapNames[0].first != nullptr)
+	{
+		if (!PrintCImage(GetDC(m_hDlg), mapNames[0].first, &diffuseControlRect))
+			Edit_SetText(GetDlgItem(m_hDlg, DIFFUSEMAPCONTROL), mapNames[0].second); //diffuseMapText에 이름 설정
+	}
+	//선택한 텍스쳐를 normalControl 박스 위에 그리기
+	if (mapNames[1].first != nullptr)
+	{
+		if (!PrintCImage(GetDC(m_hDlg), mapNames[1].first, &normalControlRect))
+			Edit_SetText(GetDlgItem(m_hDlg, NORMALMAPCONTROL), mapNames[1].second); //diffuseMapText에 이름 설정
+	}
+		
+	return true;
+}
+
 
 MeshRendererDialog::MeshRendererDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_MeshRenderer(0)
 															,mesh(0), materials(0)
@@ -214,6 +229,23 @@ MeshRendererDialog::MeshRendererDialog(HINSTANCE hInstance) : ComponentDialog(hI
 	assert(!instantiated);
 	instantiated = true;
 	g_MeshRendererDialog = this;
+	
+	mapNames[0].first = new WCHAR[100];
+	mapNames[0].second = new WCHAR[100];
+	mapNames[1].first = new WCHAR[100];
+	mapNames[1].second = new WCHAR[100];
+	wcscpy(mapNames[0].first, L"NULL");
+	wcscpy(mapNames[0].second, L"NULL");
+	wcscpy(mapNames[1].first, L"NULL");
+	wcscpy(mapNames[1].second, L"NULL");
+}
+
+MeshRendererDialog::~MeshRendererDialog()
+{
+	delete[] mapNames[0].first;
+	delete[] mapNames[0].second;
+	delete[] mapNames[1].first;
+	delete[] mapNames[1].second;
 }
 	
 
@@ -260,7 +292,17 @@ void MeshRendererDialog::MapEditBoxUpdate(int materialIdx)
 	controlMap[COLOR_B_EDIT] = handleFloatPair{ m_hColorB, b };
 	controlMap[COLOR_A_EDIT] = handleFloatPair{ m_hColorA, a };
 
-		
+	//diffuse, normal map들 이름 설정
+	std::wstring& diffuseMap = (*materials)[materialIdx].diffuseMapName;
+	std::wstring& normalMap = (*materials)[materialIdx].normalMapName;
+	//파일경로와 파일명 설정
+	wcscpy(mapNames[0].first, diffuseMap.c_str());
+	wcscpy(mapNames[0].second, ExtractTitle(diffuseMap).c_str());
+	wcscpy(mapNames[1].first, normalMap.c_str());
+	wcscpy(mapNames[1].second, ExtractTitle(normalMap).c_str());
+	
+	printMap();
+	
 	//diffuse map editbox 설정
 	Edit_SetText(m_hDiffuseTileX,
 		std::to_wstring((*materials)[materialIdx].textureTiling.x).c_str());
@@ -337,23 +379,23 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		{
 			WCHAR fileTitle[100];
 			WCHAR filePath[100];
-			std::vector<LPCWSTR> extensions = { L"dds"};
+			std::vector<LPCWSTR> extensions = { L"dds", L"bmp"};
 			if (FileOpenDialog(m_hDlg, fileTitle, filePath, extensions))
 			{
 				int idx = ListBox_GetCurSel(m_hList);
 				if (idx == -1)
 					break;
 				CommandQueue::AddCommand(new SetMaterialMap(m_MeshRenderer, idx, filePath, mapType::Type_DiffuseMap));
-				m_CImage.Load(filePath); //Cimage로 dds파일 로딩ㅇ실험
-				if (m_CImage.IsNull())
-					MessageBox(hDlg, TEXT("안되냐"), TEXT("diffuseButton"), MB_OK);
-				//diffuseMapText에 이름 설정
-				Edit_SetText(GetDlgItem(m_hDlg, DIFFUSEMAPCONTROL), fileTitle);
+				
+				wcscpy(mapNames[0].first, filePath);
+				wcscpy(mapNames[0].second, fileTitle);
+								
+				//선택한 texture를 dialog에 그리기
+				printMap();
 			}
 			else
 				MessageBox(m_hDlg, L"DiffuseMap Load Fail!", L"DiffuseMap Load", MB_OK);
 			
-			InvalidateRect(hDlg, NULL, true);
 		}
 		break;
 	case NORMALMAPBUTTON:
@@ -361,7 +403,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		{
 			WCHAR fileTitle[100];
 			WCHAR filePath[100];
-			std::vector<LPCWSTR> extensions = { L"dds" };
+			std::vector<LPCWSTR> extensions = { L"dds", L"bmp" };
 			if (FileOpenDialog(m_hDlg, fileTitle, filePath, extensions))
 			{
 				int idx = ListBox_GetCurSel(m_hList);
@@ -369,8 +411,11 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 					break;
 				CommandQueue::AddCommand(new SetMaterialMap(m_MeshRenderer,idx, filePath, mapType::Type_NormalMap));
 
-				//diffuseMapText에 이름 설정
-				Edit_SetText(GetDlgItem(m_hDlg, NORMALMAPCONTROL), fileTitle);
+				wcscpy(mapNames[1].first, filePath);
+				wcscpy(mapNames[1].second, fileTitle);
+
+				//선택한 texture를 dialog에 그리기
+				printMap();
 			}
 			else
 				MessageBox(m_hDlg, L"NormalMap Load Fail!", L"NormalMap Load", MB_OK);

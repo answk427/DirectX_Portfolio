@@ -16,10 +16,6 @@
 #include "OctreeCommand.h"
 
 
-#include <atlimage.h>
-#include <afxwin.h>
-
-
 #define TAB_MESHRENDERER IDD_DIALOG4
 
 #define DIFFUSEMAPCONTROL IDC_EDIT1
@@ -68,19 +64,21 @@ public:
 	
 public:
 	HWND m_hList; //list view 핸들
-	CImage m_CImage;
+	
 public:
 	MeshRendererDialog(HINSTANCE hInstance);	
+	~MeshRendererDialog();
 public:
 	bool OpenDialog(HWND hwnd);
 	void Init(HWND hDlg);
+	bool printMap();
 public:
 	AABB_MaxMin m_aabb;
-	
 	
 private:
 	//control ID에 해당하는 핸들, 수정해야될 값 포인터
 	std::map<int, handleFloatPair> controlMap;
+	std::pair<PWCHAR, PWCHAR> mapNames[2];
 
 	//Material Map 행렬 EditBox
 	HWND m_hDiffuseTileX;
