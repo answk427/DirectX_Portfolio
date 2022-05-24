@@ -95,7 +95,6 @@ struct VertexOut
 	float3 PosW     : POSITION;
 	float2 Tex      : TEXCOORD0;
 	float2 BoundsY  : TEXCOORD1;
-	float4 ShadowPosH : TEXCOORD2;
 };
 
 VertexOut VS(VertexIn vin)
@@ -108,10 +107,7 @@ VertexOut VS(VertexIn vin)
 	// Displace the patch corners to world space.  This is to make 
 	// the eye to patch distance calculation more accurate.
 	vout.PosW.y = gHeightMap.SampleLevel( samHeightmap, vin.Tex, 0 ).r;
-
-	// Generate projective tex-coords to project shadow map onto scene.
-	vout.ShadowPosH = mul(float4(vin.PosL, 1.0f), gShadowTransform);
-
+	   
 	// Output vertex attributes to next stage.
 	vout.Tex      = vin.Tex;
 	vout.BoundsY  = vin.BoundsY;
@@ -233,7 +229,6 @@ struct HullOut
 {
 	float3 PosW     : POSITION;
 	float2 Tex      : TEXCOORD0;
-	float4 ShadowPosH : TEXCOORD1;
 };
 
 [domain("quad")]
@@ -251,7 +246,6 @@ HullOut HS(InputPatch<VertexOut, 4> p,
 	// Pass through shader.
 	hout.PosW     = p[i].PosW;
 	hout.Tex      = p[i].Tex;
-	hout.ShadowPosH = p[i].ShadowPosH;
 	
 	return hout;
 }
@@ -285,11 +279,7 @@ DomainOut DS(PatchTess patchTess,
 		lerp(quad[0].Tex, quad[1].Tex, uv.x),
 		lerp(quad[2].Tex, quad[3].Tex, uv.x),
 		uv.y); 
-
-	dout.ShadowPosH = lerp(
-		lerp(quad[0].ShadowPosH, quad[1].ShadowPosH, uv.x),
-		lerp(quad[2].ShadowPosH, quad[3].ShadowPosH, uv.x),
-		uv.y);
+	
 		
 	// Tile layer textures over terrain.
 	//dout.TiledTex = dout.Tex*gTexScale; 
@@ -306,6 +296,9 @@ DomainOut DS(PatchTess patchTess,
 	// Project to homogeneous clip space.
 	dout.PosH    = mul(float4(dout.PosW, 1.0f), gViewProj);
 	
+	// Generate projective tex-coords to project shadow map onto scene.
+	dout.ShadowPosH = mul(float4(dout.PosW, 1.0f), gShadowTransform);
+
 	return dout;
 }
 

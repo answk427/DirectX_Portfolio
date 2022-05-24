@@ -152,6 +152,9 @@ bool ShadowMap::BuildShadowTransform(const DirectionalLight & dirLight, XMVECTOR
 	m_shadowMapCamera->SetPosition(lightPosF);
 
 	//시야행렬
+	if (XMVector3Equal(lightPos, targetPos))
+		return false;
+
 	XMMATRIX view = XMMatrixLookAtLH(lightPos, targetPos, worldUp);
 	XMFLOAT4X4 tempView;
 	XMStoreFloat4x4(&tempView, view);
