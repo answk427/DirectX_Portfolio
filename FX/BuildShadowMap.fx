@@ -228,14 +228,21 @@ TerrainPatchTess TerrainConstantHS(InputPatch<TerrainVertexOut, 4> patch, uint p
 		float3 e3 = 0.5f*(patch[2].PosW + patch[3].PosW);
 		float3  c = 0.25f*(patch[0].PosW + patch[1].PosW + patch[2].PosW + patch[3].PosW);
 
-		pt.EdgeTess[0] = CalcTessFactor(e0);
+	/*	pt.EdgeTess[0] = CalcTessFactor(e0);
 		pt.EdgeTess[1] = CalcTessFactor(e1);
 		pt.EdgeTess[2] = CalcTessFactor(e2);
 		pt.EdgeTess[3] = CalcTessFactor(e3);
 
 		pt.InsideTess[0] = CalcTessFactor(c);
-		pt.InsideTess[1] = pt.InsideTess[0];
+		pt.InsideTess[1] = pt.InsideTess[0];*/
 
+		pt.EdgeTess[0] = gMaxTessFactor;
+		pt.EdgeTess[1] = gMaxTessFactor;
+		pt.EdgeTess[2] = gMaxTessFactor;
+		pt.EdgeTess[3] = gMaxTessFactor;
+
+		pt.InsideTess[0] = gMaxTessFactor;
+		pt.InsideTess[1] = pt.InsideTess[0];
 		return pt;
 	
 }
@@ -531,5 +538,8 @@ technique11 TerrainBuildShadowMapAlphaClipTech
 		SetDomainShader(CompileShader(ds_5_0, TerrainDS()));
 		SetGeometryShader(NULL);
 		SetPixelShader(NULL);
+
+		SetRasterizerState(Depth);
+
 	}
 }
