@@ -115,6 +115,18 @@ GameObject & ObjectMgr::CreateBasicGrid()
 	return obj;
 }
 
+GameObject & ObjectMgr::CreateTerrain()
+{
+	GameObject& obj = CreateGameObject(L"TerrainObject");
+	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::TERRAIN));
+	renderer->SetTransform(&obj.transform);
+	//renderer->MapsInit();
+	//renderer->InitEffects();
+	obj.AddComponent(renderer);
+
+	return obj;
+}
+
 Component * ObjectMgr::AddComponent(GameObject * obj, ComponentType compType)
 {
 	Component* component = nullptr;

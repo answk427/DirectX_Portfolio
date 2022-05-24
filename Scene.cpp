@@ -491,8 +491,8 @@ void Scene::ShadowMapDraw()
 
 	// FX sets tessellation stages, but it does not disable them.  So do that here
 	// to turn off tessellation.
-	md3dImmediateContext->HSSetShader(0, 0, 0);
-	md3dImmediateContext->DSSetShader(0, 0, 0);
+	//md3dImmediateContext->HSSetShader(0, 0, 0);
+	//md3dImmediateContext->DSSetShader(0, 0, 0);
 
 		
 	
@@ -648,11 +648,16 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 		m_HierarchyDialog->TreeInsertObject(&gameObj);
 		break;
 	}
+	case ID_GAMEOBJECT_TERRAIN:
+	{
+		GameObject& gameObj = objectMgr.CreateTerrain();
+		m_HierarchyDialog->TreeInsertObject(&gameObj);
+		break;
+	}
 
 	case ID_40004: // Ctrl+Z
 		MessageBox(mhMainWnd, L"Undo", L"Undo", MB_OK);
 		CommandQueue::Undo();
 		break;
-
 	}
 }

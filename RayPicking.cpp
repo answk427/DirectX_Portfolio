@@ -49,6 +49,9 @@ Renderer * RayPicking::NearestOfIntersectRayAABB(D3D11_VIEWPORT* viewPort ,
 		//시야공간 반직선 -> 국소공간 반직선 변환
 		localRay = ViewToLocalRay(&rayOrigin, &rayDir, &camera->View(), 
 			&XMLoadFloat4x4(elem->GetTransform()->GetWorld()));
+
+		if (XMVector3IsNaN(localRay.first) || XMVector3IsNaN(localRay.second))
+			return nullptr;
 		
 		//반직선과 AABB 교차판정
 		float t = 0.0f;

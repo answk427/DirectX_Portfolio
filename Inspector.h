@@ -12,6 +12,7 @@
 #include "DialogSizeDefine.h"
 #include "TransformDialog.h"
 #include "LightDialog.h"
+#include "TerrainDialog.h"
 
 #include "InspectorCommand.h"
 
@@ -36,6 +37,8 @@ private:
 	MeshRendererDialog m_MeshRendererDialog;
 	TransformDialog m_TransformDialog;
 	LightDialog m_LightDialog;
+	TerrainDialog m_TerrainDialog;
+	
 
 	std::vector<ComponentDialog*> dialogs;
 

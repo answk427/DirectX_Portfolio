@@ -144,6 +144,9 @@ bool ShadowMap::BuildShadowTransform(const DirectionalLight & dirLight, XMVECTOR
 	XMVECTOR targetPos = XMLoadFloat3(&m_boundingSphere.center);
 	//평행광원의 위치(경계구의 중점에서 평행광방향의 반대방향*2 만큼 이동한 점)
 	XMVECTOR lightPos = targetPos - 2.0f*m_boundingSphere.radius*lightDir;
+	if(XMVector3Equal(lightDir, XMVectorZero()))
+		return false;
+
 	XMFLOAT3 lightPosF;
 	XMStoreFloat3(&lightPosF, lightPos);
 	m_shadowMapCamera->SetPosition(lightPosF);

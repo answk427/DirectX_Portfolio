@@ -79,7 +79,8 @@ bool LightDialog::SetObject(GameObject* obj)
 	
 	if (!m_Lighting)
 		return false;
-	   	
+
+	return true;
 }
 
 bool LightDialog::UpdateView()

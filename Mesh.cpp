@@ -31,7 +31,6 @@ void Mesh::SetSubsets(std::vector<Subset>& subsetSrc)
 		delete[] textureNames;
 	textureNames = new std::vector<std::wstring>[subsets.size()];
 	textureArrays.assign(subsets.size(), 0);
-
 }
 
 void Mesh::CreateTextureArrayResourceView(ID3D11Device* device, ID3D11DeviceContext* context)

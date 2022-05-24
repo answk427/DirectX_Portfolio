@@ -241,7 +241,13 @@
       <Filter>New Source Files\Component</Filter>
     </ClCompile>
     <ClCompile Include="SimpleLineRenderer.cpp">
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainDialog.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>New Source Files\Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -449,6 +455,12 @@
     <ClInclude Include="SimpleLineRenderer.h">
       <Filter>New Header Files\Component</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainDialog.h">
+      <Filter>New Header Files\EngineDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FX\LightHelper.fx">
@@ -490,6 +502,9 @@
       <Filter>FX</Filter>
     </CustomBuild>
     <CustomBuild Include="FX\BuildShadowMapBilboard.fx">
+      <Filter>FX</Filter>
+    </CustomBuild>
+    <CustomBuild Include="FX\Terrain.fx">
       <Filter>FX</Filter>
     </CustomBuild>
   </ItemGroup>

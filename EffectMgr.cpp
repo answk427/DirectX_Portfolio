@@ -63,6 +63,10 @@ Effect * EffectMgr::CreateEffect(const std::wstring& shaderName, EffectType type
 			effect = new BuildShadowMapEffect(device, shaderName);
 			myEffect[shaderName] = effect;
 			break;
+		case EffectType::Terrain:
+			effect = new TerrainEffect(device, shaderName);
+			myEffect[shaderName] = effect;
+			break;
 	}
 
 	return effect;

@@ -138,6 +138,8 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="Ssao.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainDialog.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformDialog.cpp" />
     <ClCompile Include="TreeBillBoardRenderer.cpp" />
@@ -207,6 +209,8 @@
     <ClInclude Include="SkinnedModel.h" />
     <ClInclude Include="Sky.h" />
     <ClInclude Include="Ssao.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TerrainDialog.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformDialog.h" />
     <ClInclude Include="TreeBillBoardRenderer.h" />
@@ -327,6 +331,11 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /Fc /Od /Zi /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc compile for debug: %(FullPath)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="FX\Terrain.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /Fc /Od /Zi /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

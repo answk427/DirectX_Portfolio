@@ -48,7 +48,7 @@ public:
 
 	//여러 vertex 구조체를 이용해 버퍼를 초기화하는 함수
 	template <typename vertex>
-	void InitVB(ID3D11Device* device, std::vector<vertex> vertices);
+	void InitVB(ID3D11Device* device, std::vector<vertex>& vertices);
 	
 	void InitInstanceBuffer(ID3D11Device* device, UINT bufferSize);
 	//현재 클래스의 m_instanceBufferSize 멤버변수로 버퍼사이즈 설정
@@ -172,7 +172,7 @@ public:
 };
 
 template<typename vertex>
-inline void Mesh::InitVB(ID3D11Device * device, std::vector<vertex> vertices)
+inline void Mesh::InitVB(ID3D11Device * device, std::vector<vertex>& vertices)
 {
 	if (vertices.empty())
 		return;

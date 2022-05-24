@@ -8,7 +8,6 @@
 #include "MeshMgr.h"
 #include "ComponentMgr.h"
 #include "EffectMgr.h"
-
 #include <map>
 
 
@@ -53,6 +52,7 @@ public:
 	GameObject* CreateObjectFromFile(const std::string& fileName);
 	GameObject& CreateBasicBoxObject();
 	GameObject& CreateBasicGrid();
+	GameObject& CreateTerrain();
 	
 	Component* AddComponent(GameObject* obj, ComponentType compType);
 

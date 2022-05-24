@@ -117,6 +117,8 @@ VertexOut VS(VertexIn vin)
 	// Generate projective tex-coords to project SSAO map onto scene.
 	vout.SsaoPosH = mul(float4(vin.PosL, 1.0f), gWorldViewProjTex);
 
+	vout.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
 	return vout;
 }
 
@@ -238,8 +240,6 @@ float4 PS(VertexOut pin,
 			diffuse += shadow[i]*D;
 			spec    += shadow[i]*S;
 			ambient += A;
-			diffuse += D;
-			spec += S;
 		}
 
 		for (int i = 0; i < pointLight_size; ++i)
@@ -252,8 +252,7 @@ float4 PS(VertexOut pin,
 			diffuse += shadow[i] * D;
 			spec += shadow[i] * S;
 			ambient += A;
-			diffuse += D;
-			spec += S;
+			
 		}
 
 		for (int i = 0; i < spotLight_size; ++i)
@@ -266,8 +265,7 @@ float4 PS(VertexOut pin,
 			diffuse += shadow[i] * D;
 			spec += shadow[i] * S;
 			ambient += A;
-			diffuse += D;
-			spec += S;
+			
 		}
 		
 		//인스턴싱 자료에 있는 색상

@@ -35,7 +35,7 @@ public:
 	//세계공간 절두체를 계산하는 함수
 	static void ComputeFrustumInWorld(XNA::Frustum* pOut, XMMATRIX* pProjection, XMMATRIX* pWorld, XMMATRIX* pView);
 	//시야공간 절두체를 국소공간으로 변환하는 함수
-	static void FrustumCulling::ConvertFrustumViewToLocal(XNA::Frustum * pOut, const XNA::Frustum * pViewFrustum, const XMMATRIX * pWorld, const XMMATRIX * pView);
+	static bool FrustumCulling::ConvertFrustumViewToLocal(XNA::Frustum * pOut, const XNA::Frustum * pViewFrustum, const XMMATRIX * pWorld, const XMMATRIX * pView);
 	//시야공간 절두체를 세계공간으로 변환하는 함수
 	static void ConvertFrustumViewToWorld(XNA::Frustum* pOut, XNA::Frustum* pViewFrustum, XMMATRIX* pView);
 

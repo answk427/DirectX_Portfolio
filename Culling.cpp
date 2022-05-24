@@ -74,7 +74,7 @@ void FrustumCulling::ComputeFrustumInWorld(XNA::Frustum * pOut, XMMATRIX * pProj
 	XNA::TransformFrustum(pOut, &viewFrustum, XMVectorGetX(scale), rotQuat, translation);
 }
 
-void FrustumCulling::ConvertFrustumViewToLocal(XNA::Frustum * pOut, const XNA::Frustum * pViewFrustum, const XMMATRIX * pWorld, const XMMATRIX * pView)
+bool FrustumCulling::ConvertFrustumViewToLocal(XNA::Frustum * pOut, const XNA::Frustum * pViewFrustum, const XMMATRIX * pWorld, const XMMATRIX * pView)
 {
 	//시야 행렬의 역행렬 계산
 	XMVECTOR detView = XMMatrixDeterminant(*pView);
@@ -92,9 +92,17 @@ void FrustumCulling::ConvertFrustumViewToLocal(XNA::Frustum * pOut, const XNA::F
 	XMVECTOR translation;
 	XMMatrixDecompose(&scale, &rotQuat, &translation, toLocal);
 
+	bool isNanScale = XMVector4IsNaN(scale);
+	bool isNanRot = XMVector4IsNaN(rotQuat);
+	bool isNanTr = XMVector4IsNaN(translation);
+
+	if (isNanScale || isNanRot || isNanTr)
+		return false;
+		
 	//절두체를 시야공간 -> 국소공간으로 변환
 	XNA::TransformFrustum(pOut, pViewFrustum, XMVectorGetX(scale), XMQuaternionNormalize(rotQuat), translation);
 	
+	return true;
 }
 
 void FrustumCulling::ConvertFrustumViewToWorld(XNA::Frustum * pOut, XNA::Frustum * pViewFrustum, XMMATRIX * pView)
@@ -121,7 +129,9 @@ INT FrustumCulling::ComputeFrustumCulling(XNA::AxisAlignedBox* aabb, Camera * ca
 	
 	//국소공간 절두체 계산
 	XNA::Frustum localFrustum;
-	ConvertFrustumViewToLocal(&localFrustum, &viewFrustum, pWorld, &camera->View());
+	
+	if (!ConvertFrustumViewToLocal(&localFrustum, &viewFrustum, pWorld, &camera->View()))
+		return 0;
 		
 	return XNA::IntersectAxisAlignedBoxFrustum(aabb, &localFrustum);
 }
@@ -137,8 +147,9 @@ void Frustum::Update()
 INT Frustum::LocalFrustumCulling(const XNA::AxisAlignedBox * localAABB, const XMMATRIX * pWorld)
 {
 	XNA::Frustum localFrustum;
-	FrustumCulling::ConvertFrustumViewToLocal(&localFrustum, m_viewFrustum, pWorld, &m_camera->View());
-		
+	if (FrustumCulling::ConvertFrustumViewToLocal(&localFrustum, m_viewFrustum, pWorld, &m_camera->View()))
+		return 0;
+
 	return XNA::IntersectAxisAlignedBoxFrustum(localAABB, &localFrustum);
 }
 

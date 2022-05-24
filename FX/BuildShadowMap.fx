@@ -37,9 +37,17 @@ cbuffer cbSkinned
 // Nonnumeric values cannot be added to a cbuffer.
 Texture2D gDiffuseMap;
 Texture2D gNormalMap;
+Texture2D gHeightMap;
 Texture2DArray gDiffuseMapArray;
 
- 
+SamplerState samHeightmap
+{
+	Filter = MIN_MAG_LINEAR_MIP_POINT;
+
+	AddressU = CLAMP;
+	AddressV = CLAMP;
+};
+
 SamplerState samLinear
 {
 	Filter = MIN_MAG_MIP_LINEAR;
@@ -64,11 +72,37 @@ struct SkinnedVertexIn
 	uint4 BoneIndices : BONEINDICES;
 };
 
+struct TerrainVertexIn
+{
+	float3 PosL     : POSITION;
+	float2 Tex      : TEXCOORD0;
+	float2 BoundsY  : TEXCOORD1;
+};
+
+struct TerrainVertexOut
+{
+	float3 PosW     : POSITION;
+	float2 Tex      : TEXCOORD0;
+	float2 BoundsY  : TEXCOORD1;
+};
+
 struct VertexOut
 {
 	float4 PosH : SV_POSITION;
 	float2 Tex  : TEXCOORD;
 };
+
+float CalcTessFactor(float3 p)
+{
+	float d = distance(p, gEyePosW);
+
+	// max norm in xz plane (useful to see detail levels from a bird's eye).
+	//float d = max( abs(p.x-gEyePosW.x), abs(p.z-gEyePosW.z) );
+
+	float s = saturate((d - gMinTessDistance) / (gMaxTessDistance - gMinTessDistance));
+
+	return pow(2, (lerp(gMaxTessFactor, gMinTessFactor, s)));
+}
  
 VertexOut VS(VertexIn vin)
 {
@@ -80,6 +114,7 @@ VertexOut VS(VertexIn vin)
 
 	return vout;
 }
+
 
 VertexOut SkinnedVS(SkinnedVertexIn vin)
 {
@@ -107,6 +142,24 @@ VertexOut SkinnedVS(SkinnedVertexIn vin)
 	
 	// Output vertex attributes for interpolation across triangle.
 	vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
+
+	return vout;
+}
+
+TerrainVertexOut TeerrainVS(TerrainVertexIn vin)
+{
+	TerrainVertexOut vout;
+
+	// Terrain specified directly in world space.
+	vout.PosW = vin.PosL;
+
+	// Displace the patch corners to world space.  This is to make 
+	// the eye to patch distance calculation more accurate.
+	vout.PosW.y = gHeightMap.SampleLevel(samHeightmap, vin.Tex, 0).r;
+	
+	// Output vertex attributes to next stage.
+	vout.Tex = vin.Tex;
+	vout.BoundsY = vin.BoundsY;
 
 	return vout;
 }
@@ -146,6 +199,46 @@ struct PatchTess
 	float EdgeTess[3] : SV_TessFactor;
 	float InsideTess  : SV_InsideTessFactor;
 };
+
+struct TerrainPatchTess
+{
+	float EdgeTess[4]   : SV_TessFactor;
+	float InsideTess[2] : SV_InsideTessFactor;
+};
+
+TerrainPatchTess TerrainConstantHS(InputPatch<TerrainVertexOut, 4> patch, uint patchID : SV_PrimitiveID)
+{
+	TerrainPatchTess pt;
+
+	////
+	//// Frustum cull
+	////
+
+	
+	// Do normal tessellation based on distance.
+	//
+		// It is important to do the tess factor calculation based on the
+		// edge properties so that edges shared by more than one patch will
+		// have the same tessellation factor.  Otherwise, gaps can appear.
+
+		// Compute midpoint on edges, and patch center
+		float3 e0 = 0.5f*(patch[0].PosW + patch[2].PosW);
+		float3 e1 = 0.5f*(patch[0].PosW + patch[1].PosW);
+		float3 e2 = 0.5f*(patch[1].PosW + patch[3].PosW);
+		float3 e3 = 0.5f*(patch[2].PosW + patch[3].PosW);
+		float3  c = 0.25f*(patch[0].PosW + patch[1].PosW + patch[2].PosW + patch[3].PosW);
+
+		pt.EdgeTess[0] = CalcTessFactor(e0);
+		pt.EdgeTess[1] = CalcTessFactor(e1);
+		pt.EdgeTess[2] = CalcTessFactor(e2);
+		pt.EdgeTess[3] = CalcTessFactor(e3);
+
+		pt.InsideTess[0] = CalcTessFactor(c);
+		pt.InsideTess[1] = pt.InsideTess[0];
+
+		return pt;
+	
+}
 
 PatchTess PatchHS(InputPatch<TessVertexOut,3> patch, 
                   uint patchID : SV_PrimitiveID)
@@ -189,6 +282,77 @@ HullOut HS(InputPatch<TessVertexOut,3> p,
 	hout.Tex      = p[i].Tex;
 	
 	return hout;
+}
+
+struct TerrainHullOut
+{
+	float3 PosW     : POSITION;
+	float2 Tex      : TEXCOORD0;
+};
+
+[domain("quad")]
+[partitioning("fractional_even")]
+[outputtopology("triangle_cw")]
+[outputcontrolpoints(4)]
+[patchconstantfunc("TerrainConstantHS")]
+[maxtessfactor(64.0f)]
+TerrainHullOut TerrainHS(InputPatch<TerrainVertexOut, 4> p,
+	uint i : SV_OutputControlPointID,
+	uint patchId : SV_PrimitiveID)
+{
+	TerrainHullOut hout;
+
+	// Pass through shader.
+	hout.PosW = p[i].PosW;
+	hout.Tex = p[i].Tex;
+
+	return hout;
+}
+
+struct TerrainDomainOut
+{
+	float4 PosH     : SV_POSITION;
+	float3 PosW     : POSITION;
+	float2 Tex      : TEXCOORD0;
+	float2 TiledTex : TEXCOORD1;
+};
+
+// The domain shader is called for every vertex created by the tessellator.  
+// It is like the vertex shader after tessellation.
+[domain("quad")]
+TerrainDomainOut TerrainDS(TerrainPatchTess patchTess,
+	float2 uv : SV_DomainLocation,
+	const OutputPatch<TerrainHullOut, 4> quad)
+{
+	TerrainDomainOut dout;
+
+	// Bilinear interpolation.
+	dout.PosW = lerp(
+		lerp(quad[0].PosW, quad[1].PosW, uv.x),
+		lerp(quad[2].PosW, quad[3].PosW, uv.x),
+		uv.y);
+
+	dout.Tex = lerp(
+		lerp(quad[0].Tex, quad[1].Tex, uv.x),
+		lerp(quad[2].Tex, quad[3].Tex, uv.x),
+		uv.y);
+
+	// Tile layer textures over terrain.
+	//dout.TiledTex = dout.Tex*gTexScale; 
+	dout.TiledTex = mul(float4(dout.Tex, 0.0f, 1.0f), gTexTransform).xy;
+
+	// Displacement mapping
+	dout.PosW.y = gHeightMap.SampleLevel(samHeightmap, dout.Tex, 0).r;
+
+	// NOTE: We tried computing the normal in the shader using finite difference, 
+	// but the vertices move continuously with fractional_even which creates
+	// noticable light shimmering artifacts as the normal changes.  Therefore,
+	// we moved the calculation to the pixel shader.  
+
+	// Project to homogeneous clip space.
+	dout.PosH = mul(float4(dout.PosW, 1.0f), gViewProj);
+
+	return dout;
 }
 
 struct DomainOut
@@ -252,6 +416,14 @@ void PS(VertexOut pin)
 // show up correctly.  Geometry that does not need to sample a
 // texture can use a NULL pixel shader for depth pass.
 void TessPS(DomainOut pin)
+{
+	float4 diffuse = gDiffuseMap.Sample(samLinear, pin.Tex);
+
+	// Don't write transparent pixels to the shadow map.
+	clip(diffuse.a - 0.15f);
+}
+
+void TerrainPS(TerrainDomainOut pin)
 {
 	float4 diffuse = gDiffuseMap.Sample(samLinear, pin.Tex);
 
@@ -348,4 +520,16 @@ technique11 TessBuildShadowMapAlphaClipTech
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_5_0, TessPS() ) );
     }
+}
+
+technique11 TerrainBuildShadowMapAlphaClipTech
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_5_0, TeerrainVS()));
+		SetHullShader(CompileShader(hs_5_0, TerrainHS()));
+		SetDomainShader(CompileShader(ds_5_0, TerrainDS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(NULL);
+	}
 }

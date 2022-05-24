@@ -10,6 +10,13 @@ namespace MyVertex
 		XMFLOAT4 color;
 	};
 
+	struct Terrain
+	{
+		XMFLOAT3 Pos;
+		XMFLOAT2 Tex;
+		XMFLOAT2 BoundsY;
+	};
+
 	//공통으로 사용되는 정점구조체
 	struct BasicVertex
 	{

@@ -41,7 +41,7 @@ void Inspector::Init(HWND hWnd_main)
 }
 
 Inspector::Inspector(HINSTANCE hInstance) : MsgProcedure(hInstance), m_pHdr(0), m_currObject(0),
-				m_MeshRendererDialog(hInstance), m_TransformDialog(hInstance), m_LightDialog(hInstance)
+				m_MeshRendererDialog(hInstance), m_TransformDialog(hInstance), m_LightDialog(hInstance), m_TerrainDialog(hInstance)
 {
 	assert(!instantiated);
 	instantiated = true;
@@ -249,7 +249,7 @@ HRESULT Inspector::OnTabbedDialogInit(HWND hwndDlg)
 	// Lock the resources for the three child dialog boxes. 
 	m_pHdr->apRes[0] = DoLockDlgRes(MAKEINTRESOURCE(TAB_TRANSFORM));
 	m_pHdr->apRes[1] = DoLockDlgRes(MAKEINTRESOURCE(TAB_MESHRENDERER));
-	m_pHdr->apRes[2] = DoLockDlgRes(MAKEINTRESOURCE(TAB_TERRAIN));
+	//m_pHdr->apRes[2] = DoLockDlgRes(MAKEINTRESOURCE(TAB_TERRAIN));
 	
 	
 	// Calculate how large to make the tab control, so 
@@ -342,10 +342,15 @@ void Inspector::AddTab(HWND hTab)
 			tie.pszText = L"SkinnedMeshRenderer";
 			//¹Ì±¸Çö
 			break;
+		case ComponentType::TERRAIN:
+			tie.pszText = L"Terrain";
+			dialogs.push_back(&m_TerrainDialog);
+			break;
 		case ComponentType::LIGHT:
 			tie.pszText = L"LIGHT";
 			dialogs.push_back(&m_LightDialog);
 			break;
+
 		default:
 			break;
 		}
@@ -358,11 +363,17 @@ void Inspector::SetObject(GameObject * obj)
 {
 	m_currObject = obj; 
 	AddTab(m_hTab);
-	for (auto& elem : dialogs)
+	//for (int i=0; i<dialogs.size(); ++i)
+	//{
+	//	dialogs[i]->SetObject(obj);
+	//	int j = 1;
+	//	int k = 2;
+	//}
+	
+	for (auto elem : dialogs)
 	{
 		elem->SetObject(obj);
 	}
-	
 	OnSelChanged(m_hDlg);
 }
 

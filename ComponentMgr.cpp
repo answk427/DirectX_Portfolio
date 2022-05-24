@@ -1,6 +1,6 @@
 #include "ComponentMgr.h"
 
-std::vector<std::string> idFront = { "MESHRENDERER", "SKINNEDMESHRENDERER" , "LIGHT", "DEFAULT" };
+std::vector<std::string> idFront = { "MESHRENDERER", "SKINNEDMESHRENDERER" , "TERRAIN", "LIGHT", "DEFAULT" };
 
 ComponentMgr::ComponentMgr() : enableCount_meshRenderer(0), enableCount_skinnedMeshRenderer(0)
 , enableCount_lighting(0),creatingIdNum(0)
@@ -9,6 +9,8 @@ ComponentMgr::ComponentMgr() : enableCount_meshRenderer(0), enableCount_skinnedM
 	meshRenderers.reserve(MESHRENDERERSIZE);
 	skinnedMeshRenderers.reserve(SKINNEDMESHRENDERERSIZE);
 	lightings.reserve(LIGHTSIZE);
+	terrainRenderers.reserve(100);
+	
 }
 
 ComponentMgr::~ComponentMgr()
@@ -35,7 +37,6 @@ Component * ComponentMgr::OnOffComponent(Component * component, Command endisabl
 				enableCount_meshRenderer,
 				idMap[component->id],
 				endisable);
-
 		case ComponentType::SKINNEDMESHRENDERER:
 			return SelectSwap(skinnedMeshRenderers,
 				enableCount_skinnedMeshRenderer,
@@ -46,11 +47,54 @@ Component * ComponentMgr::OnOffComponent(Component * component, Command endisabl
 				enableCount_lighting,
 				idMap[component->id],
 				endisable);
+		case ComponentType::TERRAIN: //임시로 onoff가 아닌 삭제하도록
+			DeleteComponent(component);
+			return nullptr;
 		default:
 			return component;
 	}
 }
 
+
+void ComponentMgr::DeleteComponent(Component * component)
+{
+	ComponentType type = component->componentType;
+	componentID id = component->id;
+	switch (type)
+	{
+	case ComponentType::MESHRENDERER:
+		SelectSwap(meshRenderers,
+			enableCount_meshRenderer,
+			idMap[id],
+			Command::DISABLE);
+		SwapComponent(meshRenderers, idMap[id], meshRenderers.size() - 1);
+		meshRenderers.pop_back();
+		break;
+	case ComponentType::SKINNEDMESHRENDERER:
+		SelectSwap(skinnedMeshRenderers,
+			enableCount_skinnedMeshRenderer,
+			idMap[id],
+			Command::DISABLE);
+		SwapComponent(skinnedMeshRenderers, idMap[id], skinnedMeshRenderers.size() - 1);
+		skinnedMeshRenderers.pop_back();
+		break;
+	case ComponentType::LIGHT:
+		SelectSwap(lightings,
+			enableCount_lighting,
+			idMap[id],
+			Command::DISABLE);
+		SwapComponent(lightings, idMap[id], lightings.size() - 1);
+		skinnedMeshRenderers.pop_back();
+		break;
+	case ComponentType::TERRAIN:
+		SwapComponent(terrainRenderers, idMap[id], terrainRenderers.size() - 1);
+		terrainRenderers.pop_back();
+		break;
+	default:
+		break;
+	}
+	return;
+}
 
 Component * ComponentMgr::CreateComponent(ComponentType compType)
 {
@@ -59,32 +103,44 @@ Component * ComponentMgr::CreateComponent(ComponentType compType)
 	{
 		case ComponentType::MESHRENDERER :
 		{
-			
 			//id생성 후 vector에 추가
-			meshRenderers.push_back(MeshRenderer(id));
+			//meshRenderers.push_back(MeshRenderer(id));
+			meshRenderers.emplace_back(id);
+			meshRenderers.back().Init();
 			//id와 index 매핑
 			idMap[meshRenderers.back().id] = meshRenderers.size() - 1;
 			//활성화 상태로 바꿈
 			return SelectSwap(meshRenderers, enableCount_meshRenderer,
 				meshRenderers.size() - 1, Command::ENABLE);
-
-			
 		}
 		case ComponentType::SKINNEDMESHRENDERER :
 		{
-			skinnedMeshRenderers.push_back(
-				SkinnedMeshRenderer(id));
+			//skinnedMeshRenderers.push_back(SkinnedMeshRenderer(id));
+			skinnedMeshRenderers.emplace_back(id);
+			skinnedMeshRenderers.back().Init();
 			idMap[skinnedMeshRenderers.back().id] = skinnedMeshRenderers.size() - 1;
 			return SelectSwap(skinnedMeshRenderers, enableCount_skinnedMeshRenderer,
 				skinnedMeshRenderers.size() - 1, Command::ENABLE);
 		}
 		case ComponentType::LIGHT:
 		{
-			lightings.push_back(
-				Lighting(id));
+			//lightings.push_back(Lighting(id));
+			lightings.emplace_back(id);
+			lightings.back().Init();
 			idMap[lightings.back().id] = lightings.size() - 1;
 			return SelectSwap(lightings, enableCount_lighting,
 				lightings.size() - 1, Command::ENABLE);
+		}
+		case ComponentType::TERRAIN:
+		{
+			//id생성 후 vector에 추가
+			//terrainRenderers.push_back(TerrainRenderer(id));
+			terrainRenderers.emplace_back(id);
+			terrainRenderers.back().Init();
+			//id와 index 매핑
+			idMap[terrainRenderers.back().id] = terrainRenderers.size() - 1;
+			//활성화 상태로 바꿈
+			return &terrainRenderers.back();
 		}
 			
 	}
@@ -123,8 +179,11 @@ Component * ComponentMgr::GetComponent(componentID & id)
 		return &meshRenderers[idx];
 	case ComponentType::SKINNEDMESHRENDERER:
 		return &skinnedMeshRenderers[idx];
+	case ComponentType::TERRAIN:
+		return &terrainRenderers[idx];
 	case ComponentType::LIGHT:
 		return &lightings[idx];
+		
 	default:
 		return components[idx];
 	}
@@ -134,7 +193,8 @@ Component * ComponentMgr::GetComponent(componentID & id)
 const std::vector<Renderer*> ComponentMgr::GetDrawableRenderers()
 {
 	std::vector<Renderer*> result;
-
+	for (auto& terrain : terrainRenderers)
+		result.push_back(&terrain);
 	for (int i = 0; i < enableCount_meshRenderer; ++i)
 		result.push_back(&meshRenderers[i]);
 	for (int i = 0; i < enableCount_skinnedMeshRenderer; ++i)
@@ -145,13 +205,15 @@ const std::vector<Renderer*> ComponentMgr::GetDrawableRenderers()
 
 int ComponentMgr::getTotalRendererCount()
 {
-	return meshRenderers.size() + skinnedMeshRenderers.size();
+	return meshRenderers.size() + skinnedMeshRenderers.size() + terrainRenderers.size();
 }
 
 const std::vector<Renderer*> ComponentMgr::GetAllRenderers()
 {
 	std::vector<Renderer*> result;
-
+	
+	for (auto& terrain : terrainRenderers)
+		result.push_back(&terrain);
 	for (int i = 0; i < meshRenderers.size(); ++i)
 		result.push_back(&meshRenderers[i]);
 	for (int i = 0; i < skinnedMeshRenderers.size(); ++i)
@@ -169,7 +231,13 @@ void ComponentMgr::Render(ID3D11DeviceContext* context, Camera* camera)
 	static std::vector<std::pair<float,int>> blendSkinnedMeshRenderers;
 
 	XMVECTOR cameraPos = XMLoadFloat3(&camera->GetPosition());
+
+#pragma region notBlendingDraw
 	//비혼합 객체 렌더링
+	for (auto& terrain : terrainRenderers)
+	{
+		terrain.Draw(context, camera);
+	}
 	for (int i = 0; i < enableCount_meshRenderer; i++)
 	{
 		if (meshRenderers[i].GetBlending())
@@ -180,7 +248,7 @@ void ComponentMgr::Render(ID3D11DeviceContext* context, Camera* camera)
 		}
 		else
 			meshRenderers[i].Draw(context, camera);
-		
+
 	}
 	for (int i = 0; i < enableCount_skinnedMeshRenderer; i++)
 	{
@@ -193,7 +261,9 @@ void ComponentMgr::Render(ID3D11DeviceContext* context, Camera* camera)
 		else
 			skinnedMeshRenderers[i].Draw(context, camera);
 	}
-		
+#pragma endregion
+
+	
 	//혼합객체 거리기준 정렬 후 렌더링
 	if (!blendMeshRenderers.empty())
 	{
@@ -214,7 +284,8 @@ void ComponentMgr::Render(ID3D11DeviceContext* context, Camera* camera)
 
 void ComponentMgr::Update()
 {
-
+	for (auto& terrain : terrainRenderers)
+		terrain.Update();
 	for (int i = 0; i < enableCount_meshRenderer; i++)
 		meshRenderers[i].Update();
 	for (int i = 0; i < enableCount_skinnedMeshRenderer; i++)

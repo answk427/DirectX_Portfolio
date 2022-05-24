@@ -32,7 +32,8 @@ enum TechniqueType
 	Reflect = 16,
 	Skinned = 32,
 	Instancing = 64,
-	Shadowed = 128
+	Shadowed = 128,
+	Tesselation = 256
 };
 
 #pragma region Effect
@@ -454,6 +455,8 @@ public:
 #pragma region BuildShadowMapEffect
 class BuildShadowMapEffect : public Effect
 {
+private:
+	ID3D11InputLayout* m_terrainLayout;
 public:
 	BuildShadowMapEffect(ID3D11Device* device, const std::wstring& filename);
 	~BuildShadowMapEffect();
@@ -475,6 +478,7 @@ public:
 	void SetDiffuseMap(ID3D11ShaderResourceView* tex)   { DiffuseMap->SetResource(tex); }
 	void SetDiffuseMapArray(ID3D11ShaderResourceView* tex) { DiffuseMapArray->SetResource(tex); }
 	void SetNormalMap(ID3D11ShaderResourceView* tex)    { NormalMap->SetResource(tex); }
+	void SetHeightMap(ID3D11ShaderResourceView* tex) { HeightMap->SetResource(tex); }
 
 	ID3DX11EffectTechnique* BuildShadowMapTech;
 	ID3DX11EffectTechnique* BuildShadowMapAlphaClipTech;
@@ -482,6 +486,7 @@ public:
 	ID3DX11EffectTechnique* BuildShadowMapAlphaClipSkinnedTech;
 	ID3DX11EffectTechnique* TessBuildShadowMapTech;
 	ID3DX11EffectTechnique* TessBuildShadowMapAlphaClipTech;
+	ID3DX11EffectTechnique* TerrainTech;
 
 	ID3DX11EffectMatrixVariable* ViewProj;
 	ID3DX11EffectMatrixVariable* WorldViewProj;
@@ -499,6 +504,7 @@ public:
 	ID3DX11EffectShaderResourceVariable* DiffuseMap;
 	ID3DX11EffectShaderResourceVariable* DiffuseMapArray;
 	ID3DX11EffectShaderResourceVariable* NormalMap;
+	ID3DX11EffectShaderResourceVariable* HeightMap;
 
 	// Effect을(를) 통해 상속됨
 	virtual void InitInputLayout(ID3D11Device * device) override;
@@ -508,6 +514,8 @@ public:
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
 	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
 	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
+
+	virtual bool IASetting(ID3D11DeviceContext* context, UINT techType);
 };
 #pragma endregion
 
@@ -855,5 +863,132 @@ public:
 	void SetViewProj(CXMMATRIX M) { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 };
 
+#pragma region TerrainEffect
+class TerrainEffect : public Effect
+{
+public:
+	TerrainEffect(ID3D11Device* device, const std::wstring& filename);
+	~TerrainEffect();
+
+	void SetShadowTransform(CXMMATRIX M) { ShadowTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetShadowMap(ID3D11ShaderResourceView* tex) { ShadowMap->SetResource(tex); }
+	void SetIsShadowed(bool b) { isShadowed->SetBool(b); }
+
+	void SetViewProj(CXMMATRIX M) { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetEyePosW(const XMFLOAT3& v) { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }
+	void SetFogColor(const FXMVECTOR v) { FogColor->SetFloatVector(reinterpret_cast<const float*>(&v)); }
+	void SetFogStart(float f) { FogStart->SetFloat(f); }
+	void SetFogRange(float f) { FogRange->SetFloat(f); }
+
+	void SetDirLights(const DirectionalLight* lights)
+	{
+		if (lights == nullptr)
+		{
+			dirLightSize->SetInt(0);
+			return;
+		}
+		DirLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::DIRECTIONAL] * sizeof(DirectionalLight));
+		dirLightSize->SetInt(Lighting::lightCount[LightType::DIRECTIONAL]);
+	}
+	void SetPointLights(const PointLight* lights)
+	{
+		if (lights == nullptr)
+		{
+			pointLightSize->SetInt(0);
+			return;
+		}
+		pointLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::POINTLIGHT] * sizeof(PointLight));
+		pointLightSize->SetInt(Lighting::lightCount[LightType::POINTLIGHT]);
+
+	}
+	void SetSpotLights(const SpotLight* lights)
+	{
+		if (lights == nullptr)
+		{
+			spotLightSize->SetInt(0);
+			return;
+		}
+		spotLights->SetRawValue(lights,
+			0,
+			Lighting::lightCount[LightType::SPOTLIGHT] * sizeof(SpotLight));
+		spotLightSize->SetInt(Lighting::lightCount[LightType::SPOTLIGHT]);
+
+	}
+	void SetMaterial(const BasicMaterial& mat) { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
+	void SetTexTransform(CXMMATRIX M) { TexTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
+
+	void SetMinDist(float f) { MinDist->SetFloat(f); }
+	void SetMaxDist(float f) { MaxDist->SetFloat(f); }
+	void SetMinTess(float f) { MinTess->SetFloat(f); }
+	void SetMaxTess(float f) { MaxTess->SetFloat(f); }
+	void SetTexelCellSpaceU(float f) { TexelCellSpaceU->SetFloat(f); }
+	void SetTexelCellSpaceV(float f) { TexelCellSpaceV->SetFloat(f); }
+	void SetWorldCellSpace(float f) { WorldCellSpace->SetFloat(f); }
+	void SetWorldFrustumPlanes(XMFLOAT4 planes[6]) { WorldFrustumPlanes->SetFloatVectorArray(reinterpret_cast<float*>(planes), 0, 6); }
+
+	void SetLayerMapArray(ID3D11ShaderResourceView* tex) { LayerMapArray->SetResource(tex); }
+	void SetBlendMap(ID3D11ShaderResourceView* tex) { BlendMap->SetResource(tex); }
+	void SetHeightMap(ID3D11ShaderResourceView* tex) { HeightMap->SetResource(tex); }
+
+	ID3DX11EffectMatrixVariable* ShadowTransform;
+	ID3DX11EffectShaderResourceVariable* ShadowMap;
+	ID3DX11EffectScalarVariable* isShadowed;
+
+	ID3DX11EffectVariable* DirLights;
+	ID3DX11EffectScalarVariable* dirLightSize;
+	ID3DX11EffectVariable* pointLights;
+	ID3DX11EffectScalarVariable* pointLightSize;
+	ID3DX11EffectVariable* spotLights;
+	ID3DX11EffectScalarVariable* spotLightSize;
+
+
+	ID3DX11EffectTechnique* Light1Tech;
+	ID3DX11EffectTechnique* Light2Tech;
+	ID3DX11EffectTechnique* Light3Tech;
+	ID3DX11EffectTechnique* Light1FogTech;
+	ID3DX11EffectTechnique* Light2FogTech;
+	ID3DX11EffectTechnique* Light3FogTech;
+
+	ID3DX11EffectMatrixVariable* ViewProj;
+	ID3DX11EffectMatrixVariable* World;
+	ID3DX11EffectMatrixVariable* WorldInvTranspose;
+	ID3DX11EffectMatrixVariable* TexTransform;
+	ID3DX11EffectVectorVariable* EyePosW;
+	ID3DX11EffectVectorVariable* FogColor;
+	ID3DX11EffectScalarVariable* FogStart;
+	ID3DX11EffectScalarVariable* FogRange;
+
+	ID3DX11EffectVariable* Mat;
+	ID3DX11EffectScalarVariable* MinDist;
+	ID3DX11EffectScalarVariable* MaxDist;
+	ID3DX11EffectScalarVariable* MinTess;
+	ID3DX11EffectScalarVariable* MaxTess;
+	ID3DX11EffectScalarVariable* TexelCellSpaceU;
+	ID3DX11EffectScalarVariable* TexelCellSpaceV;
+	ID3DX11EffectScalarVariable* WorldCellSpace;
+	ID3DX11EffectVectorVariable* WorldFrustumPlanes;
+
+	ID3DX11EffectShaderResourceVariable* LayerMapArray;
+	ID3DX11EffectShaderResourceVariable* BlendMap;
+	ID3DX11EffectShaderResourceVariable* HeightMap;
+
+	// Effect을(를) 통해 상속됨
+	virtual void InitInputLayout(ID3D11Device * device) override;
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
+	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
+	bool IASetting(ID3D11DeviceContext* context, UINT techType);
+};
+#pragma endregion
+
+
 
 #endif // EFFECTS_H
+

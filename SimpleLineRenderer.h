@@ -14,6 +14,8 @@ public:
 	~SimpleLineRenderer()
 	{
 		if(transform!=nullptr)
+			delete transform;
+		if (mesh != nullptr)
 			delete mesh;
 	}
 

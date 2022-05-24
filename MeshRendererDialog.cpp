@@ -84,6 +84,7 @@ bool MeshRendererDialog::SetObject(GameObject* obj)
 	mesh = m_MeshRenderer->GetMesh();
 	m_aabb = mesh->GetAABB_MaxMin();
 
+	return true;
 }
 
 bool MeshRendererDialog::UpdateView()
@@ -193,6 +194,9 @@ void MeshRendererDialog::Init(HWND hDlg)
 	//Static 체크박스 설정
 	HWND h_staticCheck = GetDlgItem(m_hDlg, STATICCHECK);
 	Button_SetCheck(h_staticCheck, m_MeshRenderer->GetStaticObject());
+
+	Button_SetCheck(GetDlgItem(m_hDlg, BUILDSHADOWMAPCHECK), m_MeshRenderer->isShadowBaking);
+	Button_SetCheck(GetDlgItem(m_hDlg, RECEIVESHADOWCHECK), m_MeshRenderer->isShadowed);
 }
 
 bool MeshRendererDialog::printMap()
@@ -332,7 +336,6 @@ void MeshRendererDialog::MapEditBoxUpdate(int materialIdx)
 	Edit_SetText(m_hColorG, std::to_wstring(*g).c_str());
 	Edit_SetText(m_hColorB, std::to_wstring(*b).c_str());
 	Edit_SetText(m_hColorA, std::to_wstring(*a).c_str());
-	
 }
 
 void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
@@ -473,9 +476,33 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 			break;
 		}
 		break;
+	case BUILDSHADOWMAPCHECK:
+		switch (Button_GetCheck(GetDlgItem(hDlg, BUILDSHADOWMAPCHECK)))
+		{
+		case BST_CHECKED:
+			if (m_MeshRenderer != nullptr)
+				m_MeshRenderer->isShadowBaking = true;
+			break;
+		case BST_UNCHECKED:
+			if (m_MeshRenderer != nullptr)
+				m_MeshRenderer->isShadowBaking = false;
+			break;
+		}
+		break;
+	case RECEIVESHADOWCHECK:
+		switch (Button_GetCheck(GetDlgItem(hDlg, RECEIVESHADOWCHECK)))
+		{
+		case BST_CHECKED:
+			if (m_MeshRenderer != nullptr)
+				m_MeshRenderer->isShadowed = true;
+			break;
+		case BST_UNCHECKED:
+			if (m_MeshRenderer != nullptr)
+				m_MeshRenderer->isShadowed = false;
+			break;
+		}
+		break;
 	}
-
-
 }
 
 

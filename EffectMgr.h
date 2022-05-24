@@ -7,7 +7,8 @@ enum EffectType
 {
 	BasicEffectType,
 	BillBoardEffectType,
-	BuildShadowMap
+	BuildShadowMap,
+	Terrain
 };
 
 class EffectMgr

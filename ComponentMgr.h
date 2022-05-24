@@ -1,6 +1,7 @@
 #pragma once
 #include "Interface.h"
 #include "Renderer.h"
+#include "Terrain.h"
 #include "Light.h"
 
 #include <vector>
@@ -31,6 +32,7 @@ class ComponentMgr
 private:
 	std::vector<MeshRenderer> meshRenderers;
 	std::vector<SkinnedMeshRenderer> skinnedMeshRenderers;
+	std::vector<TerrainRenderer> terrainRenderers;
 	std::vector<Lighting> lightings;
 
 	std::vector<Component*> components;
@@ -52,13 +54,16 @@ private:
 	Component* SwapEnable(std::vector<compType>& vec, int& enableCount, int idx);
 	template <typename compType>
 	Component* SwapDisable(std::vector<compType>& vec, int& enableCount, int idx);
-	
+	//컨테이너의 두 원소를 swap하고 idMap 업데이트 하는 함수
+	template<typename compType>
+	void SwapComponent(std::vector<compType>& vec, UINT idx1, UINT idx2);
+
 	//SwapEnable 함수와 SwapDisable 함수 중 하나를 선택
 	template <typename compType>
 	Component* SelectSwap(std::vector<compType>& vec, int& enableCount, int idx, Command enDisable);
 	template <typename compType>
 	Component* SelectSwap(std::vector<compType*>& vec, int& enableCount, int idx, Command enDisable);
-
+	
 
 public:
 	ComponentMgr();
@@ -67,6 +72,8 @@ public:
 public:
 	//전달받은 Component를 Enable또는 Disable 시키는 함수
 	Component* OnOffComponent(Component* component, Command endisable);
+	//Component를 삭제(container에서 제거)
+	void DeleteComponent(Component* component);
 	Component* CreateComponent(ComponentType compType);
 	
 	//ID에서 Component의 타입을 추출
@@ -135,6 +142,24 @@ inline Component* ComponentMgr::SwapDisable(std::vector<compType>& vec, int & en
 }
 
 template<typename compType>
+inline void ComponentMgr::SwapComponent(std::vector<compType>& vec, UINT idx1, UINT idx2)
+{
+	if (idx1 == idx2)
+		return;
+
+	//비활성화된 컴포넌트를 제일 앞에 있는 비활성화된 컴포넌트와 바꿈
+	//std::swap(vec[idx1], vec[idx2]);
+	compType component1 = vec[idx1];
+	vec[idx1] = vec[idx2];
+	vec[idx2] = component1;
+
+	//id와 index를 매핑하는 해쉬맵 업데이트
+	idMap[vec[idx1].id] = idx1;
+	idMap[vec[idx2].id] = idx2;
+}
+
+
+template<typename compType>
 inline Component * ComponentMgr::SelectSwap(std::vector<compType>& vec, int & enableCount, int idx, Command enDisable)
 {
 	if (enDisable == Command::ENABLE)
@@ -144,12 +169,8 @@ inline Component * ComponentMgr::SelectSwap(std::vector<compType>& vec, int & en
 
 
 		//비활성화된 컴포넌트를 제일 앞에 있는 비활성화된 컴포넌트와 바꿈
-		std::swap(vec[enableCount], vec[idx]);
-
-		//id와 index를 매핑하는 해쉬맵 업데이트
-		idMap[vec[enableCount].id] = enableCount;
-		idMap[vec[idx].id] = idx;
-
+		SwapComponent(vec, enableCount, idx);
+		
 		//활성화된 카운트 수 증가
 		enableCount++;
 				
@@ -165,20 +186,13 @@ inline Component * ComponentMgr::SelectSwap(std::vector<compType>& vec, int & en
 		enableCount--;
 
 		//현재 활성화된 컴포넌트 중 가장 마지막 컴포넌트와 바꿈
-		std::swap(vec[enableCount], vec[idx]);
-
-
-		//id와 index를 매핑하는 해쉬맵 업데이트
-		idMap[vec[enableCount].id] = enableCount;
-		idMap[vec[idx].id] = idx;
+		SwapComponent(vec, enableCount, idx);
 
 	
 	
 		vec[enableCount].Disable();
 		return &vec[enableCount];
 	
-
-		
 	}
 
 	return &vec[idx];
@@ -194,11 +208,7 @@ inline Component * ComponentMgr::SelectSwap(std::vector<compType*>& vec, int & e
 
 
 		//비활성화된 컴포넌트를 제일 앞에 있는 비활성화된 컴포넌트와 바꿈
-		std::swap(vec[enableCount], vec[idx]);
-
-		//id와 index를 매핑하는 해쉬맵 업데이트
-		idMap[vec[enableCount].id] = enableCount;
-		idMap[vec[idx].id] = idx;
+		SwapComponent(vec, enableCount, idx);
 
 		//활성화된 카운트 수 증가
 		enableCount++;
@@ -215,12 +225,7 @@ inline Component * ComponentMgr::SelectSwap(std::vector<compType*>& vec, int & e
 		enableCount--;
 
 		//현재 활성화된 컴포넌트 중 가장 마지막 컴포넌트와 바꿈
-		std::swap(vec[enableCount], vec[idx]);
-
-
-		//id와 index를 매핑하는 해쉬맵 업데이트
-		idMap[vec[enableCount].id] = enableCount;
-		idMap[vec[idx].id] = idx;
+		SwapComponent(vec, enableCount, idx);
 
 
 

@@ -11,7 +11,25 @@
 #include "Vertex.h"
 #include <MathHelper.h>
 
-
+class TesselationData
+{
+public:
+	TesselationData() : minDist(20.0f), maxDist(500.0f), minTess(0.0f), maxTess(6.0f) {}
+public:
+	float minDist;
+	float maxDist;
+	float minTess;
+	float maxTess;
+public:
+	float GetMinDist() { return minDist; }
+	float GetMaxDist() { return maxDist; }
+	float GetMinTess() { return minTess; }
+	float GetMaxTess() { return maxTess; }
+	void SetMinDist(float minDist) { this->minDist = minDist; }
+	void SetMaxDist(float maxDist) { this->maxDist = maxDist; }
+	void SetMinTess(float minTess) { this->minTess = minTess; }
+	void SetMaxTess(float maxTess) { this->maxTess = maxTess; }
+};
 
 
 
@@ -48,8 +66,11 @@ public:
 	//그림자맵을 렌더링 할 것인지 나타내는 변수
 	bool isShadowBaking;
 
-	//현재 쉐도우맵이 렌더링 됐는지 안됐는지 나타내는 변수
+	//현재 쉐도우맵 렌더링인지 나타내는 변수
 	bool isRenderShadowMapBaking = { 0 };
+
+	bool isShadowMapRender() { return isShadowBaking && isRenderShadowMapBaking; }
+	bool isShadowRender() { return isShadowed && !isRenderShadowMapBaking; }
 #pragma endregion
 
 
@@ -94,6 +115,7 @@ public:
 	Renderer(const std::string& id, ComponentType type, Mesh* mesh);
 	//Renderer(std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
 	~Renderer();
+	Renderer& operator=(const Renderer& other);
 
 public:
 	//맵 초기화
@@ -145,7 +167,7 @@ class MeshRenderer : public Renderer
 {
 public:
 	MeshRenderer(const std::string& id);
-	MeshRenderer& operator=(const MeshRenderer& meshrenderer);
+	MeshRenderer& operator=(const MeshRenderer& other);
 };
 
 class SkinnedMeshRenderer : public Renderer

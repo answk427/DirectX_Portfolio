@@ -9,6 +9,7 @@ enum ComponentType
 {
 	MESHRENDERER,
 	SKINNEDMESHRENDERER,
+	TERRAIN,
 	LIGHT,
 	UNDEFINED
 };
@@ -25,7 +26,12 @@ public:
 public:
 	Component(const componentID& id, ComponentType type) : id(id), componentType(type) {}
 	virtual ~Component() 
+	{}
+	Component& operator=(const Component& other)
 	{
+		id = other.id;
+		componentType = other.componentType;
+		return *this;
 	}
 public:
 	virtual void Init() = 0;
@@ -34,7 +40,6 @@ public:
 	virtual void LateUpdate() = 0;
 	virtual void Enable() = 0;
 	virtual void Disable() = 0;
-	
 };
 
 typedef std::string gameObjectID;

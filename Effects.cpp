@@ -144,7 +144,6 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	isShadowed = mFX->GetVariableByName("isShadowed")->AsScalar();
 
 	DirLights = mFX->GetVariableByName("gDirLights");
-
 	dirLightSize = mFX->GetVariableByName("dirLight_size")->AsScalar();
 
 	pointLights = mFX->GetVariableByName("gPointLights");
@@ -223,7 +222,7 @@ void BasicEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 }
 ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 {
-	if (techType || TechniqueType::Shadowed)
+	if (techType & TechniqueType::Shadowed)
 		SetIsShadowed(true);
 	else
 		SetIsShadowed(false);
@@ -440,7 +439,7 @@ void NormalMapEffect::InitInputLayout(ID3D11Device * device)
 
 #pragma region BuildShadowMapEffect
 BuildShadowMapEffect::BuildShadowMapEffect(ID3D11Device* device, const std::wstring& filename)
-	: Effect(device, filename)
+	: Effect(device, filename), m_terrainLayout(0)
 {
 	BuildShadowMapTech = mFX->GetTechniqueByName("BuildShadowMapTech");
 	BuildShadowMapAlphaClipTech = mFX->GetTechniqueByName("BuildShadowMapAlphaClipTech");
@@ -450,6 +449,7 @@ BuildShadowMapEffect::BuildShadowMapEffect(ID3D11Device* device, const std::wstr
 
 	TessBuildShadowMapTech = mFX->GetTechniqueByName("TessBuildShadowMapTech");
 	TessBuildShadowMapAlphaClipTech = mFX->GetTechniqueByName("TessBuildShadowMapAlphaClipTech");
+	TerrainTech = mFX->GetTechniqueByName("TerrainBuildShadowMapAlphaClipTech");
 
 	ViewProj = mFX->GetVariableByName("gViewProj")->AsMatrix();
 	WorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
@@ -466,7 +466,8 @@ BuildShadowMapEffect::BuildShadowMapEffect(ID3D11Device* device, const std::wstr
 	DiffuseMap = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
 	DiffuseMapArray = mFX->GetVariableByName("gDiffuseMapArray")->AsShaderResource();
 	NormalMap = mFX->GetVariableByName("gNormalMap")->AsShaderResource();
-
+	HeightMap = mFX->GetVariableByName("gHeightMap")->AsShaderResource();
+	
 	Init(device);
 }
 
@@ -483,6 +484,11 @@ void BuildShadowMapEffect::InitInputLayout(ID3D11Device * device)
 
 	HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTan, 4, passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize, &m_inputLayout));
+
+	ReleaseCOM(m_terrainLayout);
+	HR(TerrainTech->GetPassByIndex(0)->GetDesc(&passDesc));
+	HR(device->CreateInputLayout(InputLayoutDesc::Terrain, 3, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_terrainLayout));
 }
 void BuildShadowMapEffect::InitInstancingInputLayout(ID3D11Device * device)
 {
@@ -525,6 +531,8 @@ void BuildShadowMapEffect::PerObjectSet(GeneralMaterial * material, Camera * cam
 }
 ID3DX11EffectTechnique * BuildShadowMapEffect::GetTechnique(UINT techType)
 {
+	if (techType & TechniqueType::Tesselation)
+		return TerrainTech;
 	techType = techType & ~TechniqueType::Shadowed;
 
 	switch (techType)
@@ -548,6 +556,35 @@ void BuildShadowMapEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11
 void BuildShadowMapEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 {
 	SetDiffuseMapArray(arr);
+}
+bool BuildShadowMapEffect::IASetting(ID3D11DeviceContext * context, UINT techType)
+{
+	//instancing으로 렌더링 할 때
+	if (techType & TechniqueType::Instancing)
+	{
+		if (m_instancing_inputLayout == nullptr)
+			return false;
+		context->IASetInputLayout(m_instancing_inputLayout);
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+	else if (techType & TechniqueType::Tesselation)
+	{
+		if (m_terrainLayout == nullptr)
+			return false;
+		context->IASetInputLayout(m_terrainLayout);
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+	}
+	else 
+	{
+		if (m_inputLayout == nullptr)
+			return false;
+		context->IASetInputLayout(m_inputLayout);
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	}
+
+
+	return true;
 }
 #pragma endregion
 
@@ -1024,3 +1061,162 @@ bool BuildShadowMapBilboardEffect::IASetting(ID3D11DeviceContext * context, UINT
 	context->IASetInputLayout(m_inputLayout);
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 }
+
+
+
+#pragma region TerrainEffect
+TerrainEffect::TerrainEffect(ID3D11Device* device, const std::wstring& filename)
+	: Effect(device, filename)
+{
+
+	ShadowTransform = mFX->GetVariableByName("gShadowTransform")->AsMatrix();
+	ShadowMap = mFX->GetVariableByName("gShadowMap")->AsShaderResource();
+	isShadowed = mFX->GetVariableByName("isShadowed")->AsScalar();
+
+	DirLights = mFX->GetVariableByName("gDirLights");
+	dirLightSize = mFX->GetVariableByName("dirLight_size")->AsScalar();
+
+	pointLights = mFX->GetVariableByName("gPointLights");
+	pointLightSize = mFX->GetVariableByName("pointLight_size")->AsScalar();
+
+	spotLights = mFX->GetVariableByName("gSpotLights");
+	spotLightSize = mFX->GetVariableByName("spotLight_size")->AsScalar();
+
+
+	Light1Tech = mFX->GetTechniqueByName("Light1");
+	Light2Tech = mFX->GetTechniqueByName("Light2");
+	Light3Tech = mFX->GetTechniqueByName("Light3");
+	Light1FogTech = mFX->GetTechniqueByName("Light1Fog");
+	Light2FogTech = mFX->GetTechniqueByName("Light2Fog");
+	Light3FogTech = mFX->GetTechniqueByName("Light3Fog");
+
+	TexTransform = mFX->GetVariableByName("gTexTransform")->AsMatrix();
+	ViewProj = mFX->GetVariableByName("gViewProj")->AsMatrix();
+	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
+	FogColor = mFX->GetVariableByName("gFogColor")->AsVector();
+	FogStart = mFX->GetVariableByName("gFogStart")->AsScalar();
+	FogRange = mFX->GetVariableByName("gFogRange")->AsScalar();
+	DirLights = mFX->GetVariableByName("gDirLights");
+	Mat = mFX->GetVariableByName("gMaterial");
+
+	MinDist = mFX->GetVariableByName("gMinDist")->AsScalar();
+	MaxDist = mFX->GetVariableByName("gMaxDist")->AsScalar();
+	MinTess = mFX->GetVariableByName("gMinTess")->AsScalar();
+	MaxTess = mFX->GetVariableByName("gMaxTess")->AsScalar();
+	TexelCellSpaceU = mFX->GetVariableByName("gTexelCellSpaceU")->AsScalar();
+	TexelCellSpaceV = mFX->GetVariableByName("gTexelCellSpaceV")->AsScalar();
+	WorldCellSpace = mFX->GetVariableByName("gWorldCellSpace")->AsScalar();
+	WorldFrustumPlanes = mFX->GetVariableByName("gWorldFrustumPlanes")->AsVector();
+
+	LayerMapArray = mFX->GetVariableByName("gLayerMapArray")->AsShaderResource();
+	BlendMap = mFX->GetVariableByName("gBlendMap")->AsShaderResource();
+	HeightMap = mFX->GetVariableByName("gHeightMap")->AsShaderResource();
+
+	Init(device);
+}
+
+TerrainEffect::~TerrainEffect()
+{
+}
+void TerrainEffect::InitInputLayout(ID3D11Device * device)
+{
+	ReleaseCOM(m_inputLayout);
+	D3DX11_PASS_DESC passDesc;
+
+	Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::Terrain, 3, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_inputLayout));
+}
+void TerrainEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+
+}
+void TerrainEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
+{
+	//쉐이더에 조명설정
+	SetDirLights(directL);
+	SetPointLights(pointL);
+	SetSpotLights(spotL);
+
+	//그림자 맵 설정
+	SetShadowMap(g_shadowSRV);
+
+	SetEyePosW(camera.GetPosition());
+}
+void TerrainEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
+{
+	//인스턴스의 세계행렬과 곱해질 시야투영행렬
+	SetViewProj(camera->ViewProj());
+
+	//텍스쳐 변환 I * S * (R) * T
+	XMMATRIX texTransform = XMMatrixIdentity() *
+		XMMatrixScaling(material->textureTiling.x,
+			material->textureTiling.y, 0.0f) *
+		XMMatrixTranslation(material->textureOffset.x,
+			material->textureOffset.y, 0.0f);
+	SetTexTransform(texTransform);
+
+	//세계공간 -> 광원의 ndc좌표 -> 텍스쳐공간 좌표 변환 행렬
+	SetShadowTransform(g_shadowMatrix);
+
+	//재질 설정
+	SetMaterial(material->basicMat);
+}
+
+ID3DX11EffectTechnique * TerrainEffect::GetTechnique(UINT techType)
+{
+	if (techType & TechniqueType::Shadowed)
+		SetIsShadowed(true);
+	else
+		SetIsShadowed(false);
+
+	techType = techType & ~TechniqueType::Shadowed;
+
+	switch (techType)
+	{
+
+	case TechniqueType::Light:
+		return Light3Tech;
+	case TechniqueType::Light | TechniqueType::DiffuseMap:
+		return Light3Tech;
+	case TechniqueType::Light | TechniqueType::Fog:
+	case TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Fog:
+		return Light3FogTech;
+	
+	default:
+		nullptr;
+	}
+	return nullptr;
+}
+void TerrainEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+
+}
+void TerrainEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+
+}
+bool TerrainEffect::IASetting(ID3D11DeviceContext * context, UINT techType)
+{
+	////instancing으로 렌더링 할 때
+	//if (techType & TechniqueType::Instancing)
+	//{
+	//	if (m_instancing_inputLayout == nullptr)
+	//		return false;
+	//	context->IASetInputLayout(m_instancing_inputLayout);
+	//	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//}
+	//else
+	{
+		if (m_inputLayout == nullptr)
+			return false;
+		context->IASetInputLayout(m_inputLayout);
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
+
+	}
+
+
+	return true;
+}
+
+#pragma endregion

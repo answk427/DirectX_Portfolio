@@ -107,7 +107,7 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		}
 
 		UINT tempTechType = m_technique_type;
-		if (isShadowed && isRenderShadowMapBaking)
+		if (isShadowRender())
 			tempTechType = tempTechType | TechniqueType::Shadowed;
 		
 		
@@ -144,7 +144,7 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		mesh->enableInstancingIndexes.clear();
 	
 	//현재 렌더링이 그림자맵 렌더링이면
-	if (isShadowBaking && isRenderShadowMapBaking)
+	if (isShadowMapRender())
 		isRenderShadowMapBaking = false;
 }
 
@@ -170,6 +170,31 @@ mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(
 Renderer::~Renderer()
 {
 
+}
+
+Renderer & Renderer::operator=(const Renderer & other)
+{
+	Component::operator=(other);
+	transform = other.transform;
+	mesh = other.mesh;
+	materials = other.materials;
+	diffuseMaps = other.diffuseMaps;
+	normalMaps = other.normalMaps;
+	effects = other.effects;
+	m_texMgr = other.m_texMgr;
+	m_effectMgr = other.m_effectMgr;
+
+	m_technique_type = other.m_technique_type;
+	m_blending = other.m_blending;
+	m_instancingIdx = other.m_instancingIdx;
+	m_static = other.m_static;
+	m_color = other.m_color;
+	m_octreeData = other.m_octreeData;
+
+	isShadowed = other.isShadowed;
+	isShadowBaking = other.isShadowBaking;
+	// TODO: 여기에 반환 구문을 삽입합니다.
+	return *this;
 }
 
 void Renderer::InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath)
@@ -347,16 +372,9 @@ MeshRenderer::MeshRenderer(const std::string& id) : Renderer(id, ComponentType::
 }
 
 
-MeshRenderer & MeshRenderer::operator=(const MeshRenderer & meshrenderer)
+MeshRenderer & MeshRenderer::operator=(const MeshRenderer & other)
 {
-	transform = meshrenderer.transform;
-	mesh = meshrenderer.mesh;
-	materials = meshrenderer.materials;
-	diffuseMaps = meshrenderer.diffuseMaps;
-	normalMaps = meshrenderer.normalMaps;
-	effects = meshrenderer.effects;
-	m_texMgr = meshrenderer.m_texMgr;
-	m_effectMgr = meshrenderer.m_effectMgr;
+	Renderer::operator=(other);
 
 	return *this;
 
