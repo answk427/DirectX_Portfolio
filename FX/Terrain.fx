@@ -1,5 +1,5 @@
- 
 #include "LightHelper.fx"
+#include "BrushFuncs.fx"
  
 cbuffer cbPerFrame
 {
@@ -48,6 +48,7 @@ cbuffer cbPerObject
 	float4x4 gShadowTransform;
 	bool isShadowed;
 	Material gMaterial;
+	BrushDesc brush;
 };
 
 // Nonnumeric values cannot be added to a cbuffer.
@@ -267,6 +268,7 @@ DomainOut DS(PatchTess patchTess,
              float2 uv : SV_DomainLocation, 
              const OutputPatch<HullOut, 4> quad)
 {
+	
 	DomainOut dout;
 	
 	// Bilinear interpolation.
@@ -428,7 +430,8 @@ float4 PS(DomainOut pin,
 		litColor = lerp(litColor, gFogColor, fogLerp);
 	}
 
-    return litColor;
+	float4 brushColor = GetBrushColor(pin.PosW, brush);
+    return litColor + brushColor;
 }
 
 technique11 Light1

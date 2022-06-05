@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "RayPicking.h"
 
 //******************Renderer 함수 정의 ************************//
 void Renderer::Init()
@@ -65,9 +66,7 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		
 	
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
-	if (!GetInstancing())
-		SetVB(context);
-	else
+	if (GetInstancing())
 	{
 		//이미 렌더링을 했거나, 그릴 오브젝트들이 없는 경우 리턴
 		if (mesh->enableInstancingIndexes.empty())
@@ -75,7 +74,9 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		mesh->InstancingUpdate(context);
 		mesh->SetInstanceVB(context);
 	}
-		
+	else
+		SetVB(context);
+	
 
 	mesh->SetIB(context);
 
@@ -105,11 +106,16 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 			if (!effects[i]->OMSetting(context, m_blending))
 				break;
 		}
+
+		UINT tempTechType = m_technique_type;
+		if (isShadowRender())
+			tempTechType = tempTechType | TechniqueType::Shadowed;
+		
 		
 		if(GetInstancing())
-			activeTech = effects[i]->GetTechnique(m_technique_type | TechniqueType::Instancing);
+			activeTech = effects[i]->GetTechnique(tempTechType | TechniqueType::Instancing);
 		else
-			activeTech = effects[i]->GetTechnique(m_technique_type);
+			activeTech = effects[i]->GetTechnique(tempTechType);
 
 		activeTech->GetDesc(&techDesc);
 		
@@ -130,33 +136,66 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{
 			activeTech->GetPassByIndex(p)->Apply(0, context);
+						
 			mesh->Draw(context, i);
 		}
 	}
 	//instancing 렌더링은 Draw 호출 한번만 하도록 벡터를 비워줌.
 	if (GetInstancing())
 		mesh->enableInstancingIndexes.clear();
+	
+	//현재 렌더링이 그림자맵 렌더링이면
+	if (isShadowMapRender())
+		isRenderShadowMapBaking = false;
 }
 
 Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,type)
 , m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f,1.0f,1.0f,1.0f),
-mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 })
+mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 }), isRenderShadowMapBaking(0)
 {
+	MapsInit();
+	SetMaterials(std::vector<GeneralMaterial>(1));
 	InitEffects();
 }
 
 Renderer::Renderer(const std::string & id, ComponentType type, Mesh * mesh) : Component(id, type)
 , m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f, 1.0f, 1.0f, 1.0f),
-mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 })
+mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 }), isRenderShadowMapBaking(0)
 {
 	SetMesh(mesh);
 	SetMaterials(std::vector<GeneralMaterial>(1));
+	MapsInit();
 	InitEffects();
 }
 
 Renderer::~Renderer()
 {
 
+}
+
+Renderer & Renderer::operator=(const Renderer & other)
+{
+	Component::operator=(other);
+	transform = other.transform;
+	mesh = other.mesh;
+	materials = other.materials;
+	diffuseMaps = other.diffuseMaps;
+	normalMaps = other.normalMaps;
+	effects = other.effects;
+	m_texMgr = other.m_texMgr;
+	m_effectMgr = other.m_effectMgr;
+
+	m_technique_type = other.m_technique_type;
+	m_blending = other.m_blending;
+	m_instancingIdx = other.m_instancingIdx;
+	m_static = other.m_static;
+	m_color = other.m_color;
+	m_octreeData = other.m_octreeData;
+
+	isShadowed = other.isShadowed;
+	isShadowBaking = other.isShadowBaking;
+	// TODO: 여기에 반환 구문을 삽입합니다.
+	return *this;
 }
 
 void Renderer::InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePath)
@@ -245,6 +284,28 @@ void Renderer::InitEffects()
 	}
 }
 
+void Renderer::InitEffects(const std::vector<std::wstring>& shaderNames, std::vector<EffectType>& effectTypes)
+{
+	effects.clear();
+
+	UINT subsetSize = mesh->GetSubsetLength();
+	
+	for (int i=0; i<shaderNames.size(); ++i)
+	{		
+		m_effectMgr.SetType(shaderNames[i], effectTypes[i]);
+		Effect* effect = m_effectMgr.GetEffect(shaderNames[i]);
+		assert(effect!=nullptr);
+		effects.push_back(effect);
+	}
+	
+	for (int i = shaderNames.size(); i < subsetSize; ++i)
+	{
+		Effect* effect = m_effectMgr.GetEffect(shaderNames[0]);
+		assert(effect != nullptr);
+		effects.push_back(effect);
+	}
+}
+
 void Renderer::SetMesh(Mesh * meshSrc)
 {
 	//원래 설정되어 있던 mesh의 InstancingData에서 현재 오브젝트의 데이터를 지움.
@@ -264,7 +325,7 @@ void Renderer::SetMesh(Mesh * meshSrc)
 	AddInstancingQueue();
 }
 
-void Renderer::SetMesh(Mesh * meshSrc, vector<GeneralMaterial>& materialSrc)
+void Renderer::SetMesh(Mesh * meshSrc, std::vector<GeneralMaterial>& materialSrc)
 {
 	//원래 설정되어 있던 mesh의 InstancingData에서 현재 오브젝트의 데이터를 지움.
 	if (mesh != nullptr)
@@ -286,10 +347,10 @@ void Renderer::MapsInit()
 	InitNormalMaps();
 }
 
-void Renderer::SetMaterials(vector<GeneralMaterial>& materialSrc)
+void Renderer::SetMaterials(std::vector<GeneralMaterial>& materialSrc)
 {
 	//materials를 빈 벡터로 만듬
-	vector<GeneralMaterial>().swap(materials);
+	std::vector<GeneralMaterial>().swap(materials);
 	//매개변수 벡터와 교환
 	materials.swap(materialSrc);
 	MapsInit();
@@ -312,16 +373,9 @@ MeshRenderer::MeshRenderer(const std::string& id) : Renderer(id, ComponentType::
 }
 
 
-MeshRenderer & MeshRenderer::operator=(const MeshRenderer & meshrenderer)
+MeshRenderer & MeshRenderer::operator=(const MeshRenderer & other)
 {
-	transform = meshrenderer.transform;
-	mesh = meshrenderer.mesh;
-	materials = meshrenderer.materials;
-	diffuseMaps = meshrenderer.diffuseMaps;
-	normalMaps = meshrenderer.normalMaps;
-	effects = meshrenderer.effects;
-	m_texMgr = meshrenderer.m_texMgr;
-	m_effectMgr = meshrenderer.m_effectMgr;
+	Renderer::operator=(other);
 
 	return *this;
 

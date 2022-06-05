@@ -111,17 +111,6 @@ void ShadowMap::ComputeBoundingSphere(std::vector<Renderer*> renderers)
 			maxPosV = XMVectorMax(maxPosV, P);
 			minPosV = XMVectorMin(minPosV, P);
 		}
-
-		//모든 정점 중에 최소정점과 최대정점을 구함.
-		//auto& vertices = mesh->GetVertices();
-		//
-		//for (auto& vertex : vertices)
-		//{
-		//	//월드좌표에서의 정점위치
-		//	XMVECTOR P = XMVector3TransformCoord(XMLoadFloat3(&vertex.pos), world);
-		//	maxPosV = XMVectorMax(maxPosV, P);
-		//	minPosV = XMVectorMin(minPosV, P);
-		//}
 	}
 
 

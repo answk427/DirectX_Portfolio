@@ -62,6 +62,7 @@ public:
 		
 public:
 	const DirectionalLight& GetDirLight() const { return m_dirLight; }
+	DirectionalLight& GetDirLight() { return m_dirLight; }
 	const PointLight& GetPointLight() const { return m_pointLight; }
 	const SpotLight& GetSpotLight() const { return m_spotLight; }
 	LightType GetLightType() const { return m_lightType; }

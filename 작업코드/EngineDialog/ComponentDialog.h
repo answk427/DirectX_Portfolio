@@ -1,6 +1,7 @@
 #pragma once
 #include "MsgProcedure.h"
 #include "GameObject.h"
+#include <atlimage.h>
 
 typedef std::pair<HWND, float*> handleFloatPair;
 
@@ -17,7 +18,6 @@ public:
 public:
 	// MsgProcedure을(를) 통해 상속됨
 	virtual bool OpenDialog() override;
-	
 private:
 	virtual void MenuProc(HWND hDlg, WPARAM wParam) override;
 	virtual void CharProc(HWND hDlg, WPARAM wParam) override;
@@ -33,4 +33,8 @@ public:
 	
 public:
 	float EditText2Float(HWND h_edit);
+	void PrintBitMap(HDC hdc,const std::wstring& filePath, LPRECT controlRect);
+	void Screen2Client(HWND hwnd, LPRECT controlRect);
+	bool PrintCImage(HDC hdc, const std::wstring& filePath, LPRECT controlRect);
+	std::wstring ExtractTitle(const std::wstring& FilePath);
 };

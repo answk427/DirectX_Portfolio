@@ -1,4 +1,5 @@
 #pragma once
+#include "Inspector.h"
 #include "stdafx.h"
 #include <CommCtrl.h>
 #include <resource.h>
@@ -6,7 +7,6 @@
 #include "MsgProcedure.h"
 #include "GameObject.h"
 #include "DialogSizeDefine.h"
-#include "Inspector.h"
 #include "ObjectMgr.h"
 #include "BoundingBoxRenderer.h"
 #include <unordered_map>

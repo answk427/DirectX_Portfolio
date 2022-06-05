@@ -20,7 +20,6 @@
 #define COMPONENTSIZE 10000
 
 
-
 enum Command
 {
 	ENABLE,

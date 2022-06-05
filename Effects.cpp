@@ -1073,6 +1073,8 @@ TerrainEffect::TerrainEffect(ID3D11Device* device, const std::wstring& filename)
 	ShadowMap = mFX->GetVariableByName("gShadowMap")->AsShaderResource();
 	isShadowed = mFX->GetVariableByName("isShadowed")->AsScalar();
 
+	BrushVar = mFX->GetVariableByName("brush");
+
 	DirLights = mFX->GetVariableByName("gDirLights");
 	dirLightSize = mFX->GetVariableByName("dirLight_size")->AsScalar();
 

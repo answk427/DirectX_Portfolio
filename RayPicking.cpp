@@ -1,5 +1,10 @@
 #include "RayPicking.h"
 
+void RayPicking::ScreenPosToView(float sx, float sy, float * destX, float * destY)
+{
+
+}
+
 void RayPicking::ScreenToViewRay(XMVECTOR* rayOrigin, XMVECTOR* rayDir, float sx, float sy, D3D11_VIEWPORT * viewPort, XMMATRIX * projection)
 {
 	//시야 공간에서 선택 반직선을 계산
@@ -29,6 +34,21 @@ std::pair<XMVECTOR,XMVECTOR> RayPicking::ViewToLocalRay(XMVECTOR * rayOrigin, XM
 	localRay.second = XMVector3Normalize(localRay.second);
 
 	return localRay;
+}
+
+std::pair<XMVECTOR, XMVECTOR> RayPicking::ViewToWorldRay(XMVECTOR * rayOrigin, XMVECTOR * rayDir, XMMATRIX * view)
+{
+	//시야행렬의 역행렬
+	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(*view), *view);
+	
+	std::pair<XMVECTOR, XMVECTOR> worldRay;
+	worldRay.first = XMVector3TransformCoord(*rayOrigin, invView); //반직선원점
+	worldRay.second = XMVector3TransformNormal(*rayDir, invView); //반직선 방향
+
+	//교차 판정을 위해 반직선 방향벡터를 단위길이로 만든다
+	worldRay.second = XMVector3Normalize(worldRay.second);
+
+	return worldRay;
 }
 
 Renderer * RayPicking::NearestOfIntersectRayAABB(D3D11_VIEWPORT* viewPort ,

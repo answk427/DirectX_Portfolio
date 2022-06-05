@@ -243,11 +243,14 @@
     <ClCompile Include="SimpleLineRenderer.cpp">
       <Filter>New Source Files\Component</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>New Source Files\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainDialog.cpp">
+      <Filter>New Source Files\EngineDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -461,6 +464,9 @@
     <ClInclude Include="Terrain.h">
       <Filter>New Header Files\Component</Filter>
     </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FX\LightHelper.fx">
@@ -505,6 +511,9 @@
       <Filter>FX</Filter>
     </CustomBuild>
     <CustomBuild Include="FX\Terrain.fx">
+      <Filter>FX</Filter>
+    </CustomBuild>
+    <CustomBuild Include="FX\BrushFuncs.fx">
       <Filter>FX</Filter>
     </CustomBuild>
   </ItemGroup>

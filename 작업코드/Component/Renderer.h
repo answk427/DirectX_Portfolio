@@ -2,7 +2,6 @@
 #include <TextureMgr.h>
 #include <D3D11.h>
 #include <d3dUtil.h>
-#include <vector>
 
 #include "Interface.h"
 #include "Mesh.h"
@@ -12,7 +11,25 @@
 #include "Vertex.h"
 #include <MathHelper.h>
 
-
+class TesselationData
+{
+public:
+	TesselationData() : minDist(20.0f), maxDist(500.0f), minTess(0.0f), maxTess(6.0f) {}
+public:
+	float minDist;
+	float maxDist;
+	float minTess;
+	float maxTess;
+public:
+	float GetMinDist() { return minDist; }
+	float GetMaxDist() { return maxDist; }
+	float GetMinTess() { return minTess; }
+	float GetMaxTess() { return maxTess; }
+	void SetMinDist(float minDist) { this->minDist = minDist; }
+	void SetMaxDist(float maxDist) { this->maxDist = maxDist; }
+	void SetMinTess(float minTess) { this->minTess = minTess; }
+	void SetMaxTess(float maxTess) { this->maxTess = maxTess; }
+};
 
 
 
@@ -21,14 +38,13 @@ class Renderer : public Component
 protected:
 	Transform* transform;
 	Mesh* mesh;
-	vector<GeneralMaterial> materials;
-	vector<ID3D11ShaderResourceView*> diffuseMaps;
-	vector<ID3D11ShaderResourceView*> normalMaps;
-	vector<Effect*> effects;
+	std::vector<GeneralMaterial> materials;
+	std::vector<ID3D11ShaderResourceView*> diffuseMaps;
+	std::vector<ID3D11ShaderResourceView*> normalMaps;
+	std::vector<Effect*> effects;
 	TextureMgr& m_texMgr;
 	EffectMgr& m_effectMgr;
 	
-
 protected:
 	UINT m_technique_type;
 	//혼합 여부를 나타내는 변수
@@ -43,6 +59,21 @@ public:
 	//해당 렌더러를 가지고 있는 Octree Node와 Object List에서의 iterator
 	std::pair<std::list<Renderer*>*, std::list<Renderer*>::iterator*> m_octreeData;
 	
+
+#pragma region ShadowVariable
+	//그림자를 받을 것인지 나타내는 변수
+	bool isShadowed;
+	//그림자맵을 렌더링 할 것인지 나타내는 변수
+	bool isShadowBaking;
+
+	//현재 쉐도우맵 렌더링인지 나타내는 변수
+	bool isRenderShadowMapBaking = { 0 };
+
+	bool isShadowMapRender() { return isShadowBaking && isRenderShadowMapBaking; }
+	bool isShadowRender() { return isShadowed && !isRenderShadowMapBaking; }
+#pragma endregion
+
+
 public:
 	bool GetBlending() { return m_blending; }
 	bool SetBlending(bool blend) { return m_blending = blend;}
@@ -51,7 +82,7 @@ public:
 	bool GetInstancing()
 	{ 
 		if (mesh != nullptr)
-			return mesh->GetInstancing();
+			return mesh->GetInstancing() && !isRenderShadowMapBaking;
 		return	false;
 	}
 	bool SetInstancing(bool instancing) 
@@ -84,6 +115,7 @@ public:
 	Renderer(const std::string& id, ComponentType type, Mesh* mesh);
 	//Renderer(std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
 	~Renderer();
+	Renderer& operator=(const Renderer& other);
 
 public:
 	//맵 초기화
@@ -99,19 +131,20 @@ public:
 	
 	//쉐이더 이펙트 초기화
 	void InitEffects(EffectMgr& effectMgr, const std::wstring& shaderPath);
-	void InitEffects();
+	virtual void InitEffects();
+	virtual void InitEffects(const std::vector<std::wstring>& shaderNames, std::vector<EffectType>& effectTypes);
 
 	
 	//반드시 SetMesh가 SetMaterial보다 먼저 실행되야 하기 때문에 함수를 합침.
 	//기본 메테리얼로 생성
 	void SetMesh(Mesh* meshSrc);
 	//메테리얼 데이터를 로드해서 생성
-	void SetMesh(Mesh* meshSrc, vector<GeneralMaterial>& materialSrc);
+	void SetMesh(Mesh* meshSrc, std::vector<GeneralMaterial>& materialSrc);
 	Mesh* GetMesh() { return mesh; }
 	const Mesh* GetMesh() const { return mesh; }
 	
 public:
-	vector<GeneralMaterial>& GetMaterials() { return materials; }
+	std::vector<GeneralMaterial>& GetMaterials() { return materials; }
 
 	void SetTransform(Transform* tr) { transform = tr; }
 	Transform* GetTransform() { return transform; }
@@ -126,7 +159,7 @@ public:
 	virtual void Enable() override;
 	virtual void Disable() override;
 protected:
-	void SetMaterials(vector<GeneralMaterial>& materialSrc);
+	void SetMaterials(std::vector<GeneralMaterial>& materialSrc);
 };
 
 
@@ -134,8 +167,7 @@ class MeshRenderer : public Renderer
 {
 public:
 	MeshRenderer(const std::string& id);
-	MeshRenderer& operator=(const MeshRenderer& meshrenderer);
-	 
+	MeshRenderer& operator=(const MeshRenderer& other);
 };
 
 class SkinnedMeshRenderer : public Renderer

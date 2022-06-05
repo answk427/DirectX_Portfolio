@@ -65,3 +65,21 @@ struct AABB_MaxMin
 	AABB_MaxMin(const XMFLOAT3& maxVector, const XMFLOAT3& minVector) :m_max(maxVector), m_min(minVector) {}
 	
 };
+
+enum BrushShape
+{
+	NOBRUSH,
+	SQUARE,
+	CIRCLE
+};
+
+struct BrushDesc
+{
+	BrushDesc() :color(0.0f, 1.0f, 0.0f, 1.0f), shape(BrushShape::NOBRUSH), centerW(0.0f,0.0f,0.0f), radius(10.0f)
+	{}
+	XMFLOAT4 color;
+	XMFLOAT3 centerW;
+	FLOAT radius;
+	UINT shape;
+	FLOAT padding[3];
+};

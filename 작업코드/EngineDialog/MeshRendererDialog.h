@@ -52,6 +52,8 @@
 #define BLENDINGCHECK IDC_CHECK1
 #define INSTANCINGCHECK IDC_CHECK2
 #define STATICCHECK IDC_CHECK3
+#define BUILDSHADOWMAPCHECK IDC_CHECK4
+#define RECEIVESHADOWCHECK IDC_CHECK5	
 
 
 
@@ -61,19 +63,24 @@ class MeshRendererDialog : public ComponentDialog
 {
 public:
 	static bool instantiated;
+	
 public:
 	HWND m_hList; //list view 핸들
+	
 public:
 	MeshRendererDialog(HINSTANCE hInstance);	
+	~MeshRendererDialog();
 public:
 	bool OpenDialog(HWND hwnd);
 	void Init(HWND hDlg);
+	bool printMap();
 public:
 	AABB_MaxMin m_aabb;
 	
 private:
 	//control ID에 해당하는 핸들, 수정해야될 값 포인터
 	std::map<int, handleFloatPair> controlMap;
+	std::pair<PWCHAR, PWCHAR> mapNames[2];
 
 	//Material Map 행렬 EditBox
 	HWND m_hDiffuseTileX;

@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "RayPicking.h"
 
 //******************Renderer 함수 정의 ************************//
 void Renderer::Init()

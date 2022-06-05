@@ -880,6 +880,8 @@ public:
 	void SetFogStart(float f) { FogStart->SetFloat(f); }
 	void SetFogRange(float f) { FogRange->SetFloat(f); }
 
+	void SetBrush(const BrushDesc& brush) { BrushVar->SetRawValue(&brush, 0, sizeof(BrushDesc)); }
+
 	void SetDirLights(const DirectionalLight* lights)
 	{
 		if (lights == nullptr)
@@ -937,6 +939,9 @@ public:
 	ID3DX11EffectMatrixVariable* ShadowTransform;
 	ID3DX11EffectShaderResourceVariable* ShadowMap;
 	ID3DX11EffectScalarVariable* isShadowed;
+
+	ID3DX11EffectVariable* BrushVar;
+
 
 	ID3DX11EffectVariable* DirLights;
 	ID3DX11EffectScalarVariable* dirLightSize;

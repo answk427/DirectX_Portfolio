@@ -25,7 +25,7 @@ public:
 	
 			
 	bool SetObject(GameObject* gameObj);
-	vector<MyVertex::PosColorVertex> AABBtoVertices(XNA::AxisAlignedBox aabb);
+	std::vector<MyVertex::PosColorVertex> AABBtoVertices(XNA::AxisAlignedBox aabb);
 
 	
 };

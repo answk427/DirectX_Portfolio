@@ -1,6 +1,9 @@
 #pragma once
 #include "Renderer.h"
+#include "Mouse.h"
+#include "RayPicking.h"
 
+#define RAISEDELTA 0.2
 
 class TerrainRenderer : public Renderer
 {
@@ -47,13 +50,19 @@ public:
 		float CellSpacing;
 	};
 
+private:
+	std::vector<MyVertex::Terrain> m_patchVertices;
+	std::vector<XNA::AxisAlignedBox> m_aabb;
+
 public:
 	TerrainInitInfo m_terrainData;
 	TesselationData m_tesselationData;
+	std::unique_ptr<BrushDesc> m_brush;
 	static std::vector<int> HeightMapSizes;
+	Camera* m_camera;
 public:
 	TerrainRenderer(const componentID& id) : Renderer(id, ComponentType::TERRAIN), mtextureArraySRV(0), mblendTextureSRV(0), mHeightMapSRV(0), m_enableFog(0),
-		m_fogStart(15.0f), m_fogRange(175.0f), CellsPerPatch(64)
+		m_fogStart(15.0f), m_fogRange(175.0f), CellsPerPatch(64), m_brush(std::make_unique<BrushDesc>()), m_camera(0), m_hmapTex(0), m_blendMapTex(0)
 	{
 		mesh = new Mesh("TerrainRendererMesh");
 		mesh->Init(std::vector<MyVertex::BasicVertex>(), std::vector<UINT>());
@@ -73,6 +82,7 @@ public:
 		m_fogRange = other.m_fogRange;
 		m_enableFog = other.m_enableFog;
 		CellsPerPatch = other.CellsPerPatch;
+		m_camera = other.m_camera;
 		Init();
 
 		return *this;
@@ -85,6 +95,8 @@ public:
 		ReleaseCOM(mtextureArraySRV);
 		ReleaseCOM(mblendTextureSRV);
 		ReleaseCOM(mHeightMapSRV);
+		ReleaseCOM(m_hmapTex);
+		ReleaseCOM(m_blendMapTex);
 	}
 
 
@@ -92,6 +104,9 @@ private:
 	ID3D11ShaderResourceView* mtextureArraySRV; //기본 텍스쳐, layer 텍스쳐 합친 배열
 	ID3D11ShaderResourceView* mblendTextureSRV;
 	ID3D11ShaderResourceView* mHeightMapSRV;
+	ID3D11Texture2D* m_hmapTex;
+	ID3D11Texture2D* m_blendMapTex;
+	
 
 	std::vector<float> mHeightmap; //높이맵을 읽어와 저장할 vector
 
@@ -100,20 +115,41 @@ private:
 	float m_fogRange;
 
 	std::vector<unsigned char> mHeightmapDatas;
+		
 
 public: //Renderer 함수 재정의
-	void InitEffects() override;
-	void Draw(ID3D11DeviceContext* context, Camera* camera) override;
-	void Init() override;
+	virtual void InitEffects() override;
+	virtual void Draw(ID3D11DeviceContext* context, Camera* camera) override;
+	virtual void Init() override;
+	virtual void Update() override;
 
 public:
+	void SetCamera(Camera* camera) { m_camera = camera; }
+
 	float GetWidth()const;
 	float GetDepth()const;
 	float GetHeight(float x, float z)const;
 	float GetTangent(float posX, float posZ, float x, float z)const;
+	bool GetLocalPosition(float posX, float posZ, float* destX, float* destZ);
+	void LocalToWorld(float x, float z, float* destX, float* destZ, float halfWidth, float halfDepth);
+	//높이맵의 높이를 높이는 함수
+	void RaiseHeight(float x, float z);
+	//블랜드맵을 수정하는 함수
+	void ModifyBlendMap(float x, float z);
+
+
+	//반직선과 terrain과의 교차점을 구하는 함수
+	bool GetRayIntersectPos(XMVECTOR& rayOrigin, XMVECTOR& rayDir, XMVECTOR* destPos);
+	//스크린 좌표에서 Terrain의 교차점을 구하는 함수
+	bool GetScreenIntersect();
+	
 
 	bool GetEnableFog() { return m_enableFog; }
-	void SetEnableFog(bool b) { m_enableFog = b; }
+	void SetEnableFog(bool b)
+	{ m_enableFog = b;
+		//RaiseHeight(m_brush->centerW.x, m_brush->centerW.z);	
+		//ModifyBlendMap(m_brush->centerW.x, m_brush->centerW.z);
+	}
 	float GetFogStart() { return m_fogStart; }
 	void SetFogStart(float fogStart) { m_fogStart = fogStart; }
 	float GetFogRange() { return m_fogRange; }
@@ -159,6 +195,7 @@ private:
 	void BuildHeightmapSRV(ID3D11Device* device);
 	void BuildLayermapSRV();
 	void BuildBlendmapSRV();
+	
 
 private:
 

@@ -122,6 +122,7 @@
     <ClCompile Include="MeshReaderWriter.cpp" />
     <ClCompile Include="MeshRendererCommand.cpp" />
     <ClCompile Include="MeshRendererDialog.cpp" />
+    <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="MsgProcedure.cpp" />
     <ClCompile Include="MyCommand.cpp" />
     <ClCompile Include="ObjectCommand.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="LightDialog.h" />
     <ClInclude Include="MainWindowDialog.h" />
     <ClInclude Include="MeshReaderWriter.h" />
+    <ClInclude Include="Mouse.h" />
     <ClInclude Include="MyCommand.h" />
     <ClInclude Include="Common\Camera.h" />
     <ClInclude Include="Common\d3dApp.h" />
@@ -333,6 +335,11 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="FX\Terrain.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /Fc /Od /Zi /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="FX\BrushFuncs.fx">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /Fc /Od /Zi /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>

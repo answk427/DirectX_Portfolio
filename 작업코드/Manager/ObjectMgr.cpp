@@ -83,6 +83,50 @@ GameObject* ObjectMgr::CreateObjectFromFile(const std::string& fileName)
 	return AddNode(*root);
 }
 
+GameObject & ObjectMgr::CreateBasicBoxObject()
+{
+	GameObject& obj = CreateGameObject(L"BoxObject");
+	Mesh* mesh = meshMgr->CreateBasicBox(2, 2, 2);
+	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::MESHRENDERER));
+	
+	renderer->SetMesh(mesh);
+	renderer->SetTransform(&obj.transform);
+	//renderer->MapsInit();
+	//renderer->InitEffects();
+	
+	obj.AddComponent(renderer);
+	
+	return obj;
+}
+
+GameObject & ObjectMgr::CreateBasicGrid()
+{
+	GameObject& obj = CreateGameObject(L"GridObject");
+	Mesh* mesh = meshMgr->CreateBasicGrid(10, 10, 2, 2);
+	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::MESHRENDERER));
+
+	renderer->SetMesh(mesh);
+	renderer->SetTransform(&obj.transform);
+	//renderer->MapsInit();
+	//renderer->InitEffects();
+
+	obj.AddComponent(renderer);
+
+	return obj;
+}
+
+GameObject & ObjectMgr::CreateTerrain()
+{
+	GameObject& obj = CreateGameObject(L"TerrainObject");
+	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::TERRAIN));
+	renderer->SetTransform(&obj.transform);
+	//renderer->MapsInit();
+	//renderer->InitEffects();
+	obj.AddComponent(renderer);
+
+	return obj;
+}
+
 Component * ObjectMgr::AddComponent(GameObject * obj, ComponentType compType)
 {
 	Component* component = nullptr;
@@ -91,7 +135,7 @@ Component * ObjectMgr::AddComponent(GameObject * obj, ComponentType compType)
 	case ComponentType::LIGHT:
 		component = componentMgr->CreateComponent(compType);
 		((Lighting*)component)->transform = &obj->transform;
-		break;
+		break;		
 	default:
 		break;
 	}
@@ -153,6 +197,8 @@ Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& n
 	return renderer;
 }
 
+
+
 gameObjectID ObjectMgr::makeID()
 {
 	gameObjectID id = PRETEXTID + std::to_string(idNumber++);
@@ -163,7 +209,7 @@ gameObjectID ObjectMgr::makeID()
 void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 {
 	
-	wstring name = node.GetName();
+	std::wstring name = node.GetName();
 	
 	//파일경로에서 파일명만 추출
 	/*int pos = fileName.rfind('/');
@@ -197,7 +243,7 @@ void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 
 GameObject * ObjectMgr::AddNode(NodeStruct & node)
 {
-	wstring name = node.GetName();
+	std::wstring name = node.GetName();
 	GameObject& obj = CreateGameObject(name);
 	obj.transform.SetPosition(0, 0, 0);
 

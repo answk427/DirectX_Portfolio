@@ -3,35 +3,34 @@
 
 
 
-void Mesh::SetVertices(vector<MyVertex::BasicVertex>& vertexSrc)
+void Mesh::SetVertices(std::vector<MyVertex::BasicVertex>& vertexSrc)
 {
 	//vertices를 빈 벡터로 만듬
-	vector<MyVertex::BasicVertex>().swap(vertices);
+	std::vector<MyVertex::BasicVertex>().swap(vertices);
 	//매개변수 벡터와 교환
 	vertices.swap(vertexSrc);
 }
 
-void Mesh::SetIndices(vector<UINT>& indexSrc)
+void Mesh::SetIndices(std::vector<UINT>& indexSrc)
 {
 	//Indices를 빈 벡터로 만듬
-	vector<UINT>().swap(indices);
+	std::vector<UINT>().swap(indices);
 	//매개변수 벡터와 교환
 	indices.swap(indexSrc);
 }
 
-void Mesh::SetSubsets(vector<Subset>& subsetSrc)
+void Mesh::SetSubsets(std::vector<Subset>& subsetSrc)
 {
 	//subsets를 빈 벡터로 만듬
-	vector<Subset>().swap(subsets);
+	std::vector<Subset>().swap(subsets);
 	//매개변수 벡터와 교환
 	subsets.swap(subsetSrc);
 
 	//subset 사이즈만큼 설정되야 하는 컨테니어들 초기화
 	if (textureNames != nullptr)
 		delete[] textureNames;
-	textureNames = new vector<std::wstring>[subsets.size()];
+	textureNames = new std::vector<std::wstring>[subsets.size()];
 	textureArrays.assign(subsets.size(), 0);
-
 }
 
 void Mesh::CreateTextureArrayResourceView(ID3D11Device* device, ID3D11DeviceContext* context)
@@ -128,6 +127,10 @@ Mesh::Mesh(const Mesh & other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBuff
 	vertices = other.vertices;
 	InstancingDatas = other.InstancingDatas;
 	indices = other.indices;
+	//boundingBox
+	m_AABB = other.m_AABB;
+	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
+	//instanceBuffer
 	enableInstancingIndexes = other.enableInstancingIndexes;
 	m_InstanceBuffer = other.m_InstanceBuffer;
 	SetInstanceBufferSize(MAX_INSTSANCING);
@@ -141,6 +144,10 @@ Mesh::Mesh(Mesh && other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCou
 	vertices.swap(other.vertices);
 	InstancingDatas.swap(other.InstancingDatas);
 	indices.swap(other.indices);
+	//boundingBox
+	m_AABB = other.m_AABB;
+	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
+	//instanceBuffer
 	enableInstancingIndexes = other.enableInstancingIndexes;
 	m_InstanceBuffer = other.m_InstanceBuffer;
 	SetInstanceBufferSize(MAX_INSTSANCING);
@@ -156,13 +163,16 @@ Mesh & Mesh::operator=(const Mesh & other)
 	indices = other.indices;
 	enableInstancingIndexes = other.enableInstancingIndexes;
 	id = other.id;
+	//boundingBox
+	m_AABB = other.m_AABB;
+	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
 	m_instancing = other.m_instancing;
 	m_instanceBufferSize = other.m_instanceBufferSize;
 	m_InstanceBuffer = other.m_InstanceBuffer;
 	return *this;
 }
 
-void Mesh::Init(ID3D11Device * device, vector<MyVertex::BasicVertex>& vertexSrc, vector<UINT>& indexSrc, vector<Subset>& subsetSrc)
+void Mesh::Init(ID3D11Device * device, std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc, std::vector<Subset>& subsetSrc)
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);
@@ -170,14 +180,14 @@ void Mesh::Init(ID3D11Device * device, vector<MyVertex::BasicVertex>& vertexSrc,
 	InitBuffers(device);
 }
 
-void Mesh::Init(vector<MyVertex::BasicVertex>& vertexSrc, vector<UINT>& indexSrc, vector<Subset>& subsetSrc)
+void Mesh::Init(std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc, std::vector<Subset>& subsetSrc)
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);
 	SetSubsets(subsetSrc);
 }
 
-void Mesh::Init(vector<MyVertex::BasicVertex>& vertexSrc, vector<UINT>& indexSrc)
+void Mesh::Init(std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc)
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);

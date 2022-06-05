@@ -27,7 +27,7 @@ void Lighting::SetSpecular(const XMFLOAT4& specular)
 		return;
 	m_dirLight.Specular = specular;
 	m_pointLight.Specular = specular;
-	m_pointLight.Specular = specular;
+	m_spotLight.Specular = specular;
 }
 
 void Lighting::SetBasic(const XMFLOAT4 & diffuse, const XMFLOAT4 & ambient, const XMFLOAT4 & specular)

@@ -17,6 +17,7 @@
 #include <string>
 #include <resource.h>
 #include <DialogSizeDefine.h>
+#include <DialogSizeDefine.h>
 
 class D3DApp
 {

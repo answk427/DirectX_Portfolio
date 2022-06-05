@@ -34,7 +34,11 @@
 #include "Octree.h"
 #include "SimpleLineRenderer.h"
 #include "ShadowMap.h"
+#include "Mouse.h"
+#include "Terrain.h"
 #include <random>
+#include <RenderStates.h>
+
 
 
 class Scene : public D3DApp
@@ -190,7 +194,8 @@ void Scene::DrawScreenQuad()
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
 		Effects::DebugTexFX->SetWorldViewProj(world);
-		Effects::DebugTexFX->SetTexture(m_shadowMap->DepthMapSRV());
+		//Effects::DebugTexFX->SetTexture(m_shadowMap->DepthMapSRV());
+		
 
 		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
@@ -250,8 +255,8 @@ bool Scene::Init()
 {
 	if (!D3DApp::Init())
 		return false;
-		
-
+	RenderStates::InitAll(md3dDevice);
+	Mouse::SetViewPort(&m_currentViewPort);
 	//test
 	meshMgr.Init(md3dDevice);
 	texMgr.Init(md3dDevice, md3dImmediateContext);
@@ -425,7 +430,7 @@ void Scene::DrawScene()
 	ShadowMapDraw();
 
 	md3dImmediateContext->RSSetState(0);
-
+	//md3dImmediateContext->RSSetState(RenderStates::WireframeRS);
 
 	// Restore the back and depth buffer to the OM stage.
 	ID3D11RenderTargetView* renderTargets[1] = { mRenderTargetView };
@@ -446,11 +451,12 @@ void Scene::DrawScene()
 	//treeBillBoard 렌더링
 	//m_treeBillBoardRenderer->Draw(md3dImmediateContext, &camera);
 	
+	
 	componentMgr.Render(md3dImmediateContext, &camera);
 	
 	//m_Octree->Render(md3dImmediateContext);
 
-//그림자맵 텍스쳐 우측하단에 렌더링
+	//그림자맵 텍스쳐 우측하단에 렌더링
 	DrawScreenQuad();
 
 	//ShaderResourceView로 쉐도우맵을 이번 렌더링의 자원으로 binding 했기 때문에
@@ -574,7 +580,9 @@ void Scene::OnMouseUp(WPARAM btnState, int x, int y)
 
 void Scene::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	if (btnState & MK_LBUTTON)
+	Mouse::UpdateScreenPos(x, y);
+
+	if (btnState & MK_RBUTTON)
 	{
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
@@ -651,6 +659,8 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 	case ID_GAMEOBJECT_TERRAIN:
 	{
 		GameObject& gameObj = objectMgr.CreateTerrain();
+		TerrainRenderer* terrain = gameObj.GetComponent<TerrainRenderer>();
+		terrain->SetCamera(&camera);
 		m_HierarchyDialog->TreeInsertObject(&gameObj);
 		break;
 	}
