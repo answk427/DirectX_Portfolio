@@ -171,15 +171,15 @@ void TerrainRenderer::Init()
 void TerrainRenderer::Update()
 {
 	GetScreenIntersect();
-	//Effects::DebugTexFX->SetTexture(mHeightMapSRV);
+	
 		
 	if (GetAsyncKeyState(VK_LBUTTON))
 	{
-		//RaiseHeight(m_brush->centerW.x, m_brush->centerW.z);
-		ModifyBlendMap(m_brush->centerW.x, m_brush->centerW.z);
+		RaiseHeight(m_brush->centerW.x, m_brush->centerW.z);
+		//ModifyBlendMap(m_brush->centerW.x, m_brush->centerW.z);
 	}
-
-	Effects::DebugTexFX->SetTexture(mblendTextureSRV);
+	Effects::DebugTexFX->SetTexture(mHeightMapSRV);
+	//Effects::DebugTexFX->SetTexture(mblendTextureSRV);
 }
 
 float TerrainRenderer::GetWidth()const
@@ -458,18 +458,18 @@ void TerrainRenderer::LocalToWorld(float x, float z, float* destX, float* destZ,
 
 void TerrainRenderer::RaiseHeight(float x, float z)
 {
-	//if (m_brusZ->shape == BrushShape::NOBRUSH || m_brush->padding[0] < 0)
-	//	return;
+	if (m_brush->shape == BrushShape::NOBRUSH || m_brush->padding[0] < 0)
+		return;
 
 	//렌더링 자원으로 사용한 heightMap 텍스쳐를 얻어옴.
 	
-	/*D3D11_MAPPED_SUBRESOURCE mappedData;
+	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_texMgr.m_context->Map(m_hmapTex, D3D11CalcSubresource(0,0,1), D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 	HALF* heightMapData = reinterpret_cast<HALF*>(mappedData.pData);
 	D3D11_TEXTURE2D_DESC heightmapDesc;
 	m_hmapTex->GetDesc(&heightmapDesc);
 	
-	UINT width = heightmapDesc.Width;*/
+	UINT width = heightmapDesc.Width;
 
 	//브러쉬의 중심에서 정사각형 범위를 검사
 	float leftTopX, leftTopZ;
@@ -477,48 +477,52 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 	//세계공간에서 radius 범위만큼 이동한 좌표 -> heightmap에 사상되는 좌표
 	GetLocalPosition(x-m_brush->radius, z+m_brush->radius, &leftTopX, &leftTopZ);
 	GetLocalPosition(x + m_brush->radius, z - m_brush->radius, &rightBottomX, &rightBottomZ);
-		
+	
+	float radiusTex = (rightBottomX - leftTopX) * 0.5f;
+	float centerTexRow = leftTopZ + radiusTex;
+	float centerTexCol = leftTopX + radiusTex;
 	
 	UINT idx;
-
-
-	//switch (m_brush->shape)
-	//{
-	//case BrushShape::SQUARE:
-	//	for (int i = leftTopZ; i <= rightBottomZ; ++i)
-	//	{
-	//		for (int j = leftTopX; j <= rightBottomX; ++j)
-	//		{
-	//			idx = i * m_terrainData.HeightmapWidth + j;
-	//			//최대 높이를 넘을수 없게 함
-	//			mHeightmap[idx] = min(m_terrainData.HeightScale,
-	//				mHeightmap[idx] + m_terrainData.HeightScale * RAISEDELTA);
-	//			heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
-	//		}
-	//	}
-	//	break;
-	//case BrushShape::CIRCLE:
-	//	break;
-	//}
-
-	D3D11_MAPPED_SUBRESOURCE mappedData;
-	//m_hmapTex is ID3D11Texture2D*
-	HR(m_texMgr.m_context->Map(m_hmapTex, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
-	
-	HALF* heightMapData = reinterpret_cast<HALF*>(mappedData.pData);
-	D3D11_TEXTURE2D_DESC heightmapDesc;
-	m_hmapTex->GetDesc(&heightmapDesc);
-	UINT width = heightmapDesc.Width;
-
-	for (int row = 0; row < width/4; ++row)
+	switch (m_brush->shape)
 	{
-		for (int col = 0; col < width/4; ++col)
+	case BrushShape::SQUARE:
+		for (int i = leftTopZ; i <= rightBottomZ; ++i)
 		{
-			idx = (row * width) + col;
-			heightMapData[idx] = static_cast<HALF>(XMConvertFloatToHalf(200));
+			for (int j = leftTopX; j <= rightBottomX; ++j)
+			{
+				idx = i * width + j;
+				
+				//최대 높이를 넘을수 없게 함
+				mHeightmap[idx] = min(m_terrainData.HeightScale,
+					mHeightmap[idx] + m_terrainData.HeightScale * RAISEDELTA);
+				heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
+			}
 		}
-	}
-	
+		break;
+	case BrushShape::CIRCLE:
+		float yCoefficient = 0.0f;
+		for (int i = leftTopZ; i <= rightBottomZ; ++i)
+		{
+			for (int j = leftTopX; j <= rightBottomX; ++j)
+			{
+				idx = i * width + j;
+				
+				//중심과의 거리
+				float dist = sqrtf(pow((centerTexRow - i), 2) + pow((centerTexCol - j), 2));
+				if (dist > radiusTex)
+					continue;
+
+				//거리에 따라서 2차함수 모양으로 높이를 증가시킬 계수를 구함(0~1)
+				yCoefficient = - (dist*dist) / (radiusTex*radiusTex) + 1;
+				//최대 높이를 넘을수 없게 함
+				mHeightmap[idx] = min(m_terrainData.HeightScale,
+					mHeightmap[idx] + m_terrainData.HeightScale * RAISEDELTA * yCoefficient);
+				heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
+			}
+		}
+		break;
+	}	
+
 	m_texMgr.m_context->Unmap(m_hmapTex, D3D11CalcSubresource(0,0,1));
 	
 }
@@ -566,6 +570,7 @@ void TerrainRenderer::ModifyBlendMap(float x, float z)
 	float centerRowTex = min(startRow + radiusTex, heightTex);
 	UINT idx;
 
+	//m_texMgr.m_context->UpdateSubresource()
 	switch (m_brush->shape)
 	{
 	case BrushShape::SQUARE:
@@ -910,8 +915,10 @@ void TerrainRenderer::BuildHeightmapSRV(ID3D11Device* device)
 	ReleaseCOM(m_hmapTex);
 
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width = m_terrainData.HeightmapWidth; //basic value 2049
-	texDesc.Height = m_terrainData.HeightmapHeight; //basic value 2049
+	//texDesc.Width = m_terrainData.HeightmapWidth; //basic value 2049
+	//texDesc.Height = m_terrainData.HeightmapHeight; //basic value 2049
+	texDesc.Width = 2048;
+	texDesc.Height = 2048;
 	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
 	texDesc.Format = DXGI_FORMAT_R16_FLOAT;

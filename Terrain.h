@@ -3,7 +3,7 @@
 #include "Mouse.h"
 #include "RayPicking.h"
 
-#define RAISEDELTA 0.2
+#define RAISEDELTA 0.02
 
 class TerrainRenderer : public Renderer
 {
