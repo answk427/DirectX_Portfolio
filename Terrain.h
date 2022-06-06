@@ -62,7 +62,7 @@ public:
 	Camera* m_camera;
 public:
 	TerrainRenderer(const componentID& id) : Renderer(id, ComponentType::TERRAIN), mtextureArraySRV(0), mblendTextureSRV(0), mHeightMapSRV(0), m_enableFog(0),
-		m_fogStart(15.0f), m_fogRange(175.0f), CellsPerPatch(64), m_brush(std::make_unique<BrushDesc>()), m_camera(0), m_hmapTex(0), m_blendMapTex(0)
+		m_fogStart(15.0f), m_fogRange(175.0f), CellsPerPatch(64), m_brush(std::make_unique<BrushDesc>()), m_camera(0), m_hmapTex(0), m_blendMapTex(0), m_selectedMap(0)
 	{
 		mesh = new Mesh("TerrainRendererMesh");
 		mesh->Init(std::vector<MyVertex::BasicVertex>(), std::vector<UINT>());
@@ -109,12 +109,13 @@ private:
 	
 
 	std::vector<float> mHeightmap; //높이맵을 읽어와 저장할 vector
+	std::vector<unsigned char> mHeightmapDatas;
 
 	bool m_enableFog;
 	float m_fogStart;
 	float m_fogRange;
 
-	std::vector<unsigned char> mHeightmapDatas;
+	UINT m_selectedMap;
 		
 
 public: //Renderer 함수 재정의
@@ -178,6 +179,9 @@ public:
 		BuildQuadPatchVB(m_texMgr.md3dDevice);
 	}
 	float GetCellSpacing() { return m_terrainData.CellSpacing; }
+	
+	//BlendingMap 수정을 위해 layer맵 중 하나를 선택하는 함수
+	void SelectLayerMap(UINT num) { m_selectedMap = num; }
 
 private:
 	void LoadHeightmap(); //높이맵 read
@@ -213,57 +217,3 @@ private:
 
 };
 
-
-//void Terrain::Draw(ID3D11DeviceContext* dc, const Camera& cam, DirectionalLight lights[3])
-//{
-//	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-//	dc->IASetInputLayout(InputLayouts::Terrain);
-//
-//	UINT stride = sizeof(Vertex::Terrain);
-//	UINT offset = 0;
-//	dc->IASetVertexBuffers(0, 1, &mQuadPatchVB, &stride, &offset);
-//	dc->IASetIndexBuffer(mQuadPatchIB, DXGI_FORMAT_R16_UINT, 0);
-//
-//	XMMATRIX viewProj = cam.ViewProj();
-//	XMMATRIX world = XMLoadFloat4x4(&mWorld);
-//	XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
-//	XMMATRIX worldViewProj = world * viewProj;
-//
-//	XMFLOAT4 worldPlanes[6];
-//	ExtractFrustumPlanes(worldPlanes, viewProj);
-//
-//	// Set per frame constants.
-//	Effects::TerrainFX->SetFogColor(Colors::Silver);
-//	Effects::TerrainFX->SetFogStart(15.0f);
-//	Effects::TerrainFX->SetFogRange(175.0f);
-//	Effects::TerrainFX->SetMinDist(20.0f);
-//	Effects::TerrainFX->SetMaxDist(500.0f);
-//	Effects::TerrainFX->SetMinTess(0.0f);
-//	Effects::TerrainFX->SetMaxTess(6.0f);
-//	Effects::TerrainFX->SetTexelCellSpaceU(1.0f / mInfo.HeightmapWidth);
-//	Effects::TerrainFX->SetTexelCellSpaceV(1.0f / mInfo.HeightmapHeight);
-//	Effects::TerrainFX->SetWorldCellSpace(mInfo.CellSpacing);
-//	Effects::TerrainFX->SetWorldFrustumPlanes(worldPlanes);
-//
-//	Effects::TerrainFX->SetLayerMapArray(mLayerMapArraySRV);
-//	Effects::TerrainFX->SetBlendMap(mBlendMapSRV);
-//	Effects::TerrainFX->SetHeightMap(mHeightMapSRV);
-//
-//
-//	ID3DX11EffectTechnique* tech = Effects::TerrainFX->Light1Tech;
-//	D3DX11_TECHNIQUE_DESC techDesc;
-//	tech->GetDesc(&techDesc);
-//
-//	for (UINT i = 0; i < techDesc.Passes; ++i)
-//	{
-//		ID3DX11EffectPass* pass = tech->GetPassByIndex(i);
-//		pass->Apply(0, dc);
-//
-//		dc->DrawIndexed(mNumPatchQuadFaces * 4, 0, 0);
-//	}
-//
-//	// FX sets tessellation stages, but it does not disable them.  So do that here
-//	// to turn off tessellation.
-//	dc->HSSetShader(0, 0, 0);
-//	dc->DSSetShader(0, 0, 0);
-//}

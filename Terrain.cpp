@@ -540,10 +540,9 @@ void TerrainRenderer::ModifyBlendMap(float x, float z)
 	
 
 	UCHAR* testArr = static_cast<UCHAR*>(mappedData.pData);
-	UCHAR r = 255;
-	UCHAR g = 0;
-	UCHAR b = 0;
-	UCHAR a = 0;
+	UCHAR rgba[4] = { 0 };
+	rgba[m_selectedMap] = 255;
+	
 
 	// 브러쉬의 중심에서 정사각형 범위를 검사
 	float widthW = GetWidth();
@@ -594,10 +593,10 @@ void TerrainRenderer::ModifyBlendMap(float x, float z)
 				//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
 				idx = ((startRow+i)*widthTex * 4) + (startCol+j) * 4;
 
-				testArr[idx] = r;
-				testArr[idx + 1] = g;
-				testArr[idx + 2] = b;
-				testArr[idx + 3] = a;
+				testArr[idx] = rgba[0];
+				testArr[idx + 1] = rgba[1];
+				testArr[idx + 2] = rgba[2];
+				testArr[idx + 3] = rgba[3];
 			}
 		}
 		break;
@@ -643,10 +642,10 @@ void TerrainRenderer::ModifyBlendMap(float x, float z)
 				if (dist > radiusTex)
 					continue;
 
-				testArr[idx] = r;
-				testArr[idx + 1] = g;
-				testArr[idx + 2] = b;
-				testArr[idx + 3] = a;
+				testArr[idx] = rgba[0];
+				testArr[idx + 1] = rgba[1];
+				testArr[idx + 2] = rgba[2];
+				testArr[idx + 3] = rgba[3];
 			}
 		}
 		break;

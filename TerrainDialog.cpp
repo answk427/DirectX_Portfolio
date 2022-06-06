@@ -467,7 +467,20 @@ void TerrainDialog::MenuProc(HWND hDlg, WPARAM wParam)
 	}
 
 	switch (wmId)
-	{				
+	{			
+	case LAYERMAPRADIO1:
+		m_TerrainRenderer->SelectLayerMap(0);
+		break;
+	case LAYERMAPRADIO2:
+		m_TerrainRenderer->SelectLayerMap(1);
+		break;
+	case LAYERMAPRADIO3:
+		m_TerrainRenderer->SelectLayerMap(2);
+		break;
+	case LAYERMAPRADIO4:
+		m_TerrainRenderer->SelectLayerMap(3);
+		break;
+
 	case FOGENABLE_CHECK:
 		//blending check박스 체크
 		switch (Button_GetCheck(GetDlgItem(m_hDlg, FOGENABLE_CHECK)))
