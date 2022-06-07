@@ -41,6 +41,10 @@
 #define LAYERMAPRADIO2 IDC_RADIO4
 #define LAYERMAPRADIO3 IDC_RADIO5
 #define LAYERMAPRADIO4 IDC_RADIO6
+
+#define RAISEBUTTON IDC_RADIO2
+#define DOWNBUTTON IDC_RADIO3
+
 #pragma endregion
 
 #pragma region TerrainOptionControls

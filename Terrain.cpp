@@ -483,6 +483,8 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 	float centerTexCol = leftTopX + radiusTex;
 	
 	UINT idx;
+
+	float addVal = 0.0f;
 	switch (m_brush->shape)
 	{
 	case BrushShape::SQUARE:
@@ -492,9 +494,20 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 			{
 				idx = i * width + j;
 				
+				addVal = m_terrainData.HeightScale * RAISEDELTA;
+
 				//최대 높이를 넘을수 없게 함
-				mHeightmap[idx] = min(m_terrainData.HeightScale,
-					mHeightmap[idx] + m_terrainData.HeightScale * RAISEDELTA);
+				if (m_modifyMapOption == 0) //높이를 올림
+				{
+					mHeightmap[idx] = min(m_terrainData.HeightScale,
+						mHeightmap[idx] + addVal);
+				}
+				else //높이를 내림
+				{
+					mHeightmap[idx] = max(0,
+						mHeightmap[idx] - addVal);
+				}
+				
 				heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
 			}
 		}
@@ -513,10 +526,20 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 					continue;
 
 				//거리에 따라서 2차함수 모양으로 높이를 증가시킬 계수를 구함(0~1)
-				yCoefficient = - (dist*dist) / (radiusTex*radiusTex) + 1;
-				//최대 높이를 넘을수 없게 함
-				mHeightmap[idx] = min(m_terrainData.HeightScale,
-					mHeightmap[idx] + m_terrainData.HeightScale * RAISEDELTA * yCoefficient);
+				yCoefficient = -(dist*dist) / (radiusTex*radiusTex) + 1;
+				addVal = m_terrainData.HeightScale * RAISEDELTA * yCoefficient;
+				if (m_modifyMapOption == 1)
+				{
+					mHeightmap[idx] = min(m_terrainData.HeightScale,
+						mHeightmap[idx] + addVal);
+				}
+				else
+				{
+					mHeightmap[idx] = max(0,
+						mHeightmap[idx] - addVal);
+				}
+				//최대 높이를 넘을수 없게 함	
+				
 				heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
 			}
 		}

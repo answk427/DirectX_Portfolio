@@ -62,7 +62,8 @@ public:
 	Camera* m_camera;
 public:
 	TerrainRenderer(const componentID& id) : Renderer(id, ComponentType::TERRAIN), mtextureArraySRV(0), mblendTextureSRV(0), mHeightMapSRV(0), m_enableFog(0),
-		m_fogStart(15.0f), m_fogRange(175.0f), CellsPerPatch(64), m_brush(std::make_unique<BrushDesc>()), m_camera(0), m_hmapTex(0), m_blendMapTex(0), m_selectedMap(0)
+		m_fogStart(15.0f), m_fogRange(175.0f), CellsPerPatch(64), m_brush(std::make_unique<BrushDesc>()), 
+		m_camera(0), m_hmapTex(0), m_blendMapTex(0), m_selectedMap(0), m_modifyMapOption(0)
 	{
 		mesh = new Mesh("TerrainRendererMesh");
 		mesh->Init(std::vector<MyVertex::BasicVertex>(), std::vector<UINT>());
@@ -116,8 +117,8 @@ private:
 	float m_fogRange;
 
 	UINT m_selectedMap;
-		
-
+	UINT m_modifyMapOption; //0 상승 1 하강
+	
 public: //Renderer 함수 재정의
 	virtual void InitEffects() override;
 	virtual void Draw(ID3D11DeviceContext* context, Camera* camera) override;
@@ -182,6 +183,7 @@ public:
 	
 	//BlendingMap 수정을 위해 layer맵 중 하나를 선택하는 함수
 	void SelectLayerMap(UINT num) { m_selectedMap = num; }
+	void SetModifyMapOption(UINT num) { m_modifyMapOption = num; }
 
 private:
 	void LoadHeightmap(); //높이맵 read

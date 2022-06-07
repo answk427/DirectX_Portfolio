@@ -480,6 +480,12 @@ void TerrainDialog::MenuProc(HWND hDlg, WPARAM wParam)
 	case LAYERMAPRADIO4:
 		m_TerrainRenderer->SelectLayerMap(3);
 		break;
+	case RAISEBUTTON:
+		m_TerrainRenderer->SetModifyMapOption(0);
+		break;
+	case DOWNBUTTON:
+		m_TerrainRenderer->SetModifyMapOption(1);
+		break;
 
 	case FOGENABLE_CHECK:
 		//blending check박스 체크
