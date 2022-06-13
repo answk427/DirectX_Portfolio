@@ -1,0 +1,10 @@
+Command 폴더 
+ - 명령패턴을 적용한 코드들입니다.
+Component 폴더 
+ - 렌더러, 라이트 등 컴포넌트 코드들입니다.
+EngineDialog 
+ - winapi를 이용한 툴을 만드는데 사용한 코드들입니다.
+Manager 
+ - 컴포넌트, 텍스쳐등을 관리하는 매니저 클래스입니다.
+Ray&Culling
+ - 마우스 위치에 따른 ray와 octree등 컬링 관련 클래스입니다.
