@@ -24,7 +24,7 @@ SkinnedModel::SkinnedModel(ID3D11Device* device, TextureMgr& texMgr, const std::
 		NormalMapSRV.push_back(normalMapSRV);
 		
 	}
-}
+} 
 
 SkinnedModel::~SkinnedModel()
 {

@@ -228,6 +228,7 @@ float4 PS(VertexOut pin,
 		pin.SsaoPosH /= pin.SsaoPosH.w;
 		float ambientAccess = gSsaoMap.SampleLevel(samLinear, pin.SsaoPosH.xy, 0.0f).r;
 
+
 		// Sum the light contribution from each light source.
 		[unroll]
 		for(int i = 0; i < dirLight_size; ++i)

@@ -10,6 +10,7 @@ Transform::Transform(void* objectAddr) :m_position(0, 0, 0), m_rotation(0, 0, 0)
 
 	m_modifyFlag |= ModifyFlag::MODIFY_ROTATION;
 	UpdateWorld();
+	
 }
 
 void Transform::UpdateWorld()
@@ -30,10 +31,15 @@ void Transform::UpdateWorld()
 	XMMATRIX rotationMat;
 	if (m_modifyFlag && ModifyFlag::MODIFY_ROTATION)
 	{
-		XMVECTOR quat = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y),XMConvertToRadians(m_rotation.z));
+		XMVECTOR quat = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(m_rotation.x), XMConvertToRadians(m_rotation.y), XMConvertToRadians(m_rotation.z));
 		XMStoreFloat4(&m_quaternion, quat);
 		//쿼터니언을 회전행렬로 변환
 		rotationMat = XMMatrixRotationQuaternion(quat);
+		XMStoreFloat4x4(&m_rotationMatrix, rotationMat);
+	}
+	else if (m_modifyFlag && ModifyFlag::MODIFY_QUATERNION)
+	{
+		rotationMat = XMMatrixRotationQuaternion(XMLoadFloat4(&m_quaternion));
 		XMStoreFloat4x4(&m_rotationMatrix, rotationMat);
 	}
 	else
@@ -88,12 +94,22 @@ void Transform::SetRotation(const float & x, const float & y, const float & z)
 
 }
 
+
 void Transform::SetRotation(const XMFLOAT3 & rotation)
 {
 	if (m_rotation.x == rotation.x && m_rotation.y == rotation.y && m_rotation.z == rotation.z)
 		return;
 	 m_rotation = rotation; 
 	 m_modifyFlag |= ModifyFlag::MODIFY_ROTATION;
+}
+
+void Transform::SetRotation(const XMFLOAT4 & quaternion)
+{
+	if (m_quaternion.x == quaternion.x && m_quaternion.y == quaternion.y &&
+		m_quaternion.z == quaternion.z && m_quaternion.w == quaternion.w)
+		return;
+	m_quaternion = quaternion;
+	m_modifyFlag |= ModifyFlag::MODIFY_QUATERNION;	
 }
 
 
@@ -105,7 +121,6 @@ void Transform::SetScale(const float & x, const float & y, const float & z)
 	m_scale.y = y;
 	m_scale.z = z;
 	m_modifyFlag |= ModifyFlag::MODIFY_SCALE;
-
 }
 
 void Transform::SetScale(const XMFLOAT3 & scale)

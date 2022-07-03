@@ -175,11 +175,21 @@ void TerrainRenderer::Update()
 		
 	if (GetAsyncKeyState(VK_LBUTTON))
 	{
-		RaiseHeight(m_brush->centerW.x, m_brush->centerW.z);
-		//ModifyBlendMap(m_brush->centerW.x, m_brush->centerW.z);
+		switch (m_modifyMode)
+		{
+		case 1:
+			RaiseHeight(m_brush->centerW.x, m_brush->centerW.z);
+			break;
+		case 2:
+			ModifyBlendMap(m_brush->centerW.x, m_brush->centerW.z);
+			break;
+		}
+		
+		
+		
 	}
-	Effects::DebugTexFX->SetTexture(mHeightMapSRV);
-	//Effects::DebugTexFX->SetTexture(mblendTextureSRV);
+	//Effects::DebugTexFX->SetTexture(mHeightMapSRV);
+	Effects::DebugTexFX->SetTexture(mblendTextureSRV);
 }
 
 float TerrainRenderer::GetWidth()const
@@ -483,8 +493,10 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 	float centerTexCol = leftTopX + radiusTex;
 	
 	UINT idx;
+	std::vector<std::tuple<UINT,UINT,UINT>> indices; //평활화할때 재사용할 인덱스(row,col,idx)
 
 	float addVal = 0.0f;
+	
 	switch (m_brush->shape)
 	{
 	case BrushShape::SQUARE:
@@ -493,8 +505,8 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 			for (int j = leftTopX; j <= rightBottomX; ++j)
 			{
 				idx = i * width + j;
-				
 				addVal = m_terrainData.HeightScale * RAISEDELTA;
+				indices.push_back({ i,j,idx });
 
 				//최대 높이를 넘을수 없게 함
 				if (m_modifyMapOption == 0) //높이를 올림
@@ -508,7 +520,7 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 						mHeightmap[idx] - addVal);
 				}
 				
-				heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
+				//heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
 			}
 		}
 		break;
@@ -525,10 +537,11 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 				if (dist > radiusTex)
 					continue;
 
+				indices.push_back({ i,j,idx });
 				//거리에 따라서 2차함수 모양으로 높이를 증가시킬 계수를 구함(0~1)
 				yCoefficient = -(dist*dist) / (radiusTex*radiusTex) + 1;
 				addVal = m_terrainData.HeightScale * RAISEDELTA * yCoefficient;
-				if (m_modifyMapOption == 1)
+				if (m_modifyMapOption == 0)
 				{
 					mHeightmap[idx] = min(m_terrainData.HeightScale,
 						mHeightmap[idx] + addVal);
@@ -540,11 +553,17 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 				}
 				//최대 높이를 넘을수 없게 함	
 				
-				heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
+				//heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
 			}
 		}
 		break;
-	}	
+	}
+
+	for (auto& idx : indices)
+	{
+		Average(std::get<0>(idx), std::get<1>(idx), width);
+		heightMapData[std::get<2>(idx)] = XMConvertFloatToHalf(mHeightmap[std::get<2>(idx)]);
+	}
 
 	m_texMgr.m_context->Unmap(m_hmapTex, D3D11CalcSubresource(0,0,1));
 	
@@ -757,7 +776,7 @@ void TerrainRenderer::Smooth()
 	{
 		for (UINT j = 0; j < m_terrainData.HeightmapWidth; ++j)
 		{
-			dest[i*m_terrainData.HeightmapWidth + j] = Average(i, j);
+			dest[i*m_terrainData.HeightmapWidth + j] = Average(i, j, m_terrainData.HeightmapWidth);
 		}
 	}
 
@@ -773,7 +792,7 @@ bool TerrainRenderer::InBounds(int i, int j)
 		j >= 0 && j < (int)m_terrainData.HeightmapWidth;
 }
 
-float TerrainRenderer::Average(int i, int j)
+float TerrainRenderer::Average(int i, int j, int width)
 {
 	// Function computes the average height of the ij element.
 	// It averages itself with its eight neighbor pixels.  Note
@@ -799,7 +818,7 @@ float TerrainRenderer::Average(int i, int j)
 		{
 			if (InBounds(m, n))
 			{
-				avg += mHeightmap[m*m_terrainData.HeightmapWidth + n];
+				avg += mHeightmap[m*width + n];
 				num += 1.0f;
 			}
 		}

@@ -62,6 +62,14 @@ GameObject & ObjectMgr::CreateGameObject(const std::wstring & name, GameObject* 
 	return result;
 }
 
+GameObject*  ObjectMgr::CopyGameObject(GameObject& copyObj)
+{
+	GameObject& gameObj = CreateGameObject();
+	gameObj = copyObj;
+
+	return &gameObj;
+}
+
 GameObject* ObjectMgr::CreateObjectFromFile(const std::string& fileName)
 {
 	//assimpScene이 같은 파일로 초기화 된 상태인지 확인
@@ -75,7 +83,8 @@ GameObject* ObjectMgr::CreateObjectFromFile(const std::string& fileName)
 	}
 
 	NodeStruct* root = assimpLoader.getRoot();
-	
+	m_assimpBones = &assimpLoader.getAssimpBones();
+	m_assimpAnimations = &assimpLoader.getAssimpAnimations();
 	if (root == nullptr)
 		return nullptr;
 	
@@ -222,13 +231,19 @@ void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 	//parent의 자식오브젝트로 생성
 	GameObject& obj = CreateGameObject(name, parent);
 	
-	obj.transform.SetPosition(0, 0, 0);
+	//노드의 기본 행렬(toParent행렬?) 추출
+	XMVECTOR scale, quat, trans;
+	XMMatrixDecompose(&scale, &quat, &trans, XMLoadFloat4x4(&node.GetMatrix()));
 	
-		
+	obj.transform.SetScale(XMVectorGetX(trans), XMVectorGetY(trans), XMVectorGetZ(trans));
+	obj.transform.SetRotation({ XMVectorGetX(quat), XMVectorGetY(quat), XMVectorGetZ(quat), XMVectorGetW(quat) });
+	obj.transform.SetPosition(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
+	
+			
 	//Mesh가 있는 Node일 경우 Renderer컴포넌트 생성 후 오브젝트에 추가
 	if (node.assimpMesh != nullptr)
 	{
-		USES_CONVERSION;
+		USES_CONVERSION;	
 		Renderer* comp = CreateRenderer(*node.assimpMesh, W2A(name.c_str()));
 		comp->SetTransform(&obj.transform);
 		obj.AddComponent(comp);
@@ -245,17 +260,24 @@ GameObject * ObjectMgr::AddNode(NodeStruct & node)
 {
 	std::wstring name = node.GetName();
 	GameObject& obj = CreateGameObject(name);
-	obj.transform.SetPosition(0, 0, 0);
+	XMVECTOR scale, quat, trans;
+
+	XMMatrixDecompose(&scale, &quat, &trans, XMLoadFloat4x4(&node.GetMatrix()));
+
+	
+	obj.transform.SetScale(XMVectorGetX(trans), XMVectorGetY(trans), XMVectorGetZ(trans));
+	obj.transform.SetRotation({XMVectorGetX(quat), XMVectorGetY(quat), XMVectorGetZ(quat), XMVectorGetW(quat)});
+	obj.transform.SetPosition(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
 
 	//Mesh가 있는 Node일 경우 Renderer컴포넌트 생성 후 오브젝트에 추가
-	if (node.assimpMesh != nullptr)
+	if (node.assimpMesh != nullptr)   
 	{
 		USES_CONVERSION;
 		Renderer* comp = CreateRenderer(*node.assimpMesh, W2A(name.c_str()));
-		comp->SetTransform(&obj.transform);
+		comp->SetTransform(&obj.transform);	
 		obj.AddComponent(comp);
 	}
-
+		
 	//모든 하위노드들을 탐색
 	for (NodeStruct& node : node.childs)
 		AddNode(&obj, node);

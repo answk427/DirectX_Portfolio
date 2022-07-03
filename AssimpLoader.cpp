@@ -32,6 +32,7 @@ void AssimpLoader::InitScene(const std::string& fileName)
 		aiProcess_SortByPType | //단일타입의 프리미티브로 구성된 '깨끗한' 매쉬를 만듬
 
 		aiProcess_FindInstances  //중복 메쉬 제거
+		
 	);
 
 	assert(m_pScene);
@@ -39,6 +40,8 @@ void AssimpLoader::InitScene(const std::string& fileName)
 	if (m_pScene) //경로의 파일을 정상적으로 로드했을 때
 	{
 		currentFileName = fileName;
+		m_assimpBones.clear();
+		m_animations.clear();
 		if (root != nullptr)
 		{
 			delete root;
@@ -50,7 +53,7 @@ void AssimpLoader::InitScene(const std::string& fileName)
 
 //void AssimpLoader::InitContainer()
 //{
-//	//전부 비우는 작업 
+//	//전부 비우는 작업		
 //	vector<MyVertex::BasicVertex>().swap(vertices);
 //	vector<UINT>().swap(indices);
 //	vector<Subset>().swap(subsets);
@@ -63,7 +66,15 @@ bool AssimpLoader::LoadData()
 		return false;
 
 	NodeTravel();
-
+	
+	if (m_pScene->HasAnimations())
+	{
+		for (int i = 0; i < m_pScene->mNumAnimations; ++i)
+		{
+			LoadAnimation(m_pScene->mAnimations[i]);
+		}
+	}
+	
 	return true;
 }
 
@@ -124,6 +135,51 @@ GeneralMaterial AssimpLoader::SetMaterial(int matNumOfMesh)
 	return tempMaterial;
 }
 
+void AssimpLoader::LoadAnimation(const aiAnimation * animation)
+{
+	m_animations[animation->mName.C_Str()] = AssimpAnimation();
+	
+	AssimpAnimation& anim = m_animations[animation->mName.C_Str()];
+
+	anim.ticksPerSecond = animation->mTicksPerSecond;
+	anim.duration = animation->mDuration;
+	
+	//channelName = boneName = nodeName
+	std::string channelName;
+	AssimpAnimationFrame* currBone;
+	aiNodeAnim* nodeAnim;
+	
+	aiVectorKey* currKeyPos;
+	aiQuatKey* currKeyRot;
+	aiVectorKey* currKeyScale;
+	for (int i = 0; i < animation->mNumChannels; ++i)
+	{
+		nodeAnim= animation->mChannels[i];
+		channelName = nodeAnim->mNodeName.C_Str();
+		
+		if (anim.bones.find(channelName) == anim.bones.end())
+		{
+			const auto&[it, success] = anim.bones.insert({ channelName, AssimpAnimationFrame() });
+			currBone = &(it->second);
+		}
+		else
+			currBone = &anim.bones[channelName];
+				
+		for (int j = 0; j < nodeAnim->mNumPositionKeys; ++j)
+		{
+			currKeyPos = &nodeAnim->mPositionKeys[j];
+			currKeyRot = &nodeAnim->mRotationKeys[j];
+			currKeyScale = &nodeAnim->mScalingKeys[j];
+						
+			currBone->positionKey.push_back({ currKeyPos->mTime, currKeyPos->mValue.x, currKeyPos->mValue.y, currKeyPos->mValue.z });
+			currBone->quaternionKey.push_back({ currKeyRot->mTime, currKeyRot->mValue.x, currKeyRot->mValue.y, currKeyRot->mValue.z, currKeyRot->mValue.w });
+			currBone->scalingKey.push_back({ currKeyScale->mTime, currKeyScale->mValue.x, currKeyScale->mValue.y, currKeyScale->mValue.z });
+		}		
+	}
+	
+	
+}
+
 
 void AssimpLoader::NodeTravel()
 {
@@ -134,6 +190,7 @@ void AssimpLoader::NodeTravel()
 	root = new NodeStruct(std::wstring(A2W(node->mName.C_Str()))
 		, ConvertMatrix(node->mTransformation));
 	
+	root->GetMatrix();
 	//해당 노드의 매쉬를 적재
 	for (int i = 0; i < node->mNumMeshes; i++)
 	{
@@ -187,11 +244,12 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 
 	//총 정점의 갯수를 구함
 	assimpMesh.vertexCount += mesh->mNumVertices;
-	assimpMesh.vertices.reserve(assimpMesh.vertexCount + 10);
+	assimpMesh.vertices.reserve(assimpMesh.vertexCount);
+	assimpMesh.skinnedVertices.resize(assimpMesh.vertexCount);
 
 	//index의 총 갯수
 	assimpMesh.indexCount += mesh->mNumFaces * 3;
-	assimpMesh.indices.reserve(assimpMesh.indexCount + 10);
+	assimpMesh.indices.reserve(assimpMesh.indexCount);
 
 	tempSubset.VertexCount = mesh->mNumVertices;
 	tempSubset.IndexCount = mesh->mNumFaces * 3;
@@ -207,6 +265,31 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 	XMFLOAT3 tempAabbMax(mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z);
 	XMFLOAT3 tempAabbMin(mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z);
 
+	if (mesh->HasBones())
+	{
+		aiBone* currBone;
+		AssimpSkinnedVertex* currSkinnedVertex;
+		for (int i = 0; i < mesh->mNumBones; ++i)
+		{			
+			currBone = mesh->mBones[i];
+			if (currBone->mWeights->mVertexId >= assimpMesh.skinnedVertices.size() ||
+				currBone->mWeights->mWeight <= 0)
+				continue;
+			currSkinnedVertex = &assimpMesh.skinnedVertices[currBone->mWeights->mVertexId];
+			
+			//vertexId번째 가중치 정보 추가
+			currSkinnedVertex->weights.push_back(currBone->mWeights->mWeight);
+			
+			
+			//가중치와 연관된 뼈(노드)의 이름 추가
+			std::string nodeName = currBone->mName.C_Str();
+			currSkinnedVertex->nodeName.push_back(nodeName);
+				
+			//bone 정보에 offset변환행렬 추가
+			m_assimpBones[nodeName].offsetMat = ConvertMatrix(currBone->mOffsetMatrix);
+		}
+	}
+
 	if (assimpMesh.m_AABB_MaxMin == nullptr)
 		assimpMesh.m_AABB_MaxMin = new AABB_MaxMin(tempAabbMax, tempAabbMin);
 	else
@@ -216,7 +299,7 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 		XMVECTOR aabbMin = XMLoadFloat3(&assimpMesh.m_AABB_MaxMin->m_min);
 
 		//MaxVector
-		XMStoreFloat3(&assimpMesh.m_AABB_MaxMin->m_max,
+		XMStoreFloat3(&assimpMesh.m_AABB_MaxMin->m_max, 
 			XMVectorMax(aabbMax, XMLoadFloat3(&tempAabbMax)));
 
 		//MinVector

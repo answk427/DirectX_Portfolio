@@ -45,6 +45,10 @@
 #define RAISEBUTTON IDC_RADIO2
 #define DOWNBUTTON IDC_RADIO3
 
+#define NORMALMODERADIO IDC_RADIO7
+#define HEIGHTMODERADIO IDC_RADIO8
+#define BLENDMODERADIO IDC_RADIO9
+
 #pragma endregion
 
 #pragma region TerrainOptionControls

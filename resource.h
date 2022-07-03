@@ -63,6 +63,9 @@
 #define IDC_RADIO6                      1080
 #define IDC_RADIO2                      1081
 #define IDC_RADIO3                      1082
+#define IDC_RADIO7                      1083
+#define IDC_RADIO8                      1084
+#define IDC_RADIO9                      1085
 #define ID_40001                        40001
 #define ID_40002                        40002
 #define ID_BUTTON2                      40003
@@ -74,7 +77,6 @@
 #define ID_GAMEOBJECT_GRID              40012
 #define ID_GAMEOBJECT_TEERRAIN          40013
 #define ID_GAMEOBJECT_TERRAIN           40014
-#define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
@@ -82,7 +84,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        148
 #define _APS_NEXT_COMMAND_VALUE         40015
-#define _APS_NEXT_CONTROL_VALUE         1083
+#define _APS_NEXT_CONTROL_VALUE         1086
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

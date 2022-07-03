@@ -44,6 +44,9 @@
 class Scene : public D3DApp
 {
 public:
+	bool isDrawDebugQuad = false;
+	bool isDrawOcTree = false;
+public:
 	void BuildScreenQuadGeometryBuffers();
 	ID3D11Buffer* mScreenQuadVB;
 	ID3D11Buffer* mScreenQuadIB;
@@ -179,13 +182,15 @@ void Scene::DrawScreenQuad()
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	md3dImmediateContext->IASetVertexBuffers(0, 1, &mScreenQuadVB, &stride, &offset);
 	md3dImmediateContext->IASetIndexBuffer(mScreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+	
+
 
 	// Scale and shift quad to lower-right corner.
 	XMMATRIX world(
-		0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, 0.0f, 0.0f,
+		0.25f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.25f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.5f, -0.5f, 0.0f, 1.0f);
+		0.75f, -0.75f, 0.0f, 1.0f);
 
 	ID3DX11EffectTechnique* tech = Effects::DebugTexFX->ViewRedTech;
 	D3DX11_TECHNIQUE_DESC techDesc;
@@ -374,6 +379,10 @@ void Scene::OnResize()
 void Scene::UpdateScene(float dt)
 {
 
+	if (GetAsyncKeyState('1') & 0x8000)
+		isDrawDebugQuad = !isDrawDebugQuad;
+	if (GetAsyncKeyState('2') & 0x8000)
+		isDrawOcTree = !isDrawOcTree;
 	//
 	// Control the camera.
 	//
@@ -447,7 +456,8 @@ void Scene::DrawScene()
 	//바운딩박스 렌더링
 	m_boundingBoxRenderer->Draw(md3dImmediateContext, &camera);
 	//Octree 렌더링
-	m_OctreeRenderer->Draw(md3dImmediateContext, &camera);
+	if(isDrawOcTree)
+		m_OctreeRenderer->Draw(md3dImmediateContext, &camera);
 	//treeBillBoard 렌더링
 	//m_treeBillBoardRenderer->Draw(md3dImmediateContext, &camera);
 	
@@ -457,7 +467,8 @@ void Scene::DrawScene()
 	//m_Octree->Render(md3dImmediateContext);
 
 	//그림자맵 텍스쳐 우측하단에 렌더링
-	DrawScreenQuad();
+	if(isDrawDebugQuad)
+		DrawScreenQuad();
 
 	//ShaderResourceView로 쉐도우맵을 이번 렌더링의 자원으로 binding 했기 때문에
 	//다음 프레임에서 RenderTargetView로 쉐도우맵에 렌더링 하기 전 해제 해 준다.
@@ -475,7 +486,7 @@ void Scene::ShadowMapDraw()
 	m_shadowMap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
 	
 	auto lightings = componentMgr.getLightings();
-	DirectionalLight* selectedLighting;
+	DirectionalLight* selectedLighting = nullptr;
 
 	if (lightings.empty())
 		return;
@@ -486,6 +497,8 @@ void Scene::ShadowMapDraw()
 		if (lightings[i].GetLightType() == LightType::DIRECTIONAL)
 		{
 			selectedLighting = &lightings[i].GetDirLight();
+			if (selectedLighting == nullptr)
+				return;
 			//광원공간의 시야,투영행렬 계산
 			bool result = m_shadowMap->BuildShadowTransform(*selectedLighting,
 				XMVectorSet(0.0f,1.0f,0.0f,0.0f));

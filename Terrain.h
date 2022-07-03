@@ -3,7 +3,7 @@
 #include "Mouse.h"
 #include "RayPicking.h"
 
-#define RAISEDELTA 0.02
+#define RAISEDELTA 0.1
 
 class TerrainRenderer : public Renderer
 {
@@ -118,6 +118,7 @@ private:
 
 	UINT m_selectedMap;
 	UINT m_modifyMapOption; //0 상승 1 하강
+	UINT m_modifyMode; //0 일반모드 1 높이맵수정 2 블랜드맵수정
 	
 public: //Renderer 함수 재정의
 	virtual void InitEffects() override;
@@ -184,6 +185,7 @@ public:
 	//BlendingMap 수정을 위해 layer맵 중 하나를 선택하는 함수
 	void SelectLayerMap(UINT num) { m_selectedMap = num; }
 	void SetModifyMapOption(UINT num) { m_modifyMapOption = num; }
+	void SetModifyMode(UINT num) { m_modifyMode = num; }
 
 private:
 	void LoadHeightmap(); //높이맵 read
@@ -191,7 +193,7 @@ private:
 	//평활화 관련 함수
 	void Smooth();
 	bool InBounds(int i, int j);
-	float Average(int i, int j);
+	float Average(int i, int j, int width);
 
 
 	void CalcAllPatchBoundsY();

@@ -64,6 +64,7 @@ c:\users\js\documents\gitrepository\dx_portfolio\debug\vertex.obj
 c:\users\js\documents\gitrepository\dx_portfolio\debug\utilfunctions.obj
 c:\users\js\documents\gitrepository\dx_portfolio\fx\basic.fxo
 c:\users\js\documents\gitrepository\dx_portfolio\fx\buildshadowmap.fxo
+c:\users\js\documents\gitrepository\dx_portfolio\fx\debugtexture.fxo
 c:\users\js\documents\gitrepository\dx_portfolio\fx\normalmap.fxo
 c:\users\js\documents\gitrepository\dx_portfolio\fx\sky.fxo
 c:\users\js\documents\gitrepository\dx_portfolio\fx\ssao.fxo
@@ -74,12 +75,10 @@ c:\users\js\documents\gitrepository\dx_portfolio\fx\simpleline.fxo
 c:\users\js\documents\gitrepository\dx_portfolio\fx\buildshadowmapbilboard.fxo
 c:\users\js\documents\gitrepository\dx_portfolio\fx\terrain.fxo
 c:\users\js\documents\gitrepository\dx_portfolio\fx\brushfuncs.fxo
-c:\users\js\documents\gitrepository\dx_portfolio\fx\debugtexture.fxo
 c:\users\js\documents\gitrepository\dx_portfolio\debug\portfolio_test1.exe
 c:\users\js\documents\gitrepository\dx_portfolio\debug\portfolio_test1.ilk
 c:\users\js\documents\gitrepository\dx_portfolio\debug\portfolio_test1.pdb
 c:\users\js\documents\gitrepository\dx_portfolio\debug\portfolio_test1.res
-c:\users\js\documents\gitrepository\dx_portfolio\debug\terrain.new.obj.enc
 c:\users\js\documents\gitrepository\dx_portfolio\debug\portfolio_test1.tlog\cl.command.1.tlog
 c:\users\js\documents\gitrepository\dx_portfolio\debug\portfolio_test1.tlog\cl.read.1.tlog
 c:\users\js\documents\gitrepository\dx_portfolio\debug\portfolio_test1.tlog\cl.write.1.tlog

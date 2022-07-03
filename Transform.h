@@ -8,7 +8,8 @@ enum ModifyFlag
 {
 	MODIFY_POSITION = 1,
 	MODIFY_ROTATION = 2,
-	MODIFY_SCALE = 4
+	MODIFY_SCALE = 4,
+	MODIFY_QUATERNION = 8
 };
 
 class Transform
@@ -40,6 +41,7 @@ public:
 
 	void SetRotation(const float& x, const float& y, const float& z);
 	void SetRotation(const XMFLOAT3& rotation);
+	void SetRotation(const XMFLOAT4& quaternion);
 
 	void SetScale(const float& x, const float& y, const float& z);
 	void SetScale(const XMFLOAT3& scale);

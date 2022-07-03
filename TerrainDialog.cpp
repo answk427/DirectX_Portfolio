@@ -480,6 +480,15 @@ void TerrainDialog::MenuProc(HWND hDlg, WPARAM wParam)
 	case LAYERMAPRADIO4:
 		m_TerrainRenderer->SelectLayerMap(3);
 		break;
+	case NORMALMODERADIO:
+		m_TerrainRenderer->SetModifyMode(0);
+		break;
+	case HEIGHTMODERADIO:
+		m_TerrainRenderer->SetModifyMode(1);
+		break;
+	case BLENDMODERADIO:
+		m_TerrainRenderer->SetModifyMode(2);
+		break;
 	case RAISEBUTTON:
 		m_TerrainRenderer->SetModifyMapOption(0);
 		break;

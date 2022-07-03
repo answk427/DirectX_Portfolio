@@ -102,7 +102,7 @@ bool HierarchyDialog::TreeViewDeleteItem()
 }
 
 HierarchyDialog::HierarchyDialog(HINSTANCE hInstance) : MsgProcedure(hInstance), inspector(hInstance)
-,m_boundingBoxRenderer(0)
+,m_boundingBoxRenderer(0), copyObj(0)
 {
 	assert(!instantiated);
 	instantiated = true;
@@ -281,6 +281,59 @@ void HierarchyDialog::SelectItem()
 
 	return;
 	
+}
+
+Object * HierarchyDialog::GetSelectObject()
+{
+	TVITEM tvi;
+	//현재 선택된 아이템
+	tvi.hItem = TreeView_GetSelection(m_hwndTV);
+	tvi.mask = TVIF_PARAM;
+
+	if (tvi.hItem == NULL)
+	{
+		MessageBox(m_hDlg, TEXT("TreeView_GetSelection Fail"), TEXT("Hierarchy Select"), MB_OK);
+		return nullptr;
+	}
+
+
+	TreeView_GetItem(m_hwndTV, &tvi);
+	
+	return (Object*)(tvi.lParam);
+}
+
+void HierarchyDialog::CtrlC_copy()
+{
+	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+	{
+		if (GetAsyncKeyState('C') & 0x8000)
+		{
+			copyObj = dynamic_cast<GameObject*>(GetSelectObject());
+			if (copyObj != nullptr)
+			{
+				if (m_hDlg != nullptr)
+					MessageBox(m_hDlg, copyObj->GetName().c_str(), TEXT("control"), MB_OK);
+			}
+
+		}
+	}
+}
+
+void HierarchyDialog::CtclV_paste()
+{
+	if (GetAsyncKeyState(VK_CONTROL) & 0x8000)
+	{
+		if (GetAsyncKeyState('V') & 0x8000)
+		{
+			copyObj = dynamic_cast<GameObject*>(GetSelectObject());
+			if (copyObj != nullptr)
+			{
+				if (m_hDlg != nullptr)
+					MessageBox(m_hDlg, copyObj->GetName().c_str(), TEXT("control"), MB_OK);
+			}
+
+		}
+	}
 }
 
 HTREEITEM HierarchyDialog::TreeViewInsertItem(Object* item, HTREEITEM parent)

@@ -101,6 +101,7 @@
     <ClCompile Include="Culling.cpp" />
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="FileReaderWriter.cpp" />
+    <ClCompile Include="HierarchyCommand.cpp" />
     <ClCompile Include="InputLayoutManager.cpp" />
     <ClCompile Include="Inspector.cpp" />
     <ClCompile Include="ComponentMgr.cpp" />
@@ -125,6 +126,7 @@
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="MsgProcedure.cpp" />
     <ClCompile Include="MyCommand.cpp" />
+    <ClCompile Include="NodeBoneDatas.cpp" />
     <ClCompile Include="ObjectCommand.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="Octree.cpp" />
@@ -155,6 +157,7 @@
     <ClInclude Include="Culling.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="FileReaderWriter.h" />
+    <ClInclude Include="HierarchyCommand.h" />
     <ClInclude Include="InputLayoutManager.h" />
     <ClInclude Include="InspectorCommand.h" />
     <ClInclude Include="Light.h" />
@@ -196,6 +199,7 @@
     <ClInclude Include="MeshRendererCommand.h" />
     <ClInclude Include="MeshRendererDialog.h" />
     <ClInclude Include="MsgProcedure.h" />
+    <ClInclude Include="NodeBoneDatas.h" />
     <ClInclude Include="ObjectCommand.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="Octree.h" />

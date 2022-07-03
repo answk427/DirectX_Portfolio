@@ -203,7 +203,9 @@ void Renderer::InitDiffuseMaps(TextureMgr& texMgr, const std::wstring& texturePa
 	diffuseMaps.clear();
 	for (auto& elem : materials)
 	{	
-		ID3D11ShaderResourceView* srv = texMgr.CreateTexture(texturePath + elem.diffuseMapName);
+		ID3D11ShaderResourceView* srv = nullptr;
+		if(!elem.diffuseMapName.empty())
+			srv= texMgr.CreateTexture(texturePath + elem.diffuseMapName);
 		diffuseMaps.push_back(srv);
 	}
 }

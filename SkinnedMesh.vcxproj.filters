@@ -252,6 +252,12 @@
     <ClCompile Include="Mouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HierarchyCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeBoneDatas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -466,6 +472,12 @@
     </ClInclude>
     <ClInclude Include="Mouse.h">
       <Filter>New Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="HierarchyCommand.h">
+      <Filter>New Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeBoneDatas.h">
+      <Filter>New Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

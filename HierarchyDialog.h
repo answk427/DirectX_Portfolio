@@ -27,6 +27,8 @@ private:
 	BoundingBoxRenderer* m_boundingBoxRenderer;
 	//hierarchy에 등록된 오브젝트의 id와 item을 매핑(id를 통해 item을 선택)
 	std::unordered_map<gameObjectID, HTREEITEM> Map_idItem;
+	//복사 해 둔 오브젝트
+	GameObject* copyObj;
 	
 public:
 	static bool instantiated;
@@ -76,7 +78,18 @@ public:
 	void WindowSizing(HWND hDlg);
 
 	void SelectItem();
+	//선택된 아이템의 오브젝트를 반환하는 함수
+	Object* GetSelectObject();
 
-	void Update() { inspector.Update(); }
+	void CtrlC_copy();
+	void CtclV_paste();
+
+	void Update() 
+	{ 
+		inspector.Update(); 
+		//ctrl+c가 눌렸는지 검사
+		CtrlC_copy();
+		//ctrl+v가 눌렸는지 검사
+	}
 
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include "Interface.h"
 #include "GameObject.h"
 #include "AssimpLoader.h"
@@ -8,7 +9,6 @@
 #include "MeshMgr.h"
 #include "ComponentMgr.h"
 #include "EffectMgr.h"
-#include <map>
 
 
 
@@ -21,12 +21,14 @@ public:
 	std::map<gameObjectID, GameObject> gameObjects;
 private:
 	static int idNumber;
-	AssimpLoader assimpLoader;
 	TextureMgr& textureMgr;
 	EffectMgr& effectMgr;
 	MeshMgr* meshMgr;
 	ComponentMgr* componentMgr;
-
+private:
+	AssimpLoader assimpLoader;
+	std::map<std::string, AssimpBone>* m_assimpBones;
+	std::map<std::string, AssimpAnimation>* m_assimpAnimations;
 private:
 	//Assimp에서 읽어온 노드를 재귀적으로 탐색하는 함수
 	void AddNode(GameObject* parent, NodeStruct& node);
@@ -49,6 +51,10 @@ public:
 	GameObject& ObjectMgr::CreateGameObject();
 	GameObject& ObjectMgr::CreateGameObject(const std::wstring& name);
 	GameObject & ObjectMgr::CreateGameObject(const std::wstring & name, GameObject* parent);
+
+	GameObject* CopyGameObject(GameObject& copyObj);
+	GameObject* CopyGameObject(const std::wstring& name, GameObject& copyObj);
+
 	GameObject* CreateObjectFromFile(const std::string& fileName);
 	GameObject& CreateBasicBoxObject();
 	GameObject& CreateBasicGrid();

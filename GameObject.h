@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "Transform.h"
 #include "ComponentMgr.h"
+#include "NodeBoneDatas.h"
 
 class ComponentOfObject
 {
@@ -44,10 +45,11 @@ public:
 	~GameObject();
 			
 	Transform transform;
+	std::shared_ptr<NodeBoneDatas> nodeHierarchy;
 
 public:
 	template <typename componentT>
-	componentT* GetComponent();
+	componentT* GetComponent(); 
 	bool AddComponent(Component* component);
 	bool DeleteComponent(componentID& id);
 	

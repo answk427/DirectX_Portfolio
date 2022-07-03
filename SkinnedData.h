@@ -74,13 +74,12 @@ public:
 private:
     // Gives parentIndex of ith bone.
 	std::vector<int> mBoneHierarchy;
-
+		
 	std::vector<XMFLOAT4X4> mBoneOffsets;
    
 	std::map<std::string, AnimationClip> mAnimations;
 	
-	
-};
+}; 
 
  
 #endif // SKINNEDDATA_H
