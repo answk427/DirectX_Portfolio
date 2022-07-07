@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "ComponentMgr.h"
 #include "NodeBoneDatas.h"
+#include <memory>
 
 class ComponentOfObject
 {
@@ -37,19 +38,24 @@ class GameObject : public Object
 {
 	 
 public:
-	GameObject() : Object(), transform(this)  {}
-	GameObject(const gameObjectID& id) : Object(id), transform(this) {}
-	GameObject(const gameObjectID& id, const std::wstring& name) : Object(id, name), transform(this) {}
+	GameObject() : Object(), transform(std::make_shared<Transform>(this)) { AddNodeHierarchy(); }
+	GameObject(const gameObjectID& id) : Object(id), transform(std::make_shared<Transform>(this)) { AddNodeHierarchy(); }
+	GameObject(const gameObjectID& id, const std::wstring& name) : Object(id, name), transform(std::make_shared<Transform>(this)) { AddNodeHierarchy(); }
 	//복사 생성자
 	GameObject(const GameObject& other);
 	~GameObject();
 			
-	Transform transform;
+	std::shared_ptr<Transform> transform;
 	std::shared_ptr<NodeBoneDatas> nodeHierarchy;
-
+	
+	virtual void SetParent(GameObject* parent) 
+	{
+		Object::SetParent(parent); 
+		nodeHierarchy = parent->nodeHierarchy;
+		AddNodeHierarchy();
+	}
 public:
-	template <typename componentT>
-	componentT* GetComponent(); 
+	Component* GetComponent(ComponentType compType); 
 	bool AddComponent(Component* component);
 	bool DeleteComponent(componentID& id);
 	
@@ -57,6 +63,10 @@ public:
 	bool SearchComponent(ComponentType compType);
 	bool SearchComponent(Component* component);
 	std::vector<ComponentOfObject>& GetComponents() { return components; }
+	
+	//계층구조 관련 함수들
+	void AddNodeHierarchy();
+	void AddBoneOffset(const XMFLOAT4X4& offsetMat);
 
 private:
 	std::vector<ComponentOfObject> components;
@@ -64,23 +74,22 @@ private:
 };
 
 
-template<typename componentT>
-inline componentT* GameObject::GetComponent()
+inline Component* GameObject::GetComponent(ComponentType compType)
 {
 	if (components.empty())
 		return nullptr;
-	componentT temp("temp");
 	
+		
 	//일치하는 컴포넌트가 있는지 검색
 	std::vector<ComponentOfObject>::iterator it = std::lower_bound(
 		components.begin(), components.end(),
-		temp.componentType);
+		compType);
 
 	if (it == components.end() || it._Ptr==NULL)
 		return nullptr;
-	if ((*it).GetComponentType() != temp.componentType)
+	if ((*it).GetComponentType() != compType)
 		return nullptr;
 
-	return dynamic_cast<componentT*>((*it).GetComponent());
+	return (*it).GetComponent();
 }
   

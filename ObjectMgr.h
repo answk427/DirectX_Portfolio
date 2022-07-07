@@ -27,13 +27,14 @@ private:
 	ComponentMgr* componentMgr;
 private:
 	AssimpLoader assimpLoader;
-	std::map<std::string, AssimpBone>* m_assimpBones;
+	std::map<std::wstring, AssimpBone>* m_assimpBones;
 	std::map<std::string, AssimpAnimation>* m_assimpAnimations;
+	std::vector<AssimpSkinnedVertex>* m_assimpSkinnedVertices; //뼈, 가중치
 private:
 	//Assimp에서 읽어온 노드를 재귀적으로 탐색하는 함수
 	void AddNode(GameObject* parent, NodeStruct& node);
 	GameObject* AddNode(NodeStruct& node);
-	Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& name);
+	Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& name, const gameObjectID& ownerId);
 	
 
 	//새로운 오브젝트의 id를 생성하는 함수

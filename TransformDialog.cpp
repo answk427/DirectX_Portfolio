@@ -74,7 +74,7 @@ bool TransformDialog::OpenDialog()
 
 bool TransformDialog::SetObject(GameObject * obj)
 {
-	m_transform = &(obj->transform);
+	m_transform = obj->transform.get();
 
 	return false;
 }

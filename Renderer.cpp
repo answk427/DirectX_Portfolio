@@ -62,7 +62,9 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	if (mesh == nullptr)
 		return;
 
-	XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
+	//XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
+	XMMATRIX world;
+	GetWorldMatrix(world);
 		
 	
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
@@ -149,7 +151,7 @@ void Renderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		isRenderShadowMapBaking = false;
 }
 
-Renderer::Renderer(const std::string& id, ComponentType type) : Component(id,type)
+Renderer::Renderer(const std::string& id, ComponentType type, const gameObjectID& ownerObj) : Component(id,type, ownerObj)
 , m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f,1.0f,1.0f,1.0f),
 mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 }), isRenderShadowMapBaking(0)
 {
@@ -158,7 +160,7 @@ mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(
 	InitEffects();
 }
 
-Renderer::Renderer(const std::string & id, ComponentType type, Mesh * mesh) : Component(id, type)
+Renderer::Renderer(const std::string & id, ComponentType type, const gameObjectID& ownerObj, Mesh * mesh) : Component(id, type, ownerObj)
 , m_texMgr(TextureMgr::Instance()), m_effectMgr(EffectMgr::Instance()), m_color(1.0f, 1.0f, 1.0f, 1.0f),
 mesh(0), m_blending(0), m_technique_type(TechniqueType::Light), m_instancingIdx(0), m_octreeData({ 0,0 }), isRenderShadowMapBaking(0)
 {
@@ -369,7 +371,7 @@ void Renderer::Disable()
 
 //***********************MeshRenderer **************************//
 
-MeshRenderer::MeshRenderer(const std::string& id) : Renderer(id, ComponentType::MESHRENDERER)
+MeshRenderer::MeshRenderer(const std::string& id, const gameObjectID& ownerId) : Renderer(id, ComponentType::MESHRENDERER, ownerId)
 {
 	SetTechniqueType(TechniqueType::Light | TechniqueType::DiffuseMap);
 }
@@ -386,7 +388,8 @@ MeshRenderer & MeshRenderer::operator=(const MeshRenderer & other)
 
 
 
-SkinnedMeshRenderer::SkinnedMeshRenderer(const std::string & id) : Renderer(id, ComponentType::SKINNEDMESHRENDERER)
+SkinnedMeshRenderer::SkinnedMeshRenderer(const std::string & id, const gameObjectID& ownerObj) :
+	Renderer(id, ComponentType::SKINNEDMESHRENDERER, ownerObj)
 {
 }
 
@@ -403,5 +406,15 @@ SkinnedMeshRenderer & SkinnedMeshRenderer::operator=(const SkinnedMeshRenderer &
 
 	return *this;
 	// TODO: 여기에 반환 구문을 삽입합니다.
+}
+
+void SkinnedMeshRenderer::StoreSkinnedDatas(const std::vector<AssimpSkinnedVertex>& skinnedData)
+{
+	m_skinnedDatas = skinnedData;
+}
+
+void SkinnedMeshRenderer::StoreSkinnedDatas(std::vector<AssimpSkinnedVertex>&& skinnedData)
+{
+	m_skinnedDatas.swap(skinnedData);
 }
 

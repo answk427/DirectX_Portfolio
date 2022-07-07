@@ -1,11 +1,12 @@
 #include "GameObject.h"
 
 
-GameObject::GameObject(const GameObject & other) : Object(other), transform(this)
+GameObject::GameObject(const GameObject & other) : Object(other), transform(std::make_shared<Transform>(this))
 {
 	transform = other.transform;
-	transform.m_owner_obj = this;
+	transform->m_owner_obj = this;
 	components = other.components;
+	nodeHierarchy = other.nodeHierarchy;
 }
 
 GameObject::~GameObject()
@@ -52,6 +53,26 @@ bool GameObject::SearchComponent(Component * component)
 {
 	return std::binary_search(components.begin(), components.end(), component->componentType);
 	
+}
+
+void GameObject::AddNodeHierarchy()
+{
+	std::string* parentId;
+	//최상위 루트 일때
+	if (parent == nullptr)
+	{
+		nodeHierarchy = std::make_shared<NodeBoneDatas>();
+		parentId = nullptr;
+	}
+	else
+		parentId = &parent->GetID();
+	 
+	nodeHierarchy->AddNode(parentId, &GetID(), &GetName(),transform); 
+}
+
+void GameObject::AddBoneOffset(const XMFLOAT4X4& offsetMat)
+{
+	nodeHierarchy->AddOffset(GetID(), offsetMat);
 }
 
 bool operator<(const ComponentOfObject & comp, const ComponentType & other)

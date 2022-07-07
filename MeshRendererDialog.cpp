@@ -75,7 +75,7 @@ bool MeshRendererDialog::OpenDialog()
 
 bool MeshRendererDialog::SetObject(GameObject* obj)
 {
-	MeshRenderer* meshRenderer = obj->GetComponent<MeshRenderer>();
+	MeshRenderer* meshRenderer = dynamic_cast<MeshRenderer*>(obj->GetComponent(ComponentType::MESHRENDERER));
 	m_MeshRenderer = meshRenderer;
 	if (!m_MeshRenderer)
 		return false;

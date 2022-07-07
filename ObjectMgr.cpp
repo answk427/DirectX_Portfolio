@@ -85,6 +85,7 @@ GameObject* ObjectMgr::CreateObjectFromFile(const std::string& fileName)
 	NodeStruct* root = assimpLoader.getRoot();
 	m_assimpBones = &assimpLoader.getAssimpBones();
 	m_assimpAnimations = &assimpLoader.getAssimpAnimations();
+	
 	if (root == nullptr)
 		return nullptr;
 	
@@ -96,10 +97,11 @@ GameObject & ObjectMgr::CreateBasicBoxObject()
 {
 	GameObject& obj = CreateGameObject(L"BoxObject");
 	Mesh* mesh = meshMgr->CreateBasicBox(2, 2, 2);
-	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::MESHRENDERER));
+	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::MESHRENDERER, obj.GetID()));
 	
 	renderer->SetMesh(mesh);
-	renderer->SetTransform(&obj.transform);
+	renderer->SetTransform(obj.transform.get());
+	renderer->SetNodeHierarchy(obj.nodeHierarchy);
 	//renderer->MapsInit();
 	//renderer->InitEffects();
 	
@@ -112,10 +114,11 @@ GameObject & ObjectMgr::CreateBasicGrid()
 {
 	GameObject& obj = CreateGameObject(L"GridObject");
 	Mesh* mesh = meshMgr->CreateBasicGrid(10, 10, 2, 2);
-	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::MESHRENDERER));
+	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::MESHRENDERER, obj.GetID()));
 
 	renderer->SetMesh(mesh);
-	renderer->SetTransform(&obj.transform);
+	renderer->SetTransform(obj.transform.get());
+	renderer->SetNodeHierarchy(obj.nodeHierarchy);
 	//renderer->MapsInit();
 	//renderer->InitEffects();
 
@@ -127,8 +130,9 @@ GameObject & ObjectMgr::CreateBasicGrid()
 GameObject & ObjectMgr::CreateTerrain()
 {
 	GameObject& obj = CreateGameObject(L"TerrainObject");
-	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::TERRAIN));
-	renderer->SetTransform(&obj.transform);
+	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::TERRAIN, obj.GetID()));
+	renderer->SetTransform(obj.transform.get());
+	renderer->SetNodeHierarchy(obj.nodeHierarchy);
 	//renderer->MapsInit();
 	//renderer->InitEffects();
 	obj.AddComponent(renderer);
@@ -142,8 +146,8 @@ Component * ObjectMgr::AddComponent(GameObject * obj, ComponentType compType)
 	switch (compType)
 	{
 	case ComponentType::LIGHT:
-		component = componentMgr->CreateComponent(compType);
-		((Lighting*)component)->transform = &obj->transform;
+		component = componentMgr->CreateComponent(compType, obj->GetID());
+		((Lighting*)component)->transform = obj->transform.get();
 		break;		
 	default:
 		break;
@@ -176,7 +180,7 @@ bool ObjectMgr::DeleteObject(gameObjectID & id)
 	return true;
 }
 
-Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& name)
+Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& name, const gameObjectID& ownerId)
 {
 	
 	Mesh* mesh = meshMgr->CreateMeshFromFile(name, assimpMesh);
@@ -185,7 +189,7 @@ Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& n
 	//뼈가 없는 구조
 	if (!assimpMesh.HasBone())
 	{
-		MeshRenderer* comp = (MeshRenderer*)componentMgr->CreateComponent(ComponentType::MESHRENDERER);
+		MeshRenderer* comp = (MeshRenderer*)componentMgr->CreateComponent(ComponentType::MESHRENDERER, ownerId);
 		comp->SetMesh(mesh, assimpMesh.GetMaterials());
 		
 		//init 해야됨
@@ -194,13 +198,16 @@ Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& n
 		
 		renderer = comp;
 	}
+	//뼈가 있는 구조
 	else
 	{
-		SkinnedMeshRenderer* comp = (SkinnedMeshRenderer*)componentMgr->CreateComponent(ComponentType::SKINNEDMESHRENDERER);
+		SkinnedMeshRenderer* comp = (SkinnedMeshRenderer*)componentMgr->CreateComponent(ComponentType::SKINNEDMESHRENDERER, ownerId);
 		comp->SetMesh(mesh, assimpMesh.GetMaterials());
-		
+		//skinnedRenderer에 뼈이름, 가중치 저장		
+		comp->StoreSkinnedDatas(assimpMesh.GetSkinnedVertexData());
 		//init 해야됨
-		//...
+		comp->InitDiffuseMaps(textureMgr, L"Textures/");
+		comp->InitEffects(effectMgr, L"FX/");
 		renderer = comp;
 	}
 	return renderer;
@@ -217,7 +224,6 @@ gameObjectID ObjectMgr::makeID()
 
 void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 {
-	
 	std::wstring name = node.GetName();
 	
 	//파일경로에서 파일명만 추출
@@ -235,17 +241,23 @@ void ObjectMgr::AddNode(GameObject* parent,NodeStruct& node)
 	XMVECTOR scale, quat, trans;
 	XMMatrixDecompose(&scale, &quat, &trans, XMLoadFloat4x4(&node.GetMatrix()));
 	
-	obj.transform.SetScale(XMVectorGetX(trans), XMVectorGetY(trans), XMVectorGetZ(trans));
-	obj.transform.SetRotation({ XMVectorGetX(quat), XMVectorGetY(quat), XMVectorGetZ(quat), XMVectorGetW(quat) });
-	obj.transform.SetPosition(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
+	obj.transform->SetScale(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
+	obj.transform->SetRotation({ XMVectorGetX(quat), XMVectorGetY(quat), XMVectorGetZ(quat), XMVectorGetW(quat) });
+	obj.transform->SetPosition(XMVectorGetX(trans), XMVectorGetY(trans), XMVectorGetZ(trans));
 	
-			
+	auto boneIt = m_assimpBones->find(name);
+	if (boneIt != m_assimpBones->end())
+	{
+		obj.AddBoneOffset(boneIt->second.offsetMat);
+	}
+	
 	//Mesh가 있는 Node일 경우 Renderer컴포넌트 생성 후 오브젝트에 추가
 	if (node.assimpMesh != nullptr)
 	{
 		USES_CONVERSION;	
-		Renderer* comp = CreateRenderer(*node.assimpMesh, W2A(name.c_str()));
-		comp->SetTransform(&obj.transform);
+		Renderer* comp = CreateRenderer(*node.assimpMesh, W2A(name.c_str()), obj.GetID());
+		comp->SetTransform(obj.transform.get());
+		comp->SetNodeHierarchy(obj.nodeHierarchy);
 		obj.AddComponent(comp);
 	}
 
@@ -265,16 +277,26 @@ GameObject * ObjectMgr::AddNode(NodeStruct & node)
 	XMMatrixDecompose(&scale, &quat, &trans, XMLoadFloat4x4(&node.GetMatrix()));
 
 	
-	obj.transform.SetScale(XMVectorGetX(trans), XMVectorGetY(trans), XMVectorGetZ(trans));
-	obj.transform.SetRotation({XMVectorGetX(quat), XMVectorGetY(quat), XMVectorGetZ(quat), XMVectorGetW(quat)});
-	obj.transform.SetPosition(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
+	obj.transform->SetScale(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
+	obj.transform->SetRotation({XMVectorGetX(quat), XMVectorGetY(quat), XMVectorGetZ(quat), XMVectorGetW(quat)});
+	obj.transform->SetPosition(XMVectorGetX(trans), XMVectorGetY(trans), XMVectorGetZ(trans));
+
+	//bone 정보가 있는 node일 경우
+	auto boneIt = m_assimpBones->find(name);
+	if (boneIt != m_assimpBones->end())
+	{
+		obj.AddBoneOffset(boneIt->second.offsetMat);
+	}
+	
+	
 
 	//Mesh가 있는 Node일 경우 Renderer컴포넌트 생성 후 오브젝트에 추가
 	if (node.assimpMesh != nullptr)   
 	{
 		USES_CONVERSION;
-		Renderer* comp = CreateRenderer(*node.assimpMesh, W2A(name.c_str()));
-		comp->SetTransform(&obj.transform);	
+		Renderer* comp = CreateRenderer(*node.assimpMesh, W2A(name.c_str()), obj.GetID());
+		comp->SetTransform(obj.transform.get());	
+		comp->SetNodeHierarchy(obj.nodeHierarchy);
 		obj.AddComponent(comp);
 	}
 		

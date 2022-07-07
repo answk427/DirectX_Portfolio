@@ -6,7 +6,7 @@ void AddComponentCommand::Execute()
 	if (gameObj->SearchComponent(componentType))
 		return;
 
-	addedComponent = componentMgr.CreateComponent(componentType);
+	addedComponent = componentMgr.CreateComponent(componentType, gameObj->GetID());
 	//Component 생성에 실패한 경우
 	if (addedComponent == nullptr)
 		return;
@@ -15,10 +15,11 @@ void AddComponentCommand::Execute()
 	{
 	case ComponentType::MESHRENDERER:
 	case ComponentType::SKINNEDMESHRENDERER:
-		((Renderer*)addedComponent)->SetTransform(&gameObj->transform);
+		((Renderer*)addedComponent)->SetTransform(gameObj->transform.get());
+		((Renderer*)addedComponent)->SetNodeHierarchy(gameObj->nodeHierarchy);
 		break;
 	case ComponentType::LIGHT:
-		((Lighting*)addedComponent)->SetTransform(&gameObj->transform);
+		((Lighting*)addedComponent)->SetTransform(gameObj->transform.get());
 	}
 	
 	gameObj->AddComponent(addedComponent);

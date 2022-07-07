@@ -75,7 +75,7 @@ bool TerrainDialog::OpenDialog()
 
 bool TerrainDialog::SetObject(GameObject* obj)
 {
-	TerrainRenderer* terrainRenderer = obj->GetComponent<TerrainRenderer>();
+	TerrainRenderer* terrainRenderer = dynamic_cast<TerrainRenderer*>(obj->GetComponent(ComponentType::TERRAIN));
 	m_TerrainRenderer = terrainRenderer;
 	if (!m_TerrainRenderer)
 		return false;

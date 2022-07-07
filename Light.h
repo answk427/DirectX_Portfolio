@@ -29,10 +29,10 @@ public:
 
 public:
 
-	Lighting(std::string name) : Component(name, ComponentType::LIGHT), m_lightType(LightType::DIRECTIONAL)
+	Lighting(std::string name, const gameObjectID& ownerId) : Component(name, ComponentType::LIGHT, ownerId), m_lightType(LightType::DIRECTIONAL)
 	{}
 	
-	Lighting(const Lighting& other) : Component(other.id, ComponentType::LIGHT)
+	Lighting(const Lighting& other) : Component(other.id, ComponentType::LIGHT, other.ownerObjectId)
 	{
 		m_lightType = other.m_lightType;
 		m_dirLight = other.m_dirLight;

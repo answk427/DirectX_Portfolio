@@ -10,6 +10,8 @@
 #include "Transform.h"
 #include "Vertex.h"
 #include <MathHelper.h>
+#include "NodeBoneDatas.h"
+#include "AssimpLoader.h"
 
 class TesselationData
 {
@@ -44,6 +46,7 @@ protected:
 	std::vector<Effect*> effects;
 	TextureMgr& m_texMgr;
 	EffectMgr& m_effectMgr;
+	std::weak_ptr<NodeBoneDatas> m_bones;
 	
 protected:
 	UINT m_technique_type;
@@ -111,8 +114,8 @@ public:
 	virtual void SetVB(ID3D11DeviceContext* context) { mesh->SetVB(context); }
 	
 public:
-	Renderer(const std::string& id, ComponentType type);
-	Renderer(const std::string& id, ComponentType type, Mesh* mesh);
+	Renderer(const std::string& id, ComponentType type, const gameObjectID& ownerObj);
+	Renderer(const std::string& id, ComponentType type, const gameObjectID& ownerObj, Mesh* mesh);
 	//Renderer(std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
 	~Renderer();
 	Renderer& operator=(const Renderer& other);
@@ -145,10 +148,14 @@ public:
 	
 public:
 	std::vector<GeneralMaterial>& GetMaterials() { return materials; }
-
-	void SetTransform(Transform* tr) { transform = tr; }
+	
 	Transform* GetTransform() { return transform; }
 	const Transform* GetTransform() const { return transform; }
+	void GetWorldMatrix(XMMATRIX& dest) { m_bones.lock()->GetFinalTransform(dest, ownerObjectId); }
+	void SetTransform(Transform* tr) { transform = tr; }
+	
+	void SetNodeHierarchy(std::weak_ptr<NodeBoneDatas> bones) { m_bones = bones; }
+	
 
 	void SetTechniqueType(int orTechnique) { m_technique_type = orTechnique; }
 
@@ -158,6 +165,8 @@ public:
 	// Component을(를) 통해 상속됨
 	virtual void Enable() override;
 	virtual void Disable() override;
+
+	
 protected:
 	void SetMaterials(std::vector<GeneralMaterial>& materialSrc);
 };
@@ -166,14 +175,21 @@ protected:
 class MeshRenderer : public Renderer
 {
 public:
-	MeshRenderer(const std::string& id);
+	MeshRenderer(const std::string& id, const gameObjectID& ownerId);
 	MeshRenderer& operator=(const MeshRenderer& other);
 };
 
 class SkinnedMeshRenderer : public Renderer
 {
 public:
-	SkinnedMeshRenderer(const std::string& id);
+	SkinnedMeshRenderer(const std::string& id, const gameObjectID& ownerId);
 	SkinnedMeshRenderer& operator=(const SkinnedMeshRenderer& skinRenderer);
+
+public:
+	std::vector<AssimpSkinnedVertex> m_skinnedDatas;
+	
+public:
+	void StoreSkinnedDatas(const std::vector<AssimpSkinnedVertex>& skinnedData);
+	void StoreSkinnedDatas(std::vector<AssimpSkinnedVertex>&& skinnedData);
 	
 };

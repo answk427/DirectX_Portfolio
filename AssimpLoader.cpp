@@ -233,7 +233,8 @@ void AssimpLoader::NodeTravel(NodeStruct& parent ,aiNode * node)
 
 void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 {
-	
+	USES_CONVERSION;
+
 	Subset tempSubset;
 	//material인덱스 
 	tempSubset.materialNum = mesh->mMaterialIndex;
@@ -282,8 +283,9 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 			
 			
 			//가중치와 연관된 뼈(노드)의 이름 추가
-			std::string nodeName = currBone->mName.C_Str();
+			std::wstring nodeName = A2W(currBone->mName.C_Str());
 			currSkinnedVertex->nodeName.push_back(nodeName);
+						
 				
 			//bone 정보에 offset변환행렬 추가
 			m_assimpBones[nodeName].offsetMat = ConvertMatrix(currBone->mOffsetMatrix);

@@ -58,7 +58,7 @@ Renderer * RayPicking::NearestOfIntersectRayAABB(D3D11_VIEWPORT* viewPort ,
 
 	XMVECTOR rayOrigin;
 	XMVECTOR rayDir;
-
+	XMMATRIX world;
 	//스크린좌표 -> 시야공간 반직선 계산
 	ScreenToViewRay(&rayOrigin, &rayDir, sx, sy, viewPort, &camera->Proj());
 	
@@ -66,9 +66,12 @@ Renderer * RayPicking::NearestOfIntersectRayAABB(D3D11_VIEWPORT* viewPort ,
 	for (auto elem : objects)
 	{
 		std::pair<XMVECTOR, XMVECTOR> localRay;
+		elem->GetWorldMatrix(world);
 		//시야공간 반직선 -> 국소공간 반직선 변환
-		localRay = ViewToLocalRay(&rayOrigin, &rayDir, &camera->View(), 
-			&XMLoadFloat4x4(elem->GetTransform()->GetWorld()));
+		//localRay = ViewToLocalRay(&rayOrigin, &rayDir, &camera->View(), 
+			//&XMLoadFloat4x4(elem->GetTransform()->GetWorld()));
+		localRay = ViewToLocalRay(&rayOrigin, &rayDir, &camera->View(),
+			&world);
 
 		if (XMVector3IsNaN(localRay.first) || XMVector3IsNaN(localRay.second))
 			return nullptr;

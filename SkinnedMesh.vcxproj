@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationClass.cpp" />
     <ClCompile Include="BasicModel.cpp" />
     <ClCompile Include="BlendStateClass.cpp" />
     <ClCompile Include="BoundingBoxRenderer.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationClass.h" />
     <ClInclude Include="BasicModel.h" />
     <ClInclude Include="BlendStateClass.h" />
     <ClInclude Include="Bones.h" />

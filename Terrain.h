@@ -61,7 +61,7 @@ public:
 	static std::vector<int> HeightMapSizes;
 	Camera* m_camera;
 public:
-	TerrainRenderer(const componentID& id) : Renderer(id, ComponentType::TERRAIN), mtextureArraySRV(0), mblendTextureSRV(0), mHeightMapSRV(0), m_enableFog(0),
+	TerrainRenderer(const componentID& id, const gameObjectID& ownerId) : Renderer(id, ComponentType::TERRAIN, ownerId), mtextureArraySRV(0), mblendTextureSRV(0), mHeightMapSRV(0), m_enableFog(0),
 		m_fogStart(15.0f), m_fogRange(175.0f), CellsPerPatch(64), m_brush(std::make_unique<BrushDesc>()), 
 		m_camera(0), m_hmapTex(0), m_blendMapTex(0), m_selectedMap(0), m_modifyMapOption(0)
 	{
@@ -69,11 +69,11 @@ public:
 		mesh->Init(std::vector<MyVertex::BasicVertex>(), std::vector<UINT>());
 		InitEffects();
 	}
-	TerrainRenderer(const componentID& id, const TerrainInitInfo& info) : TerrainRenderer(id)
+	TerrainRenderer(const componentID& id, const TerrainInitInfo& info, const gameObjectID& ownerId) : TerrainRenderer(id, ownerId)
 	{
 		m_terrainData = info;
 	}
-	TerrainRenderer(const TerrainRenderer& other) : TerrainRenderer(other.id, other.m_terrainData) {}
+	TerrainRenderer(const TerrainRenderer& other) : TerrainRenderer(other.id, other.m_terrainData, other.ownerObjectId) {}
 
 	TerrainRenderer& operator=(const TerrainRenderer& other)
 	{

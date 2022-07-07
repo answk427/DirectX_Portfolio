@@ -15,9 +15,9 @@
 
 struct AssimpSkinnedVertex
 {
-	AssimpSkinnedVertex()  {	}
+	AssimpSkinnedVertex()  {}
 	//영향을 받는 뼈 이름들과 가중치
-	std::vector<std::string> nodeName;
+	std::vector<std::wstring> nodeName;
 	std::vector<float> weights;
 };
 
@@ -91,8 +91,9 @@ public:
 	std::vector<UINT> GetIndices() { return indices; }
 	std::vector<Subset> GetSubsets() { return subsets; }
 	std::vector<GeneralMaterial> GetMaterials() { return materials; }
+	std::vector<AssimpSkinnedVertex> GetSkinnedVertexData() { return skinnedVertices; }
 	AABB_MaxMin* GetAABB_MaxMin() { return m_AABB_MaxMin; }
-	bool HasBone() { return false; } //임시로 false만 반환
+	bool HasBone() { return !skinnedVertices.empty(); } 
 };
 
 class NodeStruct
@@ -133,7 +134,7 @@ class AssimpLoader
 private:
 	std::string currentFileName;
 	NodeStruct* root;
-	std::map<std::string, AssimpBone> m_assimpBones;
+	std::map<std::wstring, AssimpBone> m_assimpBones;
 	std::map<std::string, AssimpAnimation> m_animations;
 private:
 	const aiScene* m_pScene;
@@ -174,6 +175,7 @@ public:
 	bool IsEmpty() { return m_pScene == nullptr; }
 	bool EqualFileName(const std::string& fileName) { return currentFileName == fileName; }
 	NodeStruct* getRoot() { return root; }
-	std::map<std::string, AssimpBone>& getAssimpBones() { return m_assimpBones; }
+	std::map<std::wstring, AssimpBone>& getAssimpBones() { return m_assimpBones; }
 	std::map<std::string, AssimpAnimation>& getAssimpAnimations() { return m_animations; }
+	
 };

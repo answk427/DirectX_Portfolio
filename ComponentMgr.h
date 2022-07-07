@@ -73,7 +73,7 @@ public:
 	Component* OnOffComponent(Component* component, Command endisable);
 	//Component를 삭제(container에서 제거)
 	void DeleteComponent(Component* component);
-	Component* CreateComponent(ComponentType compType);
+	Component* CreateComponent(ComponentType compType, const gameObjectID& ownerId);
 	
 	//ID에서 Component의 타입을 추출
 	ComponentType typeOfID(componentID& id);

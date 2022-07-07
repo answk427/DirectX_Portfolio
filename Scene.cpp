@@ -672,7 +672,7 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 	case ID_GAMEOBJECT_TERRAIN:
 	{
 		GameObject& gameObj = objectMgr.CreateTerrain();
-		TerrainRenderer* terrain = gameObj.GetComponent<TerrainRenderer>();
+		TerrainRenderer* terrain = dynamic_cast<TerrainRenderer*>(gameObj.GetComponent(ComponentType::TERRAIN));
 		terrain->SetCamera(&camera);
 		m_HierarchyDialog->TreeInsertObject(&gameObj);
 		break;

@@ -15,6 +15,7 @@ enum ComponentType
 };
 
 typedef std::string componentID;
+typedef std::string gameObjectID;
 
 //오브젝트에 추가될 컴포넌트의 인터페이스
 class Component
@@ -22,15 +23,18 @@ class Component
 public:
 	std::string id;
 	ComponentType componentType;
-
+	gameObjectID ownerObjectId; //해당 컴포넌트를 가진 오브젝트의 id
+	
 public:
-	Component(const componentID& id, ComponentType type) : id(id), componentType(type) {}
+	Component(const componentID& id, ComponentType type, const gameObjectID& objId) :
+		id(id), componentType(type), ownerObjectId(objId) {}
 	virtual ~Component() 
 	{}
 	Component& operator=(const Component& other)
 	{
 		id = other.id;
 		componentType = other.componentType;
+		ownerObjectId = other.ownerObjectId;
 		return *this;
 	}
 public:
@@ -42,7 +46,7 @@ public:
 	virtual void Disable() = 0;
 };
 
-typedef std::string gameObjectID;
+
 
 
 class Object
@@ -72,7 +76,7 @@ public:
 	std::wstring GetName() { return name; }
 	gameObjectID& GetID() { return id; }
 	void SetName(std::wstring& name) { this->name = name; }
-	void SetParent(Object* parent) { this->parent = parent; }
+	virtual void SetParent(Object* parent) { this->parent = parent; }
 	void SetChild(Object* child) { childs.push_back(child); }
 	void DeleteChild(Object* child)
 	{

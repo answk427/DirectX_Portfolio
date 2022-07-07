@@ -1,6 +1,6 @@
 #include "TreeBillBoardRenderer.h"
 
-TreeBillBoardRenderer::TreeBillBoardRenderer() : Renderer("TreeBillBoardRenderer", ComponentType::MESHRENDERER)
+TreeBillBoardRenderer::TreeBillBoardRenderer() : Renderer("TreeBillBoardRenderer", ComponentType::MESHRENDERER, "TreeBillBoardRenderer")
 {
 	TextureMgr& texMgr = TextureMgr::Instance();
 	//±×¸²ÀÚ¸Ê ·»´õ¸µ¿¡ »ç¿ëÇÒ ½¦ÀÌ´õ

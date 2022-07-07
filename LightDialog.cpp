@@ -74,7 +74,7 @@ bool LightDialog::OpenDialog()
 
 bool LightDialog::SetObject(GameObject* obj)
 {
-	Lighting* lighting = dynamic_cast<Lighting*>(obj->GetComponent<Lighting>());
+	Lighting* lighting = dynamic_cast<Lighting*>(obj->GetComponent(ComponentType::LIGHT));
 	m_Lighting = lighting;
 	
 	if (!m_Lighting)

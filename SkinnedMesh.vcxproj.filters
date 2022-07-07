@@ -258,6 +258,9 @@
     <ClCompile Include="NodeBoneDatas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AnimationClass.cpp">
+      <Filter>New Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -477,6 +480,9 @@
       <Filter>New Header Files\Command</Filter>
     </ClInclude>
     <ClInclude Include="NodeBoneDatas.h">
+      <Filter>New Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationClass.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
   </ItemGroup>

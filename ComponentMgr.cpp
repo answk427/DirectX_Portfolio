@@ -96,7 +96,7 @@ void ComponentMgr::DeleteComponent(Component * component)
 	return;
 }
 
-Component * ComponentMgr::CreateComponent(ComponentType compType)
+Component * ComponentMgr::CreateComponent(ComponentType compType, const gameObjectID& ownerId)
 {
 	componentID id = idFront[compType] + "_" + std::to_string(creatingIdNum++);
 	switch (compType)
@@ -105,7 +105,7 @@ Component * ComponentMgr::CreateComponent(ComponentType compType)
 		{
 			//id생성 후 vector에 추가
 			//meshRenderers.push_back(MeshRenderer(id));
-			meshRenderers.emplace_back(id);
+			meshRenderers.push_back({ id, ownerId });
 			meshRenderers.back().Init();
 			//id와 index 매핑
 			idMap[meshRenderers.back().id] = meshRenderers.size() - 1;
@@ -116,7 +116,7 @@ Component * ComponentMgr::CreateComponent(ComponentType compType)
 		case ComponentType::SKINNEDMESHRENDERER :
 		{
 			//skinnedMeshRenderers.push_back(SkinnedMeshRenderer(id));
-			skinnedMeshRenderers.emplace_back(id);
+			skinnedMeshRenderers.push_back({ id, ownerId });
 			skinnedMeshRenderers.back().Init();
 			idMap[skinnedMeshRenderers.back().id] = skinnedMeshRenderers.size() - 1;
 			return SelectSwap(skinnedMeshRenderers, enableCount_skinnedMeshRenderer,
@@ -125,7 +125,7 @@ Component * ComponentMgr::CreateComponent(ComponentType compType)
 		case ComponentType::LIGHT:
 		{
 			//lightings.push_back(Lighting(id));
-			lightings.emplace_back(id);
+			lightings.push_back({ id, ownerId });
 			lightings.back().Init();
 			idMap[lightings.back().id] = lightings.size() - 1;
 			return SelectSwap(lightings, enableCount_lighting,
@@ -135,7 +135,7 @@ Component * ComponentMgr::CreateComponent(ComponentType compType)
 		{
 			//id생성 후 vector에 추가
 			//terrainRenderers.push_back(TerrainRenderer(id));
-			terrainRenderers.emplace_back(id);
+			terrainRenderers.push_back({ id, ownerId });
 			terrainRenderers.back().Init();
 			//id와 index 매핑
 			idMap[terrainRenderers.back().id] = terrainRenderers.size() - 1;

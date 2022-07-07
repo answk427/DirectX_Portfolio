@@ -383,7 +383,7 @@ bool Inspector::AddComponent(ComponentType componentType)
 		return false;
 
 	ComponentMgr& componentMgr = ComponentMgr::Instance();
-	Component* component = componentMgr.CreateComponent(componentType);
+	Component* component = componentMgr.CreateComponent(componentType, m_currObject->GetID());
 
 	if (component == nullptr)
 		return false;
