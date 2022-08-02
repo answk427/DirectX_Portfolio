@@ -15,6 +15,8 @@ namespace Vertex
 	// Basic 32-byte vertex structure.
 	struct Basic32
 	{
+		Basic32() : Pos(0, 0, 0), Normal(0, 0, 0), Tex(0, 0) {}
+		Basic32(XMFLOAT3& pos) : Pos(pos) ,Normal(0, 0, 0), Tex(0, 0) {}
 		XMFLOAT3 Pos;
 		XMFLOAT3 Normal;
 		XMFLOAT2 Tex;
@@ -52,6 +54,8 @@ public:
 	static const D3D11_INPUT_ELEMENT_DESC PosNormalTexTanSkinned[6];
 	static const D3D11_INPUT_ELEMENT_DESC Basic32Instancing[13];
 	static const D3D11_INPUT_ELEMENT_DESC TreePointSprite[2];
+	static const D3D11_INPUT_ELEMENT_DESC Basic32Skinned[5];
+	static const D3D11_INPUT_ELEMENT_DESC Basic32SkinnedInstancing[15];
 };
 
 class InputLayouts

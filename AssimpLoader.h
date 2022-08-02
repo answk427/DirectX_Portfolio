@@ -6,24 +6,31 @@
 #include <assimp/scene.h>
 
 #include <vector>
+#include <queue>
 #include <string>
 
 #include "Mesh.h"
 #include "BufferResource.h"
 #include "Renderer.h"
+#include <set>
 
+
+
+typedef std::wstring boneName;
 
 struct AssimpSkinnedVertex
 {
 	AssimpSkinnedVertex()  {}
 	//영향을 받는 뼈 이름들과 가중치
-	std::vector<std::wstring> nodeName;
+	std::vector<boneName> nodeName;
+	std::vector<int> nodeIndices;
 	std::vector<float> weights;
 };
 
 struct AssimpBone
 {
 	XMFLOAT4X4 offsetMat;
+	XMFLOAT4X4 toParentMat;
 };
 
 struct Float3Key //키프레임의 키 포지션,스케일에 사용
@@ -42,7 +49,11 @@ struct Float4Key
 //한 노드에서의 시간에 따른 애니메이션 키프레임들을 저장하는 구조체
 struct AssimpAnimationFrame
 {
+public:
 	AssimpAnimationFrame() {}
+	AssimpAnimationFrame(const boneName& name) : m_boneName(name) {}
+	boneName m_boneName;
+	void resizeKeys(int size);
 	/*AssimpAnimationFrame(double posTime, float px, float py, float pz,
 		float quatTime, float rx, float ry, float rz, float rw,
 		float scaleTime, float sx, float sy, float sz) 
@@ -57,8 +68,12 @@ struct AssimpAnimation
 {
 	double duration;
 	double ticksPerSecond;
-	std::map<std::string, AssimpAnimationFrame> bones;
+	std::map<boneName, AssimpAnimationFrame> bones;
+	std::vector<AssimpAnimationFrame> HierarchyAniClip;
+public:
+	void HierarchyInit(int size) { HierarchyAniClip.resize(size); }
 };
+
 
 
 class AssimpMesh
@@ -68,12 +83,11 @@ private:
 	//메쉬구조를 저장할 컨테이너들
 	std::vector<MyVertex::BasicVertex> vertices;
 	std::vector<UINT> indices;
-	std::vector<AssimpSkinnedVertex> skinnedVertices; //뼈, 가중치
-	std::vector<Subset> subsets;
+	std::vector<MyVertex::Subset> subsets;
 	std::vector<GeneralMaterial> materials;
 	AABB_MaxMin* m_AABB_MaxMin;
 public:
-	
+	std::vector<AssimpSkinnedVertex> skinnedVertices; //뼈, 가중치
 	int vertexCount;
 	int indexCount;
 public:
@@ -89,7 +103,7 @@ public:
 public:
 	std::vector<MyVertex::BasicVertex> GetVertices() { return vertices; }
 	std::vector<UINT> GetIndices() { return indices; }
-	std::vector<Subset> GetSubsets() { return subsets; }
+	std::vector<MyVertex::Subset> GetSubsets() { return subsets; }
 	std::vector<GeneralMaterial> GetMaterials() { return materials; }
 	std::vector<AssimpSkinnedVertex> GetSkinnedVertexData() { return skinnedVertices; }
 	AABB_MaxMin* GetAABB_MaxMin() { return m_AABB_MaxMin; }
@@ -125,6 +139,26 @@ public:
 	XMFLOAT4X4 GetOffsetMatrix() { return offsetMat; }
 };
 
+struct FinalHierarchy
+{
+public:
+	FinalHierarchy() { XMStoreFloat4x4(&identity, XMMatrixIdentity()); }
+public:
+	XMFLOAT4X4 identity;
+	std::map<boneName, int> m_boneNameIdx;
+	std::set<std::pair<int, boneName>> m_sortBones;
+	std::vector<int> parents;
+	std::vector<XMFLOAT4X4> offsets;
+	std::vector<XMFLOAT4X4> boneParentMatrix;
+public:
+	void Init();
+	void InitBones(NodeStruct* root, std::map<boneName, AssimpBone>& assimpBones);
+	void SortBones();
+	void InitAnimation(AssimpAnimation& animation);
+	void ConvertSkinnedVertex(AssimpSkinnedVertex& vertex);
+	void ConvertSkinnedVertex(NodeStruct* root);
+
+};
 
 
 #pragma comment(lib, "assimp.lib")
@@ -132,10 +166,14 @@ public:
 class AssimpLoader
 {
 private:
+	//test
+	std::vector<std::vector<std::wstring>> boneNames;
+
 	std::string currentFileName;
 	NodeStruct* root;
 	std::map<std::wstring, AssimpBone> m_assimpBones;
 	std::map<std::string, AssimpAnimation> m_animations;
+	FinalHierarchy boneHierarchy;
 private:
 	const aiScene* m_pScene;
 			
@@ -177,5 +215,5 @@ public:
 	NodeStruct* getRoot() { return root; }
 	std::map<std::wstring, AssimpBone>& getAssimpBones() { return m_assimpBones; }
 	std::map<std::string, AssimpAnimation>& getAssimpAnimations() { return m_animations; }
-	
+	FinalHierarchy* GetHierarchy() { return &boneHierarchy; }
 };

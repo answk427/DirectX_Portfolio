@@ -14,6 +14,12 @@ GameTimer::GameTimer()
 	mSecondsPerCount = 1.0 / (double)countsPerSec;
 }
 
+GameTimer & GameTimer::Instance()
+{
+	static GameTimer instance;
+	return instance;
+}
+
 // Returns the total time elapsed since Reset() was called, NOT counting any
 // time when the clock is stopped.
 float GameTimer::TotalTime()const

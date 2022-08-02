@@ -46,7 +46,7 @@ public:
 	~GameObject();
 			
 	std::shared_ptr<Transform> transform;
-	std::shared_ptr<NodeBoneDatas> nodeHierarchy;
+	std::shared_ptr<NodeHierarchy> nodeHierarchy;
 	
 	virtual void SetParent(GameObject* parent) 
 	{

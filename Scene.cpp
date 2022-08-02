@@ -40,12 +40,20 @@
 #include <RenderStates.h>
 
 
+#include <LoadM3d.h>
+#include <BasicModel.h>
+#include <SkinnedModel.h>
 
 class Scene : public D3DApp
 {
 public:
+	//test
+	SkinnedMeshRenderer* testRender;
+
+
 	bool isDrawDebugQuad = false;
 	bool isDrawOcTree = false;
+	bool isWireFrame = false;
 public:
 	void BuildScreenQuadGeometryBuffers();
 	ID3D11Buffer* mScreenQuadVB;
@@ -68,7 +76,7 @@ public:
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
-
+		
 	void MenuProc(HWND hDlg, WPARAM wParam) override;
 
 private://엔진기능
@@ -92,7 +100,6 @@ private:
 
 private:
 	Camera camera;
-	//DirectionalLight mDirLights[3];
 	std::vector<DirectionalLight> mDirLights;
 	std::vector<GameObject> gameObjects;
 
@@ -360,7 +367,10 @@ bool Scene::Init()
 	}*/
 	
 
+
 	BuildScreenQuadGeometryBuffers();
+
+
 
 	return true;
 }
@@ -383,6 +393,9 @@ void Scene::UpdateScene(float dt)
 		isDrawDebugQuad = !isDrawDebugQuad;
 	if (GetAsyncKeyState('2') & 0x8000)
 		isDrawOcTree = !isDrawOcTree;
+	if (GetAsyncKeyState('3') & 0x8000)
+		isWireFrame = !isWireFrame;
+	
 	//
 	// Control the camera.
 	//
@@ -430,7 +443,7 @@ void Scene::UpdateScene(float dt)
 		if (cullingResult != 0)
 			elem->InstancingUpdate();
 	}
-	
+		
 }
 
 void Scene::DrawScene()
@@ -438,8 +451,10 @@ void Scene::DrawScene()
 	//그림자맵 렌더링
 	ShadowMapDraw();
 
-	md3dImmediateContext->RSSetState(0);
-	//md3dImmediateContext->RSSetState(RenderStates::WireframeRS);
+	if(!isWireFrame)
+		md3dImmediateContext->RSSetState(0);
+	else
+		md3dImmediateContext->RSSetState(RenderStates::WireframeRS);
 
 	// Restore the back and depth buffer to the OM stage.
 	ID3D11RenderTargetView* renderTargets[1] = { mRenderTargetView };
@@ -449,6 +464,7 @@ void Scene::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	
+
 
 	effectMgr.SetPerFrame(componentMgr.getLightings(), camera);
 	
@@ -464,11 +480,18 @@ void Scene::DrawScene()
 	
 	componentMgr.Render(md3dImmediateContext, &camera);
 	
+	
+	
 	//m_Octree->Render(md3dImmediateContext);
 
 	//그림자맵 텍스쳐 우측하단에 렌더링
 	if(isDrawDebugQuad)
 		DrawScreenQuad();
+
+
+	
+
+	
 
 	//ShaderResourceView로 쉐도우맵을 이번 렌더링의 자원으로 binding 했기 때문에
 	//다음 프레임에서 RenderTargetView로 쉐도우맵에 렌더링 하기 전 해제 해 준다.
@@ -633,7 +656,7 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 	case ID_40007: //Import FBX
 	{
 		USES_CONVERSION;
-		std::vector<LPCWSTR> extensions = { L"fbx" };
+		std::vector<LPCWSTR> extensions = { L"fbx",L"obj" };
 		bool success = dataMgr.FileOpen(hDlg, title, full_path, extensions);
 		if (success)
 		{

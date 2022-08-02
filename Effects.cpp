@@ -42,6 +42,7 @@ void Effect::Init(ID3D11Device* device)
 {
 	InitInputLayout(device);
 	InitInstancingInputLayout(device);
+	InitSpecialInputLayout(device);
 	InitBlendState(device);
 }
 
@@ -70,7 +71,7 @@ void Effect::InitBlendState(ID3D11Device * device)
 
 #pragma region BasicEffect
 BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
-	: Effect(device, filename)
+	: Effect(device, filename), m_skinning_inputLayout(0), m_skinning_instancing_inputLayout(0)
 {
 	Light1Tech = mFX->GetTechniqueByName("Light1");
 	Light2Tech = mFX->GetTechniqueByName("Light2");
@@ -82,6 +83,8 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	Light3TexTech = mFX->GetTechniqueByName("Light3Tex");
 
 	Light3TexInstancingTech = mFX->GetTechniqueByName("Light3TexInstancing");
+	Light3TexSkinningTech = mFX->GetTechniqueByName("Light3TexSkinning");
+	Light3TexSkinningInstancingTech = mFX->GetTechniqueByName("Light3TexSkinningInstancing");
 
 	Light0TexAlphaClipTech = mFX->GetTechniqueByName("Light0TexAlphaClip");
 	Light1TexAlphaClipTech = mFX->GetTechniqueByName("Light1TexAlphaClip");
@@ -159,6 +162,7 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	SsaoMap = mFX->GetVariableByName("gSsaoMap")->AsShaderResource();
 	DiffuseMapArray = mFX->GetVariableByName("gDiffuseMapArray")->AsShaderResource();
 
+	BoneTransforms = mFX->GetVariableByName("gBoneTransforms")->AsMatrix();
 
 	//
 	Init(device);
@@ -220,6 +224,10 @@ void BasicEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 {
 	DiffuseMapArray->SetResource(arr);
 }
+void BasicEffect::SetBoneTransforms(const XMFLOAT4X4 * M, int cnt)
+{
+	BoneTransforms->SetMatrixArray(reinterpret_cast<const float*>(M), 0, cnt); 
+}
 ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 {
 	if (techType & TechniqueType::Shadowed)
@@ -236,9 +244,13 @@ ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 		return Light3Tech;
 	case TechniqueType::Light | TechniqueType::DiffuseMap:
 		return Light3TexTech;
+	case TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Skinned:
+		return Light3TexSkinningTech;
 	case TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Instancing:
 		return Light3TexInstancingTech;
-
+	case TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Instancing |
+		TechniqueType::Skinned:
+		return Light3TexSkinningInstancingTech;
 	default:
 		nullptr;
 	}
@@ -253,6 +265,57 @@ void BasicEffect::InitInputLayout(ID3D11Device * device)
 	Light1Tech->GetPassByIndex(0)->GetDesc(&passDesc);
 	HR(device->CreateInputLayout(InputLayoutDesc::Basic32, 3, passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize, &m_inputLayout));
+}
+void BasicEffect::InitSpecialInputLayout(ID3D11Device * device)
+{
+	ReleaseCOM(m_skinning_inputLayout);
+	ReleaseCOM(m_skinning_instancing_inputLayout);
+	D3DX11_PASS_DESC passDesc;
+
+	Light3TexSkinningTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::Basic32Skinned, 5, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_skinning_inputLayout));
+
+	Light3TexSkinningInstancingTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::Basic32SkinnedInstancing, 15, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_skinning_instancing_inputLayout));
+}
+bool BasicEffect::IASetting(ID3D11DeviceContext * context, UINT techType)
+{
+	//instancing으로 렌더링 할 때
+	if (techType & TechniqueType::Instancing)
+	{
+		if (techType & TechniqueType::Skinned)
+		{
+			if (m_skinning_instancing_inputLayout == nullptr)
+				return false;
+			context->IASetInputLayout(m_skinning_instancing_inputLayout);
+		}
+		else
+		{
+			if (m_instancing_inputLayout == nullptr)
+				return false;
+			context->IASetInputLayout(m_instancing_inputLayout);
+		}
+	}
+	else
+	{
+		if (techType & TechniqueType::Skinned)
+		{
+			if (m_skinning_inputLayout == nullptr)
+				return false;
+			context->IASetInputLayout(m_skinning_inputLayout);
+		}
+		else
+		{
+			if (m_inputLayout == nullptr)
+				return false;
+			context->IASetInputLayout(m_inputLayout);
+		}
+	}
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	return true;
 }
 void BasicEffect::InitInstancingInputLayout(ID3D11Device * device)
 {
@@ -435,6 +498,18 @@ void NormalMapEffect::InitInputLayout(ID3D11Device * device)
 {
 }
 
+void NormalMapEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+}
+
+void NormalMapEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+}
+
+void NormalMapEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+}
+
 #pragma endregion
 
 #pragma region BuildShadowMapEffect
@@ -545,7 +620,7 @@ ID3DX11EffectTechnique * BuildShadowMapEffect::GetTechnique(UINT techType)
 	case TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Instancing:
 		return BuildShadowMapTech;
 	default:
-		nullptr;
+		return BuildShadowMapTech;
 	}
 	return nullptr;
 }
@@ -732,7 +807,7 @@ void Effects::InitAll(ID3D11Device* device)
 {
 	BasicFX = new BasicEffect(device, L"FX/Basic.fxo");
 
-	//NormalMapFX       = new NormalMapEffect(device, L"FX/NormalMap.fxo");
+	NormalMapFX       = new NormalMapEffect(device, L"FX/NormalMap.fxo");
 	//BuildShadowMapFX  = new BuildShadowMapEffect(device, L"FX/BuildShadowMap.fxo");
 	//SsaoNormalDepthFX = new SsaoNormalDepthEffect(device, L"FX/SsaoNormalDepth.fxo");
 	//SsaoFX            = new SsaoEffect(device, L"FX/Ssao.fxo");

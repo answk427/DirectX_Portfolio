@@ -61,7 +61,7 @@ void GameObject::AddNodeHierarchy()
 	//최상위 루트 일때
 	if (parent == nullptr)
 	{
-		nodeHierarchy = std::make_shared<NodeBoneDatas>();
+		nodeHierarchy = std::make_shared<NodeHierarchy>();
 		parentId = nullptr;
 	}
 	else

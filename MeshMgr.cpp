@@ -38,9 +38,10 @@ Mesh* MeshMgr::CreateMeshFromFile(const std::string fileName, AssimpMesh& loader
 				
 	meshes.push_back(Mesh(fileName));
 	meshes.back().Init(device, loader.GetVertices(), loader.GetIndices(), loader.GetSubsets());
+	
 	AABB_MaxMin* aabb = loader.GetAABB_MaxMin();
 	meshes.back().SetAABB_MaxMin(aabb->m_max, aabb->m_min);
-	
+
 		
 	return &meshes[meshes.size()-1];
 }

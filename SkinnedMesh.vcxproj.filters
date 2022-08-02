@@ -261,6 +261,9 @@
     <ClCompile Include="AnimationClass.cpp">
       <Filter>New Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BoneRenderer.cpp">
+      <Filter>New Source Files\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -485,6 +488,9 @@
     <ClInclude Include="AnimationClass.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BoneRenderer.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FX\LightHelper.fx">
@@ -558,22 +564,19 @@
     <Image Include="bitmap2.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\Desktop\box.PNG">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\Desktop\box.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="..\..\..\desktop\bitmap4.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="..\..\..\desktop\bitmap1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="..\..\..\desktop\bitmap2.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\..\Desktop\box.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
     <Image Include="..\..\..\Desktop\box16.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\Desktop\bitmap1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

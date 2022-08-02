@@ -250,7 +250,10 @@ void Renderer::InitNormalMaps(TextureMgr& texMgr, const std::wstring& texturePat
 	normalMaps.clear();
 	for (auto& elem : materials)
 	{
-		ID3D11ShaderResourceView* srv = texMgr.CreateTexture(texturePath + elem.normalMapName);
+		ID3D11ShaderResourceView* srv = nullptr;
+		if (!elem.diffuseMapName.empty())
+			srv = texMgr.CreateTexture(texturePath + elem.diffuseMapName);
+		
 		normalMaps.push_back(srv);
 	}
 }
@@ -389,32 +392,378 @@ MeshRenderer & MeshRenderer::operator=(const MeshRenderer & other)
 
 
 SkinnedMeshRenderer::SkinnedMeshRenderer(const std::string & id, const gameObjectID& ownerObj) :
-	Renderer(id, ComponentType::SKINNEDMESHRENDERER, ownerObj)
+	Renderer(id, ComponentType::SKINNEDMESHRENDERER, ownerObj), m_animator(std::make_shared<Animator>()),
+	m_timer(GameTimer::Instance()), testAnimator(std::make_unique<SkinnedData>()),
+	mBoneRenderer(std::make_unique<BoneRenderer>("BoneRenderer", ownerObj, m_animator))
 {
+	SetTechniqueType(TechniqueType::Light | TechniqueType::DiffuseMap |
+		TechniqueType::Skinned);
+
+}
+
+SkinnedMeshRenderer::SkinnedMeshRenderer(const SkinnedMeshRenderer & other) : SkinnedMeshRenderer(other.id, other.ownerObjectId)
+{
+	
 }
 
 SkinnedMeshRenderer & SkinnedMeshRenderer::operator=(const SkinnedMeshRenderer & skinRenderer)
 {
-	transform = skinRenderer.transform;
-	mesh = skinRenderer.mesh;
-	materials = skinRenderer.materials;
-	diffuseMaps = skinRenderer.diffuseMaps;
-	normalMaps = skinRenderer.normalMaps;
-	effects = skinRenderer.effects;
-	m_texMgr = skinRenderer.m_texMgr;
-	m_effectMgr = skinRenderer.m_effectMgr;
-
+	Renderer::operator=(skinRenderer);
+	m_timer = GameTimer::Instance();
+	m_animator = std::make_unique<Animator>(*skinRenderer.m_animator.get());
 	return *this;
 	// TODO: 여기에 반환 구문을 삽입합니다.
 }
 
-void SkinnedMeshRenderer::StoreSkinnedDatas(const std::vector<AssimpSkinnedVertex>& skinnedData)
+void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 {
-	m_skinnedDatas = skinnedData;
+	if (boneDrawMode)
+	{
+		mBoneRenderer->Draw(context, camera);
+		return;
+	}
+
+	if (mesh == nullptr)
+		return;
+
+	//XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
+	XMMATRIX world;
+	GetWorldMatrix(world);
+
+
+	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
+	if (GetInstancing())
+	{
+		//이미 렌더링을 했거나, 그릴 오브젝트들이 없는 경우 리턴
+		if (mesh->enableInstancingIndexes.empty())
+			return;
+		mesh->InstancingUpdate(context);
+		mesh->SetInstanceSkinnedVB(context);
+	}
+	else
+		mesh->SetSkinnedVB(context);
+
+
+	mesh->SetIB(context);
+
+	int subsetLength = mesh->GetSubsetLength();
+
+
+	ID3DX11EffectTechnique* activeTech;
+	D3DX11_TECHNIQUE_DESC techDesc;
+
+	for (int i = 0; i < subsetLength; i++)
+	{
+		//쉐이더 별로 파이프라인 설정
+		if (i == 0 || (effects[i - 1] != effects[i])) //연속으로 같은 쉐이더는 설정하지않음
+		{
+			//입력조립기 세팅
+			if (GetInstancing())
+			{
+				if (!effects[i]->IASetting(context, m_technique_type |
+					TechniqueType::Instancing | TechniqueType::Skinned))
+					break;
+			}
+			else
+			{
+				if (!effects[i]->IASetting(context, m_technique_type |
+					TechniqueType::Skinned))
+					break;
+			}
+			//출력병합기 세팅
+			if (!effects[i]->OMSetting(context, m_blending))
+				break;
+		}
+
+		UINT tempTechType = m_technique_type;
+		if (isShadowRender())
+			tempTechType = tempTechType | TechniqueType::Shadowed;
+
+
+		if (GetInstancing())
+			activeTech = effects[i]->GetTechnique(tempTechType | TechniqueType::Instancing);
+		else
+			activeTech = effects[i]->GetTechnique(tempTechType);
+
+		activeTech->GetDesc(&techDesc);
+
+
+
+		//shader에 필요한 데이터 설정
+		effects[i]->PerObjectSet(&materials[i],
+			camera, world);
+
+		//인스턴싱일 때 텍스쳐배열 사용
+		if (GetInstancing())
+			effects[i]->SetMapArray(mesh->textureArrays[i]);
+		else
+			effects[i]->SetMaps(diffuseMaps[i], normalMaps[i], nullptr);
+
+		//BoneMatrix 설정
+		effects[i]->SetBoneTransforms(&m_animator->boneDatas.m_finalTransforms[0], 
+			m_animator->boneDatas.m_finalTransforms.size());
+
+
+		for (UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			activeTech->GetPassByIndex(p)->Apply(0, context);
+
+			mesh->Draw(context, i);
+		}
+	}
+	//instancing 렌더링은 Draw 호출 한번만 하도록 벡터를 비워줌.
+	if (GetInstancing())
+		mesh->enableInstancingIndexes.clear();
+
+	//현재 렌더링이 그림자맵 렌더링이면
+	if (isShadowMapRender())
+		isRenderShadowMapBaking = false;
 }
 
-void SkinnedMeshRenderer::StoreSkinnedDatas(std::vector<AssimpSkinnedVertex>&& skinnedData)
+void SkinnedMeshRenderer::Update()
 {
-	m_skinnedDatas.swap(skinnedData);
+	//static float TimePos = 0.0f;
+	//TimePos += m_timer.DeltaTime();
+	//testAnimator->GetFinalTransforms(m_animator->currClipName,
+	//	TimePos, m_animator->boneDatas.m_finalTransforms);
+	//
+	//if (TimePos > testAnimator->GetClipEndTime(m_animator->currClipName))
+	//	TimePos = 0.0f;
+
+	m_animator->Update(m_timer.DeltaTime());
+	
+	if (boneDrawMode)
+		mBoneRenderer->Update();	
 }
 
+void SkinnedMeshRenderer::InitSkinnedVB()
+{
+	mesh->InitSkinnedVB(m_texMgr.md3dDevice, m_skinnedDatas);
+}
+
+
+
+BoneRenderer::BoneRenderer(const std::string& id, const gameObjectID &ownerObj,
+	const std::weak_ptr<Animator> animator) :
+	Renderer(id, ComponentType::MESHRENDERER, ownerObj), m_Animator(animator)
+{
+	SetTechniqueType(TechniqueType::Light);
+}
+
+void BoneRenderer::CreateBoneShape(std::vector<Vertex::Basic32>& result, XMFLOAT3 & pos, XMFLOAT3 & xAxis, XMFLOAT3 & yAxis, XMFLOAT3 & zAxis)
+{
+	XMFLOAT3 floorRight, floorFront, floorLeft, floorBack;
+	XMFLOAT3 vertexY;
+	XMFLOAT3 vertexDownY;
+	xAxis.x = xAxis.x * CRYSTALSIZE;
+	xAxis.y = xAxis.y * CRYSTALSIZE;
+	xAxis.z = xAxis.z * CRYSTALSIZE;
+
+	yAxis.x = yAxis.x * CRYSTALSIZE;
+	yAxis.y = yAxis.y * CRYSTALSIZE;
+	yAxis.z = yAxis.z * CRYSTALSIZE;
+
+	zAxis.x = zAxis.x * CRYSTALSIZE;
+	zAxis.y = zAxis.y * CRYSTALSIZE;
+	zAxis.z = zAxis.z * CRYSTALSIZE;
+
+	//각 기저벡터축의 단위벡터만큼 이동
+	//중앙 바닥을 이루는 정점들
+	floorRight.x = pos.x + xAxis.x;
+	floorRight.y = pos.y + xAxis.y;
+	floorRight.z = pos.z + xAxis.z;
+
+	floorFront.x = pos.x + zAxis.x;
+	floorFront.y = pos.y + zAxis.y;
+	floorFront.z = pos.z + zAxis.z;
+
+	floorLeft.x = pos.x - xAxis.x;
+	floorLeft.y = pos.y - xAxis.y;
+	floorLeft.z = pos.z - xAxis.z;
+
+	floorBack.x = pos.x - zAxis.x;
+	floorBack.y = pos.y - zAxis.y;
+	floorBack.z = pos.z - zAxis.z;
+
+	//위쪽 꼭지점 정점
+	vertexY.x = pos.x + yAxis.x;
+	vertexY.y = pos.y + yAxis.y;
+	vertexY.z = pos.z + yAxis.z;
+
+	//아래쪽 꼭지점 정점
+	vertexDownY.x = pos.x - yAxis.x;
+	vertexDownY.y = pos.y - yAxis.y;
+	vertexDownY.z = pos.z - yAxis.z;
+
+	//오른쪽부터 시계방향 순서로 저장
+	result[0].Pos = floorRight;
+	result[1].Pos = floorBack;
+	result[2].Pos = floorLeft;
+	result[3].Pos = floorFront;
+	result[4].Pos = vertexY;
+	result[5].Pos = vertexDownY;
+	result[6].Pos = pos;
+
+}
+
+void BoneRenderer::InitIndices(std::vector<UINT>& indices)
+{
+	//뼈 하나당 정점이 7개 이므로
+	UINT boneSize = vertices.size() / 7;
+
+
+	//뼈 하나당 
+	for (int i = 0; i < boneSize; ++i)
+	{
+		UINT firstIdx = i * 7;
+		int parentIdx = m_Animator.lock()->boneDatas.m_parentIndices[i];
+		UINT nextVertex = parentIdx * 7;
+
+		//정오면체의 아랫면
+		indices.push_back(firstIdx + FLOORRIGHT);
+		indices.push_back(firstIdx + FLOORBACK);
+		indices.push_back(firstIdx + FLOORFRONT);
+		indices.push_back(firstIdx + FLOORBACK);
+		indices.push_back(firstIdx + FLOORLEFT);
+		indices.push_back(firstIdx + FLOORFRONT);
+
+		//정오면체의 위쪽옆면 4개
+		indices.push_back(firstIdx + FLOORRIGHT);
+		indices.push_back(firstIdx + UPY);
+		indices.push_back(firstIdx + FLOORFRONT);
+
+		indices.push_back(firstIdx + FLOORRIGHT);
+		indices.push_back(firstIdx + FLOORBACK);
+		indices.push_back(firstIdx + UPY);
+
+		indices.push_back(firstIdx + FLOORBACK);
+		indices.push_back(firstIdx + FLOORLEFT);
+		indices.push_back(firstIdx + UPY);
+
+		indices.push_back(firstIdx + FLOORLEFT);
+		indices.push_back(firstIdx + FLOORFRONT);
+		indices.push_back(firstIdx + UPY);
+
+		//정오면체의 아래쪽옆면 4개
+		indices.push_back(firstIdx + FLOORRIGHT);
+		indices.push_back(firstIdx + FLOORFRONT);
+		indices.push_back(firstIdx + DOWNY);
+
+		indices.push_back(firstIdx + FLOORBACK);
+		indices.push_back(firstIdx + FLOORRIGHT);
+		indices.push_back(firstIdx + DOWNY);
+
+		indices.push_back(firstIdx + FLOORLEFT);
+		indices.push_back(firstIdx + FLOORBACK);
+		indices.push_back(firstIdx + DOWNY);
+
+		indices.push_back(firstIdx + FLOORFRONT);
+		indices.push_back(firstIdx + FLOORLEFT);
+		indices.push_back(firstIdx + DOWNY);
+
+		//부모에서 자식 Bone으로 연결하는 인덱스
+		if (nextVertex < vertices.size() && nextVertex >=0)
+		{
+			indices.push_back(nextVertex + FLOORRIGHT);
+			indices.push_back(firstIdx + POS);
+			indices.push_back(nextVertex + FLOORBACK);
+			
+			indices.push_back(nextVertex + FLOORBACK);
+			indices.push_back(firstIdx + POS);
+			indices.push_back(nextVertex + FLOORLEFT);
+
+			indices.push_back(nextVertex + FLOORLEFT);
+			indices.push_back(firstIdx + POS);
+			indices.push_back(nextVertex + FLOORFRONT);
+
+			indices.push_back(nextVertex + FLOORFRONT);
+			indices.push_back(firstIdx + POS);
+			indices.push_back(nextVertex + FLOORRIGHT);
+		}
+	}
+
+}
+
+void BoneRenderer::InitVertices()
+{
+	std::shared_ptr<Animator>& animator = m_Animator.lock();
+	if (!animator)
+		return;
+	vertices.resize(animator->boneDatas.toRoots.size() * CNTPERVERTEX);
+}
+
+void BoneRenderer::UpdateVB()
+{
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	m_texMgr.m_context->Map(mesh->GetVB(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+
+	Vertex::Basic32* dataView = reinterpret_cast<Vertex::Basic32*>(mappedData.pData);
+
+	for (int i = 0; i < vertices.size(); ++i)
+	{
+		dataView[i].Pos = vertices[i].Pos;
+	}
+	m_texMgr.m_context->Unmap(mesh->GetVB(), 0);
+}
+
+void BoneRenderer::Update()
+{
+	static XMVECTOR origin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	static XMVECTOR xAxis = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	static XMVECTOR yAxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	static XMVECTOR zAxis = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+	std::shared_ptr<Animator>& animator = m_Animator.lock();
+	if (!animator)
+		return;
+	std::vector<XMFLOAT4X4> toRoots = animator->boneDatas.toRoots;
+	UINT boneSize = toRoots.size();
+	std::vector<Vertex::Basic32> result(7);
+
+	//기저벡터와 원점을 Root공간에서의 좌표계로 변환함
+	XMFLOAT3 resultOrg, resultXaxis, resultYaxis, resultZaxis;
+	for (UINT i = 0; i < boneSize; ++i)
+	{
+		XMMATRIX root = XMLoadFloat4x4(&toRoots[i]);
+		XMStoreFloat3(&resultOrg, XMVector4Transform(origin, root));
+		XMStoreFloat3(&resultXaxis, XMVector4Transform(xAxis, root));
+		XMStoreFloat3(&resultYaxis, XMVector4Transform(yAxis, root));
+		XMStoreFloat3(&resultZaxis, XMVector4Transform(zAxis, root));
+
+		CreateBoneShape(result, resultOrg, resultXaxis, resultYaxis, resultZaxis);
+
+		vertices[i * 7] = result[0];
+		vertices[i * 7 + 1] = result[1];
+		vertices[i * 7 + 2] = result[2];
+		vertices[i * 7 + 3] = result[3];
+		vertices[i * 7 + 4] = result[4];
+		vertices[i * 7 + 5] = result[5];
+		vertices[i * 7 + 6] = result[6];
+	}
+	//정점버퍼의 위치정보 수정
+	UpdateVB();
+}
+
+void BoneRenderer::SetVB(ID3D11DeviceContext * context)
+{
+	UINT stride[1] = { sizeof(Vertex::Basic32) };
+	UINT offset[1] = { 0 };
+	ID3D11Buffer* vb = mesh->GetVB();
+	context->IASetVertexBuffers(0, 1, &vb, stride, offset);
+}
+
+void BoneRenderer::SetMesh()
+{
+	if (mesh != nullptr)
+		delete mesh;
+	//bone 구조에 대한 Mesh 생성
+	Mesh* tempMesh = new Mesh("BoneRendererMesh");
+	InitVertices();
+	InitIndices(tempMesh->indices);
+	tempMesh->InitWritableVB<MyVertex::BasicVertex>(m_texMgr.md3dDevice, vertices.size());
+	tempMesh->InitIB(m_texMgr.md3dDevice);
+	tempMesh->InitSingleSubset(vertices);
+
+	Renderer::SetMesh(tempMesh);
+	Renderer::MapsInit();
+}

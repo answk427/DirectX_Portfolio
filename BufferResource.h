@@ -1,8 +1,24 @@
 #pragma once
 #include <d3dUtil.h>
 
+
 namespace MyVertex
 {
+	//정점버퍼, 인덱스버퍼를 1개씩 사용할 경우
+	//(버퍼 하나에 여러 메쉬의 정점,인덱스를 몰아넣는 것)
+	class Subset
+	{
+	public:
+		UINT VertexCount;
+		UINT VertexStart;
+		UINT IndexCount;
+		UINT IndexStart;
+		UINT materialNum;
+
+		Subset() : VertexCount(0), VertexStart(0),
+			IndexCount(0), IndexStart(0), materialNum(0) {}
+	};
+
 	struct PosColorVertex
 	{
 		PosColorVertex(float x, float y, float z) : pos(x, y, z), color(0.0f, 1.0f, 0.0f, 1.0f) {}
@@ -41,8 +57,23 @@ namespace MyVertex
 	//뼈가 있는 모델에 사용, 다른 버퍼슬롯에 넣을것.
 	struct SkinnedData
 	{
+		SkinnedData() :weight(0.0f, 0.0f, 0.0f), boneIndices{ -1, -1, -1,-1 } {}
+		SkinnedData(const std::vector<float>& weights, const std::vector<int>& indices) : SkinnedData()
+		{
+			for (int i = 0; i < weights.size(); ++i)
+			{
+				if (i == 0)
+					weight.x = weights[i];
+				else if (i == 1)
+					weight.y = weights[i];
+				else if (i == 2)
+					weight.z = weights[i];
+				
+				boneIndices[i] = indices[i];
+			}
+		}
 		XMFLOAT3 weight; //뼈에대한 가중치, 마지막 가중치는 1에서 빼서 구함
-		BYTE boneIndices[4]; //최대 4개의 뼈에 영향을 받음
+		int boneIndices[4]; //최대 4개의 뼈에 영향을 받음
 	};
 }
 

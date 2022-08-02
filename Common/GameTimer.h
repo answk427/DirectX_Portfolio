@@ -7,9 +7,11 @@
 
 class GameTimer
 {
-public:
-	GameTimer();
-
+private:
+	GameTimer(); //인스턴스로만 생성할 수 있도록 함
+public:	
+	static GameTimer& Instance();
+	
 	float TotalTime()const;  // in seconds
 	float DeltaTime()const; // in seconds
 

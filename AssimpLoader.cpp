@@ -5,6 +5,7 @@
 void AssimpLoader::InitScene(const std::string& fileName)
 {
 	m_pScene = aiImportFile(fileName.c_str(),
+		aiProcessPreset_TargetRealtime_Quality |
 		aiProcess_GenBoundingBoxes | //BoundingBox 계산?
 
 		aiProcess_CalcTangentSpace | //탄젠트공간 좌표축 계산 tangent, bitangent
@@ -42,6 +43,7 @@ void AssimpLoader::InitScene(const std::string& fileName)
 		currentFileName = fileName;
 		m_assimpBones.clear();
 		m_animations.clear();
+		boneHierarchy.Init();
 		if (root != nullptr)
 		{
 			delete root;
@@ -66,14 +68,19 @@ bool AssimpLoader::LoadData()
 		return false;
 
 	NodeTravel();
-	
+	boneHierarchy.InitBones(root, m_assimpBones);
+	boneHierarchy.SortBones();
 	if (m_pScene->HasAnimations())
 	{
 		for (int i = 0; i < m_pScene->mNumAnimations; ++i)
 		{
-			LoadAnimation(m_pScene->mAnimations[i]);
+			LoadAnimation(m_pScene->mAnimations[i]); 
 		}
 	}
+	for(auto& animation : m_animations)
+		boneHierarchy.InitAnimation(animation.second);
+	
+	boneHierarchy.ConvertSkinnedVertex(root);
 	
 	return true;
 }
@@ -81,7 +88,7 @@ bool AssimpLoader::LoadData()
 
 GeneralMaterial AssimpLoader::SetMaterial(int matNumOfMesh)
 {
-
+	
 	aiMaterial* aiMat = m_pScene->mMaterials[matNumOfMesh];
 	GeneralMaterial tempMaterial;
 
@@ -137,15 +144,18 @@ GeneralMaterial AssimpLoader::SetMaterial(int matNumOfMesh)
 
 void AssimpLoader::LoadAnimation(const aiAnimation * animation)
 {
+	USES_CONVERSION;
+	
 	m_animations[animation->mName.C_Str()] = AssimpAnimation();
 	
 	AssimpAnimation& anim = m_animations[animation->mName.C_Str()];
 
 	anim.ticksPerSecond = animation->mTicksPerSecond;
-	anim.duration = animation->mDuration;
+	//anim.duration = animation->mDuration;
+	anim.duration = animation->mDuration / anim.ticksPerSecond;
 	
 	//channelName = boneName = nodeName
-	std::string channelName;
+	boneName channelName;
 	AssimpAnimationFrame* currBone;
 	aiNodeAnim* nodeAnim;
 	
@@ -155,11 +165,11 @@ void AssimpLoader::LoadAnimation(const aiAnimation * animation)
 	for (int i = 0; i < animation->mNumChannels; ++i)
 	{
 		nodeAnim= animation->mChannels[i];
-		channelName = nodeAnim->mNodeName.C_Str();
+		channelName = A2W(nodeAnim->mNodeName.C_Str());
 		
 		if (anim.bones.find(channelName) == anim.bones.end())
 		{
-			const auto&[it, success] = anim.bones.insert({ channelName, AssimpAnimationFrame() });
+			const auto&[it, success] = anim.bones.insert({ channelName, AssimpAnimationFrame(channelName) });
 			currBone = &(it->second);
 		}
 		else
@@ -168,13 +178,19 @@ void AssimpLoader::LoadAnimation(const aiAnimation * animation)
 		for (int j = 0; j < nodeAnim->mNumPositionKeys; ++j)
 		{
 			currKeyPos = &nodeAnim->mPositionKeys[j];
+			currBone->positionKey.push_back({ currKeyPos->mTime / anim.ticksPerSecond, currKeyPos->mValue.x, currKeyPos->mValue.y, currKeyPos->mValue.z });
+		}
+		for (int j = 0; j < nodeAnim->mNumRotationKeys; ++j)
+		{
 			currKeyRot = &nodeAnim->mRotationKeys[j];
+			currBone->quaternionKey.push_back({ currKeyRot->mTime / anim.ticksPerSecond, currKeyRot->mValue.x, currKeyRot->mValue.y, currKeyRot->mValue.z, currKeyRot->mValue.w });
+
+		}
+		for (int j = 0; j < nodeAnim->mNumScalingKeys; ++j)
+		{
 			currKeyScale = &nodeAnim->mScalingKeys[j];
-						
-			currBone->positionKey.push_back({ currKeyPos->mTime, currKeyPos->mValue.x, currKeyPos->mValue.y, currKeyPos->mValue.z });
-			currBone->quaternionKey.push_back({ currKeyRot->mTime, currKeyRot->mValue.x, currKeyRot->mValue.y, currKeyRot->mValue.z, currKeyRot->mValue.w });
-			currBone->scalingKey.push_back({ currKeyScale->mTime, currKeyScale->mValue.x, currKeyScale->mValue.y, currKeyScale->mValue.z });
-		}		
+			currBone->scalingKey.push_back({ currKeyScale->mTime / anim.ticksPerSecond, currKeyScale->mValue.x, currKeyScale->mValue.y, currKeyScale->mValue.z });
+		}
 	}
 	
 	
@@ -235,7 +251,7 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 {
 	USES_CONVERSION;
 
-	Subset tempSubset;
+	MyVertex::Subset tempSubset;
 	//material인덱스 
 	tempSubset.materialNum = mesh->mMaterialIndex;
 
@@ -270,26 +286,53 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 	{
 		aiBone* currBone;
 		AssimpSkinnedVertex* currSkinnedVertex;
+		std::wstring nodeName;
+		
+		
+		std::vector<std::wstring> tempBoneNames;
 		for (int i = 0; i < mesh->mNumBones; ++i)
 		{			
 			currBone = mesh->mBones[i];
-			if (currBone->mWeights->mVertexId >= assimpMesh.skinnedVertices.size() ||
-				currBone->mWeights->mWeight <= 0)
-				continue;
-			currSkinnedVertex = &assimpMesh.skinnedVertices[currBone->mWeights->mVertexId];
 			
-			//vertexId번째 가중치 정보 추가
-			currSkinnedVertex->weights.push_back(currBone->mWeights->mWeight);
-			
-			
-			//가중치와 연관된 뼈(노드)의 이름 추가
-			std::wstring nodeName = A2W(currBone->mName.C_Str());
-			currSkinnedVertex->nodeName.push_back(nodeName);
-						
-				
+			//뼈의 이름을 wstring으로 변환
+			{nodeName = A2W(currBone->mName.C_Str()); }
+			tempBoneNames.push_back(nodeName);
+
 			//bone 정보에 offset변환행렬 추가
 			m_assimpBones[nodeName].offsetMat = ConvertMatrix(currBone->mOffsetMatrix);
+			m_assimpBones[nodeName].toParentMat = ConvertMatrix(currBone->mNode->mTransformation);
+			//m_assimpBones[nodeName].toParentMat = ConvertMatrix(currBone->mArmature->mTransformation);
+			
+			int currVertexId;
+			bool repeated;
+			for (int j = 0; j < currBone->mNumWeights; ++j)
+			{
+				currVertexId = tempSubset.VertexStart +
+					currBone->mWeights[j].mVertexId;
+								
+				currSkinnedVertex = &assimpMesh.skinnedVertices[currVertexId];
+				
+				repeated = false;
+				//중복으로 들어가는 경우 방지
+				for (auto& vertexNodeName : currSkinnedVertex->nodeName)
+				{
+					if (vertexNodeName == nodeName)
+					{
+						repeated = true;
+						break;
+					}
+				}
+				if (repeated)
+					continue;
+				
+				//vertexId번째 가중치 정보 추가
+				currSkinnedVertex->weights.push_back(currBone->mWeights[j].mWeight);
+				
+				//가중치와 연관된 뼈(노드)의 이름 추가
+				currSkinnedVertex->nodeName.push_back(nodeName);			
+			}
 		}
+		boneNames.push_back(tempBoneNames);
 	}
 
 	if (assimpMesh.m_AABB_MaxMin == nullptr)
@@ -382,8 +425,171 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 
 inline XMFLOAT4X4 AssimpLoader::ConvertMatrix(aiMatrix4x4 & mat)
 {
-	return XMFLOAT4X4(mat.a1,mat.a2,mat.a3,mat.a4,
+	/*return XMFLOAT4X4(mat.a1,mat.a2,mat.a3,mat.a4,
 		mat.b1,mat.b2,mat.b3,mat.b4,
 		mat.c1,mat.c2,mat.c3,mat.c4,
-		mat.d1,mat.d2,mat.d3,mat.d4);
+		mat.d1,mat.d2,mat.d3,mat.d4);*/
+	XMFLOAT4X4 resultMat;
+	XMStoreFloat4x4(&resultMat,
+		XMMatrixTranspose(XMMATRIX(
+			mat.a1, mat.a2, mat.a3, mat.a4,
+		mat.b1, mat.b2, mat.b3, mat.b4,
+		mat.c1, mat.c2, mat.c3, mat.c4,
+		mat.d1, mat.d2, mat.d3, mat.d4)));
+	return resultMat;
 }
+
+void FinalHierarchy::Init()
+{
+	m_boneNameIdx.clear();
+	parents.clear();
+	offsets.clear();
+}
+
+void FinalHierarchy::InitBones(NodeStruct * root, std::map<boneName, AssimpBone>& assimpBones)
+{
+	if (root == nullptr)
+		return;
+	if (assimpBones.empty())
+		return;
+	
+	//for (auto& animation : animations)
+	//{
+	//	for (auto& bone : animation.second.bones)
+	//	{
+	//		//새로운 뼈 이름일 때 데이터 추가
+	//		if (assimpBones.find(bone.first) == tempBones.end())
+	//		{
+	//			//뼈 정보에는 없이 Animation에만 있던 정보라 단위행렬로 초기화
+	//			tempBones[bone.first] = { identity };
+	//		}
+	//	}
+	//}
+
+	parents.reserve(assimpBones.size());
+	offsets.reserve(assimpBones.size());
+	boneParentMatrix.reserve(assimpBones.size());
+	
+	std::queue<std::pair<int, NodeStruct*>> q;
+	int parentIdx = -1;
+	auto it = assimpBones.find(root->GetName());
+	
+	//root 노드가 뼈인 경우? 있을지 모르겠음
+	if (it != assimpBones.end())
+	{ 
+		parentIdx = 0;
+		m_boneNameIdx[it->first] = 0;
+		parents.push_back(-1); //0번 루트의 부모는 -1
+		offsets.push_back(it->second.offsetMat);
+	}
+		
+	q.push({ parentIdx, root });
+
+	NodeStruct* currNode;
+	//모든 노드를 bfs로 탐색하면서 BoneName과 일치하는 노드가 있으면 뼈 정보 추가
+	while (!q.empty())
+	{
+		parentIdx = q.front().first;
+		currNode = q.front().second;
+		q.pop();
+
+		it = assimpBones.find(currNode->GetName());
+		//현재 노드가 Bone Name과 일치할 때
+		if (it != assimpBones.end())
+		{
+			parents.push_back(parentIdx);
+			offsets.push_back(it->second.offsetMat);
+			boneParentMatrix.push_back(it->second.toParentMat);
+			
+			m_boneNameIdx[it->first] = parents.size() - 1;
+			parentIdx = parents.size() - 1;
+		}
+
+		for (auto& child : currNode->childs)
+		{
+			q.push({ parentIdx, &child });
+		}
+	}
+
+}
+
+void FinalHierarchy::SortBones()
+{
+	for (auto bone : m_boneNameIdx)
+	{
+		m_sortBones.insert({ bone.second, bone.first });
+	}
+}
+
+void FinalHierarchy::InitAnimation(AssimpAnimation & animation)
+{
+	animation.HierarchyInit(m_boneNameIdx.size());
+
+	for (auto& bone : animation.bones)
+	{
+		auto it = m_boneNameIdx.find(bone.first);
+		if (it != m_boneNameIdx.end()) 
+		{
+			//노드네임을 index로 변환해서 계층구조 순서로 애니메이션을 vector에 재배치
+			animation.HierarchyAniClip[it->second] = bone.second;
+		}
+	}
+}
+
+void FinalHierarchy::ConvertSkinnedVertex(AssimpSkinnedVertex & vertex)
+{
+	vertex.nodeIndices.clear();
+	for (auto& nodeName : vertex.nodeName)
+	{
+		auto it = m_boneNameIdx.find(nodeName);
+		if (it != m_boneNameIdx.end())
+		{
+			//boneName을 계층구조에서의 인덱스로 변환
+			vertex.nodeIndices.push_back(it->second);
+		}
+	}
+}
+
+void FinalHierarchy::ConvertSkinnedVertex(NodeStruct * root)
+{
+	if (root == nullptr)
+		return;
+
+	int sumCheck = 0;
+	std::vector<int> checkIndices;
+	if (root->assimpMesh != nullptr)
+	{
+		for (int i=0; i< root->assimpMesh->skinnedVertices.size(); ++i)
+		{
+			auto& skinnedVertex = root->assimpMesh->skinnedVertices[i];
+			ConvertSkinnedVertex(skinnedVertex);
+			float result = 0.0f;
+			for (auto weight : skinnedVertex.weights)
+			{
+				result += weight;	
+			}
+			if (result < 0.95f)
+			{
+				result = 0.0f;
+				++sumCheck;
+				checkIndices.push_back(i);
+			}
+		}
+		++sumCheck;
+	}
+
+	
+	for (auto& child : root->childs)
+	{
+		ConvertSkinnedVertex(&child);
+	}
+
+}
+
+void AssimpAnimationFrame::resizeKeys(int size)
+{
+	positionKey.resize(size, { 0.0,0.0f,0.0f,0.0f });
+	quaternionKey.resize(size, { 0.0,0.0f,0.0f,0.0f,1.0f });
+	scalingKey.resize(size, { 0.0,0.0f,0.0f,0.0f });
+}
+

@@ -5,6 +5,8 @@
 #include "LightHelper.h"
 #include "SkinnedData.h"
 #include "Vertex.h"
+#include "BufferResource.h"
+#include "AnimationClass.h"
 
 struct M3dMaterial
 {
@@ -30,6 +32,16 @@ public:
 		std::vector<M3dMaterial>& mats,
 		SkinnedData& skinInfo);
 
+	void convertVertex(const std::vector<Vertex::PosNormalTexTanSkinned>& vertexSrc,
+		std::vector<MyVertex::BasicVertex>& vertexDest,
+		std::vector<MyVertex::SkinnedData>& skinDest,
+		const std::vector<USHORT>& indexSrc,
+		std::vector<UINT>& indexDest,
+		std::vector<MyVertex::Subset>& subsetDest,
+		const std::vector<MeshGeometry::Subset>& subsetSrc,
+		SkinnedData& skinSrc,
+		Animator& destAnimator
+		);
 private:
 	void ReadMaterials(std::ifstream& fin, UINT numMaterials, std::vector<M3dMaterial>& mats);
 	void ReadSubsetTable(std::ifstream& fin, UINT numSubsets, std::vector<MeshGeometry::Subset>& subsets);
@@ -40,6 +52,8 @@ private:
 	void ReadBoneHierarchy(std::ifstream& fin, UINT numBones, std::vector<int>& boneIndexToParentIndex);
 	void ReadAnimationClips(std::ifstream& fin, UINT numBones, UINT numAnimationClips, std::map<std::string, AnimationClip>& animations);
 	void ReadBoneKeyframes(std::ifstream& fin, UINT numBones, BoneAnimation& boneAnimation);
+	
+	
 };
 
 

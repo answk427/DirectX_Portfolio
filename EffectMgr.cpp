@@ -18,7 +18,7 @@ EffectMgr::~EffectMgr()
 	for (auto it = myEffect.begin(); it != myEffect.end(); ++it)
 		delete it->second;
 
-	myEffect.clear();	
+	myEffect.clear();
 }
 
 Effect* EffectMgr::GetEffect(const std::wstring& shaderName)

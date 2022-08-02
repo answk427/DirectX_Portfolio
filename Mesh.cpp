@@ -1,8 +1,6 @@
 #include "Mesh.h"
 
 
-
-
 void Mesh::SetVertices(std::vector<MyVertex::BasicVertex>& vertexSrc)
 {
 	//vertices를 빈 벡터로 만듬
@@ -19,10 +17,10 @@ void Mesh::SetIndices(std::vector<UINT>& indexSrc)
 	indices.swap(indexSrc);
 }
 
-void Mesh::SetSubsets(std::vector<Subset>& subsetSrc)
+void Mesh::SetSubsets(std::vector<MyVertex::Subset>& subsetSrc)
 {
 	//subsets를 빈 벡터로 만듬
-	std::vector<Subset>().swap(subsets);
+	std::vector<MyVertex::Subset>().swap(subsets);
 	//매개변수 벡터와 교환
 	subsets.swap(subsetSrc);
 
@@ -30,7 +28,10 @@ void Mesh::SetSubsets(std::vector<Subset>& subsetSrc)
 	if (textureNames != nullptr)
 		delete[] textureNames;
 	textureNames = new std::vector<std::wstring>[subsets.size()];
-	textureArrays.assign(subsets.size(), 0);
+	//textureArrays.assign(subsets.size(), 0);
+	textureArrays.push_back(nullptr);
+
+	textureArrays.resize(subsets.size());
 }
 
 void Mesh::CreateTextureArrayResourceView(ID3D11Device* device, ID3D11DeviceContext* context)
@@ -78,6 +79,22 @@ void Mesh::SetInstanceVB(ID3D11DeviceContext * context)
 	context->IASetVertexBuffers(0, 2, vbs, stride, offset);
 }
 
+void Mesh::SetSkinnedVB(ID3D11DeviceContext * context)
+{
+	UINT stride[2] = { sizeof(vertices[0]), sizeof(MyVertex::SkinnedData) };
+	UINT offset[2] = { 0 ,0 };
+	ID3D11Buffer* vbs[2] = { mVB, m_skinnedDataBuffer};
+	context->IASetVertexBuffers(0, 2, vbs, stride, offset);
+}
+
+void Mesh::SetInstanceSkinnedVB(ID3D11DeviceContext * context)
+{
+	UINT stride[3] = { sizeof(vertices[0]), sizeof(MyVertex::SkinnedData), sizeof(InstancingData) };
+	UINT offset[3] = { 0 ,0, 0 };
+	ID3D11Buffer* vbs[3] = { mVB, m_skinnedDataBuffer, m_InstanceBuffer };
+	context->IASetVertexBuffers(0, 3, vbs, stride, offset);
+}
+
 void Mesh::SetIB(ID3D11DeviceContext * context)
 {
 	context->IASetIndexBuffer(mIB, DXGI_FORMAT_R32_UINT, 0);
@@ -119,10 +136,11 @@ Mesh::~Mesh()
 	if (textureNames != nullptr)
 		delete[] textureNames;
 	ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(m_InstanceBuffer);
+	ReleaseCOM(m_skinnedDataBuffer);
 }
-Mesh::Mesh(const Mesh & other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCount(0), id(other.id), m_instancing(0)
+Mesh::Mesh(const Mesh & other) : Mesh(other.id)
 {
-	std::vector<Subset> tempSubsets = other.subsets;
+	std::vector<MyVertex::Subset> tempSubsets = other.subsets;
 	SetSubsets(tempSubsets);
 	vertices = other.vertices;
 	InstancingDatas = other.InstancingDatas;
@@ -136,9 +154,9 @@ Mesh::Mesh(const Mesh & other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBuff
 	SetInstanceBufferSize(MAX_INSTSANCING);
 }
 
-Mesh::Mesh(Mesh && other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCount(0), id(other.id), m_instancing(0)
+Mesh::Mesh(Mesh && other) : Mesh(other.id)
 {
-	std::vector<Subset> tempSubsets = other.subsets;
+	std::vector<MyVertex::Subset> tempSubsets = other.subsets;
 	SetSubsets(tempSubsets);
 
 	vertices.swap(other.vertices);
@@ -155,7 +173,7 @@ Mesh::Mesh(Mesh && other) : mVB(0), mIB(0), m_InstanceBuffer(0), vertexBufferCou
 
 Mesh & Mesh::operator=(const Mesh & other)
 {
-	std::vector<Subset> tempSubsets = other.subsets;
+	std::vector<MyVertex::Subset> tempSubsets = other.subsets;
 	SetSubsets(tempSubsets);
 
 	vertices = other.vertices;
@@ -172,7 +190,7 @@ Mesh & Mesh::operator=(const Mesh & other)
 	return *this;
 }
 
-void Mesh::Init(ID3D11Device * device, std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc, std::vector<Subset>& subsetSrc)
+void Mesh::Init(ID3D11Device * device, std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc, std::vector<MyVertex::Subset>& subsetSrc)
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);
@@ -180,7 +198,7 @@ void Mesh::Init(ID3D11Device * device, std::vector<MyVertex::BasicVertex>& verte
 	InitBuffers(device);
 }
 
-void Mesh::Init(std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc, std::vector<Subset>& subsetSrc)
+void Mesh::Init(std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>& indexSrc, std::vector<MyVertex::Subset>& subsetSrc)
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);
@@ -191,7 +209,7 @@ void Mesh::Init(std::vector<MyVertex::BasicVertex>& vertexSrc, std::vector<UINT>
 {
 	SetVertices(vertexSrc);
 	SetIndices(indexSrc);
-	std::vector<Subset> subsets(1);
+	std::vector<MyVertex::Subset> subsets(1);
 	subsets[0].VertexCount = vertices.size();
 	subsets[0].IndexCount = indices.size();
 	subsets[0].VertexStart = 0;
@@ -333,5 +351,6 @@ void Mesh::InitInstanceBuffer(ID3D11Device * device)
 	//매핑후 instancingData의 내용을 직접 쓸것이므로 subresource는 null
 	HR(device->CreateBuffer(&desc, 0, &m_InstanceBuffer));
 }
+
 
 

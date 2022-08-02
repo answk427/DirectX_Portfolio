@@ -10,6 +10,8 @@
 #include "ComponentMgr.h"
 #include "EffectMgr.h"
 
+#include <SkinnedData.h>
+
 
 
 #define PRETEXTID "GAMEOBJECTID_"
@@ -27,7 +29,7 @@ private:
 	ComponentMgr* componentMgr;
 private:
 	AssimpLoader assimpLoader;
-	std::map<std::wstring, AssimpBone>* m_assimpBones;
+	FinalHierarchy* m_finalHierarchy;
 	std::map<std::string, AssimpAnimation>* m_assimpAnimations;
 	std::vector<AssimpSkinnedVertex>* m_assimpSkinnedVertices; //»À, °¡ÁßÄ¡
 private:
@@ -64,4 +66,7 @@ public:
 	Component* AddComponent(GameObject* obj, ComponentType compType);
 
 	bool DeleteObject(gameObjectID& id);
+
+	void ConvertAnimation(const std::string& clipName, const AssimpAnimation& assimpAni, MyAnimationClip& dest);
+	void ConvertOldAnimation(const std::string& clipName, const AssimpAnimation& assimpAni, AnimationClip& dest);
 };

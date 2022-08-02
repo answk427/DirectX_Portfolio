@@ -13,6 +13,9 @@
 #include "NodeBoneDatas.h"
 #include "AssimpLoader.h"
 
+#include <SkinnedData.h>
+
+
 class TesselationData
 {
 public:
@@ -46,7 +49,7 @@ protected:
 	std::vector<Effect*> effects;
 	TextureMgr& m_texMgr;
 	EffectMgr& m_effectMgr;
-	std::weak_ptr<NodeBoneDatas> m_bones;
+	std::weak_ptr<NodeHierarchy> m_bones;
 	
 protected:
 	UINT m_technique_type;
@@ -140,7 +143,7 @@ public:
 	
 	//반드시 SetMesh가 SetMaterial보다 먼저 실행되야 하기 때문에 함수를 합침.
 	//기본 메테리얼로 생성
-	void SetMesh(Mesh* meshSrc);
+	virtual void SetMesh(Mesh* meshSrc);
 	//메테리얼 데이터를 로드해서 생성
 	void SetMesh(Mesh* meshSrc, std::vector<GeneralMaterial>& materialSrc);
 	Mesh* GetMesh() { return mesh; }
@@ -151,10 +154,10 @@ public:
 	
 	Transform* GetTransform() { return transform; }
 	const Transform* GetTransform() const { return transform; }
-	void GetWorldMatrix(XMMATRIX& dest) { m_bones.lock()->GetFinalTransform(dest, ownerObjectId); }
+	virtual void GetWorldMatrix(XMMATRIX& dest) { m_bones.lock()->GetFinalTransform(dest, ownerObjectId); }
 	void SetTransform(Transform* tr) { transform = tr; }
 	
-	void SetNodeHierarchy(std::weak_ptr<NodeBoneDatas> bones) { m_bones = bones; }
+	virtual void SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones) { m_bones = bones; }
 	
 
 	void SetTechniqueType(int orTechnique) { m_technique_type = orTechnique; }
@@ -171,6 +174,51 @@ protected:
 	void SetMaterials(std::vector<GeneralMaterial>& materialSrc);
 };
 
+class BoneRenderer : public Renderer
+{
+public:
+#define CNTPERVERTEX 7
+#define CRYSTALSIZE 2
+
+	enum PositionNum
+	{
+		FLOORRIGHT = 0,
+		FLOORBACK = 1,
+		FLOORLEFT=2,
+		FLOORFRONT=3,
+		UPY=4,
+		DOWNY=5,
+		POS=6
+	};
+public:
+	BoneRenderer(const std::string &id, const gameObjectID &ownerObj,
+		const std::weak_ptr<Animator> animator);
+
+	~BoneRenderer()
+	{
+		if (mesh != nullptr)
+			delete mesh;
+	}
+private:
+	//뼈 1개당 정점 7개(정오면체 두개 붙인 수정모양)
+	std::vector<Vertex::Basic32> vertices;
+	std::weak_ptr<Animator> m_Animator;
+	
+
+	void CreateBoneShape(std::vector<Vertex::Basic32>& result, XMFLOAT3& pos, XMFLOAT3& xAxis,
+		XMFLOAT3& yAxis, XMFLOAT3& zAxis);
+	void InitIndices(std::vector<UINT>& indices);
+	void InitVertices();
+	void UpdateVB();
+public:
+	virtual void Update() override;
+	virtual void SetVB(ID3D11DeviceContext* context);
+	void SetMesh();
+	
+
+
+};
+
 
 class MeshRenderer : public Renderer
 {
@@ -181,15 +229,36 @@ public:
 
 class SkinnedMeshRenderer : public Renderer
 {
+private:
+	GameTimer& m_timer;
+	bool boneDrawMode = false;
 public:
 	SkinnedMeshRenderer(const std::string& id, const gameObjectID& ownerId);
+	SkinnedMeshRenderer(const SkinnedMeshRenderer& other);
+public:
+	std::shared_ptr<Animator> m_animator;
+	std::unique_ptr<SkinnedData> testAnimator;
+	std::unique_ptr<BoneRenderer> mBoneRenderer;
+	std::vector<MyVertex::SkinnedData> m_skinnedDatas;
 	SkinnedMeshRenderer& operator=(const SkinnedMeshRenderer& skinRenderer);
-
-public:
-	std::vector<AssimpSkinnedVertex> m_skinnedDatas;
 	
 public:
-	void StoreSkinnedDatas(const std::vector<AssimpSkinnedVertex>& skinnedData);
-	void StoreSkinnedDatas(std::vector<AssimpSkinnedVertex>&& skinnedData);
+	virtual void Draw(ID3D11DeviceContext* context, Camera* camera);
+	virtual void GetWorldMatrix(XMMATRIX& dest) { m_bones.lock()->GetRootWorldTransform(dest); }
+	virtual void Update() override;
 	
+public:
+	void InitSkinnedVB();
+	void ToggleDrawMode() { boneDrawMode = !boneDrawMode; }
+	void SetBoneDatas(BoneDatas& boneDatas)
+	{
+		m_animator->SetBoneDatas(boneDatas);
+		mBoneRenderer->SetMesh();
+	}
+	virtual void SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones) 
+	{
+		m_bones = bones; 
+		mBoneRenderer->SetNodeHierarchy(bones);
+	}
 };
+

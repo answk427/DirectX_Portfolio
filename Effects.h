@@ -33,7 +33,7 @@ enum TechniqueType
 	Skinned = 32,
 	Instancing = 64,
 	Shadowed = 128,
-	Tesselation = 256
+	Tesselation = 256,
 };
 
 #pragma region Effect
@@ -49,8 +49,8 @@ public:
 	virtual void InitBlendState(ID3D11Device* device);
 	//device로부터 inputlayout을 생성하는 함수
 	virtual void InitInputLayout(ID3D11Device* device) = 0;
-
 	virtual void InitInstancingInputLayout(ID3D11Device* device) = 0;
+	virtual void InitSpecialInputLayout(ID3D11Device* device) {}
 	
 	//Frame별로 필요한 세팅을 수행하는 함수
 	virtual void PerFrameSet(DirectionalLight* directL,
@@ -78,7 +78,7 @@ public:
 		ID3D11ShaderResourceView* specularMap) = 0;
 	//텍스쳐배열 세팅
 	virtual void SetMapArray(ID3D11ShaderResourceView* arr) = 0;
-
+	virtual void SetBoneTransforms(const XMFLOAT4X4* M, int cnt) {}
 	
 private:
 	//복사를 못하게 함
@@ -91,7 +91,6 @@ protected:
 	ID3D11InputLayout* m_instancing_inputLayout;
 	ID3D11BlendState* m_blendState;
 
-	
 
 public:
 	void SetBlendState(ID3D11BlendState* blendState) { m_blendState = blendState; }
@@ -175,6 +174,10 @@ public:
 	
 	//인스턴싱 technique
 	ID3DX11EffectTechnique* Light3TexInstancingTech;
+	//스키닝 techinique
+	ID3DX11EffectTechnique* Light3TexSkinningTech;
+	//인스턴싱 스키닝 technique
+	ID3DX11EffectTechnique* Light3TexSkinningInstancingTech;
 
 	ID3DX11EffectTechnique* Light0TexAlphaClipTech;
 	ID3DX11EffectTechnique* Light1TexAlphaClipTech;
@@ -246,6 +249,9 @@ public:
 	ID3DX11EffectVariable* spotLights;
 	ID3DX11EffectScalarVariable* spotLightSize;
 
+	ID3DX11EffectMatrixVariable* BoneTransforms;
+	
+
 
 
 	ID3DX11EffectVariable* Mat;
@@ -256,6 +262,9 @@ public:
 	ID3DX11EffectShaderResourceVariable* CubeMap;
 	ID3DX11EffectShaderResourceVariable* DiffuseMapArray;
 
+	ID3D11InputLayout* m_skinning_inputLayout;
+	ID3D11InputLayout* m_skinning_instancing_inputLayout;
+
 	// Effect을(를) 통해 상속됨
 	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
 	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX& world) override;
@@ -263,12 +272,16 @@ public:
 		ID3D11ShaderResourceView* normalMap,
 		ID3D11ShaderResourceView* specularMap);
 	virtual void SetMapArray(ID3D11ShaderResourceView* arr);
+	virtual void SetBoneTransforms(const XMFLOAT4X4* M, int cnt); 
 
 	// Effect을(를) 통해 상속됨
 	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
-		
+
 	// Effect을(를) 통해 상속됨
 	virtual void InitInputLayout(ID3D11Device * device) override;
+	virtual void InitSpecialInputLayout(ID3D11Device* device) override;
+	virtual bool IASetting(ID3D11DeviceContext* context, UINT techType);
+	
 
 	// Effect을(를) 통해 상속됨
 	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
@@ -448,6 +461,14 @@ public:
 
 	// Effect을(를) 통해 상속됨
 	virtual void InitInputLayout(ID3D11Device * device) override;
+
+
+	// Effect을(를) 통해 상속됨
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+
+	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
+
+	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
 
 };
 #pragma endregion

@@ -137,7 +137,7 @@ void SkinnedData::Set(std::vector<int>& boneHierarchy,
 	mAnimations    = animations;
 }
  
-void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePos,  std::vector<XMFLOAT4X4>& finalTransforms)const
+void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePos,  std::vector<XMFLOAT4X4>& finalTransforms) const
 {
 	UINT numBones = mBoneOffsets.size();
 
@@ -145,6 +145,8 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, float timePos,
 
 	// Interpolate all the bones of this clip at the given time instance.
 	auto clip = mAnimations.find(clipName);
+	if (clip == mAnimations.end())
+		return;
 	clip->second.Interpolate(timePos, toParentTransforms);
 
 	//

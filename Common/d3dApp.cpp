@@ -43,7 +43,8 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	mSwapChain(0),
 	mDepthStencilBuffer(0),
 	mRenderTargetView(0),
-	mDepthStencilView(0)
+	mDepthStencilView(0),
+	mTimer(GameTimer::Instance())
 {
 	ZeroMemory(&mScreenViewport, sizeof(D3D11_VIEWPORT));
 

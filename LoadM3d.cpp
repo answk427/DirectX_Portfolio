@@ -76,6 +76,8 @@ bool M3DLoader::LoadM3d(const std::string& filename,
 		skinInfo.Set(boneIndexToParentIndex, boneOffsets, animations);
 
 	    return true;
+
+
 	}
     return false;
 }
@@ -258,3 +260,115 @@ void M3DLoader::ReadBoneKeyframes(std::ifstream& fin, UINT numBones, BoneAnimati
 
     fin >> ignore; // }
 }
+
+//bool M3DLoader::LoadM3d(const std::string& filename,
+//	std::vector<Vertex::PosNormalTexTanSkinned>& vertices,
+//	std::vector<USHORT>& indices,
+//	std::vector<MeshGeometry::Subset>& subsets,
+//	std::vector<M3dMaterial>& mats,
+//	SkinnedData& skinInfo)
+//mCharacterModel = new SkinnedModel(md3dDevice, mTexMgr, "Models\\soldier.m3d", L"Textures\\");
+void M3DLoader::convertVertex(const std::vector<Vertex::PosNormalTexTanSkinned>& vertexSrc,
+	std::vector<MyVertex::BasicVertex>& vertexDest,
+	std::vector<MyVertex::SkinnedData>& skinDest,
+	const std::vector<USHORT>& indexSrc,
+	std::vector<UINT>& indexDest,
+	std::vector<MyVertex::Subset>& subsetDest,
+	const std::vector<MeshGeometry::Subset>& subsetSrc,
+	SkinnedData& skinSrc,
+	Animator& destAnimator)
+{
+	//뼈구조 적재
+	BoneDatas boneDatas;
+	std::vector<int> destHierarchy;
+	std::vector<XMFLOAT4X4> destOffsets;
+	destHierarchy = skinSrc.GetHierarchy();
+	destOffsets = skinSrc.GetOffsets();
+	boneDatas.SetParents(destHierarchy);
+	boneDatas.SetOffsets(destOffsets);
+
+	destAnimator.SetBoneDatas(boneDatas);
+	
+	//애니메이션 적재
+	auto& animations = skinSrc.GetAnimations();
+	
+	for (auto& elem : animations)
+	{
+		MyAnimationClip destClip;
+		auto& clip = elem.second;
+		destClip.m_clipName = elem.first;
+		destClip.duration = clip.GetClipEndTime();
+		
+		
+		auto& boneAnimations = clip.BoneAnimations;
+		
+		for (auto& bone : boneAnimations)
+		{
+			BoneFrames boneFrames(L"LoadM3d");
+			std::vector<frameKey3> scales;
+			std::vector<frameKey4> quaternions;
+			std::vector<frameKey3> translates;
+
+			for (auto& frame : bone.Keyframes)
+			{
+				frameKey3 scale;
+				frameKey4 quaternion;
+				frameKey3 translation;
+				scale.first = frame.TimePos;
+				scale.second = frame.Scale;
+				quaternion.first = frame.TimePos;
+				quaternion.second = frame.RotationQuat;
+				translation.first = frame.TimePos;
+				translation.second = frame.Translation;
+				scales.push_back(scale);
+				quaternions.push_back(quaternion);
+				translates.push_back(translation);
+			}
+			boneFrames.InitScales(scales);
+			boneFrames.InitQuaternions(quaternions);
+			boneFrames.InitTranslations(translates);
+
+			//Animation클립에 하나의 뼈 추가
+			destClip.m_bones.push_back(boneFrames);
+		}
+
+		destAnimator.LoadAnimationClip(destClip);
+		destAnimator.currClipName = destClip.m_clipName;
+	}
+	
+
+	//skinnedVertex 적재
+	vertexDest.resize(vertexSrc.size());
+	skinDest.resize(vertexSrc.size());
+		
+
+	for (int i = 0; i < vertexSrc.size(); ++i)
+	{
+		vertexDest[i].pos = vertexSrc[i].Pos;
+		vertexDest[i].tex = vertexSrc[i].Tex;
+		vertexDest[i].normal = vertexSrc[i].Normal;
+		for (int j = 0; j < 4; ++j)
+		{
+			skinDest[i].boneIndices[j] = vertexSrc[i].BoneIndices[j];
+		}
+		skinDest[i].weight = vertexSrc[i].Weights;	
+	}
+
+	//인덱스 적재
+	indexDest.resize(indexSrc.size());
+	for (int i = 0; i < indexSrc.size(); ++i)
+	{
+		indexDest[i] = indexSrc[i];
+	}
+
+	subsetDest.resize(subsetSrc.size());
+	for (int i = 0; i < subsetSrc.size(); ++i)
+	{
+		subsetDest[i].IndexCount = subsetSrc[i].FaceCount*3;
+		subsetDest[i].IndexStart = subsetSrc[i].FaceStart*3;
+		subsetDest[i].VertexStart= subsetSrc[i].VertexStart;
+		subsetDest[i].VertexCount= subsetSrc[i].VertexCount;
+		subsetDest[i].materialNum= subsetSrc[i].Id;
+	}
+}
+

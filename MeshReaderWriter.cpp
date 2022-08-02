@@ -33,7 +33,7 @@ bool MeshReaderWriter::ReadFile(const FR_fileName& fileName, char* dest)
 	//임시 인덱스배열
 	std::vector<UINT> indexSrc(indexSize);
 	//임시 Subset 배열
-	std::vector<Subset> subsetSrc(subsetSize);
+	std::vector<MyVertex::Subset> subsetSrc(subsetSize);
 
 	//정점 구조체 읽기
 	inFile.read((char*)(&vertexSrc[0]), sizeof(MyVertex::BasicVertex)*vertexSize);
@@ -42,7 +42,7 @@ bool MeshReaderWriter::ReadFile(const FR_fileName& fileName, char* dest)
 	inFile.read((char*)(&indexSrc[0]), sizeof(UINT) * indexSize);
 
 	//Subset 읽기
-	inFile.read((char*)(&subsetSrc[0]), sizeof(Subset) * subsetSize);
+	inFile.read((char*)(&subsetSrc[0]), sizeof(MyVertex::Subset) * subsetSize);
 
 	meshData->Init(vertexSrc, indexSrc, subsetSrc);
 	
@@ -82,7 +82,7 @@ bool MeshReaderWriter::WriteFile(void * data)
 	//인덱스배열
 	const std::vector<UINT> indexSrc = meshData->GetIndices();
 	//Subset 배열
-	const std::vector<Subset> subsetSrc = meshData->GetSubsets();
+	const std::vector<MyVertex::Subset> subsetSrc = meshData->GetSubsets();
 	
 	
 
@@ -118,7 +118,7 @@ bool MeshReaderWriter::WriteFile(void * data)
 	//Subset 쓰기
 	for (int i = 0; i < subsetSize; i++)
 	{
-		outFile.write((const char*)(&subsetSrc[i]), sizeof(Subset));
+		outFile.write((const char*)(&subsetSrc[i]), sizeof(MyVertex::Subset));
 	}
 
 	outFile.close();
