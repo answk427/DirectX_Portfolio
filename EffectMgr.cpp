@@ -10,7 +10,7 @@ EffectMgr & EffectMgr::Instance()
 
 EffectMgr::EffectMgr()
 {
-	
+	fileDirectory = std::wstring(fs::current_path().c_str()) + L"/";
 }
 
 EffectMgr::~EffectMgr()
@@ -21,11 +21,11 @@ EffectMgr::~EffectMgr()
 	myEffect.clear();
 }
 
-Effect* EffectMgr::GetEffect(const std::wstring& shaderName)
+Effect* EffectMgr::GetEffect(const std::wstring& shadername)
 {
-	if (shaderName.empty())
+	std::wstring shaderName = fileDirectory + shadername;
+	if (shadername.empty())
 		return nullptr;
-
 	//생성된 effect를 찾을 수 없을 때
 	else if (myEffect.find(shaderName) == myEffect.end())
 	{
@@ -72,8 +72,10 @@ Effect * EffectMgr::CreateEffect(const std::wstring& shaderName, EffectType type
 	return effect;
 }
 
-void EffectMgr::SetType(const std::wstring & shaderName, EffectType type)
+void EffectMgr::SetType(const std::wstring & shadername, EffectType type)
 {
+	std::wstring shaderName = fileDirectory + shadername;
+
 	if (effectTypes.find(shaderName) != effectTypes.end())
 		return;
 	else

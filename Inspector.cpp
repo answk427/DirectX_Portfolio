@@ -340,7 +340,7 @@ void Inspector::AddTab(HWND hTab)
 			break;
 		case ComponentType::SKINNEDMESHRENDERER:
 			tie.pszText = L"SkinnedMeshRenderer";
-			//¹Ì±¸Çö
+			dialogs.push_back(&m_MeshRendererDialog);
 			break;
 		case ComponentType::TERRAIN:
 			tie.pszText = L"Terrain";

@@ -27,6 +27,7 @@ void AddComponentCommand::Execute()
 	//tab컨트롤을 업데이트 하기위해 inspector 클래스에 메시지를 보냄.
 	WPARAM wparam = (UINT)hInspector;
 	SendMessage(*hInspector, WM_COMMAND, wparam, 0);
+	
 }
 
 void AddComponentCommand::Undo()

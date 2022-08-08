@@ -34,7 +34,7 @@ public:
 
 //AnimationManager에 저장용 클래스
 class MyAnimationClip
-{
+{	
 public:
 	double duration;
 	std::string m_clipName; //animation clip의 이름
@@ -66,8 +66,10 @@ struct BoneDatas
 
 class Animator
 {
+private:
+	bool AnimatedPerFrame;
 public:
-	Animator() : timePos(0.0f)  {}
+	Animator() : timePos(0.0f), AnimatedPerFrame(0)  {}
 	Animator(const Animator& other);
 	Animator& operator=(const Animator& other);
 	//애니메이터에서 참조하는 뼈 구조
@@ -84,8 +86,13 @@ public:
 public:
 	void SetBoneDatas(BoneDatas& data) { boneDatas = data; }
 	void LoadAnimationClip(MyAnimationClip& clip);
-	void Update(float deltaTime);
+	void SetAnimatedFlag(bool animated) { AnimatedPerFrame = animated; }
+	bool DeleteAnimation(const std::string& clipName);
+	bool ChangeClip(const std::string& clipName);
+
 
 public:
-	void ChangeClip(const std::string& clipName);
+	void Update(float deltaTime);
+
+	
 };

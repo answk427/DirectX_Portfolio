@@ -9,6 +9,39 @@ std::wstring ConvertWSTR(const std::string& str)
 	return wstr;
 }
 
+std::string ConvertSTR(const std::wstring & wstr)
+{
+	USES_CONVERSION;
+	LPCSTR str;
+	str = W2A(wstr.c_str());
+
+	return str;
+}
+
+std::wstring ExtractTitle(const std::wstring & FilePath)
+{
+	//diffuse, normal map들 이름 설정
+	int rFirstdot = FilePath.rfind(L'.');
+	if (rFirstdot != -1)
+	{
+		int rFirstSlash = FilePath.rfind(L'\\', rFirstdot);
+		return FilePath.substr(rFirstSlash + 1);
+	}
+	return std::wstring(L"NULL");
+}
+
+std::string ExtractTitle(const std::string & FilePath)
+{
+	//diffuse, normal map들 이름 설정
+	int rFirstdot = FilePath.rfind(L'.');
+	if (rFirstdot != -1)
+	{
+		int rFirstSlash = FilePath.rfind(L'\\', rFirstdot);
+		return FilePath.substr(rFirstSlash + 1);
+	}
+	return std::string("NULL");
+}
+
 XNA::AxisAlignedBox ConvertAABBtypeToCenter(const XMFLOAT3& MaxVector, const XMFLOAT3& MinVector)
 {
 	//AABB의 중점계산

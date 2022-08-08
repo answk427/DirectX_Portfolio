@@ -72,6 +72,7 @@ bool AssimpLoader::LoadData()
 	boneHierarchy.SortBones();
 	if (m_pScene->HasAnimations())
 	{
+		m_animations.clear();
 		for (int i = 0; i < m_pScene->mNumAnimations; ++i)
 		{
 			LoadAnimation(m_pScene->mAnimations[i]); 
@@ -145,10 +146,10 @@ GeneralMaterial AssimpLoader::SetMaterial(int matNumOfMesh)
 void AssimpLoader::LoadAnimation(const aiAnimation * animation)
 {
 	USES_CONVERSION;
+	std::string title = ExtractTitle(currentFileName) + "_" + animation->mName.C_Str();
+	m_animations[title] = AssimpAnimation();
 	
-	m_animations[animation->mName.C_Str()] = AssimpAnimation();
-	
-	AssimpAnimation& anim = m_animations[animation->mName.C_Str()];
+	AssimpAnimation& anim = m_animations[title];
 
 	anim.ticksPerSecond = animation->mTicksPerSecond;
 	//anim.duration = animation->mDuration;
@@ -444,6 +445,7 @@ void FinalHierarchy::Init()
 	m_boneNameIdx.clear();
 	parents.clear();
 	offsets.clear();
+	boneParentMatrix.clear();
 }
 
 void FinalHierarchy::InitBones(NodeStruct * root, std::map<boneName, AssimpBone>& assimpBones)
@@ -555,8 +557,6 @@ void FinalHierarchy::ConvertSkinnedVertex(NodeStruct * root)
 	if (root == nullptr)
 		return;
 
-	int sumCheck = 0;
-	std::vector<int> checkIndices;
 	if (root->assimpMesh != nullptr)
 	{
 		for (int i=0; i< root->assimpMesh->skinnedVertices.size(); ++i)
@@ -568,14 +568,8 @@ void FinalHierarchy::ConvertSkinnedVertex(NodeStruct * root)
 			{
 				result += weight;	
 			}
-			if (result < 0.95f)
-			{
-				result = 0.0f;
-				++sumCheck;
-				checkIndices.push_back(i);
-			}
+			
 		}
-		++sumCheck;
 	}
 
 	

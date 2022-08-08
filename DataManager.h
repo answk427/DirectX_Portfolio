@@ -24,4 +24,4 @@ public:
 	//File의 경로, 이름을 얻어오는 함수
 	bool FileOpen(HWND hwnd, WCHAR fileTitle[], WCHAR filePath[], std::vector<LPCWSTR> extension);
 };
-  
+ 

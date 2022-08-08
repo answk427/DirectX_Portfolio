@@ -43,8 +43,28 @@ INT_PTR CALLBACK MeshRendererProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 	}
 
 	case WM_COMMAND:
+	{
+		//animationList 다이얼로그에서 선택 후 실행
+		if (wParam == 0104775)
+		{
+			//lParam에 선택된 클립의 이름이 있음
+			std::string* clipName = (std::string*)lParam;
+			AnimationManager& aniManager = AnimationManager::Instance();
+			Renderer* renderer = g_MeshRendererDialog->GetRenderer();
+			if (renderer)
+			{
+				SkinnedMeshRenderer* skinRenderer = dynamic_cast<SkinnedMeshRenderer*>(renderer);
+				if (skinRenderer)
+				{
+					skinRenderer->LoadAnimationClip(*aniManager.GetAnimation(*clipName));
+					g_MeshRendererDialog->InitAnimationList(hDlg);
+				}
+			}
+				
+		}
 		g_MeshRendererDialog->MenuProc(hDlg, wParam);
 		return (INT_PTR)TRUE;
+	}
 	case WM_KEYDOWN:
 
 		return (INT_PTR)TRUE;
@@ -75,13 +95,23 @@ bool MeshRendererDialog::OpenDialog()
 
 bool MeshRendererDialog::SetObject(GameObject* obj)
 {
-	MeshRenderer* meshRenderer = dynamic_cast<MeshRenderer*>(obj->GetComponent(ComponentType::MESHRENDERER));
-	m_MeshRenderer = meshRenderer;
-	if (!m_MeshRenderer)
-		return false;
+	Component* meshRenderer = obj->GetComponent(ComponentType::MESHRENDERER);
+	Component* skinnedMeshRenderer = obj->GetComponent(ComponentType::SKINNEDMESHRENDERER);
+	Renderer* renderer = nullptr;
 
-	materials = &(m_MeshRenderer->GetMaterials());
-	mesh = m_MeshRenderer->GetMesh();
+	if (meshRenderer != nullptr)
+		renderer = static_cast<Renderer*>(meshRenderer);
+	else if (skinnedMeshRenderer != nullptr)
+		renderer = static_cast<Renderer*>(skinnedMeshRenderer);
+	else
+		return false;
+	
+	
+	m_Renderer = renderer;
+	
+
+	materials = &(m_Renderer->GetMaterials());
+	mesh = m_Renderer->GetMesh();
 	m_aabb = mesh->GetAABB_MaxMin();
 
 	return true;
@@ -89,7 +119,7 @@ bool MeshRendererDialog::SetObject(GameObject* obj)
 
 bool MeshRendererDialog::UpdateView()
 {	
-	if (m_MeshRenderer == nullptr)
+	if (m_Renderer == nullptr)
 		return false;
 	
 	
@@ -139,7 +169,7 @@ void MeshRendererDialog::Init(HWND hDlg)
 {
 	m_hDlg = hDlg;
 	m_hList = GetDlgItem(hDlg, MATERIALLIST);
-	
+	HWND m_hAniList = GetDlgItem(hDlg, ANIMATIONLIST);
 	
 	//material 텍스쳐행렬 수정 에디트박스 핸들
 	m_hDiffuseTileX = GetDlgItem(hDlg, DIFFUSETILEX_EDIT);
@@ -181,23 +211,56 @@ void MeshRendererDialog::Init(HWND hDlg)
 		SendMessage(m_hList, LB_SETITEMDATA, pos, (LPARAM)&elem);
 	}
 
+	//Animation List Box 목록 초기화
+	InitAnimationList(hDlg);
+	
+	
+
 
 
 	//blending 체크박스 설정
 	HWND h_blendingCheck = GetDlgItem(m_hDlg, BLENDINGCHECK);
-	Button_SetCheck(h_blendingCheck, m_MeshRenderer->GetBlending());
+	Button_SetCheck(h_blendingCheck, m_Renderer->GetBlending());
 
 	//instancing 체크박스 설정
 	HWND h_instancingCheck = GetDlgItem(m_hDlg, INSTANCINGCHECK);
-	Button_SetCheck(h_instancingCheck, m_MeshRenderer->GetInstancing());
+	Button_SetCheck(h_instancingCheck, m_Renderer->GetInstancing());
 
 	//Static 체크박스 설정
 	HWND h_staticCheck = GetDlgItem(m_hDlg, STATICCHECK);
-	Button_SetCheck(h_staticCheck, m_MeshRenderer->GetStaticObject());
+	Button_SetCheck(h_staticCheck, m_Renderer->GetStaticObject());
 
-	Button_SetCheck(GetDlgItem(m_hDlg, BUILDSHADOWMAPCHECK), m_MeshRenderer->isShadowBaking);
-	Button_SetCheck(GetDlgItem(m_hDlg, RECEIVESHADOWCHECK), m_MeshRenderer->isShadowed);
+	Button_SetCheck(GetDlgItem(m_hDlg, BUILDSHADOWMAPCHECK), m_Renderer->isShadowBaking);
+	Button_SetCheck(GetDlgItem(m_hDlg, RECEIVESHADOWCHECK), m_Renderer->isShadowed);
+
+	if(m_Renderer->componentType == ComponentType::SKINNEDMESHRENDERER)
+		Button_SetCheck(GetDlgItem(m_hDlg, BONERENDERCHECK), ((SkinnedMeshRenderer*)m_Renderer)->boneDrawMode);
 }
+
+void MeshRendererDialog::InitAnimationList(HWND hDlg)
+{
+	//Animation List Box 목록 초기화
+	HWND m_hAniList = GetDlgItem(hDlg, ANIMATIONLIST);
+	/*int listCount = ListBox_GetCount(m_hAniList);
+	for (int i = 0; i < listCount; i++)
+		ListBox_DeleteString(m_hAniList, i);*/
+	ListBox_ResetContent(m_hAniList);
+
+	
+
+	if (m_Renderer->componentType == ComponentType::SKINNEDMESHRENDERER)
+	{
+		SkinnedMeshRenderer* skinRenderer = dynamic_cast<SkinnedMeshRenderer*>(m_Renderer);
+		std::vector<std::string> clipNames = skinRenderer->GetAnimationClipNames();
+		for (auto& name : clipNames)
+		{
+			SendMessage(m_hAniList, LB_ADDSTRING, 0,
+				(LPARAM)ConvertWSTR(name).c_str());
+		}
+	}
+}
+
+
 
 bool MeshRendererDialog::printMap()
 {
@@ -227,7 +290,7 @@ bool MeshRendererDialog::printMap()
 }
 
 
-MeshRendererDialog::MeshRendererDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_MeshRenderer(0)
+MeshRendererDialog::MeshRendererDialog(HINSTANCE hInstance) : ComponentDialog(hInstance), m_Renderer(0)
 															,mesh(0), materials(0)
 {
 	assert(!instantiated);
@@ -286,10 +349,10 @@ void MeshRendererDialog::MapEditBoxUpdate(int materialIdx)
 	controlMap[BOUNDMINZ_EDIT] = handleFloatPair{ m_hBoundMinZ, aabbMinZ };
 
 	//color 에디트박스 위와 동일
-	float *r = &m_MeshRenderer->m_color.x;
-	float *g = &m_MeshRenderer->m_color.y;
-	float *b = &m_MeshRenderer->m_color.z;
-	float *a = &m_MeshRenderer->m_color.w;
+	float *r = &m_Renderer->m_color.x;
+	float *g = &m_Renderer->m_color.y;
+	float *b = &m_Renderer->m_color.z;
+	float *a = &m_Renderer->m_color.w;
 
 	controlMap[COLOR_R_EDIT] = handleFloatPair{ m_hColorR, r };
 	controlMap[COLOR_G_EDIT] = handleFloatPair{ m_hColorG, g };
@@ -343,6 +406,12 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 	
 	//LOWORD(wParam) = 컨트롤 식별
 	int wmId = LOWORD(wParam);
+
+	//AnimationListDialog에서 온 메세지인지 검사
+	if (wParam == m_hAniListDialog)
+	{
+		int a = 10;
+	}
 	
 	//editbox가 수정되었을 때
 	for (auto& elem : controlMap)
@@ -388,7 +457,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 				int idx = ListBox_GetCurSel(m_hList);
 				if (idx == -1)
 					break;
-				CommandQueue::AddCommand(new SetMaterialMap(m_MeshRenderer, idx, filePath, mapType::Type_DiffuseMap));
+				CommandQueue::AddCommand(new SetMaterialMap(m_Renderer, idx, filePath, mapType::Type_DiffuseMap));
 				
 				wcscpy(mapNames[0].first, filePath);
 				wcscpy(mapNames[0].second, fileTitle);
@@ -412,7 +481,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 				int idx = ListBox_GetCurSel(m_hList);
 				if (idx == -1)
 					break;
-				CommandQueue::AddCommand(new SetMaterialMap(m_MeshRenderer,idx, filePath, mapType::Type_NormalMap));
+				CommandQueue::AddCommand(new SetMaterialMap(m_Renderer,idx, filePath, mapType::Type_NormalMap));
 
 				wcscpy(mapNames[1].first, filePath);
 				wcscpy(mapNames[1].second, fileTitle);
@@ -422,6 +491,28 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 			}
 			else
 				MessageBox(m_hDlg, L"NormalMap Load Fail!", L"NormalMap Load", MB_OK);
+		}
+		break;
+	case ANIMATIONADDBUTTON:
+		if (HIWORD(wParam) == BN_CLICKED)
+		{
+			std::string clipName;
+			AnimationListDialog aniList(m_hInstance, m_hDlg,clipName, m_hAniListDialog);
+		}
+		break;
+	case ANIMATIONDELETEBUTTON:
+		if (HIWORD(wParam) == BN_CLICKED)
+		{
+			int idx = ListBox_GetCurSel(GetDlgItem(hDlg, ANIMATIONLIST));
+			WCHAR itemName[256];
+			ListBox_GetText(GetDlgItem(hDlg, ANIMATIONLIST), idx, itemName);
+			//현재 Renderer가 가지고 있는 클립 삭제
+			dynamic_cast<SkinnedMeshRenderer*>(m_Renderer)->
+				DeleteAnimationClip(ConvertSTR(itemName));
+			
+			//Animation List Box 목록 초기화
+			HWND m_hAniList = GetDlgItem(hDlg, ANIMATIONLIST);
+			InitAnimationList(hDlg);
 		}
 		break;
 	case  MATERIALLIST:
@@ -434,17 +525,29 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 			MapEditBoxUpdate(idx);
 		}
 		break;
+	case ANIMATIONLIST:
+		//animationList 항목이 선택됐을 때
+		if (HIWORD(wParam) == LBN_SELCHANGE)
+		{
+			int idx = ListBox_GetCurSel(GetDlgItem(hDlg, ANIMATIONLIST));
+			WCHAR itemName[256];
+			ListBox_GetText(GetDlgItem(hDlg, ANIMATIONLIST), idx, itemName);
+			//현재 Renderer가 가지고 있는 클립 삭제
+			dynamic_cast<SkinnedMeshRenderer*>(m_Renderer)->
+				SetAnimationClip(ConvertSTR(itemName));
+		}
+		break;
 	case BLENDINGCHECK:
 		//blending check박스 체크
 		switch (Button_GetCheck(GetDlgItem(m_hDlg, BLENDINGCHECK)))
 		{
 		case BST_CHECKED:
-			if(m_MeshRenderer!=nullptr)
-				m_MeshRenderer->SetBlending(true);
+			if(m_Renderer!=nullptr)
+				m_Renderer->SetBlending(true);
 			break;
 		case BST_UNCHECKED:
-			if (m_MeshRenderer != nullptr)
-				m_MeshRenderer->SetBlending(false);
+			if (m_Renderer != nullptr)
+				m_Renderer->SetBlending(false);
 			break;
 		}
 		break;
@@ -453,12 +556,12 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		switch (Button_GetCheck(GetDlgItem(m_hDlg, INSTANCINGCHECK)))
 		{
 			case BST_CHECKED:
-				if (m_MeshRenderer != nullptr)
-					m_MeshRenderer->SetInstancing(true);
+				if (m_Renderer != nullptr)
+					m_Renderer->SetInstancing(true);
 				break;
 			case BST_UNCHECKED:
-				if (m_MeshRenderer != nullptr)
-					m_MeshRenderer->SetInstancing(false);
+				if (m_Renderer != nullptr)
+					m_Renderer->SetInstancing(false);
 				break;
 		}
 		break;
@@ -467,12 +570,12 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		switch (Button_GetCheck(GetDlgItem(m_hDlg, STATICCHECK)))
 		{
 		case BST_CHECKED:
-			if (m_MeshRenderer != nullptr)
-				CommandQueue::AddCommand(new OctreeAddObject(m_MeshRenderer));
+			if (m_Renderer != nullptr)
+				CommandQueue::AddCommand(new OctreeAddObject(m_Renderer));
 			break;
 		case BST_UNCHECKED:
-			if (m_MeshRenderer != nullptr)
-				CommandQueue::AddCommand(new OctreePopObject(m_MeshRenderer));
+			if (m_Renderer != nullptr)
+				CommandQueue::AddCommand(new OctreePopObject(m_Renderer));
 			break;
 		}
 		break;
@@ -480,12 +583,12 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		switch (Button_GetCheck(GetDlgItem(hDlg, BUILDSHADOWMAPCHECK)))
 		{
 		case BST_CHECKED:
-			if (m_MeshRenderer != nullptr)
-				m_MeshRenderer->isShadowBaking = true;
+			if (m_Renderer != nullptr)
+				m_Renderer->isShadowBaking = true;
 			break;
 		case BST_UNCHECKED:
-			if (m_MeshRenderer != nullptr)
-				m_MeshRenderer->isShadowBaking = false;
+			if (m_Renderer != nullptr)
+				m_Renderer->isShadowBaking = false;
 			break;
 		}
 		break;
@@ -493,16 +596,30 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		switch (Button_GetCheck(GetDlgItem(hDlg, RECEIVESHADOWCHECK)))
 		{
 		case BST_CHECKED:
-			if (m_MeshRenderer != nullptr)
-				m_MeshRenderer->isShadowed = true;
+			if (m_Renderer != nullptr)
+				m_Renderer->isShadowed = true;
 			break;
 		case BST_UNCHECKED:
-			if (m_MeshRenderer != nullptr)
-				m_MeshRenderer->isShadowed = false;
+			if (m_Renderer != nullptr)
+				m_Renderer->isShadowed = false;
+			break;
+		}
+		break;
+	case BONERENDERCHECK:
+		switch (Button_GetCheck(GetDlgItem(hDlg, BONERENDERCHECK)))
+		{
+		case BST_CHECKED:
+			if (m_Renderer != nullptr && m_Renderer->componentType == ComponentType::SKINNEDMESHRENDERER)
+				((SkinnedMeshRenderer*)m_Renderer)->boneDrawMode = true;
+			break;
+		case BST_UNCHECKED:
+			if (m_Renderer != nullptr && m_Renderer->componentType == ComponentType::SKINNEDMESHRENDERER)
+				((SkinnedMeshRenderer*)m_Renderer)->boneDrawMode = false;
 			break;
 		}
 		break;
 	}
+
 }
 
 

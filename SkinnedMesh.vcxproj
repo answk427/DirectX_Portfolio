@@ -85,6 +85,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationClass.cpp" />
+    <ClCompile Include="AnimationListDialog.cpp" />
+    <ClCompile Include="AnimationManager.cpp" />
     <ClCompile Include="BasicModel.cpp" />
     <ClCompile Include="BlendStateClass.cpp" />
     <ClCompile Include="BoneRenderer.cpp" />
@@ -153,6 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationClass.h" />
+    <ClInclude Include="AnimationListDialog.h" />
+    <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="BasicModel.h" />
     <ClInclude Include="BlendStateClass.h" />
     <ClInclude Include="BoneRenderer.h" />

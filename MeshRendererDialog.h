@@ -7,6 +7,8 @@
 
 
 #include "ComponentDialog.h"
+#include "AnimationListDialog.h"
+
 #include "GameObject.h"
 #include "DialogStructureEX.h"
 #include "DialogSizeDefine.h"
@@ -16,6 +18,8 @@
 #include "OctreeCommand.h"
 
 
+
+
 #define TAB_MESHRENDERER IDD_DIALOG4
 
 #define DIFFUSEMAPCONTROL IDC_EDIT1
@@ -23,8 +27,11 @@
 
 #define DIFFUSEMAPBUTTON IDC_BUTTON1
 #define NORMALMAPBUTTON IDC_BUTTON3
+#define ANIMATIONADDBUTTON IDC_BUTTON2
+#define ANIMATIONDELETEBUTTON IDC_BUTTON8
 
 #define MATERIALLIST IDC_LIST6
+#define ANIMATIONLIST IDC_LIST7
 
 #define DIFFUSETILEX_EDIT IDC_EDIT3
 #define DIFFUSETILEY_EDIT IDC_EDIT4
@@ -53,7 +60,8 @@
 #define INSTANCINGCHECK IDC_CHECK2
 #define STATICCHECK IDC_CHECK3
 #define BUILDSHADOWMAPCHECK IDC_CHECK4
-#define RECEIVESHADOWCHECK IDC_CHECK5	
+#define RECEIVESHADOWCHECK IDC_CHECK5
+#define BONERENDERCHECK IDC_CHECK6
 
 
 
@@ -66,14 +74,16 @@ public:
 	
 public:
 	HWND m_hList; //list view 핸들
-	
+	int m_hAniListDialog; //Animation 목록상자 다이얼로그의 값
 public:
 	MeshRendererDialog(HINSTANCE hInstance);	
 	~MeshRendererDialog();
 public:
 	bool OpenDialog(HWND hwnd);
 	void Init(HWND hDlg);
+	void InitAnimationList(HWND hDlg);
 	bool printMap();
+	
 public:
 	AABB_MaxMin m_aabb;
 	
@@ -108,7 +118,7 @@ private:
 
 
 private:
-	MeshRenderer* m_MeshRenderer;
+	Renderer* m_Renderer;
 	std::vector<GeneralMaterial>* materials;
 	Mesh* mesh;
 	
@@ -139,6 +149,8 @@ public:
 
 	// ComponentDialog을(를) 통해 상속됨
 	virtual bool SetObject(GameObject * obj) override;
+
+	Renderer* GetRenderer() { return m_Renderer; }
 
 };
 

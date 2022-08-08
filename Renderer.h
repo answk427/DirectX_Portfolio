@@ -160,7 +160,8 @@ public:
 	virtual void SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones) { m_bones = bones; }
 	
 
-	void SetTechniqueType(int orTechnique) { m_technique_type = orTechnique; }
+	virtual void SetTechniqueType(int orTechnique) { m_technique_type = orTechnique; }
+	virtual UINT GetTechniqueType() { return m_technique_type; }
 
 	void SetStaticObject(bool setting) { m_static = setting; }
 	bool GetStaticObject() {return m_static;}
@@ -192,8 +193,8 @@ public:
 	};
 public:
 	BoneRenderer(const std::string &id, const gameObjectID &ownerObj,
-		const std::weak_ptr<Animator> animator);
-
+		std::weak_ptr<NodeHierarchy> nodes);
+	
 	~BoneRenderer()
 	{
 		if (mesh != nullptr)
@@ -202,7 +203,7 @@ public:
 private:
 	//뼈 1개당 정점 7개(정오면체 두개 붙인 수정모양)
 	std::vector<Vertex::Basic32> vertices;
-	std::weak_ptr<Animator> m_Animator;
+	//std::weak_ptr<Animator> m_Animator;
 	
 
 	void CreateBoneShape(std::vector<Vertex::Basic32>& result, XMFLOAT3& pos, XMFLOAT3& xAxis,
@@ -231,16 +232,21 @@ class SkinnedMeshRenderer : public Renderer
 {
 private:
 	GameTimer& m_timer;
+	BoneDatas tempBoneDatas;
+	//bonedata를 이미 읽었는지 확인
+	bool readBoneData;
+public:
 	bool boneDrawMode = false;
 public:
 	SkinnedMeshRenderer(const std::string& id, const gameObjectID& ownerId);
 	SkinnedMeshRenderer(const SkinnedMeshRenderer& other);
+	//SkinnedMeshRenderer(SkinnedMeshRenderer&& other);
+	SkinnedMeshRenderer& operator=(const SkinnedMeshRenderer& skinRenderer);
 public:
-	std::shared_ptr<Animator> m_animator;
-	std::unique_ptr<SkinnedData> testAnimator;
+	//std::shared_ptr<Animator> m_animator;
 	std::unique_ptr<BoneRenderer> mBoneRenderer;
 	std::vector<MyVertex::SkinnedData> m_skinnedDatas;
-	SkinnedMeshRenderer& operator=(const SkinnedMeshRenderer& skinRenderer);
+	
 	
 public:
 	virtual void Draw(ID3D11DeviceContext* context, Camera* camera);
@@ -248,17 +254,19 @@ public:
 	virtual void Update() override;
 	
 public:
+	void SetAnimationClip(const std::string& clipName);
+	void LoadAnimationClip(MyAnimationClip& clip);
+	void DeleteAnimationClip(const std::string& clipName);
 	void InitSkinnedVB();
 	void ToggleDrawMode() { boneDrawMode = !boneDrawMode; }
-	void SetBoneDatas(BoneDatas& boneDatas)
-	{
-		m_animator->SetBoneDatas(boneDatas);
-		mBoneRenderer->SetMesh();
-	}
-	virtual void SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones) 
-	{
-		m_bones = bones; 
-		mBoneRenderer->SetNodeHierarchy(bones);
-	}
+	std::vector<std::string> GetAnimationClipNames();
+	
+	void SetBoneDatas(BoneDatas& boneDatas);
+	
+	virtual void SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones);
+
+	virtual void SetTechniqueType(int orTechnique);
+	virtual UINT GetTechniqueType();
+	
 };
 

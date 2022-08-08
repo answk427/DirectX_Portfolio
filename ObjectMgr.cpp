@@ -84,7 +84,12 @@ GameObject* ObjectMgr::CreateObjectFromFile(const std::string& fileName)
 
 	NodeStruct* root = assimpLoader.getRoot();
 	m_finalHierarchy = assimpLoader.GetHierarchy();
+	
+	//로딩한 애니메이션 적재
+	AnimationManager& aniManager = AnimationManager::Instance();
 	m_assimpAnimations = &assimpLoader.getAssimpAnimations();
+	aniManager.LoadAnimation(*m_assimpAnimations);
+	
 	
 
 	if (root == nullptr)
@@ -181,37 +186,6 @@ bool ObjectMgr::DeleteObject(gameObjectID & id)
 	return true;
 }
 
-void ObjectMgr::ConvertAnimation(const std::string& clipName,const AssimpAnimation & assimpAni, MyAnimationClip & dest)
-{
-	dest.m_clipName = clipName;
-	dest.duration = assimpAni.duration;
-		
-	for (auto& frame : assimpAni.HierarchyAniClip)
-	{
-		dest.m_bones.push_back(BoneFrames(frame.m_boneName));
-		BoneFrames& boneFrames = dest.m_bones.back();
-		
-		std::vector<frameKey3> scaleKeys;
-		std::vector<frameKey4> quaternionKeys;
-		std::vector<frameKey3> translateKeys;
-
-		for (auto& position : frame.positionKey)
-		{
-			translateKeys.push_back({ position.time,position.float3Key });
-		}
-		for (auto& quaternion : frame.quaternionKey)
-		{
-			quaternionKeys.push_back({ quaternion.time, quaternion.quaternionKey });
-		}
-		for (auto& scale : frame.scalingKey)
-		{
-			scaleKeys.push_back({ scale.time, scale.float3Key });
-		}
-		boneFrames.InitScales(scaleKeys);
-		boneFrames.InitQuaternions(quaternionKeys);
-		boneFrames.InitTranslations(translateKeys);
-	}
-}
 
 void ObjectMgr::ConvertOldAnimation(const std::string & clipName, const AssimpAnimation & assimpAni, AnimationClip & dest)
 {
@@ -283,36 +257,18 @@ Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& n
 			comp->m_skinnedDatas.push_back({ weights,indices });
 		}
 		comp->InitSkinnedVB();
-
-		std::vector<int> aa;
-		for (int i = 0; i < comp->m_skinnedDatas.size(); ++i)
-		{			
-			float sum = comp->m_skinnedDatas[i].weight.x +
-				comp->m_skinnedDatas[i].weight.y +
-				comp->m_skinnedDatas[i].weight.z;
-			if (sum < 0.95f && comp->m_skinnedDatas[i].boneIndices[4] ==-1 &&
-				comp->m_skinnedDatas[i].boneIndices[3] !=-1)
-				aa.push_back(i);
-		}
-		aa.size();
-
-		std::map<std::string, AnimationClip> testAnimations;
-
+				
+		AnimationManager& aniManager = AnimationManager::Instance();
+		std::string clipName = "";
 		for (auto& clip : *m_assimpAnimations)
 		{
-			MyAnimationClip aniClip;
-			ConvertAnimation(clip.first, clip.second, aniClip);
-			comp->m_animator->LoadAnimationClip(aniClip);
-			comp->m_animator->currClipName = clip.first;
-
-
-			//animation test
-			AnimationClip oldClip;
-			//ConvertOldAnimation(clip.first, clip.second, oldClip);
-			testAnimations[clip.first] = oldClip;
+			MyAnimationClip* aniClip = 
+				aniManager.GetAnimation(clip.first);
+									
+			comp->LoadAnimationClip(*aniClip);
+			
 		}
-		comp->testAnimator->Set(m_finalHierarchy->parents,
-			m_finalHierarchy->offsets, testAnimations);
+		
 		renderer = comp;
 	}
 	return renderer;

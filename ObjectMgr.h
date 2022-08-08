@@ -9,7 +9,7 @@
 #include "MeshMgr.h"
 #include "ComponentMgr.h"
 #include "EffectMgr.h"
-
+#include "AnimationManager.h"
 #include <SkinnedData.h>
 
 
@@ -67,6 +67,5 @@ public:
 
 	bool DeleteObject(gameObjectID& id);
 
-	void ConvertAnimation(const std::string& clipName, const AssimpAnimation& assimpAni, MyAnimationClip& dest);
 	void ConvertOldAnimation(const std::string& clipName, const AssimpAnimation& assimpAni, AnimationClip& dest);
 };

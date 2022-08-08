@@ -2,6 +2,9 @@
 #include <unordered_map>
 #include "Effects.h"
 #include "Light.h"
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 enum EffectType
 {
@@ -14,6 +17,7 @@ enum EffectType
 class EffectMgr
 {
 private:
+	std::wstring fileDirectory;
 	EffectMgr(const EffectMgr& effect);
 	//EffectMgr& operator=(const EffectMgr& effect);
 private:
@@ -24,7 +28,7 @@ private:
 	//쉐이더 이름과 effect Type을 매핑
 	std::unordered_map<std::wstring, EffectType> effectTypes;
 
-	
+	Effect* CreateEffect(const std::wstring& shaderName, EffectType type);
 public:
 	static EffectMgr& Instance();
 	EffectMgr();
@@ -33,7 +37,7 @@ public:
 	void Init(ID3D11Device* device) { this->device = device; }
 
 	Effect* GetEffect(const std::wstring& shaderName);
-	Effect* CreateEffect(const std::wstring& shaderName, EffectType type);
+	
 	
 	void SetType(const std::wstring& shaderName, EffectType type);
 	void SetEffect(const std::wstring& shaderName, Effect* effect) { myEffect[shaderName] = effect; }

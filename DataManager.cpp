@@ -20,7 +20,7 @@ void DataManager::Init()
 
 bool DataManager::LoadEffectData()
 {
-	if (effectMgr.CreateEffect(L"FX/Basic.fxo", EffectType::BasicEffectType) == nullptr)
+	if (effectMgr.GetEffect(L"FX/Basic.fxo") == nullptr)
 		return false;
 	else
 		return true;

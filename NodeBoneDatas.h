@@ -4,14 +4,18 @@
 #include <map>
 #include "Transform.h"
 #include "AnimationClass.h"
+#include "Effects.h"
 
 class NodeHierarchy
 {
 public:
-	NodeHierarchy() : m_animator(std::make_unique<Animator>())
+	UINT mTechType;
+public:
+	NodeHierarchy() : m_animator(std::make_shared<Animator>()),
+		mTechType(TechniqueType::Light)
 		{}
 	
-	std::unique_ptr<Animator> m_animator;
+	std::shared_ptr<Animator> m_animator;
 
 	//node id¿Í index ¸ÅÇÎ
 	std::map<std::string, int> nodeIdIdx;

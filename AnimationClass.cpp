@@ -109,6 +109,10 @@ void Animator::LoadAnimationClip(MyAnimationClip & clip)
 
 void Animator::Update(float deltaTime)
 {
+	//여러 렌더러에서 공유하는 Animator일 경우 중복 업데이트 방지
+	if (AnimatedPerFrame)
+		return;
+
 	auto it = clips.find(currClipName);
 	if (it == clips.end())
 		return;
@@ -152,8 +156,8 @@ void Animator::Update(float deltaTime)
 		toRoot = XMMatrixMultiply(toParent, parentToRoot);
 		XMStoreFloat4x4(&boneDatas.toRoots[i], toRoot);
 	}
-
-
+		
+		
 	for (int i = 0; i < numBones; ++i)
 	{
 		offset = XMLoadFloat4x4(&boneDatas.offsets[i]);
@@ -161,16 +165,26 @@ void Animator::Update(float deltaTime)
 		
 		XMStoreFloat4x4(&boneDatas.m_finalTransforms[i], XMMatrixMultiply(offset,toRoot));
 	}
+
+	//이번 프레임에 업데이트 완료
+	AnimatedPerFrame = true;
 }
 
-void Animator::ChangeClip(const std::string & clipName)
+bool Animator::DeleteAnimation(const std::string & clipName)
+{
+	return clips.erase(clipName);
+}
+
+bool Animator::ChangeClip(const std::string & clipName)
 {
 	if (clips.find(clipName) != clips.end())
 	{
 		currClipName = clipName;
 		timePos = 0.0f;
+		return true;
 	}
-		
+	//찾는 클립이 없을 때
+	return false;
 }
 
 
@@ -216,8 +230,16 @@ bool compKey4(const frameKey4 & first, float compVal)
 
 void MyAnimationClip::Interpolate(float time, std::vector<XMFLOAT4X4>& toParents)
 {
-	for (int i = 0; i < m_bones.size(); ++i)
+	XMFLOAT4X4 identity;
+	XMStoreFloat4x4(&identity, XMMatrixIdentity());
+
+	for (int i = 0; i < toParents.size(); ++i)
 	{
+		if (i >= m_bones.size())
+		{
+			toParents[i] = identity;
+			continue;
+		}
 		m_bones[i].Interpolate(time, toParents[i]);
 	}
 }

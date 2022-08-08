@@ -2,6 +2,7 @@
 
 std::vector<FileReaderWriter*> FileReaderWriter::FRWs;
 
+
 FileReaderWriter::FileReaderWriter(const fileTypeStr & type, const std::wstring & directory)
 {
 	fileType = type;

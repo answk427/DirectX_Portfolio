@@ -392,38 +392,51 @@ MeshRenderer & MeshRenderer::operator=(const MeshRenderer & other)
 
 
 SkinnedMeshRenderer::SkinnedMeshRenderer(const std::string & id, const gameObjectID& ownerObj) :
-	Renderer(id, ComponentType::SKINNEDMESHRENDERER, ownerObj), m_animator(std::make_shared<Animator>()),
-	m_timer(GameTimer::Instance()), testAnimator(std::make_unique<SkinnedData>()),
-	mBoneRenderer(std::make_unique<BoneRenderer>("BoneRenderer", ownerObj, m_animator))
+	Renderer(id, ComponentType::SKINNEDMESHRENDERER, ownerObj), 
+	m_timer(GameTimer::Instance())	
 {
-	SetTechniqueType(TechniqueType::Light | TechniqueType::DiffuseMap |
-		TechniqueType::Skinned);
-
+	SetTechniqueType(TechniqueType::Light | TechniqueType::DiffuseMap);
 }
 
 SkinnedMeshRenderer::SkinnedMeshRenderer(const SkinnedMeshRenderer & other) : SkinnedMeshRenderer(other.id, other.ownerObjectId)
 {
-	
+	m_timer = GameTimer::Instance();
+	boneDrawMode = other.boneDrawMode;
+	//m_animator = other.m_animator;
+	if(other.mBoneRenderer)
+		*mBoneRenderer.get() = *other.mBoneRenderer.get();
 }
-
+//
+//SkinnedMeshRenderer::SkinnedMeshRenderer(SkinnedMeshRenderer && other) : SkinnedMeshRenderer(other.id, other.ownerObjectId)
+//{
+//	m_timer = GameTimer::Instance();
+//	boneDrawMode = other.boneDrawMode;
+//	m_animator = other.m_animator;
+//	SetBoneDatas(other.m_animator->boneDatas);
+//}
+//
 SkinnedMeshRenderer & SkinnedMeshRenderer::operator=(const SkinnedMeshRenderer & skinRenderer)
 {
 	Renderer::operator=(skinRenderer);
 	m_timer = GameTimer::Instance();
-	m_animator = std::make_unique<Animator>(*skinRenderer.m_animator.get());
+	boneDrawMode = skinRenderer.boneDrawMode;
+	//m_animator = skinRenderer.m_animator;
+	*mBoneRenderer.get() = *skinRenderer.mBoneRenderer.get();
+
 	return *this;
-	// TODO: 여기에 반환 구문을 삽입합니다.
+	// TODO: 여기에 반환 구문을 삽입합니다. 
 }
 
 void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 {
+	
 	if (boneDrawMode)
 	{
 		mBoneRenderer->Draw(context, camera);
 		return;
 	}
 
-	if (mesh == nullptr)
+	if (mesh == nullptr)	
 		return;
 
 	//XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
@@ -460,13 +473,13 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 			//입력조립기 세팅
 			if (GetInstancing())
 			{
-				if (!effects[i]->IASetting(context, m_technique_type |
+				if (!effects[i]->IASetting(context, GetTechniqueType() |
 					TechniqueType::Instancing | TechniqueType::Skinned))
 					break;
 			}
 			else
 			{
-				if (!effects[i]->IASetting(context, m_technique_type |
+				if (!effects[i]->IASetting(context, GetTechniqueType() |
 					TechniqueType::Skinned))
 					break;
 			}
@@ -475,7 +488,7 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 				break;
 		}
 
-		UINT tempTechType = m_technique_type;
+		UINT tempTechType = GetTechniqueType();
 		if (isShadowRender())
 			tempTechType = tempTechType | TechniqueType::Shadowed;
 
@@ -500,8 +513,13 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 			effects[i]->SetMaps(diffuseMaps[i], normalMaps[i], nullptr);
 
 		//BoneMatrix 설정
-		effects[i]->SetBoneTransforms(&m_animator->boneDatas.m_finalTransforms[0], 
-			m_animator->boneDatas.m_finalTransforms.size());
+		/*effects[i]->SetBoneTransforms(&m_animator->boneDatas.m_finalTransforms[0], 
+			m_animator->boneDatas.m_finalTransforms.size());*/
+		std::shared_ptr<Animator> animator = m_bones.lock()->m_animator;
+		effects[i]->SetBoneTransforms(&animator->boneDatas.m_finalTransforms[0],
+			animator->boneDatas.m_finalTransforms.size());
+		animator->SetAnimatedFlag(false);
+		
 
 
 		for (UINT p = 0; p < techDesc.Passes; ++p)
@@ -530,7 +548,9 @@ void SkinnedMeshRenderer::Update()
 	//if (TimePos > testAnimator->GetClipEndTime(m_animator->currClipName))
 	//	TimePos = 0.0f;
 
-	m_animator->Update(m_timer.DeltaTime());
+	//m_animator->Update(m_timer.DeltaTime());
+	
+	m_bones.lock()->m_animator->Update(m_timer.DeltaTime());
 	
 	if (boneDrawMode)
 		mBoneRenderer->Update();	
@@ -541,14 +561,125 @@ void SkinnedMeshRenderer::InitSkinnedVB()
 	mesh->InitSkinnedVB(m_texMgr.md3dDevice, m_skinnedDatas);
 }
 
+std::vector<std::string> SkinnedMeshRenderer::GetAnimationClipNames()
+{
+	if (m_bones.expired())
+		return std::vector<std::string>();
+	
+	std::vector<std::string> clipNames;
+
+	std::shared_ptr<Animator> animator = m_bones.lock()->m_animator;
+	for (auto& clip : animator->clips)
+		clipNames.push_back(clip.first);
+		
+	return clipNames;
+}
+
+void SkinnedMeshRenderer::SetBoneDatas(BoneDatas & boneDatas)
+{
+	std::shared_ptr<NodeHierarchy> nodeHierarchy = m_bones.lock();
+	//animator가 있을경우 바로 본데이터 적재
+	if (nodeHierarchy)
+	{
+		std::shared_ptr<Animator> animator = nodeHierarchy->m_animator;
+		if (animator)
+		{
+			animator->SetBoneDatas(boneDatas);
+			mBoneRenderer->SetMesh();
+			readBoneData = true;
+			return;
+		}
+	}
+
+	//애니메이터 없을경우 임시저장
+	tempBoneDatas = boneDatas;
+	readBoneData = false;
+}
+
+void SkinnedMeshRenderer::SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones)
+{
+	m_bones = bones;
+	mBoneRenderer = std::make_unique<BoneRenderer>("BoneRenderer", ownerObjectId, bones);
+
+	std::shared_ptr<Animator> animator = m_bones.lock()->m_animator;
+	if (animator)
+	{
+		//아직 boneData를 읽지 않았을때
+		if (!readBoneData)
+		{
+			animator->SetBoneDatas(tempBoneDatas);
+			readBoneData = true;
+		}
+	}
+	mBoneRenderer->SetMesh();
+}
+
+void SkinnedMeshRenderer::SetTechniqueType(int orTechnique)
+{
+	if (m_bones.expired())
+		return;
+	m_bones.lock()->mTechType = orTechnique;
+}
+
+UINT SkinnedMeshRenderer::GetTechniqueType()
+{
+	if (m_bones.expired())
+		return TechniqueType::Light;
+	return m_bones.lock()->mTechType;
+}
+
+void SkinnedMeshRenderer::SetAnimationClip(const std::string & clipName)
+{
+	/*if (m_animator->ChangeClip(clipName))
+		SetTechniqueType(TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Skinned);*/
+	if (m_bones.expired())
+		return;
+	if (m_bones.lock()->m_animator->ChangeClip(clipName))
+		SetTechniqueType(TechniqueType::Light | TechniqueType::DiffuseMap | TechniqueType::Skinned);
+	else
+		SetTechniqueType(TechniqueType::Light | TechniqueType::DiffuseMap);
+}
+
+void SkinnedMeshRenderer::LoadAnimationClip(MyAnimationClip & clip)
+{
+	if (m_bones.expired())
+		return;
+
+	std::shared_ptr<Animator> animator = m_bones.lock()->m_animator;
+	if (animator)
+	{
+		animator->LoadAnimationClip(clip);
+		SetAnimationClip(clip.m_clipName);
+	}
+		
+}
+
+void SkinnedMeshRenderer::DeleteAnimationClip(const std::string & clipName)
+{
+	if (m_bones.expired())
+		return;
+
+	std::shared_ptr<Animator> animator = m_bones.lock()->m_animator;
+	if (animator)
+	{
+		animator->DeleteAnimation(clipName);
+		if (!animator->clips.empty())
+			SetAnimationClip(animator->clips.begin()->first);
+		else
+			SetAnimationClip("");
+	}
+}
+
 
 
 BoneRenderer::BoneRenderer(const std::string& id, const gameObjectID &ownerObj,
-	const std::weak_ptr<Animator> animator) :
-	Renderer(id, ComponentType::MESHRENDERER, ownerObj), m_Animator(animator)
-{
+	std::weak_ptr<NodeHierarchy> nodes) :
+	Renderer(id, ComponentType::MESHRENDERER, ownerObj) 
+{	
 	SetTechniqueType(TechniqueType::Light);
+	SetNodeHierarchy(nodes);
 }
+
 
 void BoneRenderer::CreateBoneShape(std::vector<Vertex::Basic32>& result, XMFLOAT3 & pos, XMFLOAT3 & xAxis, XMFLOAT3 & yAxis, XMFLOAT3 & zAxis)
 {
@@ -608,6 +739,9 @@ void BoneRenderer::CreateBoneShape(std::vector<Vertex::Basic32>& result, XMFLOAT
 
 void BoneRenderer::InitIndices(std::vector<UINT>& indices)
 {
+	std::shared_ptr<Animator> m_Animator = m_bones.lock()->m_animator;
+	if (!m_Animator)
+		return;
 	//뼈 하나당 정점이 7개 이므로
 	UINT boneSize = vertices.size() / 7;
 
@@ -616,7 +750,7 @@ void BoneRenderer::InitIndices(std::vector<UINT>& indices)
 	for (int i = 0; i < boneSize; ++i)
 	{
 		UINT firstIdx = i * 7;
-		int parentIdx = m_Animator.lock()->boneDatas.m_parentIndices[i];
+		int parentIdx = m_Animator->boneDatas.m_parentIndices[i];
 		UINT nextVertex = parentIdx * 7;
 
 		//정오면체의 아랫면
@@ -686,7 +820,7 @@ void BoneRenderer::InitIndices(std::vector<UINT>& indices)
 
 void BoneRenderer::InitVertices()
 {
-	std::shared_ptr<Animator>& animator = m_Animator.lock();
+	std::shared_ptr<Animator>& animator = m_bones.lock()->m_animator;
 	if (!animator)
 		return;
 	vertices.resize(animator->boneDatas.toRoots.size() * CNTPERVERTEX);
@@ -713,7 +847,7 @@ void BoneRenderer::Update()
 	static XMVECTOR yAxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	static XMVECTOR zAxis = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 
-	std::shared_ptr<Animator>& animator = m_Animator.lock();
+	std::shared_ptr<Animator>& animator = m_bones.lock()->m_animator;
 	if (!animator)
 		return;
 	std::vector<XMFLOAT4X4> toRoots = animator->boneDatas.toRoots;

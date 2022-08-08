@@ -489,9 +489,6 @@ void Scene::DrawScene()
 		DrawScreenQuad();
 
 
-	
-
-	
 
 	//ShaderResourceView로 쉐도우맵을 이번 렌더링의 자원으로 binding 했기 때문에
 	//다음 프레임에서 RenderTargetView로 쉐도우맵에 렌더링 하기 전 해제 해 준다.

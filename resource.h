@@ -13,6 +13,7 @@
 #define IDD_DIALOG7                     135
 #define IDD_DIALOG8                     136
 #define IDR_ACCELERATOR1                144
+#define IDD_DIALOG1                     148
 #define IDC_BUTTON1                     1002
 #define IDC_BUTTON3                     1003
 #define IDC_BUTTON2                     1004
@@ -49,6 +50,7 @@
 #define IDC_TAB1                        1053
 #define IDC_COMBO2                      1054
 #define IDC_LIST6                       1060
+#define IDC_LIST7                       1061
 #define IDC_EDIT11                      1064
 #define IDC_COMBO1                      1069
 #define IDC_CHECK1                      1070
@@ -58,6 +60,7 @@
 #define IDC_COMBO3                      1073
 #define IDC_CHECK5                      1075
 #define IDC_RADIO1                      1075
+#define IDC_CHECK6                      1076
 #define IDC_RADIO4                      1078
 #define IDC_RADIO5                      1079
 #define IDC_RADIO6                      1080
@@ -66,6 +69,7 @@
 #define IDC_RADIO7                      1083
 #define IDC_RADIO8                      1084
 #define IDC_RADIO9                      1085
+#define IDC_LIST1                       1086
 #define ID_40001                        40001
 #define ID_40002                        40002
 #define ID_BUTTON2                      40003
@@ -82,9 +86,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        148
+#define _APS_NEXT_RESOURCE_VALUE        150
 #define _APS_NEXT_COMMAND_VALUE         40015
-#define _APS_NEXT_CONTROL_VALUE         1086
+#define _APS_NEXT_CONTROL_VALUE         1087
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
