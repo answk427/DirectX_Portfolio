@@ -75,6 +75,20 @@ namespace MyVertex
 		XMFLOAT3 weight; //뼈에대한 가중치, 마지막 가중치는 1에서 빼서 구함
 		int boneIndices[4]; //최대 4개의 뼈에 영향을 받음
 	};
+
+	struct ComputedVertex
+	{
+		ComputedVertex() : pos(0.0f, 0.0f, 0.0f), posH(0.0f,0.0f,0.0f,1.0f), posW(0.0f,0.0f,0.0f),
+			normalW(0.0f,0.0f,0.0f), tex(0.0f,0.0f), tanW(0.0f,0.0f,0.0f,0.0f), biTanW(0.0f,0.0f,0.0f, 0.0f)
+		{} 
+		XMFLOAT3 pos; //정점의 위치
+		XMFLOAT4 posH;
+		XMFLOAT3 posW;
+		XMFLOAT3 normalW; //법선벡터
+		XMFLOAT2 tex; //텍스쳐 좌표
+		XMFLOAT4 tanW; //탄젠트(접선) 벡터
+		XMFLOAT4 biTanW; //바이탄젠트(종접선) 벡터
+	};
 }
 
 //다른 버퍼슬롯에 들어갈 인스턴싱자료

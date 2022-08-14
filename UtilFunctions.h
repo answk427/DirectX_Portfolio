@@ -5,7 +5,12 @@
 #include <BufferResource.h>
 #include <xnacollision.h>
 
+#include <filesystem>
 
+namespace fs = std::filesystem;
+
+
+std::wstring GetProjectDirectory();
 //str을 wstr로 변환
 std::wstring ConvertWSTR(const std::string& str);
 //wstr을 str로 변환

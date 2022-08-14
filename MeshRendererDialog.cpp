@@ -497,7 +497,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		if (HIWORD(wParam) == BN_CLICKED)
 		{
 			std::string clipName;
-			AnimationListDialog aniList(m_hInstance, m_hDlg,clipName, m_hAniListDialog);
+			AnimationListDialog aniList(m_hInstance, m_hDlg, m_hAniListDialog);
 		}
 		break;
 	case ANIMATIONDELETEBUTTON:

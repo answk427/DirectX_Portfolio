@@ -12,7 +12,7 @@ public:
 	UINT mTechType;
 public:
 	NodeHierarchy() : m_animator(std::make_shared<Animator>()),
-		mTechType(TechniqueType::Light)
+		mTechType(TechniqueType::Light | TechniqueType::DiffuseMap)
 		{}
 	
 	std::shared_ptr<Animator> m_animator;
@@ -29,8 +29,10 @@ public:
 	std::vector<std::weak_ptr<Transform>> toParents; //각 노드에서 부모로의 변환
 	std::vector<XMFLOAT4X4> finalTransforms; //최종변환 벡터
 
-	void GetFinalTransform(XMMATRIX& dest, std::string& nodeName);
-	void GetRootWorldTransform(XMMATRIX & dest);
+	void GetFinalTransform(XMMATRIX& dest, std::string& nodeId);
+	
+	void GetRootWorldTransform(XMMATRIX& dest);
+	void GetRootWorldTransform(XMFLOAT4X4& dest);
 	//void UpdateAnimation(float time);
 	
 };

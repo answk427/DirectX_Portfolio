@@ -1,6 +1,6 @@
 #include "AnimationListDialog.h"
 
-AnimationListDialog::AnimationListDialog(HINSTANCE hinst, HWND hParent, std::string & dest, int& dialogVal)
+AnimationListDialog::AnimationListDialog(HINSTANCE hinst, HWND hParent, int& dialogVal)
 {
 	dialogVal = DialogBox(hinst, MAKEINTRESOURCE(ANIMATIONDIALOG), hParent, AniListDialogProc);
 	

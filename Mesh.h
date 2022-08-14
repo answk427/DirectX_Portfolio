@@ -61,7 +61,7 @@ public:
 	std::vector<MyVertex::BasicVertex> vertices;
 	std::vector<UINT> indices;
 	std::vector<MyVertex::Subset> subsets;
-	//실제 instancingData를 담고 있는 std::vector
+	//실제 instancingData를 담고 있는 std::vector		
 	std::vector<InstancingData*> InstancingDatas;
 	//이번 렌더링에서 사용할 instancingData의 index.
 	std::vector<UINT> enableInstancingIndexes;

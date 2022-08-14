@@ -17,7 +17,6 @@ enum EffectType
 class EffectMgr
 {
 private:
-	std::wstring fileDirectory;
 	EffectMgr(const EffectMgr& effect);
 	//EffectMgr& operator=(const EffectMgr& effect);
 private:
@@ -30,6 +29,8 @@ private:
 
 	Effect* CreateEffect(const std::wstring& shaderName, EffectType type);
 public:
+	std::wstring fileDirectory;
+
 	static EffectMgr& Instance();
 	EffectMgr();
 	~EffectMgr();

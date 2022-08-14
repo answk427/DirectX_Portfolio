@@ -12,6 +12,7 @@
 #include <MathHelper.h>
 #include "NodeBoneDatas.h"
 #include "AssimpLoader.h"
+#include "SkinningComputeShader.h"
 
 #include <SkinnedData.h>
 
@@ -102,7 +103,7 @@ public:
 	}
 	
 	void AddInstancingQueue();
-	void InstancingUpdate();
+	virtual void InstancingUpdate();
 
 	// Component을(를) 통해 상속됨
 	virtual void Init() override;
@@ -145,7 +146,7 @@ public:
 	//기본 메테리얼로 생성
 	virtual void SetMesh(Mesh* meshSrc);
 	//메테리얼 데이터를 로드해서 생성
-	void SetMesh(Mesh* meshSrc, std::vector<GeneralMaterial>& materialSrc);
+	virtual void SetMesh(Mesh* meshSrc, std::vector<GeneralMaterial>& materialSrc);
 	Mesh* GetMesh() { return mesh; }
 	const Mesh* GetMesh() const { return mesh; }
 	
@@ -155,6 +156,12 @@ public:
 	Transform* GetTransform() { return transform; }
 	const Transform* GetTransform() const { return transform; }
 	virtual void GetWorldMatrix(XMMATRIX& dest) { m_bones.lock()->GetFinalTransform(dest, ownerObjectId); }
+	virtual void GetWorldMatrix(XMFLOAT4X4& dest)
+	{ 
+		XMMATRIX tempDest;
+		m_bones.lock()->GetFinalTransform(tempDest, ownerObjectId); 
+		XMStoreFloat4x4(&dest, tempDest);
+	}
 	void SetTransform(Transform* tr) { transform = tr; }
 	
 	virtual void SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones) { m_bones = bones; }
@@ -246,12 +253,15 @@ public:
 	//std::shared_ptr<Animator> m_animator;
 	std::unique_ptr<BoneRenderer> mBoneRenderer;
 	std::vector<MyVertex::SkinnedData> m_skinnedDatas;
+	std::unique_ptr<SkinningComputeShader> mSkinningComputeShader;
 	
 	
 public:
 	virtual void Draw(ID3D11DeviceContext* context, Camera* camera);
 	virtual void GetWorldMatrix(XMMATRIX& dest) { m_bones.lock()->GetRootWorldTransform(dest); }
+	virtual void GetWorldMatrix(XMFLOAT4X4& dest) { m_bones.lock()->GetRootWorldTransform(dest); }
 	virtual void Update() override;
+	virtual void InstancingUpdate();
 	
 public:
 	void SetAnimationClip(const std::string& clipName);
@@ -268,5 +278,7 @@ public:
 	virtual void SetTechniqueType(int orTechnique);
 	virtual UINT GetTechniqueType();
 	
+	virtual void SetMesh(Mesh* meshSrc);
+	virtual void SetMesh(Mesh* meshSrc, std::vector<GeneralMaterial>& materialSrc);
 };
 

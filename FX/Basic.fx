@@ -6,6 +6,8 @@
 
 #include "LightHelper.fx"
 
+
+
 cbuffer cbPerFrame
 {
 	DirectionalLight gDirLights[DIRECTIONALLIGHT_SIZE];
@@ -49,6 +51,7 @@ Texture2D gShadowMap;
 Texture2D gSsaoMap;
 TextureCube gCubeMap;
 Texture2DArray gDiffuseMapArray;
+
 
 SamplerState samLinear
 {
@@ -103,22 +106,13 @@ struct SkinnedVertexIn
 
 struct SkinnedInstanceVertexIn
 {
-	float3 PosL    : POSITION;
-	float3 NormalL : NORMAL;
-	float2 Tex     : TEXCOORD;
-	//여기부터 스키닝 자료
-	//float4 TangentL   : TANGENT;
-	float3 Weights    : WEIGHTS;
-	int4 BoneIndices : BONEINDICES;
+	//vertex 정보는 구조적버퍼로 입력받음.
 	//여기부터 인스턴싱 자료
 	row_major float4x4 World : WORLD;
 	row_major float4x4 WorldInvTranspose : INVTRANSPOSE;
 	float4 Color : COLOR;
 	uint RendererIdx : RENDERERIDX;
 	uint InstanceId : SV_InstanceID;
-	
-	
-	
 };
 
 struct VertexOut
@@ -133,7 +127,54 @@ struct VertexOut
 	uint InstanceId : instanceID;
 };
 
-VertexOut SkinningVS(SkinnedVertexIn vin)
+struct vertex
+{
+	float3 PosL;
+	float4 PosH;
+	float3 PosW;
+	float3 NormalW;
+	float2 Tex;
+	float4 TanW;
+	float4 BiTanW;
+};
+
+StructuredBuffer<vertex> gVertices;
+Buffer<uint> gVertexStarts;
+
+
+VertexOut SkinningInstancingVS(SkinnedInstanceVertexIn vin, uint vertexID : SV_VertexID, uint instanceID : SV_InstanceID)
+{
+	VertexOut vout;
+	uint resultVertexID = gVertexStarts[instanceID] + vertexID;
+	vout.PosH = gVertices[resultVertexID].PosH;
+	vout.PosW = gVertices[resultVertexID].PosW;
+	vout.NormalW = gVertices[resultVertexID].NormalW;
+	vout.Tex = mul(float4(gVertices[resultVertexID].Tex, 0.0f, 1.0f), gTexTransform).xy;
+	vout.ShadowPosH = mul(float4(gVertices[resultVertexID].PosL, 1.0f), gShadowTransform);
+
+	vout.SsaoPosH = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	vout.Color = vin.Color;
+	vout.InstanceId = vin.RendererIdx;
+
+	return vout;
+}
+
+VertexOut SkinningVS(uint vertexID : SV_VertexID)
+{
+	VertexOut vout;
+	vout.PosH = gVertices[vertexID].PosH;
+	vout.PosW = gVertices[vertexID].PosW;
+	vout.NormalW = gVertices[vertexID].NormalW;
+	vout.Tex = mul(float4(gVertices[vertexID].Tex, 0.0f, 1.0f), gTexTransform).xy;
+	vout.ShadowPosH = mul(float4(gVertices[vertexID].PosL, 1.0f), gShadowTransform);
+	
+	vout.SsaoPosH  = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	vout.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	
+	return vout;
+}
+
+VertexOut SkinningVSOriginal(SkinnedVertexIn vin)
 {
 	VertexOut vout;
 
@@ -181,54 +222,54 @@ VertexOut SkinningVS(SkinnedVertexIn vin)
 	return vout;
 }
 
-VertexOut SkinningInstanceVS(SkinnedInstanceVertexIn vin)
-{
-	VertexOut vout;
-
-	// Init array or else we get strange warnings about SV_POSITION.
-	float weights[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	weights[0] = vin.Weights.x;
-	weights[1] = vin.Weights.y;
-	weights[2] = vin.Weights.z;
-	weights[3] = 1.0f - weights[0] - weights[1] - weights[2];
-
-	float3 posL = float3(0.0f, 0.0f, 0.0f);
-	float3 normalL = float3(0.0f, 0.0f, 0.0f);
-	//float3 tangentL = float3(0.0f, 0.0f, 0.0f);
-	for (int i = 0; i < 4; ++i)
-	{
-		// Assume no nonuniform scaling when transforming normals, so 
-		// that we do not have to use the inverse-transpose.
-		posL += weights[i] * mul(float4(vin.PosL, 1.0f), gBoneTransforms[vin.BoneIndices[i]]).xyz;
-		normalL += weights[i] * mul(vin.NormalL, (float3x3)gBoneTransforms[vin.BoneIndices[i]]);
-		//tangentL += weights[i] * mul(vin.TangentL.xyz, (float3x3)gBoneTransforms[vin.BoneIndices[i]]);
-	}
-
-	//상수버퍼가 아닌 인스턴스버퍼로 입력한 세계행렬 사용
-	vout.PosW = mul(float4(vin.PosL, 1.0f), vin.World).xyz;
-
-	//노말벡터에 역전치행렬 곱
-	vout.NormalW = mul(vin.NormalL, (float3x3)vin.WorldInvTranspose);
-
-	vout.Color = vin.Color;
-
-	// Transform to homogeneous clip space.
-	vout.PosH = mul(float4(vout.PosW, 1.0f), gViewProj);
-
-	// Output vertex attributes for interpolation across triangle.
-	vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
-
-	// Generate projective tex-coords to project shadow map onto scene.
-	vout.ShadowPosH = mul(float4(vin.PosL, 1.0f), gShadowTransform);
-
-	// Generate projective tex-coords to project SSAO map onto scene.
-	vout.SsaoPosH = mul(float4(vin.PosL, 1.0f), gWorldViewProjTex);
-
-	//instanceid 그대로 넘겨줌
-	vout.InstanceId = vin.RendererIdx;
-
-	return vout;
-}
+//VertexOut SkinningInstanceVS(SkinnedInstanceVertexIn vin)
+//{
+//	VertexOut vout;
+//
+//	// Init array or else we get strange warnings about SV_POSITION.
+//	float weights[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+//	weights[0] = vin.Weights.x;
+//	weights[1] = vin.Weights.y;
+//	weights[2] = vin.Weights.z;
+//	weights[3] = 1.0f - weights[0] - weights[1] - weights[2];
+//
+//	float3 posL = float3(0.0f, 0.0f, 0.0f);
+//	float3 normalL = float3(0.0f, 0.0f, 0.0f);
+//	//float3 tangentL = float3(0.0f, 0.0f, 0.0f);
+//	for (int i = 0; i < 4; ++i)
+//	{
+//		// Assume no nonuniform scaling when transforming normals, so 
+//		// that we do not have to use the inverse-transpose.
+//		posL += weights[i] * mul(float4(vin.PosL, 1.0f), gBoneTransforms[vin.BoneIndices[i]]).xyz;
+//		normalL += weights[i] * mul(vin.NormalL, (float3x3)gBoneTransforms[vin.BoneIndices[i]]);
+//		//tangentL += weights[i] * mul(vin.TangentL.xyz, (float3x3)gBoneTransforms[vin.BoneIndices[i]]);
+//	}
+//
+//	//상수버퍼가 아닌 인스턴스버퍼로 입력한 세계행렬 사용
+//	vout.PosW = mul(float4(vin.PosL, 1.0f), vin.World).xyz;
+//
+//	//노말벡터에 역전치행렬 곱
+//	vout.NormalW = mul(vin.NormalL, (float3x3)vin.WorldInvTranspose);
+//
+//	vout.Color = vin.Color;
+//
+//	// Transform to homogeneous clip space.
+//	vout.PosH = mul(float4(vout.PosW, 1.0f), gViewProj);
+//
+//	// Output vertex attributes for interpolation across triangle.
+//	vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
+//
+//	// Generate projective tex-coords to project shadow map onto scene.
+//	vout.ShadowPosH = mul(float4(vin.PosL, 1.0f), gShadowTransform);
+//
+//	// Generate projective tex-coords to project SSAO map onto scene.
+//	vout.SsaoPosH = mul(float4(vin.PosL, 1.0f), gWorldViewProjTex);
+//
+//	//instanceid 그대로 넘겨줌
+//	vout.InstanceId = vin.RendererIdx;
+//
+//	return vout;
+//}
 
 
 
@@ -535,7 +576,7 @@ technique11 Light3TexSkinningInstancing
 {
 	pass P0
 	{
-		SetVertexShader(CompileShader(vs_5_0, SkinningInstanceVS()));
+		SetVertexShader(CompileShader(vs_5_0, SkinningInstancingVS()));
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_5_0, PS(3, true, false, false, false, true)));
 	}

@@ -10,7 +10,7 @@ INT_PTR CALLBACK AniListDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARA
 class AnimationListDialog  
 {
 public:
-	AnimationListDialog(HINSTANCE hinst, HWND hParent,std::string& dest, int& dialogVal);
+	AnimationListDialog(HINSTANCE hinst, HWND hParent, int& dialogVal);
 	// MsgProcedure을(를) 통해 상속됨
 	
 };

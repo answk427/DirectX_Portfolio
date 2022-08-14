@@ -79,6 +79,10 @@ public:
 	//텍스쳐배열 세팅
 	virtual void SetMapArray(ID3D11ShaderResourceView* arr) = 0;
 	virtual void SetBoneTransforms(const XMFLOAT4X4* M, int cnt) {}
+	//스키닝일 경우 정점버퍼를 구조적버퍼로 바인딩하는 함수
+	virtual void SetVertexSrcData(ID3D11ShaderResourceView* srv) {}
+	//스키닝 인스턴싱일 경우 각 인스턴스의 정점 시작지점을 알려주는 배열을 바인딩하는 함수
+	virtual void SetVertexStarts(ID3D11ShaderResourceView* srv) {}
 	
 private:
 	//복사를 못하게 함
@@ -228,9 +232,9 @@ public:
 
 	ID3DX11EffectMatrixVariable* ViewProj;
 	ID3DX11EffectMatrixVariable* WorldViewProj;
-	ID3DX11EffectMatrixVariable* WorldViewProjTex;
 	ID3DX11EffectMatrixVariable* World;
 	ID3DX11EffectMatrixVariable* WorldInvTranspose;
+	ID3DX11EffectMatrixVariable* WorldViewProjTex;
 	ID3DX11EffectMatrixVariable* ShadowTransform;
 	ID3DX11EffectMatrixVariable* TexTransform;
 	ID3DX11EffectVectorVariable* EyePosW;
@@ -285,6 +289,18 @@ public:
 
 	// Effect을(를) 통해 상속됨
 	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+
+	ID3DX11EffectShaderResourceVariable* vertexSrcData;
+	ID3DX11EffectShaderResourceVariable* vertexStartData;
+
+	virtual void SetVertexSrcData(ID3D11ShaderResourceView* srv)
+	{
+		vertexSrcData->SetResource(srv);
+	}
+	virtual void SetVertexStarts(ID3D11ShaderResourceView* srv) 
+	{
+		vertexStartData->SetResource(srv);
+	}
 };
 #pragma endregion
 
@@ -478,9 +494,16 @@ class BuildShadowMapEffect : public Effect
 {
 private:
 	ID3D11InputLayout* m_terrainLayout;
+	ID3DX11EffectShaderResourceVariable* vertexSrcData;
 public:
 	BuildShadowMapEffect(ID3D11Device* device, const std::wstring& filename);
 	~BuildShadowMapEffect();
+
+	virtual void SetVertexSrcData(ID3D11ShaderResourceView* srv)
+	{
+		vertexSrcData->SetResource(srv);
+	}
+
 
 	void SetViewProj(CXMMATRIX M)                       { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorldViewProj(CXMMATRIX M)                  { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
@@ -502,6 +525,7 @@ public:
 	void SetHeightMap(ID3D11ShaderResourceView* tex) { HeightMap->SetResource(tex); }
 
 	ID3DX11EffectTechnique* BuildShadowMapTech;
+	ID3DX11EffectTechnique* BuildShadowMapSkinningTech;
 	ID3DX11EffectTechnique* BuildShadowMapAlphaClipTech;
 	ID3DX11EffectTechnique* BuildShadowMapSkinnedTech;
 	ID3DX11EffectTechnique* BuildShadowMapAlphaClipSkinnedTech;
@@ -1011,6 +1035,66 @@ public:
 	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
 	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
 	bool IASetting(ID3D11DeviceContext* context, UINT techType);
+};
+
+class ComputeSkinningEffect : public Effect
+{
+public:
+	ID3DX11EffectTechnique* computeSkinningTech;
+private:
+	ID3DX11EffectShaderResourceVariable* skinData;
+	ID3DX11EffectShaderResourceVariable* vertexSrcData;
+	ID3DX11EffectUnorderedAccessViewVariable* vertexDestData;
+
+	ID3DX11EffectMatrixVariable* BoneTransforms;
+
+	ID3DX11EffectMatrixVariable* ViewProj;
+	ID3DX11EffectMatrixVariable* WorldViewProj;
+	ID3DX11EffectMatrixVariable* World;
+	ID3DX11EffectMatrixVariable* WorldInvTranspose;
+public:
+	ComputeSkinningEffect(ID3D11Device* device, const std::wstring& filename);
+
+	// Effect을(를) 통해 상속됨
+	virtual void InitInputLayout(ID3D11Device * device) override;
+
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
+
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
+
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+
+	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
+
+	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
+
+public:
+	void SetVertexDestData(ID3D11UnorderedAccessView* uav)
+	{
+		vertexDestData->SetUnorderedAccessView(uav);
+	}
+	void SetVertexSrcData(ID3D11ShaderResourceView* srv)
+	{
+		vertexSrcData->SetResource(srv);
+	}
+	void SetSkinData(ID3D11ShaderResourceView* srv)
+	{
+		skinData->SetResource(srv);
+	}
+
+	virtual void SetBoneTransforms(const XMFLOAT4X4* M, int cnt)
+	{
+		BoneTransforms->SetMatrixArray(reinterpret_cast<const float*>(M), 0, cnt);
+	}
+
+	void PerObjectSet(Camera * camera, CXMMATRIX& world);
+	
+	void SetWorld(CXMMATRIX M) { World->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetWorldInvTranspose(CXMMATRIX M) { WorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetWorldViewProj(CXMMATRIX M) { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetViewProj(CXMMATRIX M) { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 };
 #pragma endregion
 

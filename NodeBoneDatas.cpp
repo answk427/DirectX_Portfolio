@@ -70,6 +70,7 @@ void NodeHierarchy::GetFinalTransform(XMMATRIX & dest, std::string & nodeId)
 	}
 }
 
+
 void NodeHierarchy::GetRootWorldTransform(XMMATRIX & dest)
 {
 	std::shared_ptr<Transform> currTransform = toParents[0].lock();
@@ -77,6 +78,15 @@ void NodeHierarchy::GetRootWorldTransform(XMMATRIX & dest)
 		return;
 	//루트노드의 부모변환 행렬(세계행렬과 같음)
 	dest = XMLoadFloat4x4(currTransform->GetWorld());
+}
+
+void NodeHierarchy::GetRootWorldTransform(XMFLOAT4X4 & dest)
+{
+	std::shared_ptr<Transform> currTransform = toParents[0].lock();
+	if (!currTransform)
+		return;
+	//루트노드의 부모변환 행렬(세계행렬과 같음)
+	dest = *currTransform->GetWorld();
 }
 	
 //void NodeHierarchy::UpdateAnimation(float time)

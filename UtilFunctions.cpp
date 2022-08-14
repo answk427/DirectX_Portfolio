@@ -1,5 +1,10 @@
 #include "UtilFunctions.h"
 
+std::wstring GetProjectDirectory()
+{
+	return std::wstring(fs::current_path().c_str()) + L"/";
+}
+
 std::wstring ConvertWSTR(const std::string& str)
 {
 	USES_CONVERSION;

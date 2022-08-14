@@ -92,6 +92,20 @@ struct VertexOut
 	float2 Tex  : TEXCOORD;
 };
 
+struct ComputedVertex
+{
+	float3 PosL;
+	float4 PosH;
+	float3 PosW;
+	float3 NormalW;
+	float2 Tex;
+	float4 TanW;
+	float4 BiTanW;
+};
+
+StructuredBuffer<ComputedVertex> gVertices;
+
+
 float CalcTessFactor(float3 p)
 {
 	float d = distance(p, gEyePosW);
@@ -103,7 +117,17 @@ float CalcTessFactor(float3 p)
 
 	return pow(2, (lerp(gMaxTessFactor, gMinTessFactor, s)));
 }
- 
+
+VertexOut SkinningVS(uint vertexID : SV_VertexID)
+{
+	VertexOut vout;
+	//vout.PosH = gVertices[vertexID].PosH;
+	vout.PosH = mul(float4(gVertices[vertexID].PosL, 1.0f), mul(gWorld, gViewProj));
+	vout.Tex = mul(float4(gVertices[vertexID].Tex, 0.0f, 1.0f), gTexTransform).xy;
+	
+	return vout;
+}
+
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
@@ -469,6 +493,19 @@ technique11 BuildShadowMapTech
 
 		SetRasterizerState(Depth);
     }
+}
+
+technique11 BuildShadowMapSkinningTech
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_5_0, SkinningVS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(NULL);
+		//SetPixelShader(CompileShader(ps_5_0, PS()));
+
+		SetRasterizerState(Depth);
+	}
 }
 
 technique11 BuildShadowMapAlphaClipTech

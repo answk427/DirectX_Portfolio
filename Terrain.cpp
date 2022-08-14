@@ -189,7 +189,7 @@ void TerrainRenderer::Update()
 		
 	}
 	//Effects::DebugTexFX->SetTexture(mHeightMapSRV);
-	Effects::DebugTexFX->SetTexture(mblendTextureSRV);
+	//Effects::DebugTexFX->SetTexture(mblendTextureSRV);
 }
 
 float TerrainRenderer::GetWidth()const

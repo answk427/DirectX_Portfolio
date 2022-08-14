@@ -89,10 +89,10 @@ void Mesh::SetSkinnedVB(ID3D11DeviceContext * context)
 
 void Mesh::SetInstanceSkinnedVB(ID3D11DeviceContext * context)
 {
-	UINT stride[3] = { sizeof(vertices[0]), sizeof(MyVertex::SkinnedData), sizeof(InstancingData) };
-	UINT offset[3] = { 0 ,0, 0 };
-	ID3D11Buffer* vbs[3] = { mVB, m_skinnedDataBuffer, m_InstanceBuffer };
-	context->IASetVertexBuffers(0, 3, vbs, stride, offset);
+	UINT stride[1] = { sizeof(InstancingData)};
+	UINT offset[1] = { 0 };
+	
+	context->IASetVertexBuffers(0,1, &m_InstanceBuffer, stride, offset);
 }
 
 void Mesh::SetIB(ID3D11DeviceContext * context)
