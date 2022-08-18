@@ -7,6 +7,7 @@
 #include <UtilFunctions.h>
 #include <unordered_map>
 
+#include "SkinningComputeShader.h"
 #define MAX_INSTSANCING 1000
 
 
@@ -17,18 +18,23 @@ class Mesh
 private:
 	ID3D11Buffer* mVB;
 	ID3D11Buffer* mIB;
-	ID3D11Buffer* m_InstanceBuffer;
+	ID3D11Buffer* m_InstanceBasicBuffer;
+	ID3D11Buffer* m_InstanceMatrixBuffer;
+	
 	ID3D11Buffer* m_skinnedDataBuffer;
 	XNA::AxisAlignedBox m_AABB;
 	AABB_MaxMin m_Aabb_MaxMin;
 	bool m_instancing; //인스턴싱 렌더링 여부를 나타내는 변수
-
+	
 
 private:
 	UINT vertexBufferCount;
 	//해당 변수만큼 인스턴스버퍼의 크기를 설정한다.
 	UINT m_instanceBufferSize;
 public:
+	std::unique_ptr<SkinningInstancingComputeShader> m_instancingComputeShader;
+
+	void InitInstancingComputeShader(const std::wstring& filename, ID3D11Device* device);
 	//버퍼초기화 함수들
 	//정점버퍼 생성
 	void InitVB(ID3D11Device* device);
@@ -105,11 +111,12 @@ public:
 	bool GetInstancing() { return m_instancing; }
 	bool SetInstancing(bool instancing) { return m_instancing = instancing; }
 	void InstancingUpdate(ID3D11DeviceContext* context);
+	void InstancingBasicUpdate(ID3D11DeviceContext* context);
 
 public:
 	//생성자
-	Mesh() : mVB(0), mIB(0), m_InstanceBuffer(0), m_skinnedDataBuffer(0),vertexBufferCount(0),
-		id("temp"), m_instanceBufferSize(MAX_INSTSANCING), m_instancing(0)
+	Mesh() : mVB(0), mIB(0), m_InstanceBasicBuffer(0), m_skinnedDataBuffer(0),vertexBufferCount(0),
+		id("temp"), m_instanceBufferSize(MAX_INSTSANCING), m_instancing(0), m_InstanceMatrixBuffer(0)
 	{
 		SetInstanceBufferSize(MAX_INSTSANCING);
 		SetAABB_MaxMin(XMFLOAT3(2.0f, 2.0f, 2.0f), XMFLOAT3(-2.0f, -2.0f, -2.0f));
@@ -153,7 +160,7 @@ public:
 
 	ID3D11Buffer* GetVB() { return mVB; }
 	ID3D11Buffer* GetIB() { return mVB; }
-	ID3D11Buffer* GetInstanceBuffer() { return m_InstanceBuffer; }
+	ID3D11Buffer* GetInstanceBuffer() { return m_InstanceBasicBuffer; }
 
 	int GetSubsetLength() { return subsets.size(); }
 	const std::vector<MyVertex::Subset>& GetSubsets() { return subsets; }

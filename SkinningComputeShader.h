@@ -5,6 +5,10 @@
 #include <BufferResource.h>
 #include "Effects.h"
 #include "EffectMgr.h"
+#include "NodeBoneDatas.h"
+#include <queue>
+
+#define THREADLENGTH 256.0f
 
 class SkinningComputeShader
 {
@@ -15,7 +19,7 @@ public:
 		computeSkinningShader(new ComputeSkinningEffect(device, fileDirectory + filename)),
 		skinDataSRV(0), vertexUAV(0), boneTransformsSRV(0), vertexSRV(0), RWvertexBuffer(0)
 	{}
-	~SkinningComputeShader()
+	virtual ~SkinningComputeShader()
 	{
 		ReleaseCOM(vertexSRV);
 		ReleaseCOM(skinDataSRV);
@@ -30,9 +34,11 @@ public:
 	ID3D11ShaderResourceView* computedVertexSRV;
 	ID3D11Buffer* RWvertexBuffer;
 	int bufferSize = 0;
-private:
+	UINT MeshVerticesSize = 0;
+protected:
 	ComputeSkinningEffect* computeSkinningShader;
-private:
+	int vertexSize = 0;
+protected:
 	//계산 결과값을 기록할 버퍼 uav
 	ID3D11UnorderedAccessView* vertexUAV;
 	//쉐이더 자원으로 묶을 정점데이터, 최종변환행렬
@@ -40,7 +46,6 @@ private:
 	ID3D11ShaderResourceView* skinDataSRV;
 	ID3D11ShaderResourceView* boneTransformsSRV;
 
-	int vertexSize = 0;
 public:
 	//template <typename vertexType>
 	//void InitRWvertexBuffer(const std::vector<vertexType>& vertices, ID3D11Device* device);
@@ -112,6 +117,7 @@ inline void SkinningComputeShader::InitVertexSRV(const std::vector<vertexType>& 
 
 	ReleaseCOM(vertexDataBuffer);
 
+	MeshVerticesSize = vertices.size();
 	bufferSize = vertices.size();
 	vertexSize = sizeof(vertexType);
 }
@@ -142,8 +148,47 @@ inline void SkinningComputeShader::InitVertexUAV(ID3D11Device * device)
 
 	HR(device->CreateUnorderedAccessView(RWvertexBuffer, &uavDesc,
 		&vertexUAV));
-
 }
 
 
+
+class SkinningInstancingComputeShader : public SkinningComputeShader
+{
+private:
+	UINT m_instancingCnt; //인스턴싱 개수
+	std::vector<std::weak_ptr<NodeHierarchy>> m_instances;
+	std::queue<UINT> m_enableInstancingIndexes;
+public:
+	SkinningInstancingComputeShader(const std::wstring& filename,ID3D11Device* device) :
+		SkinningComputeShader(filename, device), m_instancingCnt(0)
+	{
+		m_instances.reserve(100);
+	}
+public:
+	template<typename DestVertexType>
+	void AddInstance(ID3D11Device* device, std::weak_ptr<NodeHierarchy> animator)
+	{
+		m_instances.push_back(animator);
+		++m_instancingCnt;
+		bufferSize = m_instancingCnt * MeshVerticesSize;
+		InitVertexUAV<DestVertexType>(device);
+		InitComputedVertexSRV(device);
+	}
+
+	template<typename DestVertexType>
+	void DeleteInstance(UINT instanceID)
+	{
+		m_instances[instanceID].reset();
+		--m_instancingCnt;
+		bufferSize = m_instancingCnt * MeshVerticesSize;
+		InitVertexUAV<DestVertexType>(device);
+		InitComputedVertexSRV(device);
+	}
+	void Execute(ID3D11DeviceContext* context, Camera* camera);
+
+	void InstancingUpdate(UINT instanceID)
+	{
+		m_enableInstancingIndexes.push(instanceID);
+	}
+};
 

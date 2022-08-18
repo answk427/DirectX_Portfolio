@@ -83,6 +83,7 @@ public:
 	virtual void SetVertexSrcData(ID3D11ShaderResourceView* srv) {}
 	//스키닝 인스턴싱일 경우 각 인스턴스의 정점 시작지점을 알려주는 배열을 바인딩하는 함수
 	virtual void SetVertexStarts(ID3D11ShaderResourceView* srv) {}
+	virtual void SetVertexBufferLen(UINT size) {}
 	
 private:
 	//복사를 못하게 함
@@ -292,7 +293,7 @@ public:
 
 	ID3DX11EffectShaderResourceVariable* vertexSrcData;
 	ID3DX11EffectShaderResourceVariable* vertexStartData;
-
+	ID3DX11EffectScalarVariable* vertexBufferLen;
 	virtual void SetVertexSrcData(ID3D11ShaderResourceView* srv)
 	{
 		vertexSrcData->SetResource(srv);
@@ -301,6 +302,7 @@ public:
 	{
 		vertexStartData->SetResource(srv);
 	}
+	virtual void SetVertexBufferLen(UINT size) { vertexBufferLen->SetInt(size); }
 };
 #pragma endregion
 
@@ -524,6 +526,7 @@ public:
 	void SetNormalMap(ID3D11ShaderResourceView* tex)    { NormalMap->SetResource(tex); }
 	void SetHeightMap(ID3D11ShaderResourceView* tex) { HeightMap->SetResource(tex); }
 
+	ID3DX11EffectTechnique* BuildShadowMapSkinningInstancingTech;
 	ID3DX11EffectTechnique* BuildShadowMapTech;
 	ID3DX11EffectTechnique* BuildShadowMapSkinningTech;
 	ID3DX11EffectTechnique* BuildShadowMapAlphaClipTech;
@@ -561,6 +564,9 @@ public:
 	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
 
 	virtual bool IASetting(ID3D11DeviceContext* context, UINT techType);
+	
+	ID3DX11EffectScalarVariable* vertexBufferLen;
+	virtual void SetVertexBufferLen(UINT size) { vertexBufferLen->SetInt(size); }
 };
 #pragma endregion
 
@@ -1042,6 +1048,8 @@ class ComputeSkinningEffect : public Effect
 public:
 	ID3DX11EffectTechnique* computeSkinningTech;
 private:
+	ID3DX11EffectScalarVariable* instanceID;
+
 	ID3DX11EffectShaderResourceVariable* skinData;
 	ID3DX11EffectShaderResourceVariable* vertexSrcData;
 	ID3DX11EffectUnorderedAccessViewVariable* vertexDestData;
@@ -1095,6 +1103,7 @@ public:
 	void SetWorldInvTranspose(CXMMATRIX M) { WorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorldViewProj(CXMMATRIX M) { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetViewProj(CXMMATRIX M) { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetInstanceID(UINT id) { instanceID->SetInt(id); }
 };
 #pragma endregion
 

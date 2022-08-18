@@ -348,6 +348,7 @@ void Renderer::SetMesh(Mesh * meshSrc, std::vector<GeneralMaterial>& materialSrc
 
 	SetMaterials(materialSrc);
 	AddInstancingQueue();
+	
 }
 
 void Renderer::MapsInit()
@@ -438,9 +439,27 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		return;
 	}
 
-	if (mesh == nullptr)	
+	if (mesh == nullptr || (isShadowMapRender() && GetInstancing() && shadowSkinningInstancingSize==0))
 		return;
 	
+	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
+	if (GetInstancing() && !isShadowMapRender())
+	{
+		//이미 렌더링을 했거나, 그릴 오브젝트들이 없는 경우 리턴
+		if (mesh->enableInstancingIndexes.empty())
+			return;
+		mesh->InstancingBasicUpdate(context);
+		mesh->SetInstanceSkinnedVB(context);
+	}
+	else
+	{
+		//skinning이 아닐땐 정점버퍼 바인딩
+		//skinning일 경우 나중에 정점데이터 structuredBuffer 바인딩
+		if (!(GetTechniqueType() & TechniqueType::Skinned))
+			mesh->SetSkinnedVB(context);
+	}
+
+	mesh->SetIB(context);
 	
 	//XMMATRIX world = XMLoadFloat4x4(&transform->m_world);
 	XMMATRIX world;
@@ -450,51 +469,41 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	//그림자맵 렌더링 일때는 정점을 다시 계산할 필요가 없음
 	if (!isShadowMapRender())
 	{
-		mSkinningComputeShader->Execute(context, camera, world,
-			animator->boneDatas.m_finalTransforms);
+		//계산쉐이더를 통해 정점스키닝 계산
+		if (GetInstancing())
+		{
+			mesh->m_instancingComputeShader->Execute(context, camera);
+		}
+		else
+		{
+			mSkinningComputeShader->Execute(context, camera, world,
+				animator->boneDatas.m_finalTransforms);
+		}
+		
 	}
 	animator->SetAnimatedFlag(false);
 
-	/*ID3D11Buffer* output;
-	D3D11_BUFFER_DESC rwVertexDesc;
-	rwVertexDesc.Usage = D3D11_USAGE_STAGING;
-	rwVertexDesc.ByteWidth = sizeof(MyVertex::ComputedVertex)* mSkinningComputeShader->bufferSize;
-	rwVertexDesc.BindFlags = 0;
-	rwVertexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	rwVertexDesc.StructureByteStride = sizeof(MyVertex::ComputedVertex);
-	rwVertexDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	HR(m_texMgr.md3dDevice->CreateBuffer(&rwVertexDesc, 0, &output));
+	//ID3D11Buffer* output;
+	//D3D11_BUFFER_DESC rwVertexDesc;
+	//rwVertexDesc.Usage = D3D11_USAGE_STAGING;
+	////rwVertexDesc.ByteWidth = sizeof(MyVertex::ComputedVertex)* mSkinningComputeShader->bufferSize;
+	//rwVertexDesc.ByteWidth = sizeof(MyVertex::ComputedVertex)* mesh->m_instancingComputeShader->bufferSize;
+	//rwVertexDesc.BindFlags = 0;
+	//rwVertexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	//rwVertexDesc.StructureByteStride = sizeof(MyVertex::ComputedVertex);
+	//rwVertexDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	//HR(m_texMgr.md3dDevice->CreateBuffer(&rwVertexDesc, 0, &output));
 
-	context->CopyResource(output, mSkinningComputeShader->RWvertexBuffer);
+	////context->CopyResource(output, mSkinningComputeShader->RWvertexBuffer);
+	//context->CopyResource(output, mesh->m_instancingComputeShader->RWvertexBuffer);
 
-	D3D11_MAPPED_SUBRESOURCE mappedData;
-	context->Map(output, 0, D3D11_MAP_READ, 0, &mappedData);
-	MyVertex::ComputedVertex* debugVertices =
-		reinterpret_cast<MyVertex::ComputedVertex*>(mappedData.pData);
+	//D3D11_MAPPED_SUBRESOURCE mappedData;
+	//context->Map(output, 0, D3D11_MAP_READ, 0, &mappedData);
+	//MyVertex::ComputedVertex* debugVertices =
+	//	reinterpret_cast<MyVertex::ComputedVertex*>(mappedData.pData);
 
-	ReleaseCOM(output);*/
+	//ReleaseCOM(output);
 	
-
-
-	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
-	if (GetInstancing())
-	{
-		//이미 렌더링을 했거나, 그릴 오브젝트들이 없는 경우 리턴
-		if (mesh->enableInstancingIndexes.empty())
-			return;
-		mesh->InstancingUpdate(context);
-		mesh->SetInstanceSkinnedVB(context);
-	}
-	else
-	{
-		//skinning이 아닐땐 정점버퍼 바인딩
-		if(!(GetTechniqueType() & TechniqueType::Skinned))
-			mesh->SetSkinnedVB(context);
-	}
-	
-
-
-	mesh->SetIB(context);
 
 	int subsetLength = mesh->GetSubsetLength();
 
@@ -513,6 +522,7 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 				if (!effects[i]->IASetting(context, GetTechniqueType() |
 					TechniqueType::Instancing))
 					break;
+				effects[i]->SetVertexBufferLen(mSkinningComputeShader->MeshVerticesSize);
 			}
 			else
 			{
@@ -556,14 +566,28 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		//스키닝일 경우 정점버퍼 대신 구조적버퍼로 정점데이터 전달
 		if (tempTechType & TechniqueType::Skinned)
 		{
-			effects[i]->SetVertexSrcData(mSkinningComputeShader->computedVertexSRV);
+			if (GetInstancing())
+				effects[i]->SetVertexSrcData(
+					mesh->m_instancingComputeShader->computedVertexSRV);
+			else
+				effects[i]->SetVertexSrcData(mSkinningComputeShader->computedVertexSRV);
 		}
 
 		for (UINT p = 0; p < techDesc.Passes; ++p)
 		{
 			activeTech->GetPassByIndex(p)->Apply(0, context);
 
-			mesh->Draw(context, i);
+			if (isShadowMapRender() && GetInstancing())
+			{
+				//인스턴싱 렌더링
+				context->DrawIndexedInstanced(mesh->subsets[i].IndexCount
+					, shadowSkinningInstancingSize
+					, mesh->subsets[i].IndexStart
+					, mesh->subsets[i].VertexStart
+					, 0);
+			}
+			else
+				mesh->Draw(context, i);		
 		}
 	}
 
@@ -571,12 +595,20 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	context->VSSetShaderResources(0, 1, nullSRV);
 		
 	//instancing 렌더링은 Draw 호출 한번만 하도록 벡터를 비워줌.
-	if (GetInstancing())
+	if (GetInstancing() && !isShadowMapRender())
+	{
+		shadowSkinningInstancingSize = mesh->enableInstancingIndexes.size();
 		mesh->enableInstancingIndexes.clear();
+	}
+		
 
 	//현재 렌더링이 그림자맵 렌더링이면
 	if (isShadowMapRender())
+	{
 		isRenderShadowMapBaking = false;
+		shadowSkinningInstancingSize = 0;
+	}
+		
 }
 
 void SkinnedMeshRenderer::Update()
@@ -604,7 +636,6 @@ void SkinnedMeshRenderer::InstancingUpdate()
 		return;
 
 	//세계행렬 업데이트
-	//mesh->InstancingDatas[m_instancingIdx]->world = transform->m_world;
 	GetWorldMatrix(mesh->InstancingDatas[m_instancingIdx]->world);
 
 	//역전치행렬 업데이트
@@ -618,12 +649,14 @@ void SkinnedMeshRenderer::InstancingUpdate()
 
 	//이번 프레임에 렌더링할 오브젝트로 등록
 	mesh->enableInstancingIndexes.push_back(m_instancingIdx);
+	mesh->m_instancingComputeShader->InstancingUpdate(m_instancingIdx);
 }
 
 void SkinnedMeshRenderer::InitSkinnedVB()
 {
 	mesh->InitSkinnedVB(m_texMgr.md3dDevice, m_skinnedDatas);
 	mSkinningComputeShader->InitSkinDataBuffer(m_skinnedDatas, m_texMgr.md3dDevice);
+	mesh->m_instancingComputeShader->InitSkinDataBuffer(m_skinnedDatas, m_texMgr.md3dDevice);
 }
 
 std::vector<std::string> SkinnedMeshRenderer::GetAnimationClipNames()
@@ -677,6 +710,8 @@ void SkinnedMeshRenderer::SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones)
 		}
 	}
 	mBoneRenderer->SetMesh();
+	mesh->m_instancingComputeShader->AddInstance<MyVertex::ComputedVertex>
+		(m_texMgr.md3dDevice, m_bones);
 }
 
 void SkinnedMeshRenderer::SetTechniqueType(int orTechnique)
@@ -696,17 +731,31 @@ UINT SkinnedMeshRenderer::GetTechniqueType()
 void SkinnedMeshRenderer::SetMesh(Mesh * meshSrc)
 {
 	Renderer::SetMesh(meshSrc);
+	mesh->InitInstancingComputeShader(L"FX/SkinningCompute.fxo", m_texMgr.md3dDevice);
+
 	mSkinningComputeShader->InitVertexSRV(mesh->GetVertices(), m_texMgr.md3dDevice);
 	mSkinningComputeShader->InitVertexUAV<MyVertex::ComputedVertex>(m_texMgr.md3dDevice);
 	mSkinningComputeShader->InitComputedVertexSRV(m_texMgr.md3dDevice);
+
+	mesh->m_instancingComputeShader->InitVertexSRV(mesh->GetVertices(), m_texMgr.md3dDevice);
+	mesh->m_instancingComputeShader->InitVertexUAV<MyVertex::ComputedVertex>(m_texMgr.md3dDevice);
+	mesh->m_instancingComputeShader->InitComputedVertexSRV(m_texMgr.md3dDevice);
+	
 }
 
 void SkinnedMeshRenderer::SetMesh(Mesh * meshSrc, std::vector<GeneralMaterial>& materialSrc)
 {
 	Renderer::SetMesh(meshSrc, materialSrc);
+	mesh->InitInstancingComputeShader(L"FX/SkinningCompute.fxo", m_texMgr.md3dDevice);
+
 	mSkinningComputeShader->InitVertexSRV(mesh->GetVertices(), m_texMgr.md3dDevice);
 	mSkinningComputeShader->InitVertexUAV<MyVertex::ComputedVertex>(m_texMgr.md3dDevice);
 	mSkinningComputeShader->InitComputedVertexSRV(m_texMgr.md3dDevice);
+
+	mesh->m_instancingComputeShader->InitVertexSRV(mesh->GetVertices(), m_texMgr.md3dDevice);
+	mesh->m_instancingComputeShader->InitVertexUAV<MyVertex::ComputedVertex>(m_texMgr.md3dDevice);
+	mesh->m_instancingComputeShader->InitComputedVertexSRV(m_texMgr.md3dDevice);
+	
 }
 
 void SkinnedMeshRenderer::SetAnimationClip(const std::string & clipName)

@@ -86,7 +86,7 @@ public:
 	bool SetBlending(bool blend) { return m_blending = blend;}
 
 	//인스턴싱 관련 함수
-	bool GetInstancing()
+	virtual bool GetInstancing()
 	{ 
 		if (mesh != nullptr)
 			return mesh->GetInstancing() && !isRenderShadowMapBaking;
@@ -121,7 +121,7 @@ public:
 	Renderer(const std::string& id, ComponentType type, const gameObjectID& ownerObj);
 	Renderer(const std::string& id, ComponentType type, const gameObjectID& ownerObj, Mesh* mesh);
 	//Renderer(std::wstring& texturePath,ID3D11Device* device, TextureMgr& texMgr);
-	~Renderer();
+	virtual ~Renderer();
 	Renderer& operator=(const Renderer& other);
 
 public:
@@ -242,6 +242,7 @@ private:
 	BoneDatas tempBoneDatas;
 	//bonedata를 이미 읽었는지 확인
 	bool readBoneData;
+	UINT shadowSkinningInstancingSize = 0;
 public:
 	bool boneDrawMode = false;
 public:
@@ -277,8 +278,15 @@ public:
 
 	virtual void SetTechniqueType(int orTechnique);
 	virtual UINT GetTechniqueType();
+	virtual bool GetInstancing()
+	{
+		if (mesh != nullptr)
+			return mesh->GetInstancing();
+		return	false;
+	}
 	
 	virtual void SetMesh(Mesh* meshSrc);
 	virtual void SetMesh(Mesh* meshSrc, std::vector<GeneralMaterial>& materialSrc);
+
 };
 

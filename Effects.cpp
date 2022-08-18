@@ -166,8 +166,8 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	DiffuseMapArray = mFX->GetVariableByName("gDiffuseMapArray")->AsShaderResource();
 
 	BoneTransforms = mFX->GetVariableByName("gBoneTransforms")->AsMatrix();
-
-	//
+	vertexBufferLen = mFX->GetVariableByName("vertexBufferLen")->AsScalar();
+	
 	Init(device);
 }
 
@@ -280,7 +280,7 @@ void BasicEffect::InitSpecialInputLayout(ID3D11Device * device)
 		passDesc.IAInputSignatureSize, &m_skinning_inputLayout));
 
 	Light3TexSkinningInstancingTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(device->CreateInputLayout(InputLayoutDesc::Basic32SkinnedInstancing, 10, passDesc.pIAInputSignature,
+	HR(device->CreateInputLayout(InputLayoutDesc::Basic32SkinnedSimpleInstancing, 2, passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize, &m_skinning_instancing_inputLayout));
 }
 bool BasicEffect::IASetting(ID3D11DeviceContext * context, UINT techType)
@@ -519,7 +519,10 @@ void NormalMapEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 BuildShadowMapEffect::BuildShadowMapEffect(ID3D11Device* device, const std::wstring& filename)
 	: Effect(device, filename), m_terrainLayout(0)
 {
+	vertexBufferLen = mFX->GetVariableByName("vertexBufferLen")->AsScalar();
+
 	vertexSrcData = mFX->GetVariableByName("gVertices")->AsShaderResource();
+	BuildShadowMapSkinningInstancingTech = mFX->GetTechniqueByName("BuildShadowMapSkinningInstancingTech");
 	BuildShadowMapTech = mFX->GetTechniqueByName("BuildShadowMapTech");
 	BuildShadowMapSkinningTech = mFX->GetTechniqueByName("BuildShadowMapSkinningTech");
 	BuildShadowMapAlphaClipTech = mFX->GetTechniqueByName("BuildShadowMapAlphaClipTech");
@@ -572,12 +575,13 @@ void BuildShadowMapEffect::InitInputLayout(ID3D11Device * device)
 }
 void BuildShadowMapEffect::InitInstancingInputLayout(ID3D11Device * device)
 {
-	ReleaseCOM(m_inputLayout);
+	ReleaseCOM(m_instancing_inputLayout);
 	D3DX11_PASS_DESC passDesc;
-
-	BuildShadowMapTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(device->CreateInputLayout(InputLayoutDesc::PosNormalTexTan, 4, passDesc.pIAInputSignature,
-		passDesc.IAInputSignatureSize, &m_inputLayout));
+		
+	BuildShadowMapSkinningInstancingTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	//일단 스키닝 인스턴싱만 적용하도록 초기화(임시)
+	HR(device->CreateInputLayout(InputLayoutDesc::Basic32SkinnedSimpleInstancing, 2, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_instancing_inputLayout));
 }
 
 void BuildShadowMapEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
@@ -616,7 +620,13 @@ ID3DX11EffectTechnique * BuildShadowMapEffect::GetTechnique(UINT techType)
 	techType = techType & ~TechniqueType::Shadowed;
 
 	if (techType & TechniqueType::Skinned)
-		return BuildShadowMapSkinningTech;
+	{
+		if (techType & TechniqueType::Instancing)
+			return BuildShadowMapSkinningInstancingTech;
+		else
+			return BuildShadowMapSkinningTech;
+	}
+		
 	switch (techType)
 	{
 	case TechniqueType::Light:
@@ -1319,6 +1329,8 @@ ComputeSkinningEffect::ComputeSkinningEffect(ID3D11Device * device, const std::w
 	WorldViewProj = mFX->GetVariableByName("gWorldViewProj")->AsMatrix();
 	World = mFX->GetVariableByName("gWorld")->AsMatrix();
 	WorldInvTranspose = mFX->GetVariableByName("gWorldInvTranspose")->AsMatrix();
+
+	instanceID = mFX->GetVariableByName("instanceID")->AsScalar();
 }
 
 void ComputeSkinningEffect::InitInputLayout(ID3D11Device * device)

@@ -73,10 +73,10 @@ void Mesh::SetVB(ID3D11DeviceContext * context)
 
 void Mesh::SetInstanceVB(ID3D11DeviceContext * context)
 {
-	UINT stride[2] = { sizeof(vertices[0]), sizeof(InstancingData) };
-	UINT offset[2] = { 0 ,0};
-	ID3D11Buffer* vbs[2] = { mVB,m_InstanceBuffer };
-	context->IASetVertexBuffers(0, 2, vbs, stride, offset);
+	UINT stride[3] = { sizeof(vertices[0]), sizeof(InstancingMatrixData), sizeof(InstancingBasicData) };
+	UINT offset[3] = { 0 ,0, 0};
+	ID3D11Buffer* vbs[3] = { mVB,m_InstanceMatrixBuffer,m_InstanceBasicBuffer };
+	context->IASetVertexBuffers(0, 3, vbs, stride, offset);
 }
 
 void Mesh::SetSkinnedVB(ID3D11DeviceContext * context)
@@ -89,10 +89,10 @@ void Mesh::SetSkinnedVB(ID3D11DeviceContext * context)
 
 void Mesh::SetInstanceSkinnedVB(ID3D11DeviceContext * context)
 {
-	UINT stride[1] = { sizeof(InstancingData)};
+	UINT stride[1] = { sizeof(InstancingBasicData)};
 	UINT offset[1] = { 0 };
 	
-	context->IASetVertexBuffers(0,1, &m_InstanceBuffer, stride, offset);
+	context->IASetVertexBuffers(0,1, &m_InstanceBasicBuffer, stride, offset);
 }
 
 void Mesh::SetIB(ID3D11DeviceContext * context)
@@ -109,21 +109,57 @@ void Mesh::SetAABB_MaxMin(XMFLOAT3 & maxV, XMFLOAT3 & minV)
 
 void Mesh::InstancingUpdate(ID3D11DeviceContext* context)
 {
-	if (m_InstanceBuffer == nullptr)
+	if (m_InstanceBasicBuffer == nullptr || m_InstanceMatrixBuffer == nullptr)
 		return;
 
 	D3D11_MAPPED_SUBRESOURCE mappedData;
-	context->Map(m_InstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+	D3D11_MAPPED_SUBRESOURCE matrixMappedData;
+
+	context->Map(m_InstanceBasicBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+	context->Map(m_InstanceMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &matrixMappedData);
+
 	
-	InstancingData* dataView = reinterpret_cast<InstancingData*>(mappedData.pData);
+	InstancingBasicData* dataView = reinterpret_cast<InstancingBasicData*>(mappedData.pData);
+	InstancingMatrixData* matrixDataView = reinterpret_cast<InstancingMatrixData*>(matrixMappedData.pData);
 
 	for (int i = 0; i < enableInstancingIndexes.size(); ++i)
 	{
-		if(InstancingDatas[enableInstancingIndexes[i]] != nullptr)
-			dataView[i] = *InstancingDatas[enableInstancingIndexes[i]];
+		if (InstancingDatas[enableInstancingIndexes[i]] != nullptr)
+		{
+			matrixDataView[i].world = InstancingDatas[enableInstancingIndexes[i]]->world;
+			matrixDataView[i].worldInvTranspose = InstancingDatas[enableInstancingIndexes[i]]->worldInvTranspose;
+			dataView[i].color = InstancingDatas[enableInstancingIndexes[i]]->color;
+			dataView[i].RendererIdx = InstancingDatas[enableInstancingIndexes[i]]->RendererIdx;
+			
+		}			
 	}
 
-	context->Unmap(m_InstanceBuffer, 0);
+	context->Unmap(m_InstanceBasicBuffer, 0);
+	context->Unmap(m_InstanceMatrixBuffer, 0);
+}
+
+void Mesh::InstancingBasicUpdate(ID3D11DeviceContext * context)
+{
+	if (m_InstanceBasicBuffer == nullptr)
+		return;
+
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	
+	context->Map(m_InstanceBasicBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+		
+	InstancingBasicData* dataView = reinterpret_cast<InstancingBasicData*>(mappedData.pData);
+	
+	for (int i = 0; i < enableInstancingIndexes.size(); ++i)
+	{
+		if (InstancingDatas[enableInstancingIndexes[i]] != nullptr)
+		{
+			dataView[i].color = InstancingDatas[enableInstancingIndexes[i]]->color;
+			dataView[i].RendererIdx = InstancingDatas[enableInstancingIndexes[i]]->RendererIdx;
+
+		}
+	}
+
+	context->Unmap(m_InstanceBasicBuffer, 0);
 }
 
 Mesh::~Mesh()
@@ -135,8 +171,9 @@ Mesh::~Mesh()
 	}
 	if (textureNames != nullptr)
 		delete[] textureNames;
-	ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(m_InstanceBuffer);
+	ReleaseCOM(mVB); ReleaseCOM(mIB); ReleaseCOM(m_InstanceBasicBuffer);
 	ReleaseCOM(m_skinnedDataBuffer);
+	ReleaseCOM(m_InstanceMatrixBuffer);
 }
 Mesh::Mesh(const Mesh & other) : Mesh(other.id)
 {
@@ -150,7 +187,7 @@ Mesh::Mesh(const Mesh & other) : Mesh(other.id)
 	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
 	//instanceBuffer
 	enableInstancingIndexes = other.enableInstancingIndexes;
-	m_InstanceBuffer = other.m_InstanceBuffer;
+	m_InstanceBasicBuffer = other.m_InstanceBasicBuffer;
 	SetInstanceBufferSize(MAX_INSTSANCING);
 }
 
@@ -167,7 +204,7 @@ Mesh::Mesh(Mesh && other) : Mesh(other.id)
 	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
 	//instanceBuffer
 	enableInstancingIndexes = other.enableInstancingIndexes;
-	m_InstanceBuffer = other.m_InstanceBuffer;
+	m_InstanceBasicBuffer = other.m_InstanceBasicBuffer;
 	SetInstanceBufferSize(MAX_INSTSANCING);
 }
 
@@ -186,7 +223,7 @@ Mesh & Mesh::operator=(const Mesh & other)
 	m_Aabb_MaxMin = other.m_Aabb_MaxMin;
 	m_instancing = other.m_instancing;
 	m_instanceBufferSize = other.m_instanceBufferSize;
-	m_InstanceBuffer = other.m_InstanceBuffer;
+	m_InstanceBasicBuffer = other.m_InstanceBasicBuffer;
 	return *this;
 }
 
@@ -255,6 +292,14 @@ void Mesh::InstanceDraw(ID3D11DeviceContext * context, UINT subsetIdx)
 		, 0);
 }
 
+void Mesh::InitInstancingComputeShader(const std::wstring & filename, ID3D11Device * device)
+{
+	if (m_instancingComputeShader)
+		return;
+	m_instancingComputeShader = std::make_unique
+		<SkinningInstancingComputeShader>(filename, device);
+}
+
 void Mesh::InitVB(ID3D11Device * device)
 {
 	ReleaseCOM(mVB);
@@ -319,37 +364,47 @@ void Mesh::InitWritableIB(ID3D11Device * device, UINT bufferSize)
 
 void Mesh::InitInstanceBuffer(ID3D11Device * device, UINT bufferSize)
 {
-	ReleaseCOM(m_InstanceBuffer);
+	ReleaseCOM(m_InstanceBasicBuffer);
+	ReleaseCOM(m_InstanceMatrixBuffer);
+
 	SetInstanceBufferSize(bufferSize);
 
 	//bufferDesc 작성
 	D3D11_BUFFER_DESC desc;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	desc.ByteWidth = sizeof(InstancingData) * bufferSize;
+	desc.ByteWidth = sizeof(InstancingBasicData) * bufferSize;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; //쓰기 가능 버퍼
 	desc.MiscFlags = 0;
 	desc.StructureByteStride = 0;
 	desc.Usage = D3D11_USAGE_DYNAMIC;
 
 	//매핑후 instancingData의 내용을 직접 쓸것이므로 subresource는 null
-	HR(device->CreateBuffer(&desc, 0, &m_InstanceBuffer));
+	HR(device->CreateBuffer(&desc, 0, &m_InstanceBasicBuffer));
+
+	desc.ByteWidth = sizeof(InstancingMatrixData) * bufferSize;
+	HR(device->CreateBuffer(&desc, 0, &m_InstanceMatrixBuffer));
 }
 
 void Mesh::InitInstanceBuffer(ID3D11Device * device)
 {
-	ReleaseCOM(m_InstanceBuffer);
+	ReleaseCOM(m_InstanceBasicBuffer);
+	ReleaseCOM(m_InstanceMatrixBuffer);
 
 	//bufferDesc 작성
 	D3D11_BUFFER_DESC desc;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	desc.ByteWidth = sizeof(InstancingData) * m_instanceBufferSize;
+	desc.ByteWidth = sizeof(InstancingBasicData) * m_instanceBufferSize;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; //쓰기 가능 버퍼
 	desc.MiscFlags = 0;
 	desc.StructureByteStride = 0;
 	desc.Usage = D3D11_USAGE_DYNAMIC;
 
 	//매핑후 instancingData의 내용을 직접 쓸것이므로 subresource는 null
-	HR(device->CreateBuffer(&desc, 0, &m_InstanceBuffer));
+	HR(device->CreateBuffer(&desc, 0, &m_InstanceBasicBuffer));
+
+	desc.ByteWidth = sizeof(InstancingMatrixData) * m_instanceBufferSize;
+	HR(device->CreateBuffer(&desc, 0, &m_InstanceMatrixBuffer));
+
 }
 
 

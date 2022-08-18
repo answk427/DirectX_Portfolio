@@ -81,3 +81,61 @@ void SkinningComputeShader::Execute(ID3D11DeviceContext * context, Camera * came
 	// Disable compute shader.
 	context->CSSetShader(0, 0, 0);
 }
+
+void SkinningInstancingComputeShader::Execute(ID3D11DeviceContext * context, Camera * camera)
+{
+	// HORIZONTAL blur pass
+	D3DX11_TECHNIQUE_DESC techDesc;
+
+	computeSkinningShader->computeSkinningTech->GetDesc(&techDesc);
+
+	//그대로 유지되는 자원 바인딩
+	computeSkinningShader->SetVertexSrcData(vertexSRV);
+	computeSkinningShader->SetVertexDestData(vertexUAV);
+	computeSkinningShader->SetSkinData(skinDataSRV);
+	
+	//이번에 계산할 인스턴스들을 전부 계산
+	while(!m_enableInstancingIndexes.empty())
+	{
+		UINT idx = m_enableInstancingIndexes.front();
+		m_enableInstancingIndexes.pop();
+
+		if (m_instances[idx].expired())
+			continue;
+		std::shared_ptr<NodeHierarchy> instance = m_instances[idx].lock();
+		if (!instance)
+			continue;
+		
+		computeSkinningShader->SetInstanceID(idx);
+		//각 인스턴싱에 해당하는 자원 바인딩
+		XMMATRIX world;
+		instance->GetRootWorldTransform(world);
+		computeSkinningShader->PerObjectSet(camera, world);
+
+		std::vector<XMFLOAT4X4>& boneTransforms = instance->m_animator->boneDatas.m_finalTransforms;
+		computeSkinningShader->SetBoneTransforms(&boneTransforms[0], boneTransforms.size());
+
+		for (UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			computeSkinningShader->computeSkinningTech->GetPassByIndex(p)->Apply(0, context);
+
+			UINT numGroupsX = (UINT)ceilf(MeshVerticesSize / THREADLENGTH);
+			context->Dispatch(numGroupsX, 1, 1);
+		}
+	}
+	
+		
+
+	// Unbind the input texture from the CS for good housekeeping.
+	ID3D11ShaderResourceView* nullSRV[1] = { 0 };
+	context->CSSetShaderResources(0, 1, nullSRV);
+
+	// Unbind output from compute shader (we are going to use this output as an input in the next pass, 
+	// and a resource cannot be both an output and input at the same time.
+	ID3D11UnorderedAccessView* nullUAV[1] = { 0 };
+	context->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+
+
+	// Disable compute shader.
+	context->CSSetShader(0, 0, 0);
+}

@@ -103,6 +103,19 @@ struct ComputedVertex
 	float4 BiTanW;
 };
 
+struct SkinnedInstanceVertexIn
+{
+	//vertex 정보는 구조적버퍼로 입력받음.
+	//여기부터 인스턴싱 자료
+	float4 Color : COLOR;
+	uint RendererIdx : RENDERERIDX;
+};
+
+cbuffer MeshInfo
+{
+	uint vertexBufferLen;
+};
+
 StructuredBuffer<ComputedVertex> gVertices;
 
 
@@ -116,6 +129,25 @@ float CalcTessFactor(float3 p)
 	float s = saturate((d - gMinTessDistance) / (gMaxTessDistance - gMinTessDistance));
 
 	return pow(2, (lerp(gMaxTessFactor, gMinTessFactor, s)));
+}
+
+//VertexOut SkinningInstancingVS(uint vertexID : SV_VertexID, uint instanceID : SV_InstanceID)
+//{
+//	VertexOut vout;
+//	uint resultVertexID = vertexBufferLen * instanceID + vertexID;
+//	vout.PosH = mul(float4(gVertices[resultVertexID].PosL, 1.0f), mul(gWorld, gViewProj));
+//	vout.Tex = mul(float4(gVertices[resultVertexID].Tex, 0.0f, 1.0f), gTexTransform).xy;
+//	
+//	return vout;
+//}
+VertexOut SkinningInstancingVS(SkinnedInstanceVertexIn vin, uint vertexID : SV_VertexID)
+{
+	VertexOut vout;
+	uint resultVertexID = vertexBufferLen * vin.RendererIdx + vertexID;
+	vout.PosH = mul(float4(gVertices[resultVertexID].PosW, 1.0f), gViewProj);
+	vout.Tex = mul(float4(gVertices[resultVertexID].Tex, 0.0f, 1.0f), gTexTransform).xy;
+
+	return vout;
 }
 
 VertexOut SkinningVS(uint vertexID : SV_VertexID)
@@ -507,6 +539,20 @@ technique11 BuildShadowMapSkinningTech
 		SetRasterizerState(Depth);
 	}
 }
+
+technique11 BuildShadowMapSkinningInstancingTech
+{
+	pass P0
+	{
+		SetVertexShader(CompileShader(vs_5_0, SkinningInstancingVS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(NULL);
+		//SetPixelShader(CompileShader(ps_5_0, PS()));
+
+		SetRasterizerState(Depth);
+	}
+}
+
 
 technique11 BuildShadowMapAlphaClipTech
 {

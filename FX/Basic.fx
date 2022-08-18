@@ -108,11 +108,8 @@ struct SkinnedInstanceVertexIn
 {
 	//vertex 정보는 구조적버퍼로 입력받음.
 	//여기부터 인스턴싱 자료
-	row_major float4x4 World : WORLD;
-	row_major float4x4 WorldInvTranspose : INVTRANSPOSE;
 	float4 Color : COLOR;
 	uint RendererIdx : RENDERERIDX;
-	uint InstanceId : SV_InstanceID;
 };
 
 struct VertexOut
@@ -139,13 +136,17 @@ struct vertex
 };
 
 StructuredBuffer<vertex> gVertices;
-Buffer<uint> gVertexStarts;
 
+cbuffer MeshInfo
+{
+	uint vertexBufferLen;
+};
 
+#define meshVerticesSize 
 VertexOut SkinningInstancingVS(SkinnedInstanceVertexIn vin, uint vertexID : SV_VertexID, uint instanceID : SV_InstanceID)
 {
 	VertexOut vout;
-	uint resultVertexID = gVertexStarts[instanceID] + vertexID;
+	uint resultVertexID = vertexBufferLen * vin.RendererIdx + vertexID;
 	vout.PosH = gVertices[resultVertexID].PosH;
 	vout.PosW = gVertices[resultVertexID].PosW;
 	vout.NormalW = gVertices[resultVertexID].NormalW;
