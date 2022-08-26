@@ -93,13 +93,14 @@ void Skinning(int3 dispatchThreadID : SV_DispatchThreadID,
 	boneIdx[1] = gInputSkinData[dispatchThreadID.x].BoneIndices[1];
 	boneIdx[2] = gInputSkinData[dispatchThreadID.x].BoneIndices[2];
 	boneIdx[3] = gInputSkinData[dispatchThreadID.x].BoneIndices[3];
-
+	
 	for (int i = 0; i < 4; ++i)
 	{
 		// Assume no nonuniform scaling when transforming normals, so 
 		// that we do not have to use the inverse-transpose.
 		if (gInputSkinData[dispatchThreadID.x].BoneIndices[i] != -1)
 		{
+			
 			posL += weights[i] * mul(float4(gVertices[dispatchThreadID.x].PosL, 1.0f),
 				gBoneCache[boneIdx[i]]).xyz;
 			normalL += weights[i] * mul(gVertices[dispatchThreadID.x].NormalL,
@@ -112,13 +113,13 @@ void Skinning(int3 dispatchThreadID : SV_DispatchThreadID,
 		else
 		{
 			posL += weights[i] * mul(float4(gVertices[dispatchThreadID.x].PosL, 1.0f),
-				gBoneCache[0]).xyz;
+				gBoneCache[boneIdx[0]]).xyz;
 			normalL += weights[i] * mul(gVertices[dispatchThreadID.x].NormalL,
-				(float3x3)gBoneCache[0]);
+				(float3x3)gBoneCache[boneIdx[0]]);
 			tangentL += weights[i] * mul(gVertices[dispatchThreadID.x].tan,
-				(float3x3)gBoneCache[0]);
+				(float3x3)gBoneCache[boneIdx[0]]);
 			bitanL += weights[i] * mul(gVertices[dispatchThreadID.x].bitan,
-				(float3x3)gBoneCache[0]);
+				(float3x3)gBoneCache[boneIdx[0]]);
 		}
 	}
 

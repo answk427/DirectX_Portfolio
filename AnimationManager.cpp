@@ -17,6 +17,7 @@ void AnimationManager::LoadAnimation(std::map<std::string, AssimpAnimation>& ass
 		MyAnimationClip aniClip;
 		ConvertAnimation(clip.first, clip.second, aniClip);
 		mAnimations[clip.first] = aniClip;
+		
 	}
 }
 

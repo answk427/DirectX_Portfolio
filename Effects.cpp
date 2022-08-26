@@ -1377,3 +1377,49 @@ void ComputeSkinningEffect::PerObjectSet(Camera * camera, CXMMATRIX & world)
 	//인스턴스의 세계행렬과 곱해질 시야투영행렬
 	SetViewProj(camera->ViewProj());
 }
+
+MoveToolEffect::MoveToolEffect(ID3D11Device * device, const std::wstring & name) 
+	: Effect(device, name)
+{
+	BasicTech= mFX->GetTechniqueByName("BasicTech");
+	EyePosW = mFX->GetVariableByName("gEyePosW")->AsVector();
+	ViewProj = mFX->GetVariableByName("gViewProj")->AsMatrix();
+
+	Init(device);
+}
+
+void MoveToolEffect::InitInputLayout(ID3D11Device * device)
+{
+	ReleaseCOM(m_inputLayout);
+	D3DX11_PASS_DESC passDesc;
+
+	BasicTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(device->CreateInputLayout(InputLayoutDesc::PosWorldColor, 6, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &m_inputLayout));
+}
+
+void MoveToolEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+}
+
+void MoveToolEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
+{
+
+}
+
+void MoveToolEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
+{
+}
+
+ID3DX11EffectTechnique * MoveToolEffect::GetTechnique(UINT techType)
+{
+	return BasicTech;
+}
+
+void MoveToolEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+}
+
+void MoveToolEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+}

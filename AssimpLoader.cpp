@@ -40,10 +40,7 @@ void AssimpLoader::InitScene(const std::string& fileName)
 
 	if (m_pScene) //경로의 파일을 정상적으로 로드했을 때
 	{
-		currentFileName = fileName;
-		m_assimpBones.clear();
-		m_animations.clear();
-		boneHierarchy.Init();
+		Init(fileName);
 		if (root != nullptr)
 		{
 			delete root;
@@ -51,6 +48,15 @@ void AssimpLoader::InitScene(const std::string& fileName)
 		}
 	}
 	
+}
+
+void AssimpLoader::Init(const std::string& fileName)
+{
+	m_meshNum = m_pScene->mNumMeshes;
+	currentFileName = fileName;
+	m_assimpBones.clear();
+	m_animations.clear();
+	boneHierarchy.Init();
 }
 
 //void AssimpLoader::InitContainer()
@@ -68,22 +74,36 @@ bool AssimpLoader::LoadData()
 		return false;
 
 	NodeTravel();
-	boneHierarchy.InitBones(root, m_assimpBones);
-	boneHierarchy.SortBones();
+
 	if (m_pScene->HasAnimations())
 	{
 		m_animations.clear();
 		for (int i = 0; i < m_pScene->mNumAnimations; ++i)
 		{
-			LoadAnimation(m_pScene->mAnimations[i]); 
+			LoadAnimation(m_pScene->mAnimations[i]);
 		}
+		if (IsEmptyMesh())
+			ExtractBoneFromAnimation(m_animations.begin()->second.bones);
 	}
+	
+	boneHierarchy.InitBones(root, m_assimpBones);
+	boneHierarchy.SortBones();
+	
 	for(auto& animation : m_animations)
 		boneHierarchy.InitAnimation(animation.second);
 	
 	boneHierarchy.ConvertSkinnedVertex(root);
 	
 	return true;
+}
+
+void AssimpLoader::ExtractBoneFromAnimation(const std::map<boneName,AssimpAnimationFrame>& ani)
+{
+	
+	for (auto& elem : ani)
+	{
+		m_assimpBones.insert({ elem.first, AssimpBone() });
+	}
 }
 
 

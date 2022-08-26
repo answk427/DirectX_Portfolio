@@ -273,6 +273,9 @@
     <ClCompile Include="SkinningComputeShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MoveToolRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effects.h">
@@ -509,6 +512,9 @@
     <ClInclude Include="SkinningComputeShader.h">
       <Filter>New Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MoveToolRenderer.h">
+      <Filter>New Header Files\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FX\LightHelper.fx">
@@ -559,6 +565,9 @@
       <Filter>FX</Filter>
     </CustomBuild>
     <CustomBuild Include="FX\SkinningCompute.fx">
+      <Filter>FX</Filter>
+    </CustomBuild>
+    <CustomBuild Include="FX\MoveToolEffect.fx">
       <Filter>FX</Filter>
     </CustomBuild>
   </ItemGroup>

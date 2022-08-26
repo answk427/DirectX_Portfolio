@@ -50,6 +50,8 @@ protected:
 	std::vector<Effect*> effects;
 	TextureMgr& m_texMgr;
 	EffectMgr& m_effectMgr;
+
+public:
 	std::weak_ptr<NodeHierarchy> m_bones;
 	
 protected:

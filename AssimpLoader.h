@@ -169,7 +169,6 @@ class AssimpLoader
 private:
 	//test
 	std::vector<std::vector<std::wstring>> boneNames;
-
 	std::string currentFileName;
 	NodeStruct* root;
 	std::map<std::wstring, AssimpBone> m_assimpBones;
@@ -177,7 +176,7 @@ private:
 	FinalHierarchy boneHierarchy;
 private:
 	const aiScene* m_pScene;
-			
+	int m_meshNum = 0;
 private:
 	//적재 컨테이너 한번에 초기화
 	//void InitContainer();
@@ -209,12 +208,15 @@ public:
 public:
 	//모델파일을 읽어와 scene 초기화
 	void InitScene(const std::string & fileName);
+	void Init(const std::string& fileName);
 	//Data 읽기
 	bool LoadData();
 	bool IsEmpty() { return m_pScene == nullptr; }
 	bool EqualFileName(const std::string& fileName) { return currentFileName == fileName; }
+	bool IsEmptyMesh(){ return m_meshNum == 0; }
 	NodeStruct* getRoot() { return root; }
 	std::map<std::wstring, AssimpBone>& getAssimpBones() { return m_assimpBones; }
 	std::map<std::string, AssimpAnimation>& getAssimpAnimations() { return m_animations; }
 	FinalHierarchy* GetHierarchy() { return &boneHierarchy; }
+	void ExtractBoneFromAnimation(const std::map<boneName, AssimpAnimationFrame>& ani);
 };

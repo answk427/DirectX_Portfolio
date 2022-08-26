@@ -10,6 +10,7 @@
 #include "ObjectMgr.h"
 #include "BoundingBoxRenderer.h"
 #include <unordered_map>
+#include "MoveToolRenderer.h"
 
 #pragma comment(lib,"comctl32.lib")
 
@@ -25,6 +26,7 @@ class HierarchyDialog : public MsgProcedure
 private:
 	Inspector inspector;
 	BoundingBoxRenderer* m_boundingBoxRenderer;
+	MoveToolRenderer* m_moveToolRenderer;
 	//hierarchy에 등록된 오브젝트의 id와 item을 매핑(id를 통해 item을 선택)
 	std::unordered_map<gameObjectID, HTREEITEM> Map_idItem;
 	//복사 해 둔 오브젝트
@@ -49,7 +51,7 @@ public:
 	virtual bool OpenDialog() override;
 
 	bool OpenDialog(HWND hwnd);
-	void Init(HWND hWnd_main, BoundingBoxRenderer* bbr);
+	void Init(HWND hWnd_main, BoundingBoxRenderer* bbr, MoveToolRenderer* moveToolRenderer);
 	void treeInit(HWND hDlg);
 	void SelectObject(gameObjectID& objID);
 

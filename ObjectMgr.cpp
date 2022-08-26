@@ -95,8 +95,10 @@ GameObject* ObjectMgr::CreateObjectFromFile(const std::string& fileName)
 	if (root == nullptr)
 		return nullptr;
 
-
-	return AddNode(*root);
+	if (!assimpLoader.IsEmptyMesh())
+		return AddNode(*root);
+	else
+		return nullptr;
 }
 
 GameObject & ObjectMgr::CreateBasicBoxObject()

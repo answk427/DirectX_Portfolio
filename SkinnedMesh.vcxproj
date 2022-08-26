@@ -128,6 +128,7 @@
     <ClCompile Include="MeshRendererCommand.cpp" />
     <ClCompile Include="MeshRendererDialog.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="MoveToolRenderer.cpp" />
     <ClCompile Include="MsgProcedure.cpp" />
     <ClCompile Include="MyCommand.cpp" />
     <ClCompile Include="NodeBoneDatas.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="MainWindowDialog.h" />
     <ClInclude Include="MeshReaderWriter.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="MoveToolRenderer.h" />
     <ClInclude Include="MyCommand.h" />
     <ClInclude Include="Common\Camera.h" />
     <ClInclude Include="Common\d3dApp.h" />
@@ -358,6 +360,11 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
     </CustomBuild>
     <CustomBuild Include="FX\SkinningCompute.fx">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /Fc /Od /Zi /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="FX\MoveToolEffect.fx">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">fxc /Fc /Od /Zi /T fx_5_0 /Fo "%(RelativeDir)\%(Filename).fxo" "%(FullPath)"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RelativeDir)\%(Filename).fxo</Outputs>

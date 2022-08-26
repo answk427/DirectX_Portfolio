@@ -438,17 +438,22 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		mBoneRenderer->Draw(context, camera);
 		return;
 	}
-
-	if (mesh == nullptr || (isShadowMapRender() && GetInstancing() && shadowSkinningInstancingSize==0))
+	if (mesh == nullptr)
 		return;
+	if ((isShadowMapRender() && GetInstancing() && shadowSkinningInstancingSize == 0))
+	{
+		isRenderShadowMapBaking = false;
+		return;
+	}
 	
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
-	if (GetInstancing() && !isShadowMapRender())
+	if (GetInstancing()) //&& !isShadowMapRender())
 	{
 		//이미 렌더링을 했거나, 그릴 오브젝트들이 없는 경우 리턴
 		if (mesh->enableInstancingIndexes.empty())
 			return;
-		mesh->InstancingBasicUpdate(context);
+		if(!isShadowMapRender())
+			mesh->InstancingBasicUpdate(context);
 		mesh->SetInstanceSkinnedVB(context);
 	}
 	else

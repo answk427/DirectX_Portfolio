@@ -32,6 +32,7 @@ namespace MyVertex
 		XMFLOAT2 Tex;
 		XMFLOAT2 BoundsY;
 	};
+		
 
 	//공통으로 사용되는 정점구조체
 	struct BasicVertex
@@ -98,6 +99,11 @@ struct InstancingData
 	XMFLOAT4X4 worldInvTranspose; //역전치행렬
 	XMFLOAT4 color; //기본색상
 	UINT RendererIdx; //어떤 렌더러에서 그렸는지 확인하기 위한 변수
+};
+struct InstancingWorldColor
+{
+	XMFLOAT4X4 world; //월드좌표
+	XMFLOAT4 color; //기본색상
 };
 
 //다른 버퍼슬롯에 들어갈 인스턴싱자료

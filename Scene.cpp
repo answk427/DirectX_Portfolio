@@ -38,6 +38,7 @@
 #include "Terrain.h"
 #include <random>
 #include <RenderStates.h>
+#include "MoveToolRenderer.h"
 
 
 #include <LoadM3d.h>
@@ -48,7 +49,7 @@ class Scene : public D3DApp
 {
 public:
 	//test
-	SkinnedMeshRenderer* testRender;
+	MoveToolRenderer* moveToolRenderer = 0;
 
 
 	bool isDrawDebugQuad = false;
@@ -167,7 +168,7 @@ void Scene::BuildScreenQuadGeometryBuffers()
 
 	//
 	// Pack the indices of all the meshes into one index buffer.
-	//
+	//	
 
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -279,6 +280,7 @@ bool Scene::Init()
 	m_boundingBoxRenderer = new BoundingBoxRenderer(md3dDevice, md3dImmediateContext);
 	m_OctreeRenderer = new SimpleLineRenderer(md3dDevice, md3dImmediateContext);
 	m_treeBillBoardRenderer = new TreeBillBoardRenderer();
+	moveToolRenderer = new MoveToolRenderer(md3dDevice);
 	
 	//카메라 초기화
 	camera.SetPosition({ 0.0f, 0.0f, -70.0f });
@@ -302,8 +304,9 @@ bool Scene::Init()
 
 
 
+	
 	//Hierarchy 초기화
-	m_HierarchyDialog->Init(mhMainWnd, m_boundingBoxRenderer);
+	m_HierarchyDialog->Init(mhMainWnd, m_boundingBoxRenderer, moveToolRenderer);
 	m_HierarchyDialog->OpenDialog(mhMainWnd);
 	
 	/*Lighting* l = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
@@ -369,7 +372,6 @@ bool Scene::Init()
 
 
 	BuildScreenQuadGeometryBuffers();
-
 
 
 	return true;
@@ -495,6 +497,8 @@ void Scene::DrawScene()
 	ID3D11ShaderResourceView* nullSRV[16] = { 0 };
 	md3dImmediateContext->PSSetShaderResources(0, 16, nullSRV);
 
+	moveToolRenderer->Draw(md3dImmediateContext, &camera);
+
 	HR(mSwapChain->Present(0, 0));
 
 	
@@ -594,6 +598,7 @@ void Scene::OnMouseDown(WPARAM btnState, int x, int y)
 		{
 			GameObject* pickedObj = reinterpret_cast<GameObject*>(picked->GetTransform()->m_owner_obj);
 			m_boundingBoxRenderer->SetObject(pickedObj);
+			moveToolRenderer->SetObject(pickedObj);
 			m_HierarchyDialog->SelectObject(pickedObj->GetID());
 		}
 			

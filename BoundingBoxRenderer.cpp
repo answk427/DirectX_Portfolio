@@ -8,7 +8,7 @@ bool BoundingBoxRenderer::SetObject(GameObject * gameObj)
 	MeshRenderer* renderer = dynamic_cast<MeshRenderer*>(gameObj->GetComponent(ComponentType::MESHRENDERER));
 	SkinnedMeshRenderer* skinnedRenderer = dynamic_cast<SkinnedMeshRenderer*>(gameObj->GetComponent(ComponentType::SKINNEDMESHRENDERER));
 	
-
+	
 	//Object에 Renderer가 없으면 return
 	if (renderer != nullptr)
 		m_meshOfCurrentObj = renderer->GetMesh();
@@ -89,6 +89,7 @@ void BoundingBoxRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	XMMATRIX world;
 	m_bones.lock()->GetFinalTransform(world, ownerObjectId);
 	
+
 	//정점버퍼, 인덱스버퍼를 입력조립기에 묶음
 	SetVB(context);
 	mesh->SetIB(context);

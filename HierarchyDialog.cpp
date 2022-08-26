@@ -35,10 +35,11 @@ bool HierarchyDialog::OpenDialog(HWND hwnd)
 	return false;
 }
 
-void HierarchyDialog::Init(HWND hWnd_main, BoundingBoxRenderer* bbr)
+void HierarchyDialog::Init(HWND hWnd_main, BoundingBoxRenderer* bbr, MoveToolRenderer* moveToolRenderer)
 {
 	hWnd = hWnd_main;
 	m_boundingBoxRenderer = bbr;
+	m_moveToolRenderer = moveToolRenderer;
 
 	InitCommonControls();
 }
@@ -102,7 +103,7 @@ bool HierarchyDialog::TreeViewDeleteItem()
 }
 
 HierarchyDialog::HierarchyDialog(HINSTANCE hInstance) : MsgProcedure(hInstance), inspector(hInstance)
-,m_boundingBoxRenderer(0), copyObj(0)
+,m_boundingBoxRenderer(0), copyObj(0), m_moveToolRenderer(0)
 {
 	assert(!instantiated);
 	instantiated = true;
@@ -278,6 +279,7 @@ void HierarchyDialog::SelectItem()
 
 	inspector.SetObject(dynamic_cast<GameObject*>(tempObj));
 	m_boundingBoxRenderer->SetObject(dynamic_cast<GameObject*>(tempObj));
+	m_moveToolRenderer->SetObject(dynamic_cast<GameObject*>(tempObj));
 
 	return;
 	
@@ -369,7 +371,8 @@ HTREEITEM HierarchyDialog::TreeViewInsertItem(Object* item, HTREEITEM parent)
 
 HTREEITEM HierarchyDialog::TreeInsertObject(Object* obj, HTREEITEM parent)
 {
-
+	if (obj == nullptr)
+		return parent;
 	//매개변수 object가 root일 경우
 	if (obj->parent == nullptr)
 	{
