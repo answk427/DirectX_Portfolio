@@ -67,7 +67,7 @@ public:
 public:
 	Scene(HINSTANCE hInstance);
 	~Scene();
-	
+
 	bool Init();
 	void OnResize();
 	void UpdateScene(float dt);
@@ -77,7 +77,7 @@ public:
 	void OnMouseDown(WPARAM btnState, int x, int y);
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
-		
+
 	void MenuProc(HWND hDlg, WPARAM wParam) override;
 
 private://엔진기능
@@ -90,7 +90,7 @@ private://엔진기능
 	Octree* m_Octree;
 	std::vector<std::unique_ptr<Renderer>> boxes;
 	std::unique_ptr<ShadowMap> m_shadowMap;
-	
+
 private:
 	DataManager& dataMgr;
 	TextureMgr& texMgr;
@@ -111,7 +111,7 @@ private:
 	float mTheta;
 	float mPhi;
 	float mRadius;
-	
+
 	D3D11_VIEWPORT m_currentViewPort;
 	//매 프레임마다 렌더링 할 Renderer 컴포넌트들의 집합
 	std::vector<Renderer*> m_drawableRenderers;
@@ -127,7 +127,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	Scene theApp(hInstance);
 
 	if (!theApp.Init())
-		return 0;	
+		return 0;
 
 	return theApp.Run();
 }
@@ -190,7 +190,7 @@ void Scene::DrawScreenQuad()
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	md3dImmediateContext->IASetVertexBuffers(0, 1, &mScreenQuadVB, &stride, &offset);
 	md3dImmediateContext->IASetIndexBuffer(mScreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
-	
+
 
 
 	// Scale and shift quad to lower-right corner.
@@ -208,7 +208,7 @@ void Scene::DrawScreenQuad()
 	{
 		Effects::DebugTexFX->SetWorldViewProj(world);
 		Effects::DebugTexFX->SetTexture(m_shadowMap->DepthMapSRV());
-		
+
 
 		tech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
@@ -275,13 +275,13 @@ bool Scene::Init()
 	texMgr.Init(md3dDevice, md3dImmediateContext);
 	effectMgr.Init(md3dDevice);
 	dataMgr.Init();
-	
+
 	//renderer 메모리할당
 	m_boundingBoxRenderer = new BoundingBoxRenderer(md3dDevice, md3dImmediateContext);
 	m_OctreeRenderer = new SimpleLineRenderer(md3dDevice, md3dImmediateContext);
 	m_treeBillBoardRenderer = new TreeBillBoardRenderer();
 	moveToolRenderer = new MoveToolRenderer(md3dDevice);
-	
+
 	//카메라 초기화
 	camera.SetPosition({ 0.0f, 0.0f, -70.0f });
 	camera.SetLens(0.5*MathHelper::Pi, AspectRatio(), 1.0f, 2000.0f); //수직시야각, 종횡비, 가까운평면, 먼평면
@@ -304,11 +304,11 @@ bool Scene::Init()
 
 
 
-	
+
 	//Hierarchy 초기화
 	m_HierarchyDialog->Init(mhMainWnd, m_boundingBoxRenderer, moveToolRenderer);
 	m_HierarchyDialog->OpenDialog(mhMainWnd);
-	
+
 	/*Lighting* l = dynamic_cast<Lighting*>(componentMgr.CreateComponent(ComponentType::LIGHT));
 	XMFLOAT4 a(0.5f, 0.5f, 0.5f, 1.0f);
 	XMFLOAT3 b(1.0f, 1.0f, 1.0f);
@@ -346,7 +346,7 @@ bool Scene::Init()
 
 	// 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
 	std::uniform_int_distribution<int> dis(-10, 10);
-		
+
 	GeometryGenerator geo;
 	/*for (int i = 0; i < 10; ++i)
 	{
@@ -368,7 +368,7 @@ bool Scene::Init()
 			}
 		}
 	}*/
-	
+
 
 
 	BuildScreenQuadGeometryBuffers();
@@ -397,7 +397,7 @@ void Scene::UpdateScene(float dt)
 		isDrawOcTree = !isDrawOcTree;
 	if (GetAsyncKeyState('3') & 0x8000)
 		isWireFrame = !isWireFrame;
-	
+
 	//
 	// Control the camera.
 	//
@@ -430,7 +430,7 @@ void Scene::UpdateScene(float dt)
 	//카메라 위치에 따른 Frustum 업데이트
 	camera.UpdateViewMatrix();
 	m_Frustum->Update();
-	
+
 
 	//절두체 선별
 	//현재 렌더링목록들을 가져온다.
@@ -445,7 +445,7 @@ void Scene::UpdateScene(float dt)
 		if (cullingResult != 0)
 			elem->InstancingUpdate();
 	}
-		
+
 }
 
 void Scene::DrawScene()
@@ -453,7 +453,7 @@ void Scene::DrawScene()
 	//그림자맵 렌더링
 	ShadowMapDraw();
 
-	if(!isWireFrame)
+	if (!isWireFrame)
 		md3dImmediateContext->RSSetState(0);
 	else
 		md3dImmediateContext->RSSetState(RenderStates::WireframeRS);
@@ -465,29 +465,29 @@ void Scene::DrawScene()
 
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	
+
 
 
 	effectMgr.SetPerFrame(componentMgr.getLightings(), camera);
-	
+
 	//Rendering
 	//바운딩박스 렌더링
 	m_boundingBoxRenderer->Draw(md3dImmediateContext, &camera);
 	//Octree 렌더링
-	if(isDrawOcTree)
+	if (isDrawOcTree)
 		m_OctreeRenderer->Draw(md3dImmediateContext, &camera);
 	//treeBillBoard 렌더링
 	//m_treeBillBoardRenderer->Draw(md3dImmediateContext, &camera);
-	
-	
+
+
 	componentMgr.Render(md3dImmediateContext, &camera);
-	
-	
-	
+
+
+
 	//m_Octree->Render(md3dImmediateContext);
 
 	//그림자맵 텍스쳐 우측하단에 렌더링
-	if(isDrawDebugQuad)
+	if (isDrawDebugQuad)
 		DrawScreenQuad();
 
 
@@ -501,14 +501,14 @@ void Scene::DrawScene()
 
 	HR(mSwapChain->Present(0, 0));
 
-	
+
 }
 
 void Scene::ShadowMapDraw()
 {
 	//뷰포트 설정, 렌더타겟뷰 null 설정, 깊이버퍼 설정
 	m_shadowMap->BindDsvAndSetNullRenderTarget(md3dImmediateContext);
-	
+
 	auto lightings = componentMgr.getLightings();
 	DirectionalLight* selectedLighting = nullptr;
 
@@ -525,8 +525,8 @@ void Scene::ShadowMapDraw()
 				return;
 			//광원공간의 시야,투영행렬 계산
 			bool result = m_shadowMap->BuildShadowTransform(*selectedLighting,
-				XMVectorSet(0.0f,1.0f,0.0f,0.0f));
-			if(result)
+				XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+			if (result)
 				SetShadowMatrix(XMLoadFloat4x4(&m_shadowMap->mShadowTransform));
 			break;
 		}
@@ -537,8 +537,8 @@ void Scene::ShadowMapDraw()
 	//md3dImmediateContext->HSSetShader(0, 0, 0);
 	//md3dImmediateContext->DSSetShader(0, 0, 0);
 
-		
-	
+
+
 	static int currObjectCount = -1;
 	int objectCount = componentMgr.getTotalRendererCount();
 	if (currObjectCount != objectCount)
@@ -547,7 +547,7 @@ void Scene::ShadowMapDraw()
 		m_shadowMap->ComputeBoundingSphere(componentMgr.GetAllRenderers());
 	}
 
-	
+
 	//그림자맵 빌드 쉐이더들의 세팅
 	//기하쉐이더 사용하는 빌보드 그림자맵 쉐이더
 	m_treeBillBoardRenderer->shadowEffect->PerFrameSet(selectedLighting, nullptr, nullptr,
@@ -580,7 +580,7 @@ void Scene::ShadowMapDraw()
 	//잠시 추가 했던 트리빌보드 렌더러 제거
 	m_drawableRenderers.pop_back();
 
-	
+
 	SetShadowSRV(m_shadowMap->DepthMapSRV());
 }
 
@@ -592,27 +592,35 @@ void Scene::OnMouseDown(WPARAM btnState, int x, int y)
 		mLastMousePos.y = y;
 		SetCapture(mhMainWnd);
 
-		//반직선교차로 오브젝트를 선택
-		Renderer* picked = RayPicking::NearestOfIntersectRayAABB(&m_currentViewPort, m_drawableRenderers, &camera, x, y);
-		if (picked != nullptr)
+		if (moveToolRenderer->AxisIntersect(&m_currentViewPort, &camera, x, y))
 		{
-			GameObject* pickedObj = reinterpret_cast<GameObject*>(picked->GetTransform()->m_owner_obj);
-			m_boundingBoxRenderer->SetObject(pickedObj);
-			moveToolRenderer->SetObject(pickedObj);
-			m_HierarchyDialog->SelectObject(pickedObj->GetID());
+
 		}
-			
+		else
+		{
+			//반직선교차로 오브젝트를 선택
+			Renderer* picked = RayPicking::NearestOfIntersectRayAABB(&m_currentViewPort, m_drawableRenderers, &camera, x, y);
+			if (picked != nullptr)
+			{
+				GameObject* pickedObj = reinterpret_cast<GameObject*>(picked->GetTransform()->m_owner_obj);
+				m_boundingBoxRenderer->SetObject(pickedObj);
+				moveToolRenderer->SetObject(pickedObj);
+				m_HierarchyDialog->SelectObject(pickedObj->GetID());
+			}
+		}
 	}
 	else if ((btnState & MK_RBUTTON) != 0)
 	{
 		//
 	}
-		
-	
+
+
 }
 
 void Scene::OnMouseUp(WPARAM btnState, int x, int y)
 {
+	moveToolRenderer->m_selectedAxis = -1;
+
 	ReleaseCapture();
 }
 
@@ -620,7 +628,7 @@ void Scene::OnMouseMove(WPARAM btnState, int x, int y)
 {
 	Mouse::UpdateScreenPos(x, y);
 
-	if (btnState & MK_RBUTTON)
+	if (btnState &MK_RBUTTON)
 	{
 		// Make each pixel correspond to a quarter of a degree.
 		float dx = XMConvertToRadians(0.25f*static_cast<float>(x - mLastMousePos.x));
@@ -628,6 +636,15 @@ void Scene::OnMouseMove(WPARAM btnState, int x, int y)
 
 		camera.Pitch(dy);
 		camera.RotateY(dx);
+	}
+	if (btnState & MK_LBUTTON)
+	{
+		float dx = x - mLastMousePos.x;
+		float dy = -(y - mLastMousePos.y);
+
+		moveToolRenderer->SetMouseDistance(dx, dy);
+		moveToolRenderer->AxisAction(camera.ViewProj());
+		
 	}
 
 	mLastMousePos.x = x;
@@ -673,7 +690,7 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 	{
 		std::vector<LPCWSTR> extensions = { L"mesh" };
 		bool success = dataMgr.FileOpen(hDlg, title, full_path, extensions);
-		if(success)
+		if (success)
 			meshMgr.CreateMeshFromFile(full_path);
 		break;
 	}

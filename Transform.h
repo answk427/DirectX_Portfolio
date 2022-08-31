@@ -47,6 +47,8 @@ public:
 	void SetScale(const XMFLOAT3& scale);
 
 	const XMFLOAT4X4* GetWorld() const { return &m_world; }
+
+	void MovePosition(const float x, const float y, const float z);
 	
 
 };	

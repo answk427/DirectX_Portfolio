@@ -130,3 +130,12 @@ void Transform::SetScale(const XMFLOAT3 & scale)
 	 m_scale = scale; 
 	 m_modifyFlag |= ModifyFlag::MODIFY_SCALE;
 }
+
+void Transform::MovePosition(const float x, const float y, const float z)
+{
+	m_position.x += x;
+	m_position.y += y;
+	m_position.z += z;
+	m_modifyFlag |= ModifyFlag::MODIFY_POSITION;
+	UpdateWorld();
+}

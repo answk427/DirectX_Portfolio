@@ -2,7 +2,7 @@
 
 MoveToolRenderer::MoveToolRenderer(ID3D11Device* device) : effect(0), mVB(0), mIB(0), 
 mInstanceBuffer(0),instancingDatas(3), scaleFactor(1.0f), pDSState(0),
-mAABBCenter(0.0f,0.0f,0.0f), m_gameObj(0)
+mAABBCenter(0.0f,0.0f,0.0f), m_gameObj(0), m_mouseDistance(0.0f,0.0f), m_selectedAxis(-1)
 {
 	if (effect != nullptr)
 		delete effect;
@@ -223,6 +223,7 @@ void MoveToolRenderer::InstancingUpdate(ID3D11DeviceContext* context)
 	XMMATRIX translate = XMMatrixTranslationFromVector({ x,y,z });
 	
 	D3D11_MAPPED_SUBRESOURCE mappedData;
+
 	context->Map(mInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
 	
 	InstancingWorldColor* dataView = 
@@ -231,13 +232,18 @@ void MoveToolRenderer::InstancingUpdate(ID3D11DeviceContext* context)
 	//스크린에서 항상 같은 크기를 유지하기 위한 scaleFactor만큼 비례변환
 	XMMATRIX scaleMat = XMMatrixScaling(scaleFactor, scaleFactor, scaleFactor);
 	
+	XMMATRIX yMatrix = scaleMat * identity * translate;
+	XMMATRIX xMatrix = scaleMat * makeXaxis * translate;
+	XMMATRIX zMatrix = scaleMat * makeZaxis * translate;
 	//인스턴싱 데이터 수정
-	XMStoreFloat4x4(&dataView[0].world,
-		(scaleMat * identity * translate) );
-	XMStoreFloat4x4(&dataView[1].world,
-		(scaleMat * makeXaxis * translate));
-	XMStoreFloat4x4(&dataView[2].world,
-		(scaleMat * makeZaxis * translate));
+	XMStoreFloat4x4(&dataView[0].world, yMatrix);
+	XMStoreFloat4x4(&dataView[1].world, xMatrix);
+	XMStoreFloat4x4(&dataView[2].world, zMatrix);
+		
+
+	XMStoreFloat4x4(&instancingDatas[0].world, yMatrix);
+	XMStoreFloat4x4(&instancingDatas[1].world, xMatrix);
+	XMStoreFloat4x4(&instancingDatas[2].world, zMatrix);
 
 	dataView[0].color = { 0.0f,1.0f,0.0f,1.0f };
 	dataView[1].color = { 1.0f,0.0f,0.0f,1.0f };
@@ -256,7 +262,7 @@ void MoveToolRenderer::InitCylinderMesh()
 {
 	GeometryGenerator geo;
 	GeometryGenerator::MeshData meshData;
-	float radius = 0.018f;
+	float radius = 0.03f;
 	float height = 1.0f;
 	geo.CreateCylinder(radius, radius, height, 10, 10, meshData);
 	
@@ -270,20 +276,22 @@ void MoveToolRenderer::InitCylinderMesh()
 	}
 
 	UINT left, right, farV, nearV, upV;
+	float bigRadius = radius * 3;
+	float bigHeight = height * 1.2f;
 	//막대 위 오각형 뿔 
-	vertices.push_back({ -radius * 3, 1.0f, 0.0f }); //왼쪽 정점
+	vertices.push_back({ -bigRadius, 1.0f, 0.0f }); //왼쪽 정점
 	left = vertices.size() - 1;
 	
-	vertices.push_back({ +radius * 3, 1.0f, 0.0f }); //오른쪽 정점
+	vertices.push_back({ +bigRadius, 1.0f, 0.0f }); //오른쪽 정점
 	right = vertices.size() - 1;
 	
-	vertices.push_back({ 0.0f, 1.0f, +radius * 3 }); //앞쪽 정점
+	vertices.push_back({ 0.0f, 1.0f, +bigRadius }); //앞쪽 정점
 	farV = vertices.size() - 1;
 
-	vertices.push_back({ 0.0f, 1.0f, -radius * 3 }); //건너편 정점
+	vertices.push_back({ 0.0f, 1.0f, -bigRadius }); //건너편 정점
 	nearV = vertices.size() - 1;
 
-	vertices.push_back({ 0.0f, height * 1.2f, 0.0f }); //위쪽 정점
+	vertices.push_back({ 0.0f, bigHeight, 0.0f }); //위쪽 정점
 	upV = vertices.size() - 1;
 	
 	
@@ -303,6 +311,8 @@ void MoveToolRenderer::InitCylinderMesh()
 	indices.push_back(upV);
 	indices.push_back(farV);
 	indices.push_back(right);
+
+	InitAxisAABB(bigRadius * 2, bigHeight);
 }
 
 void MoveToolRenderer::InitVB(ID3D11Device* device)
@@ -359,6 +369,8 @@ void MoveToolRenderer::InitInstanceBuffer(ID3D11Device * device)
 	desc.MiscFlags = 0;
 	desc.StructureByteStride = 0;
 	desc.Usage = D3D11_USAGE_DYNAMIC;
+	
+	
 
 	D3D11_SUBRESOURCE_DATA subRes;
 	subRes.pSysMem = &instancingDatas[0];
@@ -464,3 +476,120 @@ void MoveToolRenderer::InitObject()
 	mAABBCenter = { 0.0f,0.0f,0.0f };
 	maxLength = 0.0f;
 }
+
+void MoveToolRenderer::InitAxisAABB(float width, float height)
+{
+	mAABB.Center = XMFLOAT3(0, height*0.5f, 0);
+	mAABB.Extents = XMFLOAT3(width*0.5f, height*0.5f, width*0.5f);
+}
+
+void MoveToolRenderer::AxisAction(UINT idx, XMMATRIX & viewProj)
+{
+	if (m_gameObj == nullptr)
+		return;
+	
+	std::shared_ptr tr = m_gameObj->transform;
+	if (!tr)
+		return;
+
+	XMMATRIX toHomogeneous = XMLoadFloat4x4(&instancingDatas[idx].world) *
+		viewProj;
+	//동차 절단공간으로 변환
+	
+	XMVECTOR axisStart = XMVector3TransformCoord(XMVectorSet(0.0f,0.0f,0.0f,1.0f),
+		toHomogeneous);
+	XMVECTOR axisEnd = XMVector3TransformCoord(XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f),
+		toHomogeneous);
+	
+	float force = CalcForce(m_mouseDistance, axisStart, axisEnd);
+	
+	//y축
+	if (idx == 0)
+		tr->MovePosition(0.0f, force, 0.0f);
+	//x축
+	else if(idx == 1)
+		tr->MovePosition(force, 0.0f, 0.0f);
+	//z축
+	else
+		tr->MovePosition(0.0f, 0.0f, force);
+
+	m_mouseDistance = XMFLOAT2(0.0f, 0.0f);
+	
+}
+
+void MoveToolRenderer::AxisAction(XMMATRIX & viewProj)
+{
+	if (m_selectedAxis != -1)
+		AxisAction(m_selectedAxis, viewProj);
+}
+
+float MoveToolRenderer::CalcForce(XMFLOAT2 & mouseDiff, const XMVECTOR& axisStartH,
+	const XMVECTOR& axisEndH)
+{
+	//동차절단공간 -> ndc 좌표
+	XMVECTOR startNDC = axisStartH / XMVectorGetW(axisStartH);
+	startNDC.m128_f32[2] = 0.0f;
+	startNDC.m128_f32[3] = 0.0f;
+	//XMFLOAT2 startNDC(axisStartH.x / axisStartH.w, axisStartH.y / axisStartH.w);
+	//XMFLOAT2 endNDC(axisEndH.x / axisEndH.w, axisEndH.y / axisEndH.w);
+	XMVECTOR endNDC = axisEndH / XMVectorGetW(axisEndH);
+	endNDC.m128_f32[2] = 0.0f;
+	endNDC.m128_f32[3] = 0.0f;
+	//XMFLOAT2 axisNDC(endNDC.x - startNDC.x, endNDC.y - startNDC.y);
+	XMVECTOR axisNDC = endNDC - startNDC;
+	
+	//XMVECTOR axisNDCvec = XMLoadFloat2(&axisNDC);
+	
+	//단위길이로 정규화
+	axisNDC = XMVector2Normalize(axisNDC);
+	
+	
+	XMVECTOR mouseDiffvec = XMLoadFloat2(&mouseDiff);
+	//마우스 이동 벡터에서 단위벡터 축 방향의 벡터를 추출
+	return XMVectorGetX(XMVector2Dot(mouseDiffvec, axisNDC)) * FORCEFACTOR;
+}
+
+void MoveToolRenderer::SetMouseDistance(float dx, float dy)
+{
+	m_mouseDistance.x = dx;
+	m_mouseDistance.y = dy;
+}
+
+bool MoveToolRenderer::AxisIntersect(D3D11_VIEWPORT * viewPort, Camera* camera, float sx, float sy)
+{
+	XMVECTOR rayOrigin;
+	XMVECTOR rayDir;
+	XMMATRIX world;
+	//스크린좌표 -> 시야공간 반직선 계산
+	RayPicking::ScreenToViewRay(&rayOrigin, &rayDir, sx, sy, viewPort, &camera->Proj());
+
+	for (int i = 0; i < 3; ++i)
+	{
+		std::pair<XMVECTOR, XMVECTOR> localRay;
+		world = XMLoadFloat4x4(&instancingDatas[i].world);
+		localRay = RayPicking::ViewToLocalRay(&rayOrigin, &rayDir, &camera->View(),
+			&world);
+
+		if (XMVector3IsNaN(localRay.first) || XMVector3IsNaN(localRay.second))
+			return false;
+
+		//반직선과 AABB 교차판정
+		float t = 0.0f;
+		if (XNA::IntersectRayAxisAlignedBox(localRay.first, localRay.second, &mAABB, &t))
+		{
+			//교차하는 축이 있으면 이동
+			AxisAction(i, camera->ViewProj());
+			//현재 선택된 축 설정
+			m_selectedAxis = i;
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
+
+
+
+
