@@ -724,6 +724,15 @@ public:
 	ID3DX11EffectMatrixVariable* WorldViewProj;
 
 	ID3DX11EffectShaderResourceVariable* CubeMap;
+
+	// Effect을(를) 통해 상속됨
+	virtual void InitInputLayout(ID3D11Device * device) override;
+	virtual void InitInstancingInputLayout(ID3D11Device * device) override;
+	virtual void PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera) override;
+	virtual void PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world) override;
+	virtual ID3DX11EffectTechnique * GetTechnique(UINT techType) override;
+	virtual void SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap) override;
+	virtual void SetMapArray(ID3D11ShaderResourceView * arr) override;
 };
 #pragma endregion
 

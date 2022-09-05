@@ -757,6 +757,28 @@ SkyEffect::SkyEffect(ID3D11Device* device, const std::wstring& filename)
 SkyEffect::~SkyEffect()
 {
 }
+void SkyEffect::InitInputLayout(ID3D11Device * device)
+{
+}
+void SkyEffect::InitInstancingInputLayout(ID3D11Device * device)
+{
+}
+void SkyEffect::PerFrameSet(DirectionalLight * directL, PointLight * pointL, SpotLight * spotL, const Camera & camera)
+{
+}
+void SkyEffect::PerObjectSet(GeneralMaterial * material, Camera * camera, CXMMATRIX & world)
+{
+}
+ID3DX11EffectTechnique * SkyEffect::GetTechnique(UINT techType)
+{
+	return nullptr;
+}
+void SkyEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderResourceView * normalMap, ID3D11ShaderResourceView * specularMap)
+{
+}
+void SkyEffect::SetMapArray(ID3D11ShaderResourceView * arr)
+{
+}
 #pragma endregion
 
 #pragma region DebugTexEffect
@@ -829,7 +851,7 @@ void Effects::InitAll(ID3D11Device* device)
 	//SsaoNormalDepthFX = new SsaoNormalDepthEffect(device, L"FX/SsaoNormalDepth.fxo");
 	//SsaoFX            = new SsaoEffect(device, L"FX/Ssao.fxo");
 	//SsaoBlurFX        = new SsaoBlurEffect(device, L"FX/SsaoBlur.fxo");
-	//SkyFX             = new SkyEffect(device, L"FX/Sky.fxo");
+	SkyFX             = new SkyEffect(device, L"FX/Sky.fxo");
 	DebugTexFX = new DebugTexEffect(device, L"FX/DebugTexture.fxo");
 }
 

@@ -8,10 +8,8 @@
 #include "Vertex.h"
 #include "Effects.h"
 
-Sky::Sky(ID3D11Device* device, const std::wstring& cubemapFilename, float skySphereRadius)
+Sky::Sky(ID3D11Device* device, float skySphereRadius) : mCubeMapSRV(0)
 {
-	HR(D3DX11CreateShaderResourceViewFromFile(device, cubemapFilename.c_str(), 0, 0, &mCubeMapSRV, 0));
-
 	GeometryGenerator::MeshData sphere;
 	GeometryGenerator geoGen;
 	geoGen.CreateSphere(skySphereRadius, 30, 30, sphere);
@@ -70,6 +68,8 @@ ID3D11ShaderResourceView* Sky::CubeMapSRV()
 
 void Sky::Draw(ID3D11DeviceContext* dc, const Camera& camera)
 {
+	if (mCubeMapSRV == nullptr)
+		return;
 	// center Sky about eye in world space
 	XMFLOAT3 eyePos = camera.GetPosition();
 	XMMATRIX T = XMMatrixTranslation(eyePos.x, eyePos.y, eyePos.z);
@@ -99,4 +99,10 @@ void Sky::Draw(ID3D11DeviceContext* dc, const Camera& camera)
 
 		dc->DrawIndexed(mIndexCount, 0, 0);
 	}
+}
+
+void Sky::InitSkySRV(ID3D11Device * device, const std::wstring & cubemapFilename)
+{
+	ReleaseCOM(mCubeMapSRV);
+	HR(D3DX11CreateShaderResourceViewFromFile(device, cubemapFilename.c_str(), 0, 0, &mCubeMapSRV, 0));
 }

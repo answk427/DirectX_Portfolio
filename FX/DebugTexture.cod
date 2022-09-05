@@ -243,12 +243,14 @@ fxgroup
                 dcl_temps 1
                 
                 #line 47 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\DebugTexture.fx"
-                sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t0.xyzw, s0  // c<0:Inf,1:Inf,2:Inf,3:Inf>
+                sample_indexable(texture2d)(float,float,float,float) r0.x, v1.xyxx, t0.xyzw, s0  // c<0:Inf>
                 
-                #line 52
-                mov o0.xyzw, r0.xyzw  // PS<0:Inf,1:Inf,2:Inf,3:Inf>
+                #line 50
+                mov r0.xyz, r0.xxxx  // g<0:Inf,0:Inf,0:Inf>
+                mov o0.w, l(1.000000)  // PS<3: 1f>
+                mov o0.xyz, r0.xyzx  // PS<0:Inf,1:Inf,2:Inf>
                 ret 
-                // Approximately 3 instruction slots used
+                // Approximately 5 instruction slots used
                             
             };
         }
@@ -359,12 +361,14 @@ fxgroup
                 dcl_temps 1
                 
                 #line 47 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\DebugTexture.fx"
-                sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t0.xyzw, s0  // c<0:Inf,1:Inf,2:Inf,3:Inf>
+                sample_indexable(texture2d)(float,float,float,float) r0.x, v1.xyxx, t0.yxzw, s0  // c<1:Inf>
                 
-                #line 52
-                mov o0.xyzw, r0.xyzw  // PS<0:Inf,1:Inf,2:Inf,3:Inf>
+                #line 50
+                mov r0.xyz, r0.xxxx  // g<0:Inf,0:Inf,0:Inf>
+                mov o0.w, l(1.000000)  // PS<3: 1f>
+                mov o0.xyz, r0.xyzx  // PS<0:Inf,1:Inf,2:Inf>
                 ret 
-                // Approximately 3 instruction slots used
+                // Approximately 5 instruction slots used
                             
             };
         }
@@ -475,12 +479,14 @@ fxgroup
                 dcl_temps 1
                 
                 #line 47 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\DebugTexture.fx"
-                sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t0.xyzw, s0  // c<0:Inf,1:Inf,2:Inf,3:Inf>
+                sample_indexable(texture2d)(float,float,float,float) r0.x, v1.xyxx, t0.zxyw, s0  // c<2:Inf>
                 
-                #line 52
-                mov o0.xyzw, r0.xyzw  // PS<0:Inf,1:Inf,2:Inf,3:Inf>
+                #line 50
+                mov r0.xyz, r0.xxxx  // g<0:Inf,0:Inf,0:Inf>
+                mov o0.w, l(1.000000)  // PS<3: 1f>
+                mov o0.xyz, r0.xyzx  // PS<0:Inf,1:Inf,2:Inf>
                 ret 
-                // Approximately 3 instruction slots used
+                // Approximately 5 instruction slots used
                             
             };
         }
@@ -591,12 +597,14 @@ fxgroup
                 dcl_temps 1
                 
                 #line 47 "C:\Users\JS\Documents\GitRepository\DX_Portfolio\FX\DebugTexture.fx"
-                sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t0.xyzw, s0  // c<0:Inf,1:Inf,2:Inf,3:Inf>
+                sample_indexable(texture2d)(float,float,float,float) r0.x, v1.xyxx, t0.wxyz, s0  // c<3:Inf>
                 
-                #line 52
-                mov o0.xyzw, r0.xyzw  // PS<0:Inf,1:Inf,2:Inf,3:Inf>
+                #line 50
+                mov r0.xyz, r0.xxxx  // g<0:Inf,0:Inf,0:Inf>
+                mov o0.w, l(1.000000)  // PS<3: 1f>
+                mov o0.xyz, r0.xyzx  // PS<0:Inf,1:Inf,2:Inf>
                 ret 
-                // Approximately 3 instruction slots used
+                // Approximately 5 instruction slots used
                             
             };
         }

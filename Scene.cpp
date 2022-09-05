@@ -39,7 +39,7 @@
 #include <random>
 #include <RenderStates.h>
 #include "MoveToolRenderer.h"
-
+#include <Sky.h>
 
 #include <LoadM3d.h>
 #include <BasicModel.h>
@@ -50,6 +50,8 @@ class Scene : public D3DApp
 public:
 	//test
 	MoveToolRenderer* moveToolRenderer = 0;
+	std::unique_ptr<Sky> skyRenderer;
+	 
 
 
 	bool isDrawDebugQuad = false;
@@ -269,6 +271,7 @@ bool Scene::Init()
 	if (!D3DApp::Init())
 		return false;
 	RenderStates::InitAll(md3dDevice);
+	skyRenderer = std::make_unique<Sky>(md3dDevice, 5000.0f);
 	Mouse::SetViewPort(&m_currentViewPort);
 	//test
 	meshMgr.Init(md3dDevice);
@@ -491,6 +494,7 @@ void Scene::DrawScene()
 		DrawScreenQuad();
 
 
+	skyRenderer->Draw(md3dImmediateContext, camera);
 
 	//ShaderResourceView로 쉐도우맵을 이번 렌더링의 자원으로 binding 했기 때문에
 	//다음 프레임에서 RenderTargetView로 쉐도우맵에 렌더링 하기 전 해제 해 준다.
@@ -723,6 +727,14 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 	case ID_40004: // Ctrl+Z
 		MessageBox(mhMainWnd, L"Undo", L"Undo", MB_OK);
 		CommandQueue::Undo();
+		break;
+	case ID_40015: //SkyBox 파일 로드
+		std::vector<LPCWSTR> extensions = { L"dds"};
+		bool success = dataMgr.FileOpen(hDlg, title, full_path, extensions);
+		if (success)
+		{
+			skyRenderer->InitSkySRV(md3dDevice, full_path);
+		}
 		break;
 	}
 }

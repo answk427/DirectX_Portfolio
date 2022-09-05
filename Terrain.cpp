@@ -37,7 +37,7 @@ void TerrainRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	ID3D11Buffer* vb = mesh->GetVB();
 	context->IASetVertexBuffers(0, 1, &vb, stride, offset);
 
-	
+
 	mesh->SetIB(context);
 
 	//세계->투영 행렬로부터 절두체를 구함.
@@ -56,11 +56,11 @@ void TerrainRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	effects[0]->IASetting(context, tempTechType);
 	effects[0]->OMSetting(context, m_blending);
 
-	
+
 
 	if (isShadowRender())
 		tempTechType = tempTechType | TechniqueType::Shadowed;
-	
+
 	if (m_enableFog)
 		tempTechType = tempTechType | TechniqueType::Fog;
 
@@ -70,7 +70,7 @@ void TerrainRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	//else
 
 
-	
+
 	//shader에 필요한 데이터 설정
 	effects[0]->PerObjectSet(&materials[0],
 		camera, world);
@@ -171,8 +171,8 @@ void TerrainRenderer::Init()
 void TerrainRenderer::Update()
 {
 	GetScreenIntersect();
-	
-		
+
+
 	if (GetAsyncKeyState(VK_LBUTTON))
 	{
 		switch (m_modifyMode)
@@ -184,9 +184,9 @@ void TerrainRenderer::Update()
 			ModifyBlendMap(m_brush->centerW.x, m_brush->centerW.z);
 			break;
 		}
-		
-		
-		
+
+
+
 	}
 	//Effects::DebugTexFX->SetTexture(mHeightMapSRV);
 	//Effects::DebugTexFX->SetTexture(mblendTextureSRV);
@@ -231,15 +231,15 @@ float TerrainRenderer::GetHeight(float x, float z)const
 	// If upper triangle ABC.
 	if (s + t <= 1.0f)
 	{
-	float uy = B - A;
-	float vy = C - A;
-	return A + s * uy + t * vy;
+		float uy = B - A;
+		float vy = C - A;
+		return A + s * uy + t * vy;
 	}
 	else // lower triangle DCB.
 	{
-	float uy = C - D;
-	float vy = B - D;
-	return D + (1.0f - s)*uy + (1.0f - t)*vy;
+		float uy = C - D;
+		float vy = B - D;
+		return D + (1.0f - s)*uy + (1.0f - t)*vy;
 	}
 }
 
@@ -325,26 +325,26 @@ bool TerrainRenderer::GetLocalPosition(float posX, float posZ, float * destX, fl
 		*destX = 0;
 		result = false;
 	}
-		
+
 	if (*destX >= m_terrainData.HeightmapWidth)
 	{
 		*destX = m_terrainData.HeightmapWidth - 1;
 		result = false;
 	}
-		
+
 	if (*destZ < 0)
 	{
 		*destZ = 0;
 		result = false;
 	}
-	
+
 	if (*destZ >= m_terrainData.HeightmapHeight)
 	{
 		*destZ = m_terrainData.HeightmapHeight - 1;
 		result = false;
 	}
-		
-		
+
+
 	return result;
 }
 
@@ -361,7 +361,7 @@ bool TerrainRenderer::GetRayIntersectPos(XMVECTOR & rayOrigin, XMVECTOR & rayDir
 	float dist;
 	int aabbSize = m_aabb.size();
 	const XNA::AxisAlignedBox* aabbArr = m_aabb.data();
-	for (int i = 0; i< aabbSize; ++i)
+	for (int i = 0; i < aabbSize; ++i)
 	{
 		if (XNA::IntersectRayAxisAlignedBox(rayOrigin, rayDir, &aabbArr[i], &dist))
 		{
@@ -372,17 +372,17 @@ bool TerrainRenderer::GetRayIntersectPos(XMVECTOR & rayOrigin, XMVECTOR & rayDir
 				patchIdxRow = i / (mNumPatchVertCols - 1);
 				patchIdxCol = i % (mNumPatchVertCols - 1);
 			}
-		}	
+		}
 	}
 	//교차하는 aabb가 없으므로 false 반환
 	if (patchIdxRow == -1 && patchIdxCol == -1)
 		return false;
-		
+
 	const float* heightArr = mHeightmap.data();
 	//교차하는 aabb 안에 있는 삼각형들에 대하여 검사
-	for (int i = patchIdxRow*CellsPerPatch; i < (patchIdxRow+1)*CellsPerPatch-1; ++i)
+	for (int i = patchIdxRow * CellsPerPatch; i < (patchIdxRow + 1)*CellsPerPatch - 1; ++i)
 	{
-		for (int j = patchIdxCol*CellsPerPatch; j < (patchIdxCol+1)*CellsPerPatch-1; ++j)
+		for (int j = patchIdxCol * CellsPerPatch; j < (patchIdxCol + 1)*CellsPerPatch - 1; ++j)
 		{
 			//왼쪽 위
 			//월드 좌표로 변환
@@ -390,21 +390,21 @@ bool TerrainRenderer::GetRayIntersectPos(XMVECTOR & rayOrigin, XMVECTOR & rayDir
 			//y = mHeightmap[i*m_terrainData.HeightmapWidth + j];
 			y = heightArr[i*m_terrainData.HeightmapWidth + j];
 			leftTop = XMVectorSet(x, y, z, 1.0f);
-			
+
 			//오른쪽 위 정점
-			LocalToWorld(j+1, i, &x, &z, halfWidth, halfDepth);
+			LocalToWorld(j + 1, i, &x, &z, halfWidth, halfDepth);
 			//y = mHeightmap[i*m_terrainData.HeightmapWidth + (j + 1)];
 			y = heightArr[i*m_terrainData.HeightmapWidth + (j + 1)];
-			rightTop= XMVectorSet(x, y, z, 1.0f);
+			rightTop = XMVectorSet(x, y, z, 1.0f);
 
 			//왼쪽 아래 정점
-			LocalToWorld(j, i+1, &x, &z, halfWidth, halfDepth);
+			LocalToWorld(j, i + 1, &x, &z, halfWidth, halfDepth);
 			//y = mHeightmap[(i + 1)*m_terrainData.HeightmapWidth + j];
 			y = heightArr[(i + 1)*m_terrainData.HeightmapWidth + j];
-			leftBottom= XMVectorSet(x, y, z, 1.0f);
+			leftBottom = XMVectorSet(x, y, z, 1.0f);
 
 			//오른쪽 아래 정점
-			LocalToWorld(j+1, i+1, &x, &z, halfWidth, halfDepth);
+			LocalToWorld(j + 1, i + 1, &x, &z, halfWidth, halfDepth);
 			//y = mHeightmap[(i + 1)*m_terrainData.HeightmapWidth + (j + 1)];
 			y = heightArr[(i + 1)*m_terrainData.HeightmapWidth + (j + 1)];
 			rightBottom = XMVectorSet(x, y, z, 1.0f);
@@ -421,7 +421,7 @@ bool TerrainRenderer::GetRayIntersectPos(XMVECTOR & rayOrigin, XMVECTOR & rayDir
 	//교차 하는게 없으면 false 반환
 	return false;
 }
-		
+
 bool TerrainRenderer::GetScreenIntersect()
 {
 	if (!m_camera || m_brush->shape == BrushShape::NOBRUSH)
@@ -429,15 +429,15 @@ bool TerrainRenderer::GetScreenIntersect()
 	D3D11_VIEWPORT* viewPort = Mouse::GetViewPort();
 	if (viewPort == nullptr)
 		return false;
-	
-	
+
+
 	//마우스 위치의 스크린 좌표에서 세계공간 반직선 계산
 
-	std::pair<XMVECTOR,XMVECTOR> ray; //<반직선원점,반직선방향>
-		
+	std::pair<XMVECTOR, XMVECTOR> ray; //<반직선원점,반직선방향>
+
 	float sx, sy;
 	Mouse::GetScreenPos(&sx, &sy);
-	
+
 	RayPicking::ScreenToViewRay(&ray.first, &ray.second,
 		sx, sy, viewPort, &m_camera->Proj());
 
@@ -450,13 +450,13 @@ bool TerrainRenderer::GetScreenIntersect()
 		m_brush->padding[0] = -1.0f;
 		return false;
 	}
-		
+
 	m_brush->padding[0] = 1.0f;
 	XMStoreFloat3(&m_brush->centerW, intersectionPos);
 
 	//std::wstring str = L"x: " + std::to_wstring(m_brush->center.x) + L" y: " + std::to_wstring(m_brush->center.y) + L" z: " + std::to_wstring(m_brush->center.z) + L'\n';
 	//OutputDebugString(str.c_str());
-		
+
 	return true;
 }
 
@@ -472,37 +472,149 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 		return;
 
 	//렌더링 자원으로 사용한 heightMap 텍스쳐를 얻어옴.
-	
+
 	D3D11_MAPPED_SUBRESOURCE mappedData;
-	HR(m_texMgr.m_context->Map(m_hmapTex, D3D11CalcSubresource(0,0,1), D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
-	HALF* heightMapData = reinterpret_cast<HALF*>(mappedData.pData);
+	//HR(m_texMgr.m_context->Map(m_hmapTex, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	//HALF* heightMapData = reinterpret_cast<HALF*>(mappedData.pData);
 	D3D11_TEXTURE2D_DESC heightmapDesc;
 	m_hmapTex->GetDesc(&heightmapDesc);
-	
+
+	static UINT widthTex = 0;
+	static UINT heightTex = 0;
+	static std::vector<float> tempHeightMap;
+
 	UINT width = heightmapDesc.Width;
+	UINT height = heightmapDesc.Height;
+
+	if (widthTex != width || heightTex != height)
+	{
+		widthTex = heightmapDesc.Width;
+		heightTex = heightmapDesc.Height;
+		tempHeightMap.clear();
+		tempHeightMap.resize(widthTex * heightTex, 0.0f);
+	}
+
+
+	
 
 	//브러쉬의 중심에서 정사각형 범위를 검사
 	float leftTopX, leftTopZ;
 	float rightBottomX, rightBottomZ;
 	//세계공간에서 radius 범위만큼 이동한 좌표 -> heightmap에 사상되는 좌표
-	GetLocalPosition(x-m_brush->radius, z+m_brush->radius, &leftTopX, &leftTopZ);
+	GetLocalPosition(x - m_brush->radius, z + m_brush->radius, &leftTopX, &leftTopZ);
 	GetLocalPosition(x + m_brush->radius, z - m_brush->radius, &rightBottomX, &rightBottomZ);
-	
+
 	float radiusTex = (rightBottomX - leftTopX) * 0.5f;
 	float centerTexRow = leftTopZ + radiusTex;
 	float centerTexCol = leftTopX + radiusTex;
-	
+
 	UINT idx;
-	std::vector<std::tuple<UINT,UINT,UINT>> indices; //평활화할때 재사용할 인덱스(row,col,idx)
+	std::vector<std::tuple<UINT, UINT, UINT>> indices; //평활화할때 재사용할 인덱스(row,col,idx)
+
+	
+
+	//float addVal = 0.0f;
+	//for (int i = leftTopZ; i <= rightBottomZ; ++i)
+	//{
+	//	for (int j = leftTopX; j <= rightBottomX; ++j)
+	//	{
+	//		idx = i * width + j;
+
+	//		//중심과의 거리
+	//		float dist = sqrtf(pow((centerTexRow - i), 2) + pow((centerTexCol - j), 2));
+	//		if (dist > radiusTex)
+	//			continue;
+
+	//		indices.push_back({ i,j,idx });
+	//		//거리에 따라서 2차함수 모양으로 높이를 증가시킬 계수를 구함(0~1)
+	//		yCoefficient = -(dist*dist) / (radiusTex*radiusTex) + 1;
+	//		addVal = m_terrainData.HeightScale * RAISEDELTA * yCoefficient;
+	//		if (m_modifyMapOption == 0)
+	//		{
+	//			mHeightmap[idx] = min(m_terrainData.HeightScale,
+	//				mHeightmap[idx] + addVal);
+	//		}
+	//		else
+	//		{
+	//			mHeightmap[idx] = max(0,
+	//				mHeightmap[idx] - addVal);
+	//		}
+	//		//최대 높이를 넘을수 없게 함	
+
+	//		//heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
+	//	}
+	//}
+
+	//float yCoefficient = 0.0f;
+
+	//for (UINT i = 0; i < boxHeight; ++i)
+	//{
+	//	//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
+	//	//col이 참조하는 배열 인덱스는 한줄에 width*4
+	//	for (UINT j = 0; j < boxWidth; ++j)
+	//	{
+	//		UINT texI = updateBox.top + i;
+	//		UINT texJ = updateBox.left + j;
+	//		//블랜드맵에서의 인덱스 계산
+	//		idx = texI* width + texJ;
+	//		
+	//		//브러쉬의 중점과 현재 점의 거리
+	//		float dist = sqrtf(pow((centerTexRow - texI), 2) + pow((centerTexCol - texJ), 2));
+	//		indices.push_back({ texI,texJ,idx });
+
+
+	//		//거리에 따라서 2차함수 모양으로 높이를 증가시킬 계수를 구함(0~1)
+	//		yCoefficient = -(dist*dist) / (radiusTex*radiusTex) + 1;
+	//		
+	//		addVal = m_terrainData.HeightScale * RAISEDELTA;
+	//		if(m_brush->shape == BrushShape::CIRCLE)
+	//			addVal = addVal * yCoefficient;
+	//		
+	//			
+
+	//					
+	//		//원형 브러쉬일 때 원 범위 밖은 업데이트하지 않음
+	//		if (m_brush->shape == BrushShape::CIRCLE &&
+	//			dist > radiusTex)
+	//		{
+	//			
+	//		}
+	//		else
+	//		{
+	//			if (m_modifyMapOption == 0)
+	//			{
+	//				tempHeightMap[idx] = min(m_terrainData.HeightScale,
+	//					mHeightmap[idx] + addVal);
+	//			}
+	//			else
+	//			{
+	//				mHeightmap[idx] = max(0,
+	//					mHeightmap[idx] - addVal);
+	//			}
+	//		}
+
+	//		srcTemp[i * width + j] = tempBlendMap[idx];
+	//	}
+	//}
+
+	D3D11_BOX updateBox;
+	updateBox.top = leftTopZ;
+	updateBox.left = leftTopX;
+	updateBox.bottom = rightBottomZ;
+	updateBox.right = rightBottomX;
+	updateBox.front = 0;
+	updateBox.back = 1;
+
+	UINT boxWidth = updateBox.right - updateBox.left;
+	UINT boxHeight = updateBox.bottom - updateBox.top;
 
 	float addVal = 0.0f;
-	
 	switch (m_brush->shape)
 	{
 	case BrushShape::SQUARE:
-		for (int i = leftTopZ; i <= rightBottomZ; ++i)
+		for (int i = leftTopZ; i < updateBox.bottom; ++i)
 		{
-			for (int j = leftTopX; j <= rightBottomX; ++j)
+			for (int j = leftTopX; j < updateBox.right; ++j)
 			{
 				idx = i * width + j;
 				addVal = m_terrainData.HeightScale * RAISEDELTA;
@@ -519,19 +631,19 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 					mHeightmap[idx] = max(0,
 						mHeightmap[idx] - addVal);
 				}
-				
+
 				//heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
 			}
 		}
 		break;
 	case BrushShape::CIRCLE:
 		float yCoefficient = 0.0f;
-		for (int i = leftTopZ; i <= rightBottomZ; ++i)
+		for (int i = leftTopZ; i < updateBox.bottom; ++i)
 		{
-			for (int j = leftTopX; j <= rightBottomX; ++j)
+			for (int j = leftTopX; j < updateBox.right; ++j)
 			{
 				idx = i * width + j;
-				
+
 				//중심과의 거리
 				float dist = sqrtf(pow((centerTexRow - i), 2) + pow((centerTexCol - j), 2));
 				if (dist > radiusTex)
@@ -552,55 +664,81 @@ void TerrainRenderer::RaiseHeight(float x, float z)
 						mHeightmap[idx] - addVal);
 				}
 				//최대 높이를 넘을수 없게 함	
-				
+
 				//heightMapData[idx] = XMConvertFloatToHalf(mHeightmap[idx]);
 			}
 		}
 		break;
 	}
 
+
+	UINT sizeSum = boxWidth * boxHeight;
+
+	std::vector<HALF> srcTemp(sizeSum, 0);
+
+	UINT srcI, srcJ, srcIdx;
 	for (auto& idx : indices)
 	{
+		srcI = std::get<0>(idx) - updateBox.top;
+		srcJ = std::get<1>(idx) - updateBox.left;
+		srcIdx = srcI * boxWidth + srcJ;
 		Average(std::get<0>(idx), std::get<1>(idx), width);
-		heightMapData[std::get<2>(idx)] = XMConvertFloatToHalf(mHeightmap[std::get<2>(idx)]);
+		srcTemp[srcIdx] = XMConvertFloatToHalf(mHeightmap[std::get<2>(idx)]);
+		//heightMapData[std::get<2>(idx)] = XMConvertFloatToHalf(mHeightmap[std::get<2>(idx)]);
 	}
+	int rowPitch = sizeof(srcTemp[0]) * boxWidth;
 
-	m_texMgr.m_context->Unmap(m_hmapTex, D3D11CalcSubresource(0,0,1));
-	
+	m_texMgr.m_context->UpdateSubresource(m_hmapTex, D3D11CalcSubresource(0, 0, 1),
+		&updateBox, &srcTemp[0], rowPitch, 0);
+	//m_texMgr.m_context->Unmap(m_hmapTex, D3D11CalcSubresource(0, 0, 1));
+
 }
 
 void TerrainRenderer::ModifyBlendMap(float x, float z)
 {
 	if (m_brush->shape == BrushShape::NOBRUSH || m_brush->padding[0] < 0)
 		return;
-
+	static UINT widthTex = 0;;
+	static UINT heightTex = 0;
 	//*********** 블랜드맵 텍스쳐 정보, 데이터 얻어오기 **********//
-	D3D11_MAPPED_SUBRESOURCE mappedData;	
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+
 	D3D11_TEXTURE2D_DESC blendMapDesc;
 	m_blendMapTex->GetDesc(&blendMapDesc);
 
-	UINT widthTex = blendMapDesc.Width;
-	UINT heightTex = blendMapDesc.Height;
-		
-	HR(m_texMgr.m_context->Map(m_blendMapTex, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
-	
+	static std::vector<UINT> tempBlendMap;
+	if (widthTex != blendMapDesc.Width || heightTex != blendMapDesc.Height)
+	{
+		widthTex = blendMapDesc.Width;
+		heightTex = blendMapDesc.Height;
+		tempBlendMap.clear();
+		tempBlendMap.resize(widthTex * heightTex);
+	}
 
-	UCHAR* testArr = static_cast<UCHAR*>(mappedData.pData);
+
+
+
+	DXGI_FORMAT format = blendMapDesc.Format;
+	//HR(m_texMgr.m_context->Map(m_blendMapTex, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	//UCHAR* testArr = static_cast<UCHAR*>(mappedData.pData);
+
+
 	UCHAR rgba[4] = { 0 };
 	rgba[m_selectedMap] = 255;
-	
+
+
 
 	// 브러쉬의 중심에서 정사각형 범위를 검사
 	float widthW = GetWidth();
 	float halfWidthW = widthW * 0.5f;
-	
+
 	float leftTopX, leftTopZ;
 	float rightBottomX, rightBottomZ;
 
 	// 세계공간 좌표 -> Terrain 공간 좌표 변환
 	GetLocalPosition(x - m_brush->radius, z + m_brush->radius, &leftTopX, &leftTopZ);
 	GetLocalPosition(x + m_brush->radius, z - m_brush->radius, &rightBottomX, &rightBottomZ);
-		
+
 	//terrain 공간좌표 -> BlendMap Texture 공간 좌표
 	UINT startRow = leftTopZ / m_terrainData.HeightmapWidth * widthTex;
 	UINT endRow = rightBottomZ / m_terrainData.HeightmapWidth * heightTex;
@@ -612,93 +750,169 @@ void TerrainRenderer::ModifyBlendMap(float x, float z)
 	float centerRowTex = min(startRow + radiusTex, heightTex);
 	UINT idx;
 
-	//m_texMgr.m_context->UpdateSubresource()
-	switch (m_brush->shape)
+
+
+
+	D3D11_BOX updateBox;
+	updateBox.top = startRow;
+	updateBox.left = startCol;
+	updateBox.bottom = endRow;
+	updateBox.right = endCol;
+	updateBox.front = 0;
+	updateBox.back = 1;
+
+	UINT sizeSum = (endCol - startCol) * (endRow - startRow);
+	UINT targetBlendValue = 255 << (m_selectedMap * 8);
+	std::vector<UINT> srcTemp(sizeSum, 0);
+
+	UINT width = endCol - startCol;
+	UINT height = endRow - startRow;
+	for (UINT i = 0; i < height; ++i)
 	{
-	case BrushShape::SQUARE:
-		//for (UINT i = startRow; i < endRow; ++i)
-		//{
-		//	//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
-		//	//col이 참조하는 배열 인덱스는 한줄에 width*4
-		//	for (UINT j = startCol; j < endCol; ++j)
-		//	{
-		//		//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
-		//		idx = (i*width * 4) + j*4;
-
-		//		testArr[idx] = r;
-		//		testArr[idx + 1] = g;
-		//		testArr[idx + 2] = b;
-		//		testArr[idx + 3] = a;
-		//	}
-		//}
-		for (UINT i = 0; (startRow + i) < endRow; ++i)
+		//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
+		//col이 참조하는 배열 인덱스는 한줄에 width*4
+		for (UINT j = 0; j < width; ++j)
 		{
-			//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
-			//col이 참조하는 배열 인덱스는 한줄에 width*4
-			for (UINT j = 0; (startCol+j) < endCol; ++j)
+			//블랜드맵에서의 인덱스 계산
+			idx = (startRow+i)*widthTex + (startCol+j);
+
+			//브러쉬의 중점과 현재 점의 거리
+			float dist = sqrtf(powf(((startCol +j) - centerColTex), 2) +
+				powf(((startRow+i) - centerRowTex), 2));
+
+			//원형 브러쉬일 때 원 범위 밖은 업데이트하지 않음
+			if (m_brush->shape == BrushShape::CIRCLE &&
+				dist > radiusTex)
 			{
-				//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
-				idx = ((startRow+i)*widthTex * 4) + (startCol+j) * 4;
-
-				testArr[idx] = rgba[0];
-				testArr[idx + 1] = rgba[1];
-				testArr[idx + 2] = rgba[2];
-				testArr[idx + 3] = rgba[3];
 			}
+			else
+				tempBlendMap[idx] = targetBlendValue;
+									
+			srcTemp[i * width + j] = tempBlendMap[idx];
 		}
-		break;
-	case BrushShape::CIRCLE:
-		float halfWidth = GetWidth() *0.5f;
-		float worldX, worldZ;
-		//for (UINT i = 0; (startRow + i) < endRow; ++i)
-		//{
-		//	//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
-		//	//col이 참조하는 배열 인덱스는 한줄에 width*4
-		//	for (UINT j = 0; (startCol + j) < endCol; ++j)
-		//	{
-		//		//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
-		//		idx = ((startRow + i)*widthTex * 4) + (startCol + j) * 4;
-		//		LocalToWorld((leftTopZ + i), (leftTopX + j), &worldX, &worldZ, halfWidth, halfWidth);
-
-		//		//브러쉬의 중점과 현재 점의 거리
-		//		float dist = sqrtf(powf((x - worldX),2) +
-		//			powf((z - worldZ),2));
-		//		
-		//		if (dist > m_brush->radius)
-		//			continue;
-
-		//		testArr[idx] = r;
-		//		testArr[idx + 1] = g;
-		//		testArr[idx + 2] = b;
-		//		testArr[idx + 3] = a;
-		//	}
-		//}
-		for (UINT i = startRow; i < endRow; ++i)
-		{
-			//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
-			//col이 참조하는 배열 인덱스는 한줄에 width*4
-			for (UINT j = startCol; j < endCol; ++j)
-			{
-				//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
-				idx = (i*widthTex * 4) + j * 4;
-				
-				//브러쉬의 중점과 현재 점의 거리
-				float dist = sqrtf(powf((j - centerColTex), 2) +
-					powf((i - centerRowTex), 2));
-
-				if (dist > radiusTex)
-					continue;
-
-				testArr[idx] = rgba[0];
-				testArr[idx + 1] = rgba[1];
-				testArr[idx + 2] = rgba[2];
-				testArr[idx + 3] = rgba[3];
-			}
-		}
-		break;
 	}
-			
-	m_texMgr.m_context->Unmap(m_blendMapTex, D3D11CalcSubresource(0, 0, 1));
+
+
+	int rowPitch = sizeof(srcTemp[0]) * (endCol - startCol);
+	m_texMgr.m_context->UpdateSubresource(m_blendMapTex, D3D11CalcSubresource(0, 0, 1),
+		&updateBox, &srcTemp[0], rowPitch, 0);
+
+
+	//switch (m_brush->shape)
+	//{
+	//case BrushShape::SQUARE:
+	//	//for (UINT i = startRow; i < endRow; ++i)
+	//	//{
+	//	//	//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
+	//	//	//col이 참조하는 배열 인덱스는 한줄에 width*4
+	//	//	for (UINT j = startCol; j < endCol; ++j)
+	//	//	{
+	//	//		//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
+	//	//		idx = (i*width * 4) + j*4;
+
+	//	//		testArr[idx] = r;
+	//	//		testArr[idx + 1] = g;
+	//	//		testArr[idx + 2] = b;
+	//	//		testArr[idx + 3] = a;
+	//	//	}
+	//	//}
+	//	
+	//	for (UINT i = 0; i < endRow; ++i)
+	//	{
+	//		//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
+	//		//col이 참조하는 배열 인덱스는 한줄에 width*4
+	//		for (UINT j = 0; j < endCol; ++j)
+	//		{
+	//			//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
+	//			idx = (i*widthTex * 4) + j * 4;
+
+	//			if (startRow <= i && i < endRow && j >= startCol && j < endCol)
+	//			{
+	//				testArr[idx] = rgba[0];
+	//				testArr[idx + 1] = rgba[1];
+	//				testArr[idx + 2] = rgba[2];
+	//				testArr[idx + 3] = rgba[3];
+	//			}
+	//			else
+	//			{
+	//				testArr[idx] = testArr[idx];
+	//				testArr[idx + 1] = testArr[idx + 1];
+	//				testArr[idx + 2] = testArr[idx + 2];
+	//				testArr[idx + 3] = testArr[idx + 3];
+	//			}				
+	//		}
+	//	}
+
+
+
+	//	//for (UINT i = 0; (startRow + i) < endRow; ++i)
+	//	//{
+	//	//	//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
+	//	//	//col이 참조하는 배열 인덱스는 한줄에 width*4
+	//	//	for (UINT j = 0; (startCol+j) < endCol; ++j)
+	//	//	{
+	//	//		//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
+	//	//		idx = ((startRow+i)*widthTex * 4) + (startCol+j) * 4;
+
+	//	//		testArr[idx] = rgba[0];
+	//	//		testArr[idx + 1] = rgba[1];
+	//	//		testArr[idx + 2] = rgba[2];
+	//	//		testArr[idx + 3] = rgba[3];
+	//	//	}
+	//	//}
+	//	break;
+	//case BrushShape::CIRCLE:
+	//	float halfWidth = GetWidth() *0.5f;
+	//	float worldX, worldZ;
+	//	//for (UINT i = 0; (startRow + i) < endRow; ++i)
+	//	//{
+	//	//	//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
+	//	//	//col이 참조하는 배열 인덱스는 한줄에 width*4
+	//	//	for (UINT j = 0; (startCol + j) < endCol; ++j)
+	//	//	{
+	//	//		//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
+	//	//		idx = ((startRow + i)*widthTex * 4) + (startCol + j) * 4;
+	//	//		LocalToWorld((leftTopZ + i), (leftTopX + j), &worldX, &worldZ, halfWidth, halfWidth);
+
+	//	//		//브러쉬의 중점과 현재 점의 거리
+	//	//		float dist = sqrtf(powf((x - worldX),2) +
+	//	//			powf((z - worldZ),2));
+	//	//		
+	//	//		if (dist > m_brush->radius)
+	//	//			continue;
+
+	//	//		testArr[idx] = r;
+	//	//		testArr[idx + 1] = g;
+	//	//		testArr[idx + 2] = b;
+	//	//		testArr[idx + 3] = a;
+	//	//	}
+	//	//}
+	//	for (UINT i = startRow; i < endRow; ++i)
+	//	{
+	//		//4개의 원소를 참조하면 R8G8B8A8_UNORM이므로 한픽셀 수정하는것이 됨.
+	//		//col이 참조하는 배열 인덱스는 한줄에 width*4
+	//		for (UINT j = startCol; j < endCol; ++j)
+	//		{
+	//			//UCHAR* 배열이기 때문에 4배를 곱해줘야 i,j번째 픽셀에 접근
+	//			idx = (i*widthTex * 4) + j * 4;
+	//			
+	//			//브러쉬의 중점과 현재 점의 거리
+	//			float dist = sqrtf(powf((j - centerColTex), 2) +
+	//				powf((i - centerRowTex), 2));
+
+	//			if (dist > radiusTex)
+	//				continue;
+
+	//			testArr[idx] = rgba[0];
+	//			testArr[idx + 1] = rgba[1];
+	//			testArr[idx + 2] = rgba[2];
+	//			testArr[idx + 3] = rgba[3];
+	//		}
+	//	}
+	//	break;
+	//}
+
+	//m_texMgr.m_context->Unmap(m_blendMapTex, D3D11CalcSubresource(0, 0, 1));
 }
 
 void TerrainRenderer::SetHeightScale(float height)
@@ -764,7 +978,7 @@ void TerrainRenderer::LoadHeightmap()
 			mHeightmap[i] = (mHeightmapDatas[i] / 255.0f)*m_terrainData.HeightScale;
 		}
 	}
-		
+
 }
 
 //평활화
@@ -866,8 +1080,8 @@ void TerrainRenderer::CalcPatchBoundsY(UINT i, UINT j)
 	UINT patchID = i * (mNumPatchVertCols - 1) + j;
 	mPatchBoundsY[patchID] = XMFLOAT2(minY, maxY);
 
-	
-	
+
+
 }
 
 void TerrainRenderer::BuildQuadPatchVB(ID3D11Device* device)
@@ -897,7 +1111,7 @@ void TerrainRenderer::BuildQuadPatchVB(ID3D11Device* device)
 			m_patchVertices[i*mNumPatchVertCols + j].Tex.y = i * dv;
 		}
 	}
-	   
+
 
 	// Store axis-aligned bounding box y-bounds in upper-left patch corner.
 	for (UINT i = 0; i < mNumPatchVertRows - 1; ++i)
@@ -907,9 +1121,9 @@ void TerrainRenderer::BuildQuadPatchVB(ID3D11Device* device)
 			UINT patchID = i * (mNumPatchVertCols - 1) + j;
 			UINT vertexID = i * mNumPatchVertCols + j;
 			m_patchVertices[vertexID].BoundsY = mPatchBoundsY[patchID];
-			
+
 			//사각형의 오른쪽위 점, 왼쪽 아래 점을 이용해 aabb를 계산
-			XMVECTOR rightTop = XMVectorSet(m_patchVertices[vertexID+1].Pos.x,
+			XMVECTOR rightTop = XMVectorSet(m_patchVertices[vertexID + 1].Pos.x,
 				mPatchBoundsY[patchID].y, //max 높이
 				m_patchVertices[vertexID + 1].Pos.z, 1.0f);
 
@@ -966,9 +1180,11 @@ void TerrainRenderer::BuildHeightmapSRV(ID3D11Device* device)
 	texDesc.Format = DXGI_FORMAT_R16_FLOAT;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//texDesc.Usage = D3D11_USAGE_DYNAMIC;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
 	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = 0;
 
 	// HALF is defined in xnamath.h, for storing 16-bit float.
@@ -980,7 +1196,7 @@ void TerrainRenderer::BuildHeightmapSRV(ID3D11Device* device)
 	data.pSysMem = &hmap[0];
 	data.SysMemPitch = m_terrainData.HeightmapWidth * sizeof(HALF);
 	data.SysMemSlicePitch = 0;
-		
+
 	HR(device->CreateTexture2D(&texDesc, &data, &m_hmapTex));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -988,9 +1204,9 @@ void TerrainRenderer::BuildHeightmapSRV(ID3D11Device* device)
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
-	
+
 	HR(device->CreateShaderResourceView(m_hmapTex, &srvDesc, &mHeightMapSRV));
-		
+
 }
 
 void TerrainRenderer::BuildLayermapSRV()
@@ -1003,45 +1219,31 @@ void TerrainRenderer::BuildLayermapSRV()
 
 void TerrainRenderer::BuildBlendmapSRV()
 {
-	
+
 	if (m_terrainData.BlendMapFilename.empty())
 		return;
-	
+
 	//HR(D3DX11CreateShaderResourceViewFromFile(m_texMgr.md3dDevice,
 	//	m_terrainData.BlendMapFilename.c_str(), 0, 0, &mblendTextureSRV, 0));
-			
+
 	ReleaseCOM(mblendTextureSRV);
 	ReleaseCOM(m_blendMapTex);
 
 	//texture 생성
 	D3DX11_IMAGE_LOAD_INFO texInfo;
 	texInfo.MipLevels = 1;
-	texInfo.CpuAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	texInfo.Usage = D3D11_USAGE_DYNAMIC;
+	texInfo.CpuAccessFlags = 0;
+	texInfo.Usage = D3D11_USAGE_DEFAULT;
 	texInfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	texInfo.MiscFlags = 0;
-	
+
 
 	D3DX11CreateTextureFromFile(m_texMgr.md3dDevice, m_terrainData.BlendMapFilename.c_str(), &texInfo, 0,
 		(ID3D11Resource**)&m_blendMapTex, 0);
-		
+
 	HR(m_texMgr.md3dDevice->CreateShaderResourceView(m_blendMapTex, 0, &mblendTextureSRV));
 
-	//
-	//D3D11_TEXTURE2D_DESC texDesc;
-	//texDesc.Width = m_terrainData.HeightmapWidth; //basic value 2049
-	//texDesc.Height = m_terrainData.HeightmapHeight; //basic value 2049
-	//texDesc.MipLevels = 1;
-	//texDesc.ArraySize = 1;
-	//texDesc.Format = DXGI_FORMAT_R16_FLOAT;
-	//texDesc.SampleDesc.Count = 1;
-	//texDesc.SampleDesc.Quality = 0;
-	//texDesc.Usage = D3D11_USAGE_DYNAMIC;
-	//texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	//texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	//texDesc.MiscFlags = 0;
-	
-	
-		
+
+
 }
 

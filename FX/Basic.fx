@@ -47,6 +47,7 @@ cbuffer cbSkinned
 
 // Nonnumeric values cannot be added to a cbuffer.
 Texture2D gDiffuseMap;
+Texture2D gNormalMap;
 Texture2D gShadowMap;
 Texture2D gSsaoMap;
 TextureCube gCubeMap;
@@ -117,6 +118,7 @@ struct VertexOut
 	float4 PosH       : SV_POSITION;
     float3 PosW       : POSITION;
     float3 NormalW    : NORMAL;
+	float4 TangentW   : TANGENT;
 	float2 Tex        : TEXCOORD0;
 	float4 ShadowPosH : TEXCOORD1;
 	float4 SsaoPosH   : TEXCOORD2;
@@ -150,13 +152,14 @@ VertexOut SkinningInstancingVS(SkinnedInstanceVertexIn vin, uint vertexID : SV_V
 	vout.PosH = gVertices[resultVertexID].PosH;
 	vout.PosW = gVertices[resultVertexID].PosW;
 	vout.NormalW = gVertices[resultVertexID].NormalW;
+	vout.TangentW = gVertices[resultVertexID].TanW;
 	vout.Tex = mul(float4(gVertices[resultVertexID].Tex, 0.0f, 1.0f), gTexTransform).xy;
 	vout.ShadowPosH = mul(float4(gVertices[resultVertexID].PosL, 1.0f), gShadowTransform);
 
 	vout.SsaoPosH = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	vout.Color = vin.Color;
 	vout.InstanceId = vin.RendererIdx;
-
+	
 	return vout;
 }
 
@@ -166,6 +169,7 @@ VertexOut SkinningVS(uint vertexID : SV_VertexID)
 	vout.PosH = gVertices[vertexID].PosH;
 	vout.PosW = gVertices[vertexID].PosW;
 	vout.NormalW = gVertices[vertexID].NormalW;
+	vout.TangentW = gVertices[vertexID].TanW;
 	vout.Tex = mul(float4(gVertices[vertexID].Tex, 0.0f, 1.0f), gTexTransform).xy;
 	vout.ShadowPosH = mul(float4(gVertices[vertexID].PosL, 1.0f), gShadowTransform);
 	
@@ -380,7 +384,16 @@ float4 PS(VertexOut pin,
 			clip(texColor.a - 0.1f);
 		}
 	}
-	 
+
+	//
+	// Normal mapping
+	//
+
+	float3 normalMapSample = gNormalMap.Sample(samLinear, pin.Tex).rgb;
+	float3 bumpedNormalW = NormalSampleToWorldSpace(normalMapSample, pin.NormalW, pin.TangentW);
+	
+	/*ComputeDirectionalLight(gMaterial, gDirLights[i], bumpedNormalW, toEye,
+		A, D, S);*/
 	//
 	// Lighting.
 	//

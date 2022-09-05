@@ -14,13 +14,13 @@ class Camera;
 class Sky
 {
 public:
-	Sky(ID3D11Device* device, const std::wstring& cubemapFilename, float skySphereRadius);
+	Sky(ID3D11Device* device, float skySphereRadius);
 	~Sky();
 
 	ID3D11ShaderResourceView* CubeMapSRV();
 
 	void Draw(ID3D11DeviceContext* dc, const Camera& camera);
-
+	void InitSkySRV(ID3D11Device* device, const std::wstring& cubemapFilename);
 private:
 	Sky(const Sky& rhs);
 	Sky& operator=(const Sky& rhs);

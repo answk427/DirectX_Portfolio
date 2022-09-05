@@ -46,13 +46,13 @@ float4 PS(VertexOut pin, uniform int index) : SV_Target
 {
 	float4 c = gTexture.Sample(samLinear, pin.Tex);
 	
-	// draw as grayscale
-	//float g = c[index];
-	//return float4(g.rrr, 1);
-	return c;
+	 //draw as grayscale
+	float g = c[index];
+	return float4(g.rrr, 1);
+	//return c;    
 }
  
-technique11 ViewArgbTech
+technique11 ViewArgbTech 
 {
     pass P0
     {
