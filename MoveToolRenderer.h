@@ -83,3 +83,4 @@ public:
 	bool AxisIntersect(D3D11_VIEWPORT* viewPort, Camera* camera,
 		float sx, float sy);
 };
+	

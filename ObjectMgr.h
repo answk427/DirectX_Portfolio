@@ -11,7 +11,7 @@
 #include "EffectMgr.h"
 #include "AnimationManager.h"
 #include <SkinnedData.h>
-
+#include <random>
 
 
 #define PRETEXTID "GAMEOBJECTID_"
@@ -32,6 +32,8 @@ private:
 	FinalHierarchy* m_finalHierarchy;
 	std::map<std::string, AssimpAnimation>* m_assimpAnimations;
 	std::vector<AssimpSkinnedVertex>* m_assimpSkinnedVertices; //뼈, 가중치
+	BoneDatas m_boneDatas;
+
 private:
 	//Assimp에서 읽어온 노드를 재귀적으로 탐색하는 함수
 	void AddNode(GameObject* parent, NodeStruct& node);
@@ -59,9 +61,13 @@ public:
 	GameObject* CopyGameObject(const std::wstring& name, GameObject& copyObj);
 
 	GameObject* CreateObjectFromFile(const std::string& fileName);
+	GameObject* CreateObjectFromFile(const std::string& fileName, AssimpLoader& aspLoader);
 	GameObject& CreateBasicBoxObject();
+	GameObject& CreateBasicBoxObject(GameObject* parent);
 	GameObject& CreateBasicGrid();
 	GameObject& CreateTerrain();
+
+	GameObject* CreateLatestObject(int xRange, int yRange, int zRange);
 	
 	Component* AddComponent(GameObject* obj, ComponentType compType);
 

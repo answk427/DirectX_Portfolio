@@ -34,6 +34,7 @@ enum TechniqueType
 	Instancing = 64,
 	Shadowed = 128,
 	Tesselation = 256,
+	NormalMap = 512
 };
 
 #pragma region Effect
@@ -123,6 +124,7 @@ public:
 	void SetFogStart(float f)                           { FogStart->SetFloat(f); }
 	void SetFogRange(float f)                           { FogRange->SetFloat(f); }
 	void SetIsShadowed(bool b)							{ isShadowed->SetBool(b); }
+	void SetIsNormalMap(bool b)							{ isNormalMap->SetBool(b); }
 	
 	void SetDirLights(const DirectionalLight* lights)   
 	{ 
@@ -164,6 +166,7 @@ public:
 	}
 	void SetMaterial(const BasicMaterial& mat)               { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
 	void SetDiffuseMap(ID3D11ShaderResourceView* tex)   { DiffuseMap->SetResource(tex); }
+	void SetNormalMap(ID3D11ShaderResourceView* tex) { NormalMap->SetResource(tex); }
 	void SetShadowMap(ID3D11ShaderResourceView* tex)    { ShadowMap->SetResource(tex); }
 	void SetSsaoMap(ID3D11ShaderResourceView* tex)      { SsaoMap->SetResource(tex); }
 	void SetCubeMap(ID3D11ShaderResourceView* tex)      { CubeMap->SetResource(tex); }
@@ -243,6 +246,7 @@ public:
 	ID3DX11EffectScalarVariable* FogStart;
 	ID3DX11EffectScalarVariable* FogRange;
 	ID3DX11EffectScalarVariable* isShadowed;
+	ID3DX11EffectScalarVariable* isNormalMap;
 	
 	ID3DX11EffectVariable* DirLights;
 	
@@ -262,6 +266,8 @@ public:
 	ID3DX11EffectVariable* Mat;
 
 	ID3DX11EffectShaderResourceVariable* DiffuseMap;
+	ID3DX11EffectShaderResourceVariable* NormalMap;
+
 	ID3DX11EffectShaderResourceVariable* ShadowMap;
 	ID3DX11EffectShaderResourceVariable* SsaoMap;
 	ID3DX11EffectShaderResourceVariable* CubeMap;

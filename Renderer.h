@@ -159,7 +159,7 @@ public:
 	const Transform* GetTransform() const { return transform; }
 	virtual void GetWorldMatrix(XMMATRIX& dest) { m_bones.lock()->GetFinalTransform(dest, ownerObjectId); }
 	virtual void GetWorldMatrix(XMFLOAT4X4& dest)
-	{ 
+	{	
 		XMMATRIX tempDest;
 		m_bones.lock()->GetFinalTransform(tempDest, ownerObjectId); 
 		XMStoreFloat4x4(&dest, tempDest);
@@ -224,9 +224,6 @@ public:
 	virtual void Update() override;
 	virtual void SetVB(ID3D11DeviceContext* context);
 	void SetMesh();
-	
-
-
 };
 
 
@@ -235,6 +232,8 @@ class MeshRenderer : public Renderer
 public:
 	MeshRenderer(const std::string& id, const gameObjectID& ownerId);
 	MeshRenderer& operator=(const MeshRenderer& other);
+	virtual void SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones);
+
 };
 
 class SkinnedMeshRenderer : public Renderer
@@ -261,7 +260,7 @@ public:
 	
 public:
 	virtual void Draw(ID3D11DeviceContext* context, Camera* camera);
-	virtual void GetWorldMatrix(XMMATRIX& dest) { m_bones.lock()->GetRootWorldTransform(dest); }
+	virtual void GetWorldMatrix(XMMATRIX& dest){ m_bones.lock()->GetRootWorldTransform(dest); }
 	virtual void GetWorldMatrix(XMFLOAT4X4& dest) { m_bones.lock()->GetRootWorldTransform(dest); }
 	virtual void Update() override;
 	virtual void InstancingUpdate();

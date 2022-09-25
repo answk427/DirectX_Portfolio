@@ -37,6 +37,7 @@ cbuffer cbPerObject
 	float4x4 gShadowTransform; 
 	Material gMaterial;
 	bool isShadowed;
+	bool gUseNormalMap;
 };
 
 cbuffer cbSkinned
@@ -145,12 +146,16 @@ cbuffer MeshInfo
 };
 
 #define meshVerticesSize 
-VertexOut SkinningInstancingVS(SkinnedInstanceVertexIn vin, uint vertexID : SV_VertexID, uint instanceID : SV_InstanceID)
+VertexOut SkinningInstancingVS(SkinnedInstanceVertexIn vin,
+	uint vertexID : SV_VertexID, uint instanceID : SV_InstanceID)
 {
 	VertexOut vout;
 	uint resultVertexID = vertexBufferLen * vin.RendererIdx + vertexID;
 	vout.PosH = gVertices[resultVertexID].PosH;
 	vout.PosW = gVertices[resultVertexID].PosW;
+
+	
+	
 	vout.NormalW = gVertices[resultVertexID].NormalW;
 	vout.TangentW = gVertices[resultVertexID].TanW;
 	vout.Tex = mul(float4(gVertices[resultVertexID].Tex, 0.0f, 1.0f), gTexTransform).xy;
@@ -300,6 +305,9 @@ VertexOut VS(VertexIn vin)
 
 	vout.Color = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
+
+	vout.TangentW = float4(1.0f, 0.0f, 0.0f, 0.0f);
+
 	return vout;
 }
 
@@ -329,6 +337,9 @@ VertexOut InstanceVS(InstanceVertexIn vin)
 	
 	//instanceid 그대로 넘겨줌
 	vout.InstanceId = vin.RendererIdx;
+
+	vout.TangentW = float4(1.0f, 0.0f, 0.0f, 0.0f);
+
 
 	return vout;
 }
@@ -399,6 +410,14 @@ float4 PS(VertexOut pin,
 	//
 
 	float4 litColor = texColor;
+	
+	float3 normalW = float3(0.0f, 0.0f, 0.0f);
+	
+	if (gUseNormalMap)
+		normalW = bumpedNormalW;
+	else
+		normalW = pin.NormalW;
+
 	if( gLightCount > 0  )
 	{  
 		// Start with a sum of zero. 
@@ -424,7 +443,7 @@ float4 PS(VertexOut pin,
 		for(int i = 0; i < dirLight_size; ++i)
 		{
 			float4 A, D, S;
-			ComputeDirectionalLight(gMaterial, gDirLights[i], pin.NormalW, toEye, 
+			ComputeDirectionalLight(gMaterial, gDirLights[i], normalW, toEye,
 				A, D, S);
 
 			//ambient += ambientAccess*A;    
@@ -436,7 +455,7 @@ float4 PS(VertexOut pin,
 		for (int i = 0; i < pointLight_size; ++i)
 		{
 			float4 A, D, S;
-			ComputePointLight(gMaterial, gPointLights[i], pin.PosW,pin.NormalW, toEye,
+			ComputePointLight(gMaterial, gPointLights[i], pin.PosW, normalW, toEye,
 				A, D, S);
 			
 			//ambient += ambientAccess * A;
@@ -449,7 +468,7 @@ float4 PS(VertexOut pin,
 		for (int i = 0; i < spotLight_size; ++i)
 		{
 			float4 A, D, S;
-			ComputeSpotLight(gMaterial, gSpotLights[i], pin.PosW, pin.NormalW, toEye,
+			ComputeSpotLight(gMaterial, gSpotLights[i], pin.PosW, normalW, toEye,
 				A, D, S);
 
 			//ambient += ambientAccess * A;
@@ -471,7 +490,7 @@ float4 PS(VertexOut pin,
 		if( gReflectionEnabled )
 		{
 			float3 incident = -toEye;
-			float3 reflectionVector = reflect(incident, pin.NormalW);
+			float3 reflectionVector = reflect(incident, normalW);
 			float4 reflectionColor  = gCubeMap.Sample(samLinear, reflectionVector);
 
 			litColor += gMaterial.Reflect*reflectionColor;

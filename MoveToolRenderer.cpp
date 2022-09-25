@@ -101,29 +101,33 @@ void MoveToolRenderer::GetMoveToolAxes(XMVECTOR& localPos, XMMATRIX& world, XMMA
 
 void MoveToolRenderer::GetMoveToolAxes(XMVECTOR & posW, XMMATRIX & viewProj)
 {
-	XMVECTOR posH = XMVector3TransformCoord(posW, viewProj);
+	
 
+	//세계공간에서의 각 축의 끝점
+	//현재 오브젝트의 위치인 posW에서 각 축 방향으로 이동
+	XMVECTOR xAxisEndPosW = XMVector3TransformCoord(posW, XMMatrixTranslation(1.0f, 0.0f, 0.0f));
+	XMVECTOR yAxisEndPosW = XMVector3TransformCoord(posW, XMMatrixTranslation(0.0f, 1.0f, 0.0f));
+	XMVECTOR zAxisEndPosW = XMVector3TransformCoord(posW, XMMatrixTranslation(0.0f, 0.0f, 1.0f));
+	
 	//동차절단공간에서의 각 축의 끝 점을 구함
-	//posW.m128_f32[0] += 1.0f;
-	XMVECTOR xAxisEndPosH = XMVector3TransformCoord(XMVector3TransformCoord(posW,
-		XMMatrixTranslation(1.0f, 0.0f, 0.0f)), viewProj);
-	XMVECTOR yAxisEndPosH = XMVector3TransformCoord(XMVector3TransformCoord(posW,
-		XMMatrixTranslation(0.0f, 1.0f, 0.0f)), viewProj);
-	XMVECTOR zAxisEndPosH = XMVector3TransformCoord(XMVector3TransformCoord(posW,
-		XMMatrixTranslation(0.0f, 0.0f, 1.0f)), viewProj);
+	XMVECTOR xAxisEndPosH = XMVector3TransformCoord(xAxisEndPosW, viewProj);
+	XMVECTOR yAxisEndPosH = XMVector3TransformCoord(yAxisEndPosW, viewProj);
+	XMVECTOR zAxisEndPosH = XMVector3TransformCoord(zAxisEndPosW, viewProj);
 
 	//ndc 공간으로 변환
+	XMVECTOR posH = XMVector3TransformCoord(posW, viewProj);
 	XMVECTOR desetNDCpos = posH / XMVectorGetW(posH);
 	XMVECTOR xAxisEndPosNDC = xAxisEndPosH / XMVectorGetW(xAxisEndPosH);
 	XMVECTOR yAxisEndPosNDC = yAxisEndPosH / XMVectorGetW(yAxisEndPosH);
 	XMVECTOR zAxisEndPosNDC = zAxisEndPosH / XMVectorGetW(zAxisEndPosH);
 
-	//ndc공간에서 xyz 축의 방향
+	//ndc공간에서 xyz 축의 벡터
 	XMVECTOR AxisDir[3];
 	AxisDir[0] = xAxisEndPosNDC - desetNDCpos;
 	AxisDir[1] = yAxisEndPosNDC - desetNDCpos;
 	AxisDir[2] = zAxisEndPosNDC - desetNDCpos;
 
+	//ndc공간에서 각 축의 크기
 	float AxisLen[3];
 	AxisLen[0] = XMVectorGetX(XMVector2Length(AxisDir[0]));
 	AxisLen[1] = XMVectorGetX(XMVector2Length(AxisDir[1]));
@@ -203,6 +207,7 @@ void MoveToolRenderer::InstancingUpdate(ID3D11DeviceContext* context)
 	if (mInstanceBuffer == nullptr || m_gameObj == nullptr)
 		return;
 	
+	//기본 메쉬인 y축에 곱할 단위행렬
 	static XMMATRIX identity = XMMatrixIdentity();
 	//y축을 z축에대해 -90도 회전하면 x축
 	static XMMATRIX makeXaxis = 
@@ -213,9 +218,11 @@ void MoveToolRenderer::InstancingUpdate(ID3D11DeviceContext* context)
 	
 	//해당 오브젝트의 세계행렬과 AABB의 중심에서 이동값만 추출
 	//const XMFLOAT3& center = m_Renderer->GetMesh()->GetAABB().Center;
+	
+	
+	//m_Renderer->m_bones.lock()->GetFinalTransform(world, m_Renderer->ownerObjectId);
 	const XMFLOAT3& center = mAABBCenter;
 	XMMATRIX world;
-	//m_Renderer->m_bones.lock()->GetFinalTransform(world, m_Renderer->ownerObjectId);
 	m_gameObj->nodeHierarchy->GetFinalTransform(world, m_gameObj->GetID());
 	float x = world._41 + center.x;
 	float y = world._42 + center.y;
@@ -530,8 +537,6 @@ float MoveToolRenderer::CalcForce(XMFLOAT2 & mouseDiff, const XMVECTOR& axisStar
 	XMVECTOR startNDC = axisStartH / XMVectorGetW(axisStartH);
 	startNDC.m128_f32[2] = 0.0f;
 	startNDC.m128_f32[3] = 0.0f;
-	//XMFLOAT2 startNDC(axisStartH.x / axisStartH.w, axisStartH.y / axisStartH.w);
-	//XMFLOAT2 endNDC(axisEndH.x / axisEndH.w, axisEndH.y / axisEndH.w);
 	XMVECTOR endNDC = axisEndH / XMVectorGetW(axisEndH);
 	endNDC.m128_f32[2] = 0.0f;
 	endNDC.m128_f32[3] = 0.0f;

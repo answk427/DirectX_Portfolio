@@ -148,6 +148,7 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 	FogStart = mFX->GetVariableByName("gFogStart")->AsScalar();
 	FogRange = mFX->GetVariableByName("gFogRange")->AsScalar();
 	isShadowed = mFX->GetVariableByName("isShadowed")->AsScalar();
+	isNormalMap = mFX->GetVariableByName("gUseNormalMap")->AsScalar();
 
 	DirLights = mFX->GetVariableByName("gDirLights");
 	dirLightSize = mFX->GetVariableByName("dirLight_size")->AsScalar();
@@ -160,6 +161,7 @@ BasicEffect::BasicEffect(ID3D11Device* device, const std::wstring& filename)
 
 	Mat = mFX->GetVariableByName("gMaterial");
 	DiffuseMap = mFX->GetVariableByName("gDiffuseMap")->AsShaderResource();
+	NormalMap = mFX->GetVariableByName("gNormalMap")->AsShaderResource();
 	CubeMap = mFX->GetVariableByName("gCubeMap")->AsShaderResource();
 	ShadowMap = mFX->GetVariableByName("gShadowMap")->AsShaderResource();
 	SsaoMap = mFX->GetVariableByName("gSsaoMap")->AsShaderResource();
@@ -222,6 +224,7 @@ void BasicEffect::SetMaps(ID3D11ShaderResourceView * diffuseMap, ID3D11ShaderRes
 {
 	//if(diffuseMap!=nullptr)
 	SetDiffuseMap(diffuseMap);
+	SetNormalMap(normalMap);
 }
 void BasicEffect::SetMapArray(ID3D11ShaderResourceView * arr)
 {
@@ -238,7 +241,13 @@ ID3DX11EffectTechnique * BasicEffect::GetTechnique(UINT techType)
 	else
 		SetIsShadowed(false);
 
+	if (techType & TechniqueType::NormalMap)
+		SetIsNormalMap(true);
+	else
+		SetIsNormalMap(false);
+
 	techType = techType & ~TechniqueType::Shadowed;
+	techType = techType & ~TechniqueType::NormalMap;
 
 	switch (techType)
 	{

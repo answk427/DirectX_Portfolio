@@ -3,8 +3,9 @@
 #include <algorithm>
 #include <map>
 #include <GameTimer.h>
+#include "Transform.h"
 
-//시간, 해당 키 프레임의 벡터
+//시간, 해당 키 프레임의 시간, 벡터
 typedef std::pair<float, XMFLOAT3> frameKey3;
 typedef std::pair<float, XMFLOAT4> frameKey4;
 
@@ -47,6 +48,12 @@ public:
 
 struct BoneDatas
 {
+	//Bone 이름과 인덱스
+	std::map<std::wstring, int> m_boneNameIdx;
+	std::vector<std::shared_ptr<Transform>> boneTransforms;
+
+	//parent 행렬
+	std::vector<XMFLOAT4X4> toParents;
 	//Offset 행렬
 	std::vector<XMFLOAT4X4> offsets;
 	//Bone 계층구조
@@ -61,6 +68,16 @@ struct BoneDatas
 	void SetOffsets(const std::vector<XMFLOAT4X4>& offsetVec);
 	void SetParents(const std::vector<int>& parents);
 	void SetParentMatrix(const std::vector<XMFLOAT4X4>& parentMats);
+
+	void SetBoneNameTransform(const std::map<std::wstring, int>& boneNameIdx,
+		const std::wstring& boneName, std::shared_ptr<Transform> tr);
+
+	void SetBoneNameIdx(const std::map<std::wstring, int>& boneNameIdx);
+	void SetBoneTransform(const std::wstring& boneName, std::shared_ptr<Transform> tr);
+
+	bool GetMatrixFromBoneName(XMFLOAT4X4& dest, const std::wstring& boneName);
+	
+	void UpdateBoneTransforms();
 };
 
 
@@ -72,15 +89,17 @@ public:
 	Animator() : timePos(0.0f), AnimatedPerFrame(0)  {}
 	Animator(const Animator& other);
 	Animator& operator=(const Animator& other);
+	
+public:
 	//애니메이터에서 참조하는 뼈 구조
 	BoneDatas boneDatas;
-		
+	//현재 애니메이터에서 실행할 수 있는 클립들
+	std::map<std::string, MyAnimationClip> clips;	
 	//현재 실행하는 클립이름
 	std::string currClipName;
 	//현재 실행중인 시간위치
 	float timePos;
-	//현재 애니메이터에서 실행할 수 있는 클립들
-	std::map<std::string, MyAnimationClip> clips;
+	
 	
 	
 public:

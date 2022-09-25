@@ -108,7 +108,10 @@ public:
 	std::vector<GeneralMaterial> GetMaterials() { return materials; }
 	std::vector<AssimpSkinnedVertex> GetSkinnedVertexData() { return skinnedVertices; }
 	AABB_MaxMin* GetAABB_MaxMin() { return m_AABB_MaxMin; }
-	bool HasBone() { return !skinnedVertices.empty(); } 
+	bool HasBone()
+	{ 
+		return !skinnedVertices.empty();
+	} 
 };
 
 class NodeStruct
@@ -166,10 +169,12 @@ public:
 
 class AssimpLoader
 {
+public:
+	std::string currentFileName;
 private:
 	//test
 	std::vector<std::vector<std::wstring>> boneNames;
-	std::string currentFileName;
+	
 	NodeStruct* root;
 	std::map<std::wstring, AssimpBone> m_assimpBones;
 	std::map<std::string, AssimpAnimation> m_animations;

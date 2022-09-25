@@ -451,7 +451,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		{
 			WCHAR fileTitle[MAX_PATH];
 			WCHAR filePath[MAX_PATH];
-			std::vector<LPCWSTR> extensions = { L"dds", L"bmp", L"jpg"};
+			std::vector<LPCWSTR> extensions = { L"dds", L"bmp", L"jpg", L"png"};
 			if (FileOpenDialog(m_hDlg, fileTitle, filePath, extensions))
 			{
 				int idx = ListBox_GetCurSel(m_hList);
@@ -475,7 +475,7 @@ void MeshRendererDialog::MenuProc(HWND hDlg, WPARAM wParam)
 		{
 			WCHAR fileTitle[100];
 			WCHAR filePath[100];
-			std::vector<LPCWSTR> extensions = { L"dds", L"bmp", L"jpg" };
+			std::vector<LPCWSTR> extensions = { L"dds", L"bmp", L"jpg", L"png" };
 			if (FileOpenDialog(m_hDlg, fileTitle, filePath, extensions))
 			{
 				int idx = ListBox_GetCurSel(m_hList);

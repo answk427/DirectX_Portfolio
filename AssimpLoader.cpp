@@ -283,7 +283,8 @@ void AssimpLoader::SetMesh(AssimpMesh& assimpMesh, aiMesh * mesh)
 	//총 정점의 갯수를 구함
 	assimpMesh.vertexCount += mesh->mNumVertices;
 	assimpMesh.vertices.reserve(assimpMesh.vertexCount);
-	assimpMesh.skinnedVertices.resize(assimpMesh.vertexCount);
+	if(mesh->HasBones())
+		assimpMesh.skinnedVertices.resize(assimpMesh.vertexCount);
 
 	//index의 총 갯수
 	assimpMesh.indexCount += mesh->mNumFaces * 3;
@@ -474,19 +475,6 @@ void FinalHierarchy::InitBones(NodeStruct * root, std::map<boneName, AssimpBone>
 		return;
 	if (assimpBones.empty())
 		return;
-	
-	//for (auto& animation : animations)
-	//{
-	//	for (auto& bone : animation.second.bones)
-	//	{
-	//		//새로운 뼈 이름일 때 데이터 추가
-	//		if (assimpBones.find(bone.first) == tempBones.end())
-	//		{
-	//			//뼈 정보에는 없이 Animation에만 있던 정보라 단위행렬로 초기화
-	//			tempBones[bone.first] = { identity };
-	//		}
-	//	}
-	//}
 
 	parents.reserve(assimpBones.size());
 	offsets.reserve(assimpBones.size());

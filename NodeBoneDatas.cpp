@@ -20,6 +20,7 @@ void NodeHierarchy::AddNode(std::string* parentId, std::string* childId, std::ws
 		parentIndices.push_back(nodeIdIdx[*parentId]);
 	
 	nodeIdIdx[*childId] = parentIndices.size() - 1;
+	nodeNames.push_back(*nodeName);
 
 	XMFLOAT4X4 identity;
 	XMStoreFloat4x4(&identity, XMMatrixIdentity());
@@ -53,6 +54,7 @@ void NodeHierarchy::GetFinalTransform(XMMATRIX & dest, std::string & nodeId)
 	int nodeIdx = nodeIdIdx[nodeId];
 	int parentIdx = parentIndices[nodeIdx];
 	std::shared_ptr<Transform> currTransform = toParents[nodeIdx].lock();
+	
 	if (!currTransform)
 		return;
 	
@@ -62,9 +64,20 @@ void NodeHierarchy::GetFinalTransform(XMMATRIX & dest, std::string & nodeId)
 	//부모 인덱스가 -1은 루트노드, -2는 삭제된 노드
 	while (parentIdx >= 0)
 	{
-		currTransform = toParents[parentIdx].lock();
-		if (currTransform)
-			dest = dest * XMLoadFloat4x4(currTransform->GetWorld());
+		XMFLOAT4X4 parentMat;
+		
+		
+		if (!m_animator->boneDatas.GetMatrixFromBoneName(parentMat, nodeNames[parentIdx])
+		 || m_animator->clips.empty()
+			)
+		{
+			currTransform = toParents[parentIdx].lock();
+			
+			if(currTransform)
+				parentMat = *currTransform->GetWorld();
+		}
+		
+		dest = XMMatrixMultiply(dest, XMLoadFloat4x4(&parentMat));
 
 		parentIdx = parentIndices[parentIdx];
 	}

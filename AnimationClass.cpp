@@ -6,7 +6,6 @@ void BoneFrames::Interpolate(float time, XMFLOAT4X4& dest)
 	XMVECTOR quaternion;
 	XMVECTOR translate;
 	float lerpPercent;
-
 	
 
 	if (scaleKeys.empty())
@@ -109,9 +108,14 @@ void Animator::LoadAnimationClip(MyAnimationClip & clip)
 
 void Animator::Update(float deltaTime)
 {
-	//여러 렌더러에서 공유하는 Animator일 경우 중복 업데이트 방지
+	//여러 렌더러에서 공유하는 Animator일 경우
+	//중복 업데이트 방지
 	if (AnimatedPerFrame)
 		return;
+
+#pragma region UpdateBody
+
+
 
 	auto it = clips.find(currClipName);
 	if (it == clips.end())
@@ -130,7 +134,9 @@ void Animator::Update(float deltaTime)
 
 	int numBones = boneDatas.offsets.size();
 	//각 뼈대에서 부모뼈대로 가는 행렬
-	std::vector<XMFLOAT4X4> toParents(numBones);
+	//std::vector<XMFLOAT4X4> toParents(numBones);
+	std::vector<XMFLOAT4X4>&  toParents = boneDatas.toParents;
+	toParents.resize(numBones);
 	//애니메이션에 따른 행렬 계산
 	clip.Interpolate(timePos, toParents);
 	boneDatas.toRoots[0] = toParents[0];
@@ -165,9 +171,11 @@ void Animator::Update(float deltaTime)
 		
 		XMStoreFloat4x4(&boneDatas.m_finalTransforms[i], XMMatrixMultiply(offset,toRoot));
 	}
+#pragma endregion
 
 	//이번 프레임에 업데이트 완료
 	AnimatedPerFrame = true;
+
 }
 
 bool Animator::DeleteAnimation(const std::string & clipName)
@@ -260,4 +268,45 @@ void BoneDatas::SetParentMatrix(const std::vector<XMFLOAT4X4>& parentMats)
 {
 	m_toParentMatrix.reserve(parentMats.size());
 	m_toParentMatrix = parentMats;
+}
+
+void BoneDatas::SetBoneNameTransform(const std::map<std::wstring, int>& boneNameIdx, const std::wstring & boneName, std::shared_ptr<Transform> tr)
+{
+	SetBoneNameIdx(boneNameIdx);
+	SetBoneTransform(boneName, tr);
+}
+
+void BoneDatas::SetBoneNameIdx(const std::map<std::wstring, int>& boneNameIdx)
+{
+	m_boneNameIdx = boneNameIdx;
+	boneTransforms.resize(m_boneNameIdx.size());
+}
+
+void BoneDatas::SetBoneTransform(const std::wstring & boneName, std::shared_ptr<Transform> tr)
+{
+	auto it = m_boneNameIdx.find(boneName);
+	if (it != m_boneNameIdx.end())
+	{
+		boneTransforms[it->second] = tr;
+	}
+}
+
+bool BoneDatas::GetMatrixFromBoneName(XMFLOAT4X4 & dest, const std::wstring & boneName)
+{
+	auto it = m_boneNameIdx.find(boneName);
+	if (it != m_boneNameIdx.end() && !toParents.empty())
+	{
+		dest = toParents[it->second];
+		return true;
+	}
+	return false;
+}
+
+void BoneDatas::UpdateBoneTransforms()
+{
+	for (UINT i=0; i<boneTransforms.size(); ++i)
+	{
+		auto tr = boneTransforms[i];
+		tr->m_world = toRoots[i];
+	}
 }

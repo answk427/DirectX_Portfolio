@@ -392,6 +392,14 @@ MeshRenderer & MeshRenderer::operator=(const MeshRenderer & other)
 	// TODO: 여기에 반환 구문을 삽입합니다.
 }
 
+void MeshRenderer::SetNodeHierarchy(std::weak_ptr<NodeHierarchy> bones)
+{
+	m_bones = bones;
+	
+	std::shared_ptr<Animator> animator = m_bones.lock()->m_animator;
+	
+}
+
 
 
 SkinnedMeshRenderer::SkinnedMeshRenderer(const std::string & id, const gameObjectID& ownerObj) :
@@ -451,7 +459,12 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 	{
 		//이미 렌더링을 했거나, 그릴 오브젝트들이 없는 경우 리턴
 		if (mesh->enableInstancingIndexes.empty())
+		{
+			std::shared_ptr<Animator> animator = m_bones.lock()->m_animator;
+			animator->SetAnimatedFlag(false);
 			return;
+		}
+			
 		if(!isShadowMapRender())
 			mesh->InstancingBasicUpdate(context);
 		mesh->SetInstanceSkinnedVB(context);
@@ -540,8 +553,12 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 		}
 
 		UINT tempTechType = GetTechniqueType();
+		
+		
 		if (isShadowRender())
 			tempTechType = tempTechType | TechniqueType::Shadowed;
+		if (normalMaps[i] != nullptr)
+			tempTechType = tempTechType | TechniqueType::NormalMap;
 
 
 		if (GetInstancing())
@@ -618,16 +635,6 @@ void SkinnedMeshRenderer::Draw(ID3D11DeviceContext * context, Camera * camera)
 
 void SkinnedMeshRenderer::Update()
 {
-	//static float TimePos = 0.0f;
-	//TimePos += m_timer.DeltaTime();
-	//testAnimator->GetFinalTransforms(m_animator->currClipName,
-	//	TimePos, m_animator->boneDatas.m_finalTransforms);
-	//
-	//if (TimePos > testAnimator->GetClipEndTime(m_animator->currClipName))
-	//	TimePos = 0.0f;
-
-	//m_animator->Update(m_timer.DeltaTime());
-	
 	m_bones.lock()->m_animator->Update(m_timer.DeltaTime());
 	
 	if (boneDrawMode)
@@ -678,7 +685,7 @@ std::vector<std::string> SkinnedMeshRenderer::GetAnimationClipNames()
 	return clipNames;
 }
 
-void SkinnedMeshRenderer::SetBoneDatas(BoneDatas & boneDatas)
+void SkinnedMeshRenderer::SetBoneDatas(BoneDatas& boneDatas)
 {
 	std::shared_ptr<NodeHierarchy> nodeHierarchy = m_bones.lock();
 	//animator가 있을경우 바로 본데이터 적재
@@ -821,6 +828,7 @@ void BoneRenderer::CreateBoneShape(std::vector<Vertex::Basic32>& result, XMFLOAT
 	XMFLOAT3 floorRight, floorFront, floorLeft, floorBack;
 	XMFLOAT3 vertexY;
 	XMFLOAT3 vertexDownY;
+
 	xAxis.x = xAxis.x * CRYSTALSIZE;
 	xAxis.y = xAxis.y * CRYSTALSIZE;
 	xAxis.z = xAxis.z * CRYSTALSIZE;
@@ -869,7 +877,6 @@ void BoneRenderer::CreateBoneShape(std::vector<Vertex::Basic32>& result, XMFLOAT
 	result[4].Pos = vertexY;
 	result[5].Pos = vertexDownY;
 	result[6].Pos = pos;
-
 }
 
 void BoneRenderer::InitIndices(std::vector<UINT>& indices)
@@ -1011,6 +1018,8 @@ void BoneRenderer::Update()
 	}
 	//정점버퍼의 위치정보 수정
 	UpdateVB();
+	
+	animator->SetAnimatedFlag(false);
 }
 
 void BoneRenderer::SetVB(ID3D11DeviceContext * context)

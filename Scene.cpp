@@ -225,7 +225,7 @@ void Scene::AddTreeBilBoard()
 	// random_device 를 통해 난수 생성 엔진을 초기화 한다.
 	std::mt19937 gen(rd());
 
-	// 0 부터 99 까지 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
+	// 균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
 	std::uniform_int_distribution<int> dis(-10, 10);
 	//TREE 랜덤 생성
 	for (int i = 0; i < 10; ++i)
@@ -729,12 +729,19 @@ void Scene::MenuProc(HWND hDlg, WPARAM wParam)
 		CommandQueue::Undo();
 		break;
 	case ID_40015: //SkyBox 파일 로드
-		std::vector<LPCWSTR> extensions = { L"dds"};
+	{
+		std::vector<LPCWSTR> extensions = { L"dds", L"png" };
 		bool success = dataMgr.FileOpen(hDlg, title, full_path, extensions);
 		if (success)
 		{
 			skyRenderer->InitSkySRV(md3dDevice, full_path);
 		}
+		break;
+	}
+	case ID_40016: //랜덤위치에 최근 오브젝트 생성
+		GameObject* gameObj = objectMgr.CreateLatestObject(500, 100, 500);
+		m_HierarchyDialog->TreeInsertObject(gameObj);
+		
 		break;
 	}
 }

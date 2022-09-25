@@ -68,6 +68,14 @@ void GameObject::AddNodeHierarchy()
 		parentId = &parent->GetID();
 	 
 	nodeHierarchy->AddNode(parentId, &GetID(), &GetName(),transform); 
+	nodeHierarchy->m_animator->boneDatas.SetBoneTransform(GetName(), transform);
+
+	MeshRenderer* meshRender = (MeshRenderer*)GetComponent(ComponentType::MESHRENDERER);
+	SkinnedMeshRenderer* skinRender = (SkinnedMeshRenderer*)GetComponent(ComponentType::SKINNEDMESHRENDERER);
+	if (meshRender != nullptr)
+		meshRender->SetNodeHierarchy(nodeHierarchy);
+	if (skinRender != nullptr)
+		skinRender->SetNodeHierarchy(nodeHierarchy);
 }
 
 void GameObject::AddBoneOffset(const XMFLOAT4X4& offsetMat)

@@ -53,6 +53,21 @@ public:
 		Object::SetParent(parent); 
 		nodeHierarchy = parent->nodeHierarchy;
 		AddNodeHierarchy();
+
+		std::queue<GameObject*> q;
+		for (auto& child : childs)
+			q.push((GameObject*)child);
+		
+		while (!q.empty())
+		{
+			GameObject* child = q.front();
+			q.pop();
+			child->nodeHierarchy = parent->nodeHierarchy;
+			child->AddNodeHierarchy();
+
+			for (auto& chchild : child->childs)
+				q.push((GameObject*)chchild);
+		}
 	}
 public:
 	Component* GetComponent(ComponentType compType); 

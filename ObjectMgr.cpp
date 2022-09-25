@@ -101,9 +101,50 @@ GameObject* ObjectMgr::CreateObjectFromFile(const std::string& fileName)
 		return nullptr;
 }
 
+GameObject * ObjectMgr::CreateObjectFromFile(const std::string & fileName, AssimpLoader & aspLoader)
+{
+	//assimpScene이 같은 파일로 초기화 된 상태인지 확인
+	if (!aspLoader.EqualFileName(fileName))
+	{
+		aspLoader.InitScene(fileName);
+		if (!aspLoader.LoadData())
+		{
+			return nullptr;
+		}
+	}
+
+	NodeStruct* root = aspLoader.getRoot();
+	
+	
+	if (root == nullptr)
+		return nullptr;
+
+	if (!aspLoader.IsEmptyMesh())
+		return AddNode(*root);
+	else
+		return nullptr;
+}
+
 GameObject & ObjectMgr::CreateBasicBoxObject()
 {
 	GameObject& obj = CreateGameObject(L"BoxObject");
+	Mesh* mesh = meshMgr->CreateBasicBox(2, 2, 2);
+	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::MESHRENDERER, obj.GetID()));
+
+	renderer->SetMesh(mesh);
+	renderer->SetTransform(obj.transform.get());
+	renderer->SetNodeHierarchy(obj.nodeHierarchy);
+	//renderer->MapsInit();
+	//renderer->InitEffects();
+
+	obj.AddComponent(renderer);
+
+	return obj;
+}
+
+GameObject & ObjectMgr::CreateBasicBoxObject(GameObject * parent)
+{
+	GameObject& obj = CreateGameObject(L"BoxObject", parent);
 	Mesh* mesh = meshMgr->CreateBasicBox(2, 2, 2);
 	Renderer* renderer = dynamic_cast<Renderer*>(componentMgr->CreateComponent(ComponentType::MESHRENDERER, obj.GetID()));
 
@@ -146,6 +187,67 @@ GameObject & ObjectMgr::CreateTerrain()
 	obj.AddComponent(renderer);
 
 	return obj;
+}
+
+GameObject * ObjectMgr::CreateLatestObject(int xRange, int yRange, int zRange)
+{
+	if (assimpLoader.currentFileName.empty())
+		return nullptr;
+	GameObject* gameObj = CreateObjectFromFile(assimpLoader.currentFileName);
+	
+		
+	std::queue<GameObject*> queue;
+	queue.push(gameObj);
+
+	Component* tempRenderer = nullptr;
+	while (!queue.empty())
+	{
+		GameObject* obj = queue.front();
+		queue.pop();
+		tempRenderer = obj->GetComponent(ComponentType::SKINNEDMESHRENDERER);
+		if (tempRenderer != nullptr)
+			break;
+
+		for (auto& child : obj->childs)
+			queue.push((GameObject*)child);
+	}
+	
+	SkinnedMeshRenderer* skinRenderer = dynamic_cast<SkinnedMeshRenderer*>(tempRenderer);
+
+	// 시드값을 얻기 위한 random_device 생성.
+	std::random_device rd;
+	// random_device 를 통해 난수 생성 엔진을 초기화 한다.
+	std::mt19937 gen(rd());
+	
+
+		
+	if (skinRenderer)
+	{
+		AnimationManager& aniManager = AnimationManager::Instance();
+
+		std::uniform_int_distribution<int> randomClipIdx(0, aniManager.mAnimations.size()-1);
+		int clipIdx = randomClipIdx(gen);
+		auto& it = aniManager.mAnimations.begin();
+		for (int i = 0; i < clipIdx; ++i)
+		{
+			++it;
+		}
+		
+		skinRenderer->LoadAnimationClip(it->second);
+	}
+		
+
+	//균등하게 나타나는 난수열을 생성하기 위해 균등 분포 정의.
+	std::uniform_int_distribution<int> xDis(-xRange, xRange);
+	std::uniform_int_distribution<int> yDis(-yRange, yRange);
+	std::uniform_int_distribution<int> zDis(-zRange, zRange);
+	
+	std::uniform_int_distribution<int> rotDis(0, 360);
+	
+	gameObj->transform->SetPosition(xDis(gen), yDis(gen), zDis(gen));
+	gameObj->transform->SetRotation(0.0f, rotDis(gen), 0.0f);
+	gameObj->transform->UpdateWorld();
+	return gameObj;
 }
 
 Component * ObjectMgr::AddComponent(GameObject * obj, ComponentType compType)
@@ -239,12 +341,8 @@ Renderer* ObjectMgr::CreateRenderer(AssimpMesh& assimpMesh, const std::string& n
 		//init 해야됨
 		comp->InitDiffuseMaps(textureMgr, L"Textures/");
 		comp->InitEffects(effectMgr, L"FX/");
-
-		BoneDatas boneDatas;
-		boneDatas.SetParents(m_finalHierarchy->parents);
-		boneDatas.SetOffsets(m_finalHierarchy->offsets);
-		boneDatas.SetParentMatrix(m_finalHierarchy->boneParentMatrix);
-		comp->SetBoneDatas(boneDatas);
+						
+		comp->SetBoneDatas(m_boneDatas);
 
 		//정점이 뼈 인덱스,가중치 스키닝 정보를 가진 경우
 		for (auto& skinnedVertex : assimpMesh.skinnedVertices)
@@ -300,6 +398,18 @@ void ObjectMgr::AddNode(GameObject* parent, NodeStruct& node)
 	//parent의 자식오브젝트로 생성
 	GameObject& obj = CreateGameObject(name, parent);
 
+	if (name == L"RightHand")
+	{
+		//GameObject& box = CreateBasicBoxObject(&obj);
+		AssimpLoader tempLoader;
+		GameObject& box = *CreateObjectFromFile("LongSword.obj", tempLoader);
+										
+		//부모자식 관계 설정
+		box.SetParent(&obj);
+		obj.SetChild(&box);
+			
+	}
+
 	//노드의 기본 행렬(toParent행렬?) 추출
 	XMVECTOR scale, quat, trans;
 	XMMatrixDecompose(&scale, &quat, &trans, XMLoadFloat4x4(&node.GetMatrix()));
@@ -307,7 +417,7 @@ void ObjectMgr::AddNode(GameObject* parent, NodeStruct& node)
 	obj.transform->SetScale(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
 	obj.transform->SetRotation({ XMVectorGetX(quat), XMVectorGetY(quat), XMVectorGetZ(quat), XMVectorGetW(quat) });
 	obj.transform->SetPosition(XMVectorGetX(trans), XMVectorGetY(trans), XMVectorGetZ(trans));
-
+	obj.transform->UpdateWorld();
 
 	//bone 정보가 있는 node일 경우 offset 추가
 	auto boneIt = m_finalHierarchy->m_boneNameIdx.find(name);
@@ -348,6 +458,15 @@ GameObject * ObjectMgr::AddNode(NodeStruct & node)
 	obj.transform->SetScale(XMVectorGetX(scale), XMVectorGetY(scale), XMVectorGetZ(scale));
 	obj.transform->SetRotation({ XMVectorGetX(quat), XMVectorGetY(quat), XMVectorGetZ(quat), XMVectorGetW(quat) });
 	obj.transform->SetPosition(XMVectorGetX(trans), XMVectorGetY(trans), XMVectorGetZ(trans));
+	obj.transform->UpdateWorld();
+
+	m_boneDatas.SetParents(m_finalHierarchy->parents);
+	m_boneDatas.SetOffsets(m_finalHierarchy->offsets);
+	m_boneDatas.SetParentMatrix(m_finalHierarchy->boneParentMatrix);
+	m_boneDatas.SetBoneNameTransform(m_finalHierarchy->m_boneNameIdx, name,
+		obj.transform);
+	
+	obj.nodeHierarchy->m_animator->SetBoneDatas(m_boneDatas);
 
 	//bone 정보가 있는 node일 경우 offset 추가
 	auto boneIt = m_finalHierarchy->m_boneNameIdx.find(name);
